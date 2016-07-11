@@ -25,7 +25,7 @@
 */
 //Pertenece al plugin PaperAttendance
 defined('MOODLE_INTERNAL') || die();
-require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/config.php');
+require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 require_once($CFG->libdir . "/formslib.php");
 class upload_form extends moodleform {
 	/**
@@ -36,7 +36,7 @@ class upload_form extends moodleform {
 		
 		$mform = $this->_form;
 
-		$maxbytes = $course->maxbytes;
+		//$maxbytes = $course->maxbytes;
 		
 		$mform->addElement('header', 'header', get_string('header', 'form'));
 		$mform->addElement('filepicker', 'file', get_string('uploadfilepicker', 'local_paperattendance'), null, array('maxbytes' => $CFG->maxbytes, 'accepted_types' =>array('*.pdf')));	
