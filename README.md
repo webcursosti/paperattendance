@@ -1,2 +1,0 @@
-# paperattendance
-Moodle plugin 
