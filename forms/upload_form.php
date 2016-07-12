@@ -36,10 +36,14 @@ class upload_form extends moodleform {
 		
 		$mform = $this->_form;
 
+<<<<<<< HEAD
 		//retrieve course id
 		$instance = $this ->_customdata;
 		$courseid = $instance['courseid'];
 		$maxbytes = 6000000;
+=======
+		//$maxbytes = $course->maxbytes;
+>>>>>>> refs/remotes/webcursosuai/master
 		
 		//header
 		$mform->addElement('header', 'header', get_string('header', 'local_paperattendance'));

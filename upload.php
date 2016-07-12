@@ -49,8 +49,11 @@ $url = new moodle_url('/local/paperattendance/upload.php', array(
     'courseid' => $courseid));
 
 $pagetitle = get_string('uploadtitle', 'local_paperattendance');
+<<<<<<< HEAD
 $course = $DB ->get_record("course", array("id" =>$courseid));
 
+=======
+>>>>>>> refs/remotes/webcursosuai/master
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
@@ -64,6 +67,7 @@ if ($addform->is_cancelled()) {
     redirect($url);
     die();
 } 
+<<<<<<< HEAD
 if ($addform->get_data()) {
 	require_capability('local/paperattendance:upload', $context);
 	
@@ -77,10 +81,18 @@ if ($addform->get_data()) {
 	}
 	// Save file
 	$file = $addform->save_file('file', $path."/".$addform->get_new_filename('file'),false);
+=======
+else if ($data = $addform->get_data()) {
+	// If not cancelled
+	$content = $data->get_file_content('file');
+	$name = $data->get_new_filename('file');
+	$file = $data->save_stored_file('file', $coursecontext->id, 'paperattendance', 'tmpupload', $courseid, '/', $name);
+>>>>>>> refs/remotes/webcursosuai/master
 	// Validate that file was correctly uploaded.
 	if (!$file) {
 		print_error('Could not upload file');
 	}
+<<<<<<< HEAD
 	else{
 	// Display confirmation page before moving out.
 	redirect($url, get_string('uploadsuccessful', 'local_paperattendance'), 3);
@@ -90,6 +102,13 @@ if ($addform->get_data()) {
 // If there is no data or is it not cancelled show the header, the tabs and the form.
 echo $OUTPUT->header();
 echo $OUTPUT->heading($pagetitle. " " . $course->shortname . " " . $course->fullname);
+=======
+
+}
+// If there is no data or is it not cancelled show the header, the tabs and the form.
+echo $OUTPUT->header();
+echo $OUTPUT->heading($pagetitle);
+>>>>>>> refs/remotes/webcursosuai/master
 // Display the form.
 $addform->display();
 echo $OUTPUT->footer();

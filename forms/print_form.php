@@ -20,25 +20,24 @@
 *
 * @package    local
 * @subpackage paperattendance
-* @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl) 
 * @copyright  2016 Hans Jeria (hansjeria@gmail.com) 					
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-require_once(dirname(dirname(dirname(__FILE__))) . "/config.php");
-require_once($CFG->dirroot . "/local/paperattendance/forms/print_form.php");
-global $DB, $USER, $PAGE, $OUTPUT;
-require_login();
-if (isguestuser()) {
-	die();
+
+defined('MOODLE_INTERNAL') || die();
+require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/config.php');
+require_once($CFG->libdir . "/formslib.php");
+
+class print_form extends moodleform {
+
+	public function definition() {
+		global $CFG;
+		
+		$mform = $this->_form;
+		
+	}
+	
+	public function validation($data, $files) {
+		
+	}
 }
-
-$context = context_system::instance();
-if (! has_capability("local/paperattendance:print", $context) || ! is_siteadmin($USER)) {
-	print_error("ACCESS DENIED");
-}
-$urlprint = new moodle_url("/local/paperattendance/print.php");
-// Page navigation and URL settings.
-$PAGE->set_url($urlprint);
-$PAGE->set_context($context);
-
-
