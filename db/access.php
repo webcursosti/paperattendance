@@ -42,39 +42,39 @@ defined('MOODLE_INTERNAL') || die();
 $capabilities = array(
 		'local/paperattendance:print' => array(
 				'captype' => 'read',
-				'contextlevel' => CONTEXT_COURSE,
-				'archetypes' => array(
+				'contextlevel' => CONTEXT_SYSTEM,
+				'legacy' => array(
 						'student' => CAP_PROHIBIT,
 						'teacher' => CAP_ALLOW,
 						'editingteacher' => CAP_ALLOW,
-						'manager' => CAP_ALLOW,
-						'secre_pregrado' => CAP_ALLOW)),
+						'manager' => CAP_ALLOW
+						 )),
 		'local/paperattendance:upload' => array(
 				'captype' => 'write',
-				'contextlevel' => CONTEXT_COURSE,
-				'archetypes' => array(
+				'contextlevel' => CONTEXT_SYSTEM,
+				'legacy' => array(
 						'student' => CAP_PROHIBIT,
 						'teacher' => CAP_PROHIBIT,
 						'editingteacher' => CAP_ALLOW,
-						'manager' => CAP_ALLOW,
-						'secre_pregrado' => CAP_ALLOW)),
+						'manager' => CAP_ALLOW
+						 )),
 		'local/paperattendance:history' => array(
 				'captype' => 'read',
-				'contextlevel' => CONTEXT_COURSE,
-				'archetypes' => array(
+				'contextlevel' => CONTEXT_SYSTEM,
+				'legacy' => array(
 						'student' => CAP_ALLOW,
 						'teacher' => CAP_ALLOW,
 						'editingteacher' => CAP_ALLOW,
-						'manager' => CAP_ALLOW,
-						'secre_pregrado' => CAP_ALLOW)),
+						'manager' => CAP_ALLOW
+						 )),
 		'local/paperattendance:manageattendance' => array(
 				'riskbitmask' => RISK_MANAGETRUST,
 				'captype' => 'write',
-				'contextlevel' => CONTEXT_COURSE,
-				'archetypes' => array(
+				'contextlevel' => CONTEXT_SYSTEM,
+				'legacy' => array(
 						'student' => CAP_PROHIBIT,
 						'teacher' => CAP_ALLOW,
 						'editingteacher' => CAP_ALLOW,
-						'manager' => CAP_ALLOW,
-						'secre_pregrado' => CAP_ALLOW))
+						'manager' => CAP_ALLOW
+						 ))
 				);
