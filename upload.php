@@ -27,7 +27,6 @@
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once($CFG->dirroot . '/local/paperattendance/forms/upload_form.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
-require_once ($CFG->dirroot . "/repository/lib.php");
 global $DB, $OUTPUT,$COURSE;
 
 // User must be logged in.
@@ -46,69 +45,36 @@ if (! has_capability('local/paperattendance:upload', $context)) {
 }
 // This page url.
 $url = new moodle_url('/local/paperattendance/upload.php', array(
-    'courseid' => $courseid));
+    'course' => $courseid));
 
 $pagetitle = get_string('uploadtitle', 'local_paperattendance');
-<<<<<<< HEAD
-$course = $DB ->get_record("course", array("id" =>$courseid));
-
-=======
->>>>>>> refs/remotes/webcursosuai/master
 $PAGE->set_context($context);
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('incourse');
 $PAGE->set_heading(get_site()->fullname);
 $PAGE->set_title($pagetitle);
 
 // Add the upload form for the course.
-$addform = new upload_form (null, array("courseid" => $courseid));
+$addform = new upload_form ();
 // If the form is cancelled, refresh the instante.
 if ($addform->is_cancelled()) {
     redirect($url);
     die();
 } 
-<<<<<<< HEAD
-if ($addform->get_data()) {
-	require_capability('local/paperattendance:upload', $context);
-	
-	$data = $addform -> get_data();
-	$teacherid = $data -> teacher;
-	var_dump($teacherid);
-	
-	$path = $CFG -> dataroot. "temp/local/paperattendance/unread";
-	if(!file_exists($path)){
-		mkdir($path, 0777, true);
-	}
-	// Save file
-	$file = $addform->save_file('file', $path."/".$addform->get_new_filename('file'),false);
-=======
 else if ($data = $addform->get_data()) {
 	// If not cancelled
 	$content = $data->get_file_content('file');
 	$name = $data->get_new_filename('file');
 	$file = $data->save_stored_file('file', $coursecontext->id, 'paperattendance', 'tmpupload', $courseid, '/', $name);
->>>>>>> refs/remotes/webcursosuai/master
 	// Validate that file was correctly uploaded.
 	if (!$file) {
 		print_error('Could not upload file');
 	}
-<<<<<<< HEAD
-	else{
-	// Display confirmation page before moving out.
-	redirect($url, get_string('uploadsuccessful', 'local_paperattendance'), 3);
-	die();
-	}
-}
-// If there is no data or is it not cancelled show the header, the tabs and the form.
-echo $OUTPUT->header();
-echo $OUTPUT->heading($pagetitle. " " . $course->shortname . " " . $course->fullname);
-=======
 
 }
 // If there is no data or is it not cancelled show the header, the tabs and the form.
 echo $OUTPUT->header();
 echo $OUTPUT->heading($pagetitle);
->>>>>>> refs/remotes/webcursosuai/master
 // Display the form.
 $addform->display();
 echo $OUTPUT->footer();
