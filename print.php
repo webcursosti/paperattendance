@@ -84,6 +84,10 @@ else if ($data = $addform->get_data()) {
 	
 	//unlink($attendancepdffile);
 	//unlink($path."/".$filename);
+	$image = new Imagick();
+	$image->readImage("IMG_0115.jpg");
+	
+	$a = $image->getImageBlob();
 }
 
 $course = $DB->get_record("course",array("id" => $courseid));
