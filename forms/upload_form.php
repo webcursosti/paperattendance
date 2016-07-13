@@ -32,17 +32,41 @@ class upload_form extends moodleform {
 	 * Defines forms elements
 	 */
 	public function definition() {
-		global $CFG;
+		global $CFG, $DB;
 		
 		$mform = $this->_form;
 
-		//$maxbytes = $course->maxbytes;
+		//retrieve course id
+		$instance = $this ->_customdata;
+		$courseid = $instance['courseid'];
+		$maxbytes = 6000000;
 		
-		$mform->addElement('header', 'header', get_string('header', 'form'));
-		$mform->addElement('filepicker', 'file', get_string('uploadfilepicker', 'local_paperattendance'), null, array('maxbytes' => $CFG->maxbytes, 'accepted_types' =>array('*.pdf')));	
+		//header
+		$mform->addElement('header', 'header', get_string('header', 'local_paperattendance'));
+		//uploader
+		$sqlteachers = "SELECT u.id, CONCAT (u.firstname, ' ', u.lastname)AS name
+					FROM {user} u
+					INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+					INNER JOIN {context} ct ON (ct.id = ra.contextid)
+					INNER JOIN {course} c ON (c.id = ct.instanceid AND c.id = ?)
+					INNER JOIN {role} r ON (r.id = ra.roleid AND r.shortname IN ('teacher', 'editingteacher'))";
+		$teachers = $DB->get_records_sql($sqlteachers, array($courseid));
+		
+		$arrayteachers = array();
+		$arrayteachers["no"] = get_string('selectteacher', 'local_paperattendance');
+		foreach ($teachers as $teacher){
+			$arrayteachers[$teacher->id] = $teacher->name;
+		}
+		$mform->addElement("select", "teacher", get_string('uploadteacher', 'local_paperattendance'), $arrayteachers);
+		
+		//filepicker
+		$mform->addElement('filepicker', 'file', get_string('uploadfilepicker', 'local_paperattendance'), null, array('maxbytes' => $maxbytes, 'accepted_types' =>array('*.pdf')));	
 		$mform->setType('file', PARAM_FILE);
 		$mform->addRule('file', get_string('uploadrule', 'local_paperattendance'), 'required', null, 'client');
-		$mform->addHelpButton('upload', 'uploadhelp', 'local_paperattendance');
+		
+		//courseid
+		$mform->addElement('hidden', 'courseid', $courseid);
+		$mform->setType('courseid', PARAM_INT);
 		$this->add_action_buttons(true);
 	}
 	public function validation($data, $files) {

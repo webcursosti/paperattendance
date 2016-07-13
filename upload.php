@@ -27,7 +27,8 @@
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once($CFG->dirroot . '/local/paperattendance/forms/upload_form.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
-global $DB, $OUTPUT,$COURSE;
+require_once ($CFG->dirroot . "/repository/lib.php");
+global $DB, $OUTPUT,$COURSE, $USER;
 
 // User must be logged in.
 require_login();
@@ -45,36 +46,66 @@ if (! has_capability('local/paperattendance:upload', $context)) {
 }
 // This page url.
 $url = new moodle_url('/local/paperattendance/upload.php', array(
-    'course' => $courseid));
+    'courseid' => $courseid));
 
 $pagetitle = get_string('uploadtitle', 'local_paperattendance');
+$course = $DB ->get_record("course", array("id" =>$courseid));
+
 $PAGE->set_context($context);
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('incourse');
+$PAGE->set_pagelayout('standard');
 $PAGE->set_heading(get_site()->fullname);
-$PAGE->set_title($pagetitle);
+$PAGE->set_title($pagetitle . " " . $course -> fullname);
 
 // Add the upload form for the course.
-$addform = new upload_form ();
+$addform = new upload_form (null, array("courseid" => $courseid));
 // If the form is cancelled, refresh the instante.
 if ($addform->is_cancelled()) {
     redirect($url);
     die();
 } 
-else if ($data = $addform->get_data()) {
-	// If not cancelled
-	$content = $data->get_file_content('file');
-	$name = $data->get_new_filename('file');
-	$file = $data->save_stored_file('file', $coursecontext->id, 'paperattendance', 'tmpupload', $courseid, '/', $name);
+if ($addform->get_data()) {
+	require_capability('local/paperattendance:upload', $context);
+	
+	$data = $addform -> get_data();
+	$teacherid = $data -> teacher;
+	
+	$path = $CFG -> dataroot. "temp/local/paperattendance/unread";
+	if(!file_exists($path)){
+		mkdir($path, 0777, true);
+	}
+	// Save file
+	$filename = $addform->get_new_filename('file');
+	$file = $addform->save_file('file', $path."/".$filename,false);
 	// Validate that file was correctly uploaded.
+	
+	$transaction = $DB->start_delegated_transaction();
+	// Insert the record that associates a digitized file with a set of answers.
+	$pdfinsert = new stdClass();
+	$pdfinsert->id = "NULL";
+	$pdfinsert->courseid = $courseid;
+	$pdfinsert->teacherid = $teacherid;
+	$pdfinsert->uploaderid = $USER-> id;
+	$pdfinsert->pdf = $filename;
+	$pdfinsert->status = 0;
+	$pdfinsert->lastmodified = time();
+	$pdfinsert->id = $DB->insert_record('paperattendance_session', $pdfinsert);
+	
 	if (!$file) {
 		print_error('Could not upload file');
+		$e = new exception('Failed to create file in moodle filesystem');
+		$DB->rollback_delegated_transaction($transaction, $e);
 	}
-
+	else{
+	// Display confirmation page before moving out.
+	$DB->commit_delegated_transaction($transaction);
+	redirect($url, get_string('uploadsuccessful', 'local_paperattendance'), 3);
+	//die();
+	}
 }
 // If there is no data or is it not cancelled show the header, the tabs and the form.
 echo $OUTPUT->header();
-echo $OUTPUT->heading($pagetitle);
+echo $OUTPUT->heading($pagetitle. " " . $course->shortname . " " . $course->fullname);
 // Display the form.
 $addform->display();
 echo $OUTPUT->footer();
