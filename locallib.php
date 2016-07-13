@@ -20,3 +20,26 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+/**
+ * Creates a QR image based on a string
+ *
+ * @param unknown $qrstring
+ * @param unknown $attendanceid
+ * @return multitype:string
+ */
+function paperattendance_create_qr_image($qrstring){
+	global $CFG;
+	require_once ($CFG->dirroot . '/local/paperattendance/phpqrcode/phpqrcode.php');
+	
+	$path = $CFG -> dataroot. "/temp/local/paperattandace/";
+	if (!file_exists($path)) {
+		mkdir($path, 0777, true);
+	}
+	
+	$filename = "qr.png";
+	$img = $path . "/". $filename;
+	QRcode::png($qrstring, $img);
+	
+	return 	array($path, $filename);
+}
