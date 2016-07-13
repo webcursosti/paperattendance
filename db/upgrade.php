@@ -151,9 +151,52 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		upgrade_plugin_savepoint(true, 2016060606, 'local', 'paperattendance');
 	}
 	
+	if ($oldversion < 2016071103) {
 	
-
-
+		// Changing type of field initialtime on table paperattendance_module to char.
+		$table = new xmldb_table('paperattendance_module');
+		$field = new xmldb_field('initialtime', XMLDB_TYPE_CHAR, '45', null, null, null, null, 'name');
+	
+		// Launch change of type for field initialtime.
+		$dbman->change_field_type($table, $field);
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2016071103, 'local', 'paperattendance');
+		
+		// Changing type of field endtime on table paperattendance_module to char.
+		$table = new xmldb_table('paperattendance_module');
+		$field = new xmldb_field('endtime', XMLDB_TYPE_CHAR, '45', null, null, null, null, 'initialtime');
+		
+		// Launch change of type for field endtime.
+		$dbman->change_field_type($table, $field);
+		
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2016071103, 'local', 'paperattendance');
+	}
+	
+	if ($oldversion < 2016071201) {
+	
+		// Changing type of field status on table paperattendance_presence to int.
+		$table = new xmldb_table('paperattendance_presence');
+		$field = new xmldb_field('status', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'userid');
+	
+		// Launch change of type for field status.
+		$dbman->change_field_type($table, $field);
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2016071201, 'local', 'paperattendance');
+		
+		// Changing type of field status on table paperattendance_session to int.
+		$table = new xmldb_table('paperattendance_session');
+		$field = new xmldb_field('status', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'pdf');
+		
+		// Launch change of type for field status.
+		$dbman->change_field_type($table, $field);
+		
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2016071201, 'local', 'paperattendance');
+	}
+	
 	
     
 	return true;
