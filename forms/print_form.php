@@ -62,7 +62,7 @@ class print_form extends moodleform {
 		$mform->addElement("hidden", "courseid", $courseid);
 		$mform->setType( "courseid", PARAM_INT);
 		
-		$this->add_action_buttons(true);
+		$this->add_action_buttons(true, "Descargar");
 		
 	}
 	

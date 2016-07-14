@@ -14,9 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- *
+*
 *
 * @package    local
 * @subpackage paperattendance
@@ -33,7 +32,7 @@ require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi.php");
 require_once ($CFG->dirroot . "/mod/emarking/print/locallib.php");
 require_once ("locallib.php");
-global $DB, $PAGE, $OUTPUT;
+global $DB, $PAGE, $OUTPUT, $USER;
 require_login();
 if (isguestuser()) {
 	die();
@@ -47,10 +46,11 @@ if (! has_capability("local/paperattendance:print", $context)) {
 	print_error("ACCESS DENIED");
 }
 
-$urlprint = new moodle_url("/local/paperattendance/print.php");
+$urlprint = new moodle_url("/local/paperattendance/print.php", array("courseid" => $courseid));
 // Page navigation and URL settings.
 $pagetitle = "Imprimir lista de asistencia";
 $PAGE->set_context($context);
+$PAGE->requires->jquery();
 $PAGE->set_url($urlprint);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title($pagetitle);
@@ -80,7 +80,12 @@ if($action == "add"){
 		$uailogopath = $CFG->dirroot . '/local/paperattendance/img/uai.jpeg';
 		$webcursospath = $CFG->dirroot . '/local/paperattendance/img/webcursos.jpg';
 		
-		$attendancepdffile = $path . "/paperattendance_".$courseid.".pdf";
+		$attendancepdffile = $path . "/print/paperattendance_".$courseid.".pdf";
+		
+		if (!file_exists($path . "/print/")) {
+			mkdir($path . "/print/", 0777, true);
+		}	
+		
 		$pdf = new PDF();		
 		$pdf->setPrintHeader(false);
 		$pdf->setPrintFooter(false);
@@ -116,27 +121,94 @@ if($action == "add"){
 		}
 		
 		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $modules,$path."/".$filename, $webcursospath);
+				
+		/*
+		$fs = get_file_storage();
 		
-		$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
-		$pdf = null;
-		//unlink($path."/".$filename);
-		//$action = "download";
-	
+		$file_record = array(
+    			'contextid' => $context->id,
+    			'component' => 'local_paperattendance',
+    			'filearea' => 'draft',
+    			'itemid' => 0,
+    			'filepath' => '/',
+    			'filename' => "paperattendance_".$courseid.".pdf",
+    			'timecreated' => time(),
+    			'timemodified' => time(),
+    			'userid' => $USER->id,
+    			'author' => $USER->firstname." ".$USER->lastname,
+    			'license' => 'allrightsreserved'
+    	);
+		
+		// If the file already exists we delete it
+		if ($fs->file_exists($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid.".pdf")) {
+			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid.".pdf");
+			$previousfile->delete();
+		}
+		
+		// Info for the new file
+    	$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
+		*/
+		unlink($path."/".$filename);
+		$action = "download";
+		
 	}
-}
-
-if($action == "add"){
-	$PAGE->set_heading($pagetitle);
-	echo $OUTPUT->header();
-	
-	echo html_writer::nonempty_tag("h2", $course->shortname." - ".$course->fullname);
-	
-	$addform->display();
 }
 
 if($action == "download" && isset($attendancepdffile)){
 	
+	$pdf->Output($attendancepdffile, "D"); // Se genera el nuevo pdf.
+	
+	// 
+	/*
+	$fs = get_file_storage();
+	
+	// Prepare file record object
+	$fileinfo = array(
+			'component' => 'local_paperattendance',     // usually = table name
+			'filearea' => 'draft',     // usually = table name
+			'itemid' => 0,               // usually = ID of row in table
+			'contextid' => $context->id, // ID of context
+			'filepath' => '/',           // any path beginning and ending in /
+			'filename' => "paperattendance_".$courseid.".pdf"); // any filename
+	
+	// Get file
+	$file = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
+			$fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
+	
+	// Read contents
+	echo $file->pathnamehash;
+	if ($file) {
+		$contents = $file->get_content();
+		
+	} else {
+		// file doesn't exist - do something
+	}
+	//$children = $fileinfo->get_children();
+	/*
+	$filename = "paperattendance_".$courseid.".pdf";
+	$table_files = "files";
+	$results = $DB->get_record($table_files, array('filename' => $filename));
+	$baseurl = "$CFG->wwwroot/pluginfile.php/$results->contextid/$results->component/$results->filearea/$results->itemid/$filename";
+	echo $baseurl;
+	
+	$url = $CFG->wwwroot."/pluginfile.php/1/local_paperattendance/print/paperattendance_".$courseid.".pdf";
+	
+	$viewerpdf = html_writer::nonempty_tag("embed", "Hola", array(
+			"src" => $url,
+			"type" => "type='application/pdf'",
+			"style" => "height:75vh; width:60vw"
+	));
+	*/
 
-	//unlink($attendancepdffile);
 }
+
+echo $OUTPUT->header();
+
+$PAGE->set_heading($pagetitle);
+
+echo html_writer::nonempty_tag("h2", $course->shortname." - ".$course->fullname);
+
+$addform->display();
+
 echo $OUTPUT->footer();
+?>
