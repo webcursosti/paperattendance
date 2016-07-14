@@ -25,10 +25,17 @@
 */
 //Pertenece al plugin PaperAttendance
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+<<<<<<< HEAD
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 require_once ($CFG->dirroot . "/repository/lib.php");
 require_once($CFG->dirroot . '/local/paperattendance/forms/modules_form.php');
 global $CFG, $DB, $OUTPUT,$COURSE, $USER, $PAGE;
+=======
+require_once($CFG->dirroot . '/local/paperattendance/forms/modules_form.php');
+require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
+require_once ($CFG->dirroot . "/repository/lib.php");
+global $DB, $OUTPUT,$COURSE, $USER, $PAGE;
+>>>>>>> refs/remotes/webcursosuai/master
 
 // User must be logged in.
 require_login();
@@ -36,7 +43,10 @@ if (isguestuser()) {
     //die();
 }
 $context = context_system::instance();
+<<<<<<< HEAD
 $courseid = optional_param('courseid',null, PARAM_INT);
+=======
+>>>>>>> refs/remotes/webcursosuai/master
 
 if (! has_capability('local/paperattendance:modules', $context)) {
     // TODO: Log invalid access to modify modules.
@@ -44,6 +54,7 @@ if (! has_capability('local/paperattendance:modules', $context)) {
    //	 die();
 }
 
+<<<<<<< HEAD
 $url = new moodle_url('/local/paperattendance/modules.php');
 
 if($courseid){
@@ -55,6 +66,12 @@ if($courseid){
 
 $PAGE->navbar->add(get_string('uploadtitle', 'local_paperattendance'));
 $PAGE->navbar->add(get_string('modulestitle', 'local_paperattendance'),$url);
+=======
+$url = new moodle_url('/local/paperattendance/modules.php', array(
+    'courseid' => $courseid));
+
+$PAGE->navbar->add(get_string('uploadtitle', 'local_paperattendance'),$url);
+>>>>>>> refs/remotes/webcursosuai/master
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
@@ -98,6 +115,7 @@ if ($action == "view") {
     }
     $buttonurl = new moodle_url("/local/paperattendance/modules.php", array(
         "action" => "add"));
+<<<<<<< HEAD
     
     $PAGE->set_title(get_string("viewmodules", "local_paperattendance"));
     $PAGE->set_heading(get_string("viewmodules", "local_paperattendance"));
@@ -113,14 +131,19 @@ if ($action == "view") {
     		array(
     				"align" => "center"));
     
+=======
+>>>>>>> refs/remotes/webcursosuai/master
 }
 if ($action == "add") {
 	$addform = new paperattendance_addmodule_form();
 	if ($addform->is_cancelled()) {
 		$action = "view";
+<<<<<<< HEAD
 		
 		$url = new moodle_url('/local/paperattendance/modules.php');
 		redirect($url);
+=======
+>>>>>>> refs/remotes/webcursosuai/master
 	} else if ($creationdata = $addform->get_data()) {
 		$record = new stdClass();
 		$record->name = $creationdata->name;
@@ -128,6 +151,7 @@ if ($action == "add") {
 		$record->endtime = $creationdata->endtime;
 		$DB->insert_record("paperattendance_module", $record);
 		$action = "view";
+<<<<<<< HEAD
 		
 		$url = new moodle_url('/local/paperattendance/modules.php');
 		redirect($url);
@@ -138,6 +162,9 @@ if ($action == "add") {
 	echo $OUTPUT->header();
 	echo $OUTPUT->heading(get_string("addmoduletitle", "local_paperattendance"));
 	$addform->display();
+=======
+	}
+>>>>>>> refs/remotes/webcursosuai/master
 }
 if ($action == "edit") {
 	if ($idmodule == null) {
@@ -155,9 +182,12 @@ if ($action == "edit") {
 				$editform->set_data($defaultdata);
 				if ($editform->is_cancelled()) {
 					$action = "view";
+<<<<<<< HEAD
 					
 					$url = new moodle_url('/local/paperattendance/modules.php');
 					redirect($url);
+=======
+>>>>>>> refs/remotes/webcursosuai/master
 				} else if ($editform->get_data() && $sesskey == $USER->sesskey) {
 					$record = new stdClass();
 					$record->id = $editform->get_data()->idmodule;
@@ -166,13 +196,17 @@ if ($action == "edit") {
 					$record->endtime = $editform->get_data()->endtime;
 					$DB->update_record("paperattendance_module", $record);
 					$action = "view";
+<<<<<<< HEAD
 					
 					$url = new moodle_url('/local/paperattendance/modules.php');
 					redirect($url);
+=======
+>>>>>>> refs/remotes/webcursosuai/master
 				}
 		} else {
 			print_error(get_string("moduledoesnotexist", "local_paperattendance"));
 			$action = "view";
+<<<<<<< HEAD
 			$url = new moodle_url('/local/paperattendance/modules.php');
 			redirect($url);
 		}
@@ -184,6 +218,10 @@ if ($action == "edit") {
 	echo $OUTPUT->header();
 	echo $OUTPUT->heading(get_string("editmoduletitle", "local_paperattendance"));
 	$editform->display();
+=======
+		}
+	}
+>>>>>>> refs/remotes/webcursosuai/master
 }
 if ($action == "delete") {
 	if ($idmodule == null) {
@@ -195,6 +233,11 @@ if ($action == "delete") {
 				if ($sesskey == $USER->sesskey) {
 					$DB->delete_records("paperattendance_module", array(
 							"id" => $module->id));
+<<<<<<< HEAD
+=======
+					$DB->delete_records_select("paperattendance_session_module", "moduleid = ?", array(
+							$module->id));
+>>>>>>> refs/remotes/webcursosuai/master
 					$action = "view";
 				} else {
 					print_error(get_string("usernotloggedin", "local_paperattendance"));
@@ -204,9 +247,42 @@ if ($action == "delete") {
 			$action = "view";
 		}
 	}
+<<<<<<< HEAD
 	$url = new moodle_url('/local/paperattendance/modules.php');
 	redirect($url);
 }
 
 
+=======
+}
+if ($action == "add") {
+	$PAGE->set_title(get_string("addmodule", "local_paperattendance"));
+	$PAGE->set_heading(get_string("addmodule", "local_paperattendance"));
+	echo $OUTPUT->header();
+	echo $OUTPUT->heading(get_string("addmodule", "local_paperattendance"));
+	$addform->display();
+}
+if ($action == "edit") {
+	$PAGE->set_title(get_string("editmodule", "local_paperattendance"));
+	$PAGE->set_heading(get_string("editmodule", "local_paperattendance"));
+	echo $OUTPUT->header();
+	echo $OUTPUT->heading(get_string("editmodule", "local_paperattendance"));
+	$editform->display();
+}
+if ($action == "view") {
+	$PAGE->set_title(get_string("viewmodules", "local_paperattendance"));
+	$PAGE->set_heading(get_string("viewmodules", "local_paperattendance"));
+	echo $OUTPUT->header();
+	echo $OUTPUT->heading(get_string("viewmodules", "local_paperattendance"));
+	if (count($modules) == 0) {
+		echo html_writer::nonempty_tag("h4", get_string("nomodules", "local_paperattendance"), array(
+				"align" => "center"));
+	} else {
+		echo html_writer::table($modulestable);
+	}
+	echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, get_string("addmodule", "local_paperattendance")),
+			array(
+					"align" => "center"));
+}
+>>>>>>> refs/remotes/webcursosuai/master
 echo $OUTPUT->footer();

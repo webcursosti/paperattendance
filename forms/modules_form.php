@@ -28,8 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 require_once($CFG->libdir . "/formslib.php");
 class paperattendance_editmodule_form extends moodleform {
+<<<<<<< HEAD
 	public function definition() {
 	global $CFG, $DB;
+=======
+	global $DB;
+>>>>>>> refs/remotes/webcursosuai/master
 	$mform = $this->_form;
 	$instance = $this->_customdata;
 	$idmodule = $instance ["idmodule"];
@@ -64,7 +68,11 @@ class paperattendance_editmodule_form extends moodleform {
 		}
 		if (isset($data ["initialtime"]) && ! empty($data ["initialtime"]) && $data ["initialtime"] != "" && $data ["initialtime"] != null) {
 			if (! $DB->get_recordset_select("paperattendance_module", " initialtime = ?", array(
+<<<<<<< HEAD
 					$initialtime))) {
+=======
+					$ip))) {
+>>>>>>> refs/remotes/webcursosuai/master
 						$errors ["initialtime"] = get_string("initialtimeexist", "local_paperattendance");
 					}
 
@@ -73,7 +81,11 @@ class paperattendance_editmodule_form extends moodleform {
 		}
 		if (isset($data ["endtime"]) && ! empty($data ["endtime"]) && $data ["endtime"] != "" && $data ["endtime"] != null) {
 			if (! $DB->get_recordset_select("paperattendance_module", " endtime = ?", array(
+<<<<<<< HEAD
 					$endtime))) {
+=======
+					$ip))) {
+>>>>>>> refs/remotes/webcursosuai/master
 						$errors ["endtime"] = get_string("endtimeexist", "local_paperattendance");
 					}
 		
@@ -116,7 +128,11 @@ class paperattendance_addmodule_form extends moodleform {
 		}
 		if (isset($data ["initialtime"]) && ! empty($data ["initialtime"]) && $data ["initialtime"] != "" && $data ["initialtime"] != null) {
 			if (! $DB->get_recordset_select("paperattendance_module", " initialtime = ?", array(
+<<<<<<< HEAD
 					$initialtime))) {
+=======
+					$ip))) {
+>>>>>>> refs/remotes/webcursosuai/master
 						$errors ["initialtime"] = get_string("initialtimeexist", "local_paperattendance");
 					}
 
@@ -125,7 +141,11 @@ class paperattendance_addmodule_form extends moodleform {
 		}
 		if (isset($data ["endtime"]) && ! empty($data ["endtime"]) && $data ["endtime"] != "" && $data ["endtime"] != null) {
 			if (! $DB->get_recordset_select("paperattendance_module", " endtime = ?", array(
+<<<<<<< HEAD
 					$endtime))) {
+=======
+					$ip))) {
+>>>>>>> refs/remotes/webcursosuai/master
 						$errors ["endtime"] = get_string("endtimeexist", "local_paperattendance");
 					}
 		
