@@ -50,13 +50,13 @@ class print_form extends moodleform {
 		foreach ($teachers as $teacher){
 			$arrayteachers[$teacher->id] = $teacher->name;
 		}
-		$mform->addElement("select", "teacher", "Profesor", $arrayteachers);
+		$mform->addElement("select", "requestor", "Solicitante", $arrayteachers);
 		$mform->addElement("date_selector", "sessiondate", "Fecha de Asistencia");
 		
 		$modules = $DB->get_records("paperattendance_module");
 		$arraymodules = array();
 		foreach ($modules as $module){
-			$arraymodules[] = $mform->createElement('advcheckbox', $module->id , '',$module->initialtime);	
+			$arraymodules[] = $mform->createElement('advcheckbox', $module->id."*".$module->initialtime."*".$module->endtime , '',$module->initialtime);	
 		}
 		$mform->addGroup($arraymodules, 'modules', "Modulos");
 		$mform->addElement("hidden", "courseid", $courseid);
@@ -70,11 +70,11 @@ class print_form extends moodleform {
 		
 		$errors = array();
 		
-		$teacher = $data["teacher"];
+		$requestor = $data["requestor"];
 		$sessiondate = $data["sessiondate"];
 		$modules = $data["modules"];
 		
-		if($teacher == "no"){
+		if($requestor == "no"){
 			$errors["teacher"] = "Debe seleccionar un profesor.";
 		}
 		
