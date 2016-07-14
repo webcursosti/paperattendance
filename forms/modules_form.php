@@ -28,7 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 require_once($CFG->libdir . "/formslib.php");
 class paperattendance_editmodule_form extends moodleform {
-	global $DB;
+	public function definition() {
+	global $CFG, $DB;
 	$mform = $this->_form;
 	$instance = $this->_customdata;
 	$idmodule = $instance ["idmodule"];
@@ -63,7 +64,7 @@ class paperattendance_editmodule_form extends moodleform {
 		}
 		if (isset($data ["initialtime"]) && ! empty($data ["initialtime"]) && $data ["initialtime"] != "" && $data ["initialtime"] != null) {
 			if (! $DB->get_recordset_select("paperattendance_module", " initialtime = ?", array(
-					$ip))) {
+					$initialtime))) {
 						$errors ["initialtime"] = get_string("initialtimeexist", "local_paperattendance");
 					}
 
@@ -72,7 +73,7 @@ class paperattendance_editmodule_form extends moodleform {
 		}
 		if (isset($data ["endtime"]) && ! empty($data ["endtime"]) && $data ["endtime"] != "" && $data ["endtime"] != null) {
 			if (! $DB->get_recordset_select("paperattendance_module", " endtime = ?", array(
-					$ip))) {
+					$endtime))) {
 						$errors ["endtime"] = get_string("endtimeexist", "local_paperattendance");
 					}
 		
@@ -115,7 +116,7 @@ class paperattendance_addmodule_form extends moodleform {
 		}
 		if (isset($data ["initialtime"]) && ! empty($data ["initialtime"]) && $data ["initialtime"] != "" && $data ["initialtime"] != null) {
 			if (! $DB->get_recordset_select("paperattendance_module", " initialtime = ?", array(
-					$ip))) {
+					$initialtime))) {
 						$errors ["initialtime"] = get_string("initialtimeexist", "local_paperattendance");
 					}
 
@@ -124,7 +125,7 @@ class paperattendance_addmodule_form extends moodleform {
 		}
 		if (isset($data ["endtime"]) && ! empty($data ["endtime"]) && $data ["endtime"] != "" && $data ["endtime"] != null) {
 			if (! $DB->get_recordset_select("paperattendance_module", " endtime = ?", array(
-					$ip))) {
+					$endtime))) {
 						$errors ["endtime"] = get_string("endtimeexist", "local_paperattendance");
 					}
 		
