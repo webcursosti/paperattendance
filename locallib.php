@@ -95,7 +95,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->Image($qrpath, 153, 5, 35);
 	// Botton QR and Logo Webcursos
 	$pdf->Image($qrpath, 15, 257, 35);
-	$pdf->Image($webcursospath, 142, 265, 40);
+	$pdf->Image($webcursospath, 145, 265, 40);
 	// We position to the right of the logo and write exam name.
 	$top = 7;
 	$pdf->SetFont('Helvetica', 'B', 12);

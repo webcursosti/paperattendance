@@ -78,7 +78,7 @@ if($action == "add"){
 		list($path, $filename) = paperattendance_create_qr_image($courseid."*".$requestor."*");
 		
 		$uailogopath = $CFG->dirroot . '/local/paperattendance/img/uai.jpeg';
-		$webcursospath = $CFG->dirroot . '/local/paperattendance/img/webcursos.png';
+		$webcursospath = $CFG->dirroot . '/local/paperattendance/img/webcursos.jpg';
 		
 		$attendancepdffile = $path . "/paperattendance_".$courseid.".pdf";
 		$pdf = new PDF();		
@@ -120,7 +120,7 @@ if($action == "add"){
 		$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
 		$pdf = null;
 		//unlink($path."/".$filename);
-		$action = "download";
+		//$action = "download";
 	
 	}
 }
