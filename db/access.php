@@ -76,5 +76,12 @@ $capabilities = array(
 						'teacher' => CAP_ALLOW,
 						'editingteacher' => CAP_ALLOW,
 						'manager' => CAP_ALLOW
-						 ))
+						 )),
+		'local/paperattendance:modules' => array(
+				'riskbitmask' => RISK_MANAGETRUST,
+				'captype' => 'write',
+				'contextlevel' => CONTEXT_SYSTEM,
+				'legacy' => array(
+						'manager' => CAP_ALLOW
+				))
 				);
