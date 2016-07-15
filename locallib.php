@@ -30,11 +30,10 @@ define('PAPERATTENDANCE_STATUS_READ', 1); //already processed
 * @param unknown $qrstring
 * @return multitype:string
 */
-function paperattendance_create_qr_image($qrstring){
+function paperattendance_create_qr_image($qrstring , $path){
 		global $CFG;
 		require_once ($CFG->dirroot . '/local/paperattendance/phpqrcode/phpqrcode.php');
-	
-		$path = $CFG -> dataroot. "/temp/local/paperattandace/";
+
 		if (!file_exists($path)) {
 			mkdir($path, 0777, true);
 		}
