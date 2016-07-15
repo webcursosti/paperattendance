@@ -75,7 +75,9 @@ if($action == "add"){
 		// array idmodule => {0 = no checked, 1 = checked}
 		$modules = $data->modules;
 		
-		list($path, $filename) = paperattendance_create_qr_image($courseid."*".$requestor."*");
+		$path = $CFG -> dataroot. "/temp/local/paperattandace/";
+		
+		//list($path, $filename) = paperattendance_create_qr_image($courseid."*".$requestor."*", $path);
 		
 		$uailogopath = $CFG->dirroot . '/local/paperattendance/img/uai.jpeg';
 		$webcursospath = $CFG->dirroot . '/local/paperattendance/img/webcursos.jpg';
@@ -86,7 +88,7 @@ if($action == "add"){
 			mkdir($path . "/print/", 0777, true);
 		}	
 		
-		$pdf = new PDF();		
+		$pdf = new PDF();
 		$pdf->setPrintHeader(false);
 		$pdf->setPrintFooter(false);
 	
