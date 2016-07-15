@@ -100,7 +100,6 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$top = 7;
 	$pdf->SetFont('Helvetica', 'B', 12);
 	$pdf->SetXY($left, $top);
-	//$pdf->Write(1, core_text::strtoupper($downloadexam->name));
 	// Write course name.
 	$top += 6;
 	$pdf->SetFont('Helvetica', '', 8);
@@ -204,7 +203,6 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			$topprovisional = 7;
 			$pdf->SetFont('Helvetica', 'B', 12);
 			$pdf->SetXY($leftprovisional, $topprovisional);
-			//$pdf->Write(1, core_text::strtoupper($downloadexam->name));
 			// Write course name.
 			$topprovisional += 6;
 			$pdf->SetFont('Helvetica', '', 8);

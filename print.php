@@ -122,7 +122,8 @@ if($action == "add"){
 		
 		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $modules,$path."/".$filename, $webcursospath);
 				
-		/*
+		$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
+		
 		$fs = get_file_storage();
 		
 		$file_record = array(
@@ -146,8 +147,8 @@ if($action == "add"){
 		}
 		
 		// Info for the new file
-    	$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
-		*/
+    	$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);    	
+		
 		unlink($path."/".$filename);
 		$action = "download";
 		
@@ -155,60 +156,42 @@ if($action == "add"){
 }
 
 if($action == "download" && isset($attendancepdffile)){
+
+	$button = html_writer::nonempty_tag(
+			"div",
+			$OUTPUT->single_button($urlprint, "Volver"), 
+			array("align" => "left"
+				
+	));
 	
-	$pdf->Output($attendancepdffile, "D"); // Se genera el nuevo pdf.
+	$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid.".pdf");
 	
-	// 
-	/*
-	$fs = get_file_storage();
-	
-	// Prepare file record object
-	$fileinfo = array(
-			'component' => 'local_paperattendance',     // usually = table name
-			'filearea' => 'draft',     // usually = table name
-			'itemid' => 0,               // usually = ID of row in table
-			'contextid' => $context->id, // ID of context
-			'filepath' => '/',           // any path beginning and ending in /
-			'filename' => "paperattendance_".$courseid.".pdf"); // any filename
-	
-	// Get file
-	$file = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
-			$fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
-	
-	// Read contents
-	echo $file->pathnamehash;
-	if ($file) {
-		$contents = $file->get_content();
-		
-	} else {
-		// file doesn't exist - do something
-	}
-	//$children = $fileinfo->get_children();
-	/*
-	$filename = "paperattendance_".$courseid.".pdf";
-	$table_files = "files";
-	$results = $DB->get_record($table_files, array('filename' => $filename));
-	$baseurl = "$CFG->wwwroot/pluginfile.php/$results->contextid/$results->component/$results->filearea/$results->itemid/$filename";
-	echo $baseurl;
-	
-	$url = $CFG->wwwroot."/pluginfile.php/1/local_paperattendance/print/paperattendance_".$courseid.".pdf";
-	
-	$viewerpdf = html_writer::nonempty_tag("embed", "Hola", array(
+	$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
 			"src" => $url,
-			"type" => "type='application/pdf'",
 			"style" => "height:75vh; width:60vw"
 	));
-	*/
-
 }
 
 echo $OUTPUT->header();
 
-$PAGE->set_heading($pagetitle);
+if($action == "add"){
 
-echo html_writer::nonempty_tag("h2", $course->shortname." - ".$course->fullname);
+	$PAGE->set_heading($pagetitle);
+	
+	echo html_writer::nonempty_tag("h2", $course->shortname." - ".$course->fullname);
+	
+	$addform->display();
+}
 
-$addform->display();
+if($action == "download" && isset($attendancepdffile)){
+	
+	// Donwload and back buttons
+	echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "download"), null ,array("target" => "_blank"));
+	echo "Descargar lista de asistencia";
+	echo $button;
+	
+	// Preview PDF
+	echo $viewerpdf;
+}
 
 echo $OUTPUT->footer();
-?>
