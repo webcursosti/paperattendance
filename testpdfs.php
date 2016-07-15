@@ -41,6 +41,7 @@ echo $OUTPUT->header();
 
 print(class_exists('imagick'));
 var_dump(class_exists('imagick'));
+phpinfo();
 /*
 $imagick = new Imagick();
 $imagick->readImage('papperattendance_3.pdf');
