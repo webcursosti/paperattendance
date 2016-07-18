@@ -39,13 +39,19 @@ $PAGE->set_title($pagetitle);
 
 echo $OUTPUT->header();
 
-print(class_exists('imagick'));
-var_dump(class_exists('imagick'));
 phpinfo();
-/*
+
 $imagick = new Imagick();
-$imagick->readImage('papperattendance_3.pdf');
-$imagick->writeImages('attendance.jpg', false);
-*/
+$imagick->setResolution(100,100);
+$imagick->readImage('b1.pdf[0]');
+//$imagick->writeImages('attendance.jpg', false);
+$imagick->setImageFormat('png');
+$imagick->writeImage('b1.png');
+
+$imagick->readImage('b2.pdf[0]');
+//$imagick->writeImages('attendance.jpg', false);
+$imagick->setImageFormat('png');
+$imagick->writeImage('b2.png');
+
 
 echo $OUTPUT->footer();
