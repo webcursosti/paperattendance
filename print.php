@@ -66,7 +66,6 @@ if($action == "add"){
 		redirect($backtocourse);
 	}
 	else if ($data = $addform->get_data()) {
-		// Create the PDF with the students
 		// id teacher
 		$requestor = $data->requestor;
 		$requestorinfo = $DB->get_record("user", array("id" => $requestor));
@@ -92,7 +91,7 @@ if($action == "add"){
 		$pdf->setPrintHeader(false);
 		$pdf->setPrintFooter(false);
 	
-		//TODO: Add enrolments for omega, Remember change manual.
+		//TODO: Add enrolments for omega, Remember change "manual".
 		$enrolincludes = array("manual");
 		$filedir = $CFG->dataroot . "/temp/emarking/$context->id";
 		$userimgdir = $filedir . "/u";
@@ -122,7 +121,7 @@ if($action == "add"){
 			throw new Exception('No students to print');
 		}
 		
-		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $modules,$path."/".$filename, $webcursospath);
+		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $modules, $path, $stringqr, $webcursospath);
 				
 		$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
 		

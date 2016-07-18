@@ -39,6 +39,7 @@ $PAGE->set_title($pagetitle);
 
 echo $OUTPUT->header();
 
+phpinfo();
 
 $imagick = new Imagick();
 $imagick->setResolution(100,100);
