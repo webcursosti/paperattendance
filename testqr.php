@@ -41,34 +41,52 @@ $PAGE->set_title($pagetitle);
 
 echo $OUTPUT->header();
 
+$myurl = 'b4.pdf[0]';
+$image = new Imagick($myurl);
+$imagickqrtop->setResolution(100,100);
+$image->setImageFormat( "png" );
+$image->writeImage('b4.png');
 
-$imagick = new Imagick();
-$imagick->setResolution(100,100);
-$imagick->readImage('b1.png');
-$imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
+//check if there's a qr on the top right corner
+$imagickqrtop = new Imagick();
+$imagickqrtop->setResolution(100,100);
+$imagickqrtop->readImage('b4.png');
+$imagickqrtop->setImageType( imagick::IMGTYPE_GRAYSCALE );
 
+$height = $imagickqrtop->getImageHeight();
+$width = $imagickqrtop->getImageWidth();
 
-//$imagick->writeImages('attendance.jpg', false);
-//$imagick->setImageFormat('png');
-//$imagick->writeImage('b1.png');
-$height = $imagick->getImageHeight();
-$width = $imagick->getImageWidth();
-echo $height." ".$width;
-$imagick->cropImage($width*0.25, $height*0.14, $width*0.652, $height*0.014);
+$imagickqrtop->cropImage($width*0.25, $height*0.14, $width*0.652, $height*0.014);
+//StartX : width -> 844  *  0,652   :    550
+//StartY : height -> 1096  *  0,014 :    15
 
-/* Export the image pixels */
-
-$imagick->writeImage('delcorte.png');
+$imagickqrtop->writeImage('delcorte.png');
 
 // QR
-$qrcode = new QrReader('delcorte.png');
-$text = $qrcode->text(); //return decoded text from QR Code
+$qrcodetop = new QrReader('delcorte.png');
+$texttop = $qrcodetop->text(); //return decoded text from QR Code
 
-echo "<br>".$text;
-/*
-$imagick->readImage('b2.pdf[0]');
-//$imagick->writeImages('attendance.jpg', false);
-$imagick->setImageFormat('png');
-$imagick->writeImage('b2.png');
-*/
+echo "<br> Qr top".$texttop;
+
+//check if there's a qr on the bottom right corner
+$imagickqrbottom = new Imagick();
+$imagickqrbottom->setResolution(100,100);
+$imagickqrbottom->readImage('b4.png');
+$imagickqrbottom->setImageType( imagick::IMGTYPE_GRAYSCALE );
+
+$heightbottom = $imagickqrbottom->getImageHeight();
+$widthbottom = $imagickqrbottom->getImageWidth();
+
+$imagickqrbottom->cropImage($widthbottom*0.25, $heightbottom*0.14, $widthbottom*0.652, $heightbottom*0.846);
+//StartX : width -> 844  *  0,652   :    550
+//StartY : height -> 1096  *  0,014 :    15
+
+$imagickqrbottom->writeImage('delcortebottom.png');
+
+// QR
+$qrcodebottom = new QrReader('delcortebottom.png');
+$textbottom = $qrcodebottom->text(); //return decoded text from QR Code
+
+echo "<br>Qr bottom".$textbottom;
+
 echo $OUTPUT->footer();
