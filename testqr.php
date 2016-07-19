@@ -30,7 +30,6 @@ global $DB, $PAGE, $OUTPUT, $USER;
 
 $context = context_system::instance();
 
-
 $urlprint = new moodle_url("/local/paperattendance/testpdfs.php");
 // Page navigation and URL settings.
 $pagetitle = "TEST imagick";
@@ -41,52 +40,94 @@ $PAGE->set_title($pagetitle);
 
 echo $OUTPUT->header();
 
-$myurl = 'b4.pdf[0]';
-$image = new Imagick($myurl);
-$image->setResolution(100,100);
-$image->setImageFormat( "png" );
-$image->writeImage('b4.png');
-
-//check if there's a qr on the top right corner
-$imagickqrtop = new Imagick();
-$imagickqrtop->setResolution(100,100);
-$imagickqrtop->readImage('b4.png');
-$imagickqrtop->setImageType( imagick::IMGTYPE_GRAYSCALE );
-
-$height = $imagickqrtop->getImageHeight();
-$width = $imagickqrtop->getImageWidth();
-
-$imagickqrtop->cropImage($width*0.25, $height*0.14, $width*0.652, $height*0.014);
 //StartX : width -> 844  *  0,652   :    550
 //StartY : height -> 1096  *  0,014 :    15
+//aux var orientation {straight, rotated, error}
 
-$imagickqrtop->writeImage('delcorte.png');
 
-// QR
-$qrcodetop = new QrReader('delcorte.png');
-$texttop = $qrcodetop->text(); //return decoded text from QR Code
-
-echo "<br> Qr top".$texttop;
-
-//check if there's a qr on the bottom right corner
-$imagickqrbottom = new Imagick();
-$imagickqrbottom->setResolution(100,100);
-$imagickqrbottom->readImage('b4.png');
-$imagickqrbottom->setImageType( imagick::IMGTYPE_GRAYSCALE );
-
-$heightbottom = $imagickqrbottom->getImageHeight();
-$widthbottom = $imagickqrbottom->getImageWidth();
-
-$imagickqrbottom->cropImage($widthbottom*0.25, $heightbottom*0.14, $widthbottom*0.652, $heightbottom*0.846);
-//StartX : width -> 844  *  0,652   :    550
-//StartY : height -> 1096  *  0,014 :    15
-
-$imagickqrbottom->writeImage('delcortebottom.png');
-
-// QR
-$qrcodebottom = new QrReader('delcortebottom.png');
-$textbottom = $qrcodebottom->text(); //return decoded text from QR Code
-
-echo "<br>Qr bottom".$textbottom;
 
 echo $OUTPUT->footer();
+
+
+echo get_orientation("b4.pdf",0);
+
+
+
+//pdf = pdfname + extension (.pdf)
+function get_orientation($pdf , $page){
+	$pdfexplode = explode(".",$pdf);
+	$pdfname = $pdfexplode[0];
+	$qrpath = $pdfname.'qr.png';
+	
+	//save the pdf page as a png
+	$myurl = $pdf.'['.$page.']';
+	$image = new Imagick($myurl);
+	$image->setResolution(100,100);
+	$image->setImageFormat( 'png' );
+	$image->writeImage( $pdfname.'.png' );
+	
+	//check if there's a qr on the top right corner
+	$imagick = new Imagick();
+	$imagick->setResolution(100,100);
+	$imagick->readImage( $pdfname.'.png' );
+	$imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
+	
+	$height = $imagick->getImageHeight();
+	$width = $imagick->getImageWidth();
+	
+	$qrtop = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.652, $height*0.014);
+	$qrtop->writeImage($qrpath);
+	
+	// QR
+	$qrcodetop = new QrReader($qrpath);
+	$texttop = $qrcodetop->text(); //return decoded text from QR Code
+
+	if($texttop == "" || $texttop == " " || empty($texttop)){
+		
+		//check if there's a qr on the bottom right corner
+		$qrbottom = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.652, $height*0.846);
+		$qrbottom->writeImage($qrpath);
+		
+		// QR
+		$qrcodebottom = new QrReader($qrpath);
+		$textbottom = $qrcodebottom->text(); //return decoded text from QR Code
+		
+			if($textbottom == "" || $textbottom == " " || empty($textbottom)){
+				
+				//check if there's a qr on the top left corner
+				$qrtopleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.355, $height*0.014);
+				$qrtopleft->writeImage($qrpath);
+		
+				// QR
+				$qrcodetopleft = new QrReader($qrpath);
+				$texttopleft = $qrcodetopleft->text(); //return decoded text from QR Code
+				
+				if($texttopleft == "" || $texttopleft == " " || empty($texttopleft)){
+					
+					//check if there's a qr on the top left corner
+					$qrbottomleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.355, $height*0.846);
+					$qrbottomleft->writeImage($qrpath);
+					
+					// QR
+					$qrcodebottomleft = new QrReader($qrpath);
+					$textbottomleft = $qrcodebottomleft->text(); //return decoded text from QR Code
+					
+					if($textbottomleft == "" || $textbottomleft == " " || empty($textbottomleft)){
+						return "error";
+					}
+					else{
+						return "rotated";
+					}
+				}
+				else{
+					return "rotated";
+				}
+			}
+			else{
+				return "straight";
+			}
+	}
+	else{
+		return "straight";
+	}
+}
