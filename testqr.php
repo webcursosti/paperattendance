@@ -46,7 +46,7 @@ echo $OUTPUT->header();
 
 
 
-get_orientation("b4.pdf","0");
+get_orientation("paperattendance_2.pdf","0");
 
 
 echo $OUTPUT->footer();
