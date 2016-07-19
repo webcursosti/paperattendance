@@ -49,7 +49,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->footer();
 
 
-echo get_orientation("b4.pdf",0);
+echo get_orientation("b4.pdf","0");
 
 
 
