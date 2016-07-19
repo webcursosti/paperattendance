@@ -25,10 +25,10 @@
 */
 //Pertenece al plugin PaperAttendance
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
-require_once($CFG->dirroot . '/local/paperattendance/forms/modules_form.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 require_once ($CFG->dirroot . "/repository/lib.php");
-global $DB, $OUTPUT,$COURSE, $USER, $PAGE;
+require_once($CFG->dirroot . '/local/paperattendance/forms/modules_form.php');
+global $CFG, $DB, $OUTPUT,$COURSE, $USER, $PAGE;
 
 // User must be logged in.
 require_login();
@@ -36,6 +36,7 @@ if (isguestuser()) {
     //die();
 }
 $context = context_system::instance();
+$courseid = optional_param('courseid',null, PARAM_INT);
 
 if (! has_capability('local/paperattendance:modules', $context)) {
     // TODO: Log invalid access to modify modules.
@@ -43,10 +44,17 @@ if (! has_capability('local/paperattendance:modules', $context)) {
    //	 die();
 }
 
-$url = new moodle_url('/local/paperattendance/modules.php', array(
-    'courseid' => $courseid));
+$url = new moodle_url('/local/paperattendance/modules.php');
 
-$PAGE->navbar->add(get_string('uploadtitle', 'local_paperattendance'),$url);
+if($courseid){
+	$courseurl = new moodle_url('/course/view.php', array(
+			'id' => $courseid));
+	$course = $DB ->get_record("course", array("id" =>$courseid));
+	$PAGE->navbar->add($course->fullname, $courseurl );
+}
+
+$PAGE->navbar->add(get_string('uploadtitle', 'local_paperattendance'));
+$PAGE->navbar->add(get_string('modulestitle', 'local_paperattendance'),$url);
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
@@ -90,11 +98,29 @@ if ($action == "view") {
     }
     $buttonurl = new moodle_url("/local/paperattendance/modules.php", array(
         "action" => "add"));
+    
+    $PAGE->set_title(get_string("viewmodules", "local_paperattendance"));
+    $PAGE->set_heading(get_string("viewmodules", "local_paperattendance"));
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string("modulestitle", "local_paperattendance"));
+    if (count($modules) == 0) {
+    	echo html_writer::nonempty_tag("h4", get_string("nomodules", "local_paperattendance"), array(
+    			"align" => "center"));
+    } else {
+    	echo html_writer::table($modulestable);
+    }
+    echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, get_string("addmoduletitle", "local_paperattendance")),
+    		array(
+    				"align" => "center"));
+    
 }
 if ($action == "add") {
 	$addform = new paperattendance_addmodule_form();
 	if ($addform->is_cancelled()) {
 		$action = "view";
+		
+		$url = new moodle_url('/local/paperattendance/modules.php');
+		redirect($url);
 	} else if ($creationdata = $addform->get_data()) {
 		$record = new stdClass();
 		$record->name = $creationdata->name;
@@ -102,7 +128,16 @@ if ($action == "add") {
 		$record->endtime = $creationdata->endtime;
 		$DB->insert_record("paperattendance_module", $record);
 		$action = "view";
+		
+		$url = new moodle_url('/local/paperattendance/modules.php');
+		redirect($url);
 	}
+	
+	$PAGE->set_title(get_string("addmodule", "local_paperattendance"));
+	$PAGE->set_heading(get_string("addmodule", "local_paperattendance"));
+	echo $OUTPUT->header();
+	echo $OUTPUT->heading(get_string("addmoduletitle", "local_paperattendance"));
+	$addform->display();
 }
 if ($action == "edit") {
 	if ($idmodule == null) {
@@ -120,6 +155,9 @@ if ($action == "edit") {
 				$editform->set_data($defaultdata);
 				if ($editform->is_cancelled()) {
 					$action = "view";
+					
+					$url = new moodle_url('/local/paperattendance/modules.php');
+					redirect($url);
 				} else if ($editform->get_data() && $sesskey == $USER->sesskey) {
 					$record = new stdClass();
 					$record->id = $editform->get_data()->idmodule;
@@ -128,12 +166,24 @@ if ($action == "edit") {
 					$record->endtime = $editform->get_data()->endtime;
 					$DB->update_record("paperattendance_module", $record);
 					$action = "view";
+					
+					$url = new moodle_url('/local/paperattendance/modules.php');
+					redirect($url);
 				}
 		} else {
 			print_error(get_string("moduledoesnotexist", "local_paperattendance"));
 			$action = "view";
+			$url = new moodle_url('/local/paperattendance/modules.php');
+			redirect($url);
 		}
+
 	}
+	
+	$PAGE->set_title(get_string("editmodule", "local_paperattendance"));
+	$PAGE->set_heading(get_string("editmodule", "local_paperattendance"));
+	echo $OUTPUT->header();
+	echo $OUTPUT->heading(get_string("editmoduletitle", "local_paperattendance"));
+	$editform->display();
 }
 if ($action == "delete") {
 	if ($idmodule == null) {
@@ -145,8 +195,6 @@ if ($action == "delete") {
 				if ($sesskey == $USER->sesskey) {
 					$DB->delete_records("paperattendance_module", array(
 							"id" => $module->id));
-					$DB->delete_records_select("paperattendance_session_module", "moduleid = ?", array(
-							$module->id));
 					$action = "view";
 				} else {
 					print_error(get_string("usernotloggedin", "local_paperattendance"));
@@ -156,34 +204,9 @@ if ($action == "delete") {
 			$action = "view";
 		}
 	}
+	$url = new moodle_url('/local/paperattendance/modules.php');
+	redirect($url);
 }
-if ($action == "add") {
-	$PAGE->set_title(get_string("addmodule", "local_paperattendance"));
-	$PAGE->set_heading(get_string("addmodule", "local_paperattendance"));
-	echo $OUTPUT->header();
-	echo $OUTPUT->heading(get_string("addmodule", "local_paperattendance"));
-	$addform->display();
-}
-if ($action == "edit") {
-	$PAGE->set_title(get_string("editmodule", "local_paperattendance"));
-	$PAGE->set_heading(get_string("editmodule", "local_paperattendance"));
-	echo $OUTPUT->header();
-	echo $OUTPUT->heading(get_string("editmodule", "local_paperattendance"));
-	$editform->display();
-}
-if ($action == "view") {
-	$PAGE->set_title(get_string("viewmodules", "local_paperattendance"));
-	$PAGE->set_heading(get_string("viewmodules", "local_paperattendance"));
-	echo $OUTPUT->header();
-	echo $OUTPUT->heading(get_string("viewmodules", "local_paperattendance"));
-	if (count($modules) == 0) {
-		echo html_writer::nonempty_tag("h4", get_string("nomodules", "local_paperattendance"), array(
-				"align" => "center"));
-	} else {
-		echo html_writer::table($modulestable);
-	}
-	echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, get_string("addmodule", "local_paperattendance")),
-			array(
-					"align" => "center"));
-}
+
+
 echo $OUTPUT->footer();

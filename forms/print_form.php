@@ -62,7 +62,7 @@ class print_form extends moodleform {
 		$mform->addElement("hidden", "courseid", $courseid);
 		$mform->setType( "courseid", PARAM_INT);
 		
-		$this->add_action_buttons(true);
+		$this->add_action_buttons(true, "Descargar");
 		
 	}
 	
@@ -75,7 +75,7 @@ class print_form extends moodleform {
 		$modules = $data["modules"];
 		
 		if($requestor == "no"){
-			$errors["teacher"] = "Debe seleccionar un profesor.";
+			$errors["requestor"] = "Debe seleccionar un profesor.";
 		}
 		
 		$actualtime = strtotime(date("d-m-Y"));

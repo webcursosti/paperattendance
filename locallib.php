@@ -30,20 +30,19 @@ define('PAPERATTENDANCE_STATUS_READ', 1); //already processed
 * @param unknown $qrstring
 * @return multitype:string
 */
-function paperattendance_create_qr_image($qrstring){
+function paperattendance_create_qr_image($qrstring , $path){
 		global $CFG;
 		require_once ($CFG->dirroot . '/local/paperattendance/phpqrcode/phpqrcode.php');
-	
-		$path = $CFG -> dataroot. "/temp/local/paperattandace/";
+
 		if (!file_exists($path)) {
 			mkdir($path, 0777, true);
 		}
 		
-		$filename = "qr.png";
+		$filename = "qr".substr( md5(rand()), 0, 4).".png";
 		$img = $path . "/". $filename;
 		QRcode::png($qrstring, $img);
 		
-		return 	array($path, $filename);
+		return $filename;
 }
 
 /**
@@ -80,7 +79,7 @@ function paperattendance_get_students_for_printing($course) {
  * @param unknown $studentinfo
  *            the student info including name and idnumber
  */
-function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $webcursospath) {
+function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $qrstring, $webcursospath) {
 	global $CFG;
 	// Pages should be added automatically while the list grows.
 	$pdf->SetAutoPageBreak(false);
@@ -91,16 +90,19 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 		$pdf->Image($logofilepath, $left, 15, 50);
 		$left += 55;
 	}
+	
 	// Top QR
-	$pdf->Image($qrpath, 153, 5, 35);
+	$qrfilename = paperattendance_create_qr_image($qrstring.$pdf->PageNo(), $qrpath);
+	$pdf->Image($qrpath."/".$qrfilename, 153, 5, 35);
 	// Botton QR and Logo Webcursos
-	$pdf->Image($qrpath, 15, 257, 35);
-	$pdf->Image($webcursospath, 145, 265, 40);
+	$pdf->Image($webcursospath, 18, 265, 35);
+	$pdf->Image($qrpath."/".$qrfilename, 153, 256, 35);
+	unlink($qrpath."/".$qrfilename);
+	
 	// We position to the right of the logo and write exam name.
 	$top = 7;
 	$pdf->SetFont('Helvetica', 'B', 12);
 	$pdf->SetXY($left, $top);
-	//$pdf->Write(1, core_text::strtoupper($downloadexam->name));
 	// Write course name.
 	$top += 6;
 	$pdf->SetFont('Helvetica', '', 8);
@@ -196,7 +198,10 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			
 			// Logo UAI and Top QR
 			$pdf->Image($logofilepath, 20, 15, 50);
-			$pdf->Image($qrpath, 152, 8, 35);
+			// Top QR
+			$qrfilename = paperattendance_create_qr_image($qrstring.$pdf->PageNo(), $qrpath);
+			//echo $qrfilename."  ".$qrpath."<br>";
+			$pdf->Image($qrpath."/".$qrfilename, 153, 5, 35);
 			
 			// Attendance info
 			// Write teacher name.
@@ -204,7 +209,6 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			$topprovisional = 7;
 			$pdf->SetFont('Helvetica', 'B', 12);
 			$pdf->SetXY($leftprovisional, $topprovisional);
-			//$pdf->Write(1, core_text::strtoupper($downloadexam->name));
 			// Write course name.
 			$topprovisional += 6;
 			$pdf->SetFont('Helvetica', '', 8);
@@ -231,8 +235,9 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			$pdf->Write(1, core_text::strtoupper(get_string('students') . ': ' . count($studentinfo)));
 			
 			// Botton QR and Logo Webcursos
-			$pdf->Image($qrpath, 15, 257, 35);
-			$pdf->Image($webcursospath, 142, 265, 40);
+			$pdf->Image($webcursospath, 18, 265, 35);
+			$pdf->Image($qrpath."/".$qrfilename, 153, 256, 35);
+			unlink($qrpath."/".$qrfilename);
 		}
 		
 		$top += 8;

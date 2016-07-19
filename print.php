@@ -14,9 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- *
+*
 *
 * @package    local
 * @subpackage paperattendance
@@ -33,7 +32,7 @@ require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi.php");
 require_once ($CFG->dirroot . "/mod/emarking/print/locallib.php");
 require_once ("locallib.php");
-global $DB, $PAGE, $OUTPUT;
+global $DB, $PAGE, $OUTPUT, $USER;
 require_login();
 if (isguestuser()) {
 	die();
@@ -47,10 +46,11 @@ if (! has_capability("local/paperattendance:print", $context)) {
 	print_error("ACCESS DENIED");
 }
 
-$urlprint = new moodle_url("/local/paperattendance/print.php");
+$urlprint = new moodle_url("/local/paperattendance/print.php", array("courseid" => $courseid));
 // Page navigation and URL settings.
 $pagetitle = "Imprimir lista de asistencia";
 $PAGE->set_context($context);
+$PAGE->requires->jquery();
 $PAGE->set_url($urlprint);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title($pagetitle);
@@ -66,7 +66,6 @@ if($action == "add"){
 		redirect($backtocourse);
 	}
 	else if ($data = $addform->get_data()) {
-		// Create the PDF with the students
 		// id teacher
 		$requestor = $data->requestor;
 		$requestorinfo = $DB->get_record("user", array("id" => $requestor));
@@ -75,17 +74,24 @@ if($action == "add"){
 		// array idmodule => {0 = no checked, 1 = checked}
 		$modules = $data->modules;
 		
-		list($path, $filename) = paperattendance_create_qr_image($courseid."*".$requestor."*");
+		$path = $CFG -> dataroot. "/temp/local/paperattandace/";
+		
+		//list($path, $filename) = paperattendance_create_qr_image($courseid."*".$requestor."*", $path);
 		
 		$uailogopath = $CFG->dirroot . '/local/paperattendance/img/uai.jpeg';
 		$webcursospath = $CFG->dirroot . '/local/paperattendance/img/webcursos.jpg';
+		$timepdf = time();
+		$attendancepdffile = $path . "/print/paperattendance_".$courseid."_".$timepdf.".pdf";
 		
-		$attendancepdffile = $path . "/paperattendance_".$courseid.".pdf";
-		$pdf = new PDF();		
+		if (!file_exists($path . "/print/")) {
+			mkdir($path . "/print/", 0777, true);
+		}	
+		
+		$pdf = new PDF();
 		$pdf->setPrintHeader(false);
 		$pdf->setPrintFooter(false);
 	
-		//TODO: Add enrolments for omega, Remember change manual.
+		//TODO: Add enrolments for omega, Remember change "manual".
 		$enrolincludes = array("manual");
 		$filedir = $CFG->dataroot . "/temp/emarking/$context->id";
 		$userimgdir = $filedir . "/u";
@@ -114,20 +120,79 @@ if($action == "add"){
 		if ($numberstudents == 0) {
 			throw new Exception('No students to print');
 		}
+		// Contruction string for QR encode
+		$arraymodules = "";
+		foreach ($modules as $key => $value){
+			if($value == 1){
+				$schedule = explode("*", $key);
+				if($arraymodules == ""){
+					$arraymodules .= $schedule[0];
+				}else{
+					$arraymodules .= ":".$schedule[0];
+				}
+			}
+		}
 		
-		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $modules,$path."/".$filename, $webcursospath);
+		$time = strtotime(date("d-m-Y"));
 		
+		$stringqr = $courseid."*".$requestor."*".$arraymodules."*".$time."*";
+		
+		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $modules, $path, $stringqr, $webcursospath);
+				
 		$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
-		$pdf = null;
-		//unlink($path."/".$filename);
-		//$action = "download";
-	
+		
+		$fs = get_file_storage();
+		
+		$file_record = array(
+    			'contextid' => $context->id,
+    			'component' => 'local_paperattendance',
+    			'filearea' => 'draft',
+    			'itemid' => 0,
+    			'filepath' => '/',
+    			'filename' => "paperattendance_".$courseid."_".$timepdf.".pdf",
+    			'timecreated' => time(),
+    			'timemodified' => time(),
+    			'userid' => $USER->id,
+    			'author' => $USER->firstname." ".$USER->lastname,
+    			'license' => 'allrightsreserved'
+    	);
+		
+		// If the file already exists we delete it
+		if ($fs->file_exists($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
+			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
+			$previousfile->delete();
+		}
+		
+		// Info for the new file
+    	$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);    	
+		
+		$action = "download";
+		
 	}
 }
 
+if($action == "download" && isset($attendancepdffile)){
+
+	$button = html_writer::nonempty_tag(
+			"div",
+			$OUTPUT->single_button($urlprint, "Volver"), 
+			array("align" => "left"
+				
+	));
+	
+	$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
+	
+	$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
+			"src" => $url,
+			"style" => "height:75vh; width:60vw"
+	));
+}
+
+echo $OUTPUT->header();
+
 if($action == "add"){
+
 	$PAGE->set_heading($pagetitle);
-	echo $OUTPUT->header();
 	
 	echo html_writer::nonempty_tag("h2", $course->shortname." - ".$course->fullname);
 	
@@ -136,7 +201,13 @@ if($action == "add"){
 
 if($action == "download" && isset($attendancepdffile)){
 	
-
-	//unlink($attendancepdffile);
+	// Donwload and back buttons
+	echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "download"), null, array("target" => "_blank"));
+	echo "Descargar lista de asistencia";
+	echo $button;
+	
+	// Preview PDF
+	echo $viewerpdf;
 }
+
 echo $OUTPUT->footer();
