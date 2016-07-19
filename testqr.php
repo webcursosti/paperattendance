@@ -46,12 +46,10 @@ echo $OUTPUT->header();
 
 
 
-echo $OUTPUT->footer();
-
-
 get_orientation("b4.pdf","0");
 
 
+echo $OUTPUT->footer();
 
 //pdf = pdfname + extension (.pdf)
 function get_orientation($pdf , $page){
