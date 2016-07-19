@@ -24,6 +24,8 @@
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 require_once (dirname(dirname(dirname(__FILE__))) . "/config.php");
+require_once ($CFG->dirroot . '/local/paperattendance/phpqrcode/phpqrcode.php');
+require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
 global $DB, $PAGE, $OUTPUT, $USER;
 
 $context = context_system::instance();
@@ -42,15 +44,56 @@ echo $OUTPUT->header();
 
 $imagick = new Imagick();
 $imagick->setResolution(100,100);
-$imagick->readImage('b1.pdf[0]');
-//$imagick->writeImages('attendance.jpg', false);
-$imagick->setImageFormat('png');
-$imagick->writeImage('b1.png');
+$imagick->readImage('b1.png');
+$imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
 
+
+//$imagick->writeImages('attendance.jpg', false);
+//$imagick->setImageFormat('png');
+//$imagick->writeImage('b1.png');
+$height = $imagick->getImageHeight();
+$width = $imagick->getImageWidth();
+echo $height." ".$width;
+$imagick->cropImage($width*0.25, $height*0.14, $width*0.652, $height*0.014);
+
+/* Export the image pixels */
+
+$imagick->writeImage('delcorte.png');
+
+// QR
+$imagick = new Imagick();
+$imagick->setResolution(100,100);
+$imagick->readImage('delcorte.png');
+$imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
+
+$pixel = $imagick->getImagePixelColor(1, 1); 
+$colors = $pixel->getColor();
+print_r($colors); // produces Array([r]=>255,[g]=>255,[b]=>255,[a]=>1);
+
+$pixel->getColorAsString(); // produces rgb(255,255,255);
+
+
+var_dump($pixel->getColorAsString());
+
+$height2 = $imagick->getImageHeight();
+$width2 = $imagick->getImageWidth();
+
+$pixels = $imagick->exportImagePixels(0, 0, $width2, $height2, "G", Imagick::PIXEL_CHAR);
+$average = array_sum($pixels)/count($pixels);
+echo "<br>".$average."<br>";
+/* Output */
+//var_dump($pixels);
+
+
+
+$qrcode = new QrReader('delcorte.png');
+$text = $qrcode->text(); //return decoded text from QR Code
+
+echo "<br>".$text;
+/*
 $imagick->readImage('b2.pdf[0]');
 //$imagick->writeImages('attendance.jpg', false);
 $imagick->setImageFormat('png');
 $imagick->writeImage('b2.png');
-
-
+*/
 echo $OUTPUT->footer();

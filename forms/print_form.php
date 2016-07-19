@@ -75,7 +75,7 @@ class print_form extends moodleform {
 		$modules = $data["modules"];
 		
 		if($requestor == "no"){
-			$errors["teacher"] = "Debe seleccionar un profesor.";
+			$errors["requestor"] = "Debe seleccionar un profesor.";
 		}
 		
 		$actualtime = strtotime(date("d-m-Y"));
