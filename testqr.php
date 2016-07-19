@@ -24,6 +24,8 @@
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 require_once (dirname(dirname(dirname(__FILE__))) . "/config.php");
+require_once ($CFG->dirroot . '/local/paperattendance/phpqrcode/phpqrcode.php');
+require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
 global $DB, $PAGE, $OUTPUT, $USER;
 
 $context = context_system::instance();
@@ -42,15 +44,31 @@ echo $OUTPUT->header();
 
 $imagick = new Imagick();
 $imagick->setResolution(100,100);
-$imagick->readImage('b1.pdf[0]');
-//$imagick->writeImages('attendance.jpg', false);
-$imagick->setImageFormat('png');
-$imagick->writeImage('b1.png');
+$imagick->readImage('b1.png');
+$imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
 
+
+//$imagick->writeImages('attendance.jpg', false);
+//$imagick->setImageFormat('png');
+//$imagick->writeImage('b1.png');
+$height = $imagick->getImageHeight();
+$width = $imagick->getImageWidth();
+echo $height." ".$width;
+$imagick->cropImage($width*0.25, $height*0.14, $width*0.652, $height*0.014);
+
+/* Export the image pixels */
+
+$imagick->writeImage('delcorte.png');
+
+// QR
+$qrcode = new QrReader('delcorte.png');
+$text = $qrcode->text(); //return decoded text from QR Code
+
+echo "<br>".$text;
+/*
 $imagick->readImage('b2.pdf[0]');
 //$imagick->writeImages('attendance.jpg', false);
 $imagick->setImageFormat('png');
 $imagick->writeImage('b2.png');
-
-
+*/
 echo $OUTPUT->footer();
