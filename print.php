@@ -202,7 +202,7 @@ if($action == "add"){
 if($action == "download" && isset($attendancepdffile)){
 	
 	// Donwload and back buttons
-	echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "download"), null ,array("target" => "_blank"));
+	echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "download"), null, array("target" => "_blank"));
 	echo "Descargar lista de asistencia";
 	echo $button;
 	
