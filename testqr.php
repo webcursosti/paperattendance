@@ -43,7 +43,7 @@ echo $OUTPUT->header();
 
 $myurl = 'b4.pdf[0]';
 $image = new Imagick($myurl);
-$imagickqrtop->setResolution(100,100);
+$image->setResolution(100,100);
 $image->setImageFormat( "png" );
 $image->writeImage('b4.png');
 
