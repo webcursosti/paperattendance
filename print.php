@@ -80,8 +80,8 @@ if($action == "add"){
 		
 		$uailogopath = $CFG->dirroot . '/local/paperattendance/img/uai.jpeg';
 		$webcursospath = $CFG->dirroot . '/local/paperattendance/img/webcursos.jpg';
-		
-		$attendancepdffile = $path . "/print/paperattendance_".$courseid.".pdf";
+		$timepdf = time();
+		$attendancepdffile = $path . "/print/paperattendance_".$courseid."_".$timepdf.".pdf";
 		
 		if (!file_exists($path . "/print/")) {
 			mkdir($path . "/print/", 0777, true);
@@ -120,6 +120,22 @@ if($action == "add"){
 		if ($numberstudents == 0) {
 			throw new Exception('No students to print');
 		}
+		// Contruction string for QR encode
+		$arraymodules = "";
+		foreach ($modules as $key => $value){
+			if($value == 1){
+				$schedule = explode("*", $key);
+				if($arraymodules == ""){
+					$arraymodules .= $schedule[0];
+				}else{
+					$arraymodules .= ":".$schedule[0];
+				}
+			}
+		}
+		
+		$time = strtotime(date("d-m-Y"));
+		
+		$stringqr = $courseid."*".$requestor."*".$arraymodules."*".$time."*";
 		
 		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $modules, $path, $stringqr, $webcursospath);
 				
@@ -133,7 +149,7 @@ if($action == "add"){
     			'filearea' => 'draft',
     			'itemid' => 0,
     			'filepath' => '/',
-    			'filename' => "paperattendance_".$courseid.".pdf",
+    			'filename' => "paperattendance_".$courseid."_".$timepdf.".pdf",
     			'timecreated' => time(),
     			'timemodified' => time(),
     			'userid' => $USER->id,
@@ -142,15 +158,14 @@ if($action == "add"){
     	);
 		
 		// If the file already exists we delete it
-		if ($fs->file_exists($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid.".pdf")) {
-			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid.".pdf");
+		if ($fs->file_exists($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
+			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
 			$previousfile->delete();
 		}
 		
 		// Info for the new file
     	$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);    	
 		
-		unlink($path."/".$filename);
 		$action = "download";
 		
 	}
@@ -165,7 +180,7 @@ if($action == "download" && isset($attendancepdffile)){
 				
 	));
 	
-	$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid.".pdf");
+	$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
 	
 	$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
 			"src" => $url,
