@@ -74,40 +74,40 @@ function get_orientation($pdf , $page){
 	$width = $imagick->getImageWidth();
 	
 	$qrtop = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.652, $height*0.014);
-	$qrtop->writeImage($qrpath);
+	$qrtop->writeImage("topright".$qrpath);
 	
 	// QR
-	$qrcodetop = new QrReader($qrpath);
+	$qrcodetop = new QrReader("topright".$qrpath);
 	$texttop = $qrcodetop->text(); //return decoded text from QR Code
 
 	if($texttop == "" || $texttop == " " || empty($texttop)){
 		
 		//check if there's a qr on the bottom right corner
 		$qrbottom = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.652, $height*0.846);
-		$qrbottom->writeImage($qrpath);
+		$qrbottom->writeImage("bottomright".$qrpath);
 		
 		// QR
-		$qrcodebottom = new QrReader($qrpath);
+		$qrcodebottom = new QrReader("bottomright".$qrpath);
 		$textbottom = $qrcodebottom->text(); //return decoded text from QR Code
 		
 			if($textbottom == "" || $textbottom == " " || empty($textbottom)){
 				
 				//check if there's a qr on the top left corner
 				$qrtopleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.355, $height*0.014);
-				$qrtopleft->writeImage($qrpath);
+				$qrtopleft->writeImage("topleft".$qrpath);
 		
 				// QR
-				$qrcodetopleft = new QrReader($qrpath);
+				$qrcodetopleft = new QrReader("topleft".$qrpath);
 				$texttopleft = $qrcodetopleft->text(); //return decoded text from QR Code
 				
 				if($texttopleft == "" || $texttopleft == " " || empty($texttopleft)){
 					
 					//check if there's a qr on the top left corner
 					$qrbottomleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.355, $height*0.846);
-					$qrbottomleft->writeImage($qrpath);
+					$qrbottomleft->writeImage("bottomleft".$qrpath);
 					
 					// QR
-					$qrcodebottomleft = new QrReader($qrpath);
+					$qrcodebottomleft = new QrReader("bottomleft".$qrpath);
 					$textbottomleft = $qrcodebottomleft->text(); //return decoded text from QR Code
 					
 					if($textbottomleft == "" || $textbottomleft == " " || empty($textbottomleft)){
