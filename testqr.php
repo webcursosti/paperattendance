@@ -49,7 +49,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->footer();
 
 
-echo get_orientation("b4.pdf","0");
+get_orientation("b4.pdf","0");
 
 
 
@@ -113,21 +113,21 @@ function get_orientation($pdf , $page){
 					$textbottomleft = $qrcodebottomleft->text(); //return decoded text from QR Code
 					
 					if($textbottomleft == "" || $textbottomleft == " " || empty($textbottomleft)){
-						return "error";
+						echo "error";
 					}
 					else{
-						return "rotated";
+						echo "rotated";
 					}
 				}
 				else{
-					return "rotated";
+					echo "rotated";
 				}
 			}
 			else{
-				return "straight";
+				echo "straight";
 			}
 	}
 	else{
-		return "straight";
+		echo "straight";
 	}
 }
