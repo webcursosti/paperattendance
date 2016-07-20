@@ -70,13 +70,13 @@ if ($addform->get_data()) {
 	$data = $addform -> get_data();
 	$teacherid = $data -> teacher;
 	
-	$path = $CFG -> dataroot. "temp/local/paperattendance/unread";
-	if(!file_exists($path)){
-		mkdir($path, 0777, true);
-	}
+	$path = $CFG -> dataroot. "/temp/local/paperattandace/";
+	if (!file_exists($path . "/unread/")) {
+			mkdir($path . "/unread/", 0777, true);
+		}	
 	// Save file
 	$filename = $addform->get_new_filename('file');
-	$file = $addform->save_file('file', $path."/".$filename,false);
+	$file = $addform->save_file('file', "/temp/local/paperattandace/".$filename, false);
 	// Validate that file was correctly uploaded.
 	
 	$transaction = $DB->start_delegated_transaction();
