@@ -40,21 +40,29 @@ $PAGE->set_title($pagetitle);
 
 echo $OUTPUT->header();
 
-//StartX : width -> 844  *  0,652   :    550
-//StartY : height -> 1096  *  0,014 :    15
-//aux var orientation {straight, rotated, error}
+$filename = "paperattendance_2.pdf";
 
+$document = new Imagick($filename);
+$pdftotalpages = $document->getNumberImages();
+var_dump($pdftotalpages);
 
-
-$orientation = get_orientation("paperattendance_2.pdf","0");
-
-if($orientation == "rotated"){
-	$rotate = rotate("paperattendance_2.pdf","0");
-	echo $rotate;
+for ($pdfpage = 0; $pdfpage < $pdftotalpages; $pdfpage++) {
+	//get pdf page orientation
+	$orientation = get_orientation($filename,$pdfpage);
+	echo "<br>".$orientation;
+	
+	//rotate pdf page if necessary
+	if($orientation == "rotated"){
+		$rotate = rotate($filename,$pdfpage);
+		echo "<br>".$rotate;
+	}
 }
+
 
 echo $OUTPUT->footer();
 
+
+//returns orientation {straight, rotated, error}
 //pdf = pdfname + extension (.pdf)
 function get_orientation($pdf , $page){
 	$pdfexplode = explode(".",$pdf);
