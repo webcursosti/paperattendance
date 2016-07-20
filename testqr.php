@@ -93,7 +93,7 @@ function get_orientation($pdf , $page){
 			if($textbottom == "" || $textbottom == " " || empty($textbottom)){
 				
 				//check if there's a qr on the top left corner
-				$qrtopleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.355, $height*0.014);
+				$qrtopleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.1225, $height*0.014);
 				$qrtopleft->writeImage("topleft".$qrpath);
 		
 				// QR
@@ -103,7 +103,7 @@ function get_orientation($pdf , $page){
 				if($texttopleft == "" || $texttopleft == " " || empty($texttopleft)){
 					
 					//check if there's a qr on the top left corner
-					$qrbottomleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.355, $height*0.846);
+					$qrbottomleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.1255, $height*0.846);
 					$qrbottomleft->writeImage("bottomleft".$qrpath);
 					
 					// QR
