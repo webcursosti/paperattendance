@@ -54,16 +54,46 @@ $imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
 $height = $imagick->getImageHeight();
 $width = $imagick->getImageWidth();
 echo $height." ".$width;
-$imagick->cropImage($width*0.25, $height*0.14, $width*0.652, $height*0.014);
 
+$circle = new Imagick();
+$circle->readImage('img/circle.png');
+$circle->resizeImage(29, 24, Imagick::FILTER_BOX ,0);
+
+$arraycompare = array();
+for ($countstudent = 0; $countstudent < 26; $countstudent++){
+	//$imagick->setImagePage(0,0,0,0);
+	//$imagick->resizeImage($width, $height, Imagick::FILTER_BOX, 0, false);
+	//$imagick->cropImage($width*0.04, $height*0.68, $width*0.765, $height*0.18);
+
+	$frame = $imagick->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*$countstudent));
+	//$imagick->cropImage($width*0.04, $height*0.026, $width*0.765, $height*(0.18+0.016*$countstudents));
+	$frame->writeImage('student_'.$countstudent.'.png');
+	$x = $frame->getImageChannelMean(Imagick::CHANNEL_GRAY);
+	echo "<br>Imagen $countstudent media ".$x["mean"]." desviacion ".$x["standardDeviation"];
+	/*
+	$pixels = $frame->exportImagePixels(0, 0, $width*0.035, $height*0.022, "RBG", Imagick::PIXEL_CHAR);
+	$average = array_sum($pixels)/count($pixels);
+	echo "<br>Imagen $countstudent ".$average." ancho ".($width*0.035)." alto ".($height*0.022)."<br>";
+	*/
+
+	//$arraycompare[] = $frame->compareImages($circle, Imagick::METRIC_MEANSQUAREERROR);
+}
 /* Export the image pixels */
+/*
+$image = $imagick->coalesceImages();
+foreach ($image as $frame){
+	$frame->cropImage($width*0.04, $height*0.026, $width*0.765, $height*(0.18+0.016*$countstudents));
+	$frame->setImagePage(0, 0, 0, 0); // Remove canvas
+	$imagick->writeImage('student_'.$countstudents.'.png');
+}*/
 
-$imagick->writeImage('delcorte.png');
+$imagick->writeImage('circles.png');
+/*
 
 // QR
 $imagick = new Imagick();
 $imagick->setResolution(100,100);
-$imagick->readImage('delcorte.png');
+$imagick->readImage('1.png');
 $imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
 
 $pixel = $imagick->getImagePixelColor(1, 1); 
@@ -89,7 +119,7 @@ echo "<br>".$average."<br>";
 $qrcode = new QrReader('delcorte.png');
 $text = $qrcode->text(); //return decoded text from QR Code
 
-echo "<br>".$text;
+//echo "<br>".$text;
 /*
 $imagick->readImage('b2.pdf[0]');
 //$imagick->writeImages('attendance.jpg', false);
