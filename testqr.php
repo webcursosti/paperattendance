@@ -152,7 +152,7 @@ function get_orientation($pdf , $page){
 function rotate($pdf, $page){
 	//original pdf
 	$original = new Imagick($pdf);
-	$original->setIteratorIndex($page);
+
 	
 	//substitute page
 	$myurl = $pdf.'['.$page.']';
@@ -160,7 +160,7 @@ function rotate($pdf, $page){
 	$imagick->readImage($myurl);
 	//rotate page
 	$angle = 180;
-	$imagick->rotateimage(new ImagickPixel(), $angle))
+	$imagick->rotateimage(new ImagickPixel(), $angle));
 
 	if($original->setImage($imagick)){
 	$original->setImageFormat("pdf");
