@@ -40,7 +40,7 @@ $PAGE->set_title($pagetitle);
 
 echo $OUTPUT->header();
 
-$filename = "paperattendance_2.pdf";
+$filename = "paperattendance_3.pdf";
 
 $document = new Imagick($filename);
 $pdftotalpages = $document->getNumberImages();
@@ -49,7 +49,7 @@ $document->clear();
 
 for ($pdfpage = 0; $pdfpage < $pdftotalpages; $pdfpage++) {
 	//get pdf page orientation
-	$orientation = get_orientation($filename,"$pdfpage");
+	$orientation = get_orientation($filename,$pdfpage);
 	echo "<br>".$orientation;
 	
 	//rotate pdf page if necessary
@@ -150,17 +150,27 @@ function get_orientation($pdf , $page){
 
 //pdf = pdfname + extension (.pdf)
 function rotate($pdf, $page){
+	//original pdf
+	$original = new Imagick($pdf);
+	$original->setIteratorIndex($page);
+	
+	//substitute page
 	$myurl = $pdf.'['.$page.']';
 	$imagick = new Imagick();
 	$imagick->readImage($myurl);
+	//rotate page
 	$angle = 180;
-	if($imagick->rotateimage(new ImagickPixel(), $angle)){
-	$imagick->setImageFormat("pdf");
-	$imagick->writeImage($pdf);
+	$imagick->rotateimage(new ImagickPixel(), $angle))
+
+	if($original->setImage($imagick)){
+	$original->setImageFormat("pdf");
+	$original->writeImage($pdf);
+	
+	$imagick->clear();
+	
 	return "1";
 	}
 	else{
-	return "0";	
+		return "0";
 	}
-	$imagick->clear();
 }
