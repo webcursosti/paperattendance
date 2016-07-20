@@ -46,8 +46,12 @@ echo $OUTPUT->header();
 
 
 
-get_orientation("paperattendance_2.pdf","0");
+$orientation = get_orientation("paperattendance_2.pdf","0");
 
+if($orientation == "rotated"){
+	$rotate = rotate("paperattendance_2.pdf","0");
+	echo $rotate;
+}
 
 echo $OUTPUT->footer();
 
@@ -111,21 +115,37 @@ function get_orientation($pdf , $page){
 					$textbottomleft = $qrcodebottomleft->text(); //return decoded text from QR Code
 					
 					if($textbottomleft == "" || $textbottomleft == " " || empty($textbottomleft)){
-						echo "error";
+						return "error";
 					}
 					else{
-						echo "rotated";
+						return "rotated";
 					}
 				}
 				else{
-					echo "rotated";
+					return "rotated";
 				}
 			}
 			else{
-				echo "straight";
+				return "straight";
 			}
 	}
 	else{
-		echo "straight";
+		return "straight";
+	}
+}
+
+//pdf = pdfname + extension (.pdf)
+function rotate($pdf, $page){
+	$myurl = $pdf.'['.$page.']';
+	$imagick = new Imagick();
+	$imagick->readImage($myurl);
+	$angle = 180;
+	if($imagick->rotateimage(new ImagickPixel(), $angle)){
+	$imagick->setImageFormat("pdf");
+	$imagick->writeImage($pdf);
+	return "1";
+	}
+	else{
+	return "0";	
 	}
 }
