@@ -40,7 +40,7 @@ $PAGE->set_title($pagetitle);
 
 echo $OUTPUT->header();
 
-$filename = "paperattendance_3.pdf";
+$filename = "paperattendance_2.pdf";
 
 $document = new Imagick($filename);
 $pdftotalpages = $document->getNumberImages();
@@ -54,7 +54,7 @@ for ($pdfpage = 0; $pdfpage < $pdftotalpages; $pdfpage++) {
 	
 	//rotate pdf page if necessary
 	if($orientation == "rotated"){
-		$rotate = rotate($filename,$pdfpage);
+		$rotate = rotate($filename,$pdfpage, $pdftotalpages);
 		echo "<br>".$rotate;
 	}
 	else {
@@ -149,28 +149,36 @@ function get_orientation($pdf , $page){
 }
 
 //pdf = pdfname + extension (.pdf)
-function rotate($pdf, $page){
-	//original pdf
-	$original = new Imagick($pdf);
-
+function rotate($pdf, $page, $totalpages){
 	
-	//substitute page
+	//rotated
 	$myurl = $pdf.'['.$page.']';
 	$imagick = new Imagick();
 	$imagick->readImage($myurl);
-	//rotate page
 	$angle = 180;
-	$imagick->rotateimage(new ImagickPixel(), $angle));
-
-	if($original->setImage($imagick)){
-	$original->setImageFormat("pdf");
-	$original->writeImage($pdf);
+ 	$imagick->rotateimage(new ImagickPixel(), $angle);
+ 	$imagick->setImageFormat('pdf');
+ 	$imagick->writeImage('rotated.pdf');
+ 	
+	//combined
+	$combined = new Imagick();
 	
-	$imagick->clear();
+	for ($originalpage = 0; $originalpage < $totalpages; $originalpage++) {
+		if($originalpage != $page){
+		$addpage = new Imagick($pdf.'['.$originalpage.']');
+		$combined->addImage($addpage);
+		}
+		else{
+		$rotated = new Imagick('rotated.pdf');
+		$combined->addImage($rotated);
+		}
+	}
 	
+	$combined->setImageFormat('pdf');
+	if( $combined->writeImage($pdf)){
 	return "1";
 	}
 	else{
-		return "0";
+	return "0";	
 	}
 }
