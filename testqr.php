@@ -40,17 +40,33 @@ $PAGE->set_title($pagetitle);
 
 echo $OUTPUT->header();
 
-//StartX : width -> 844  *  0,652   :    550
-//StartY : height -> 1096  *  0,014 :    15
-//aux var orientation {straight, rotated, error}
+$filename = "paperattendance_3.pdf";
 
+$document = new Imagick($filename);
+$pdftotalpages = $document->getNumberImages();
+var_dump($pdftotalpages);
+$document->clear();
 
-
-get_orientation("paperattendance_2.pdf","0");
+for ($pdfpage = 0; $pdfpage < $pdftotalpages; $pdfpage++) {
+	//get pdf page orientation
+	$orientation = get_orientation($filename,$pdfpage);
+	echo "<br>".$orientation;
+	
+	//rotate pdf page if necessary
+	if($orientation == "rotated"){
+		$rotate = rotate($filename,$pdfpage);
+		echo "<br>".$rotate;
+	}
+	else {
+		echo "page ".$pdfpage." is straight";
+	}
+}
 
 
 echo $OUTPUT->footer();
 
+
+//returns orientation {straight, rotated, error}
 //pdf = pdfname + extension (.pdf)
 function get_orientation($pdf , $page){
 	$pdfexplode = explode(".",$pdf);
@@ -63,6 +79,7 @@ function get_orientation($pdf , $page){
 	$image->setResolution(100,100);
 	$image->setImageFormat( 'png' );
 	$image->writeImage( $pdfname.'.png' );
+	$image->clear();
 	
 	//check if there's a qr on the top right corner
 	$imagick = new Imagick();
@@ -93,7 +110,7 @@ function get_orientation($pdf , $page){
 			if($textbottom == "" || $textbottom == " " || empty($textbottom)){
 				
 				//check if there's a qr on the top left corner
-				$qrtopleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.355, $height*0.014);
+				$qrtopleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.1225, $height*0.014);
 				$qrtopleft->writeImage("topleft".$qrpath);
 		
 				// QR
@@ -103,7 +120,7 @@ function get_orientation($pdf , $page){
 				if($texttopleft == "" || $texttopleft == " " || empty($texttopleft)){
 					
 					//check if there's a qr on the top left corner
-					$qrbottomleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.355, $height*0.846);
+					$qrbottomleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.1255, $height*0.846);
 					$qrbottomleft->writeImage("bottomleft".$qrpath);
 					
 					// QR
@@ -111,21 +128,49 @@ function get_orientation($pdf , $page){
 					$textbottomleft = $qrcodebottomleft->text(); //return decoded text from QR Code
 					
 					if($textbottomleft == "" || $textbottomleft == " " || empty($textbottomleft)){
-						echo "error";
+						return "error";
 					}
 					else{
-						echo "rotated";
+						return "rotated";
 					}
 				}
 				else{
-					echo "rotated";
+					return "rotated";
 				}
 			}
 			else{
-				echo "straight";
+				return "straight";
 			}
 	}
 	else{
-		echo "straight";
+		return "straight";
+	}
+	$imagick->clear();
+}
+
+//pdf = pdfname + extension (.pdf)
+function rotate($pdf, $page){
+	//original pdf
+	$original = new Imagick($pdf);
+	$original->setIteratorIndex($page);
+	
+	//substitute page
+	$myurl = $pdf.'['.$page.']';
+	$imagick = new Imagick();
+	$imagick->readImage($myurl);
+	//rotate page
+	$angle = 180;
+	$imagick->rotateimage(new ImagickPixel(), $angle))
+
+	if($original->setImage($imagick)){
+	$original->setImageFormat("pdf");
+	$original->writeImage($pdf);
+	
+	$imagick->clear();
+	
+	return "1";
+	}
+	else{
+		return "0";
 	}
 }
