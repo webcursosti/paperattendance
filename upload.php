@@ -28,6 +28,11 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once($CFG->dirroot . '/local/paperattendance/forms/upload_form.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 require_once ($CFG->dirroot . "/repository/lib.php");
+require_once ($CFG->libdir . '/pdflib.php');
+require_once ($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/fpdi.php');
+require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php");
+require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
+require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi.php");
 global $DB, $OUTPUT,$COURSE, $USER;
 
 // User must be logged in.
@@ -97,8 +102,62 @@ if ($addform->get_data()) {
 		$DB->rollback_delegated_transaction($transaction, $e);
 	}
 	else{
-	// Display confirmation page before moving out.
+
 	$DB->commit_delegated_transaction($transaction);
+	$time = strtotime(date());
+	$attendancepdffile = $path . "/paperattendance_".$courseid."_".$time.".pdf";
+
+	//read pdf and rewrite it 
+	$pdf = new PDF();
+	// get the page count
+	$pageCount = $pdf->setSourceFile($path."/".$filename);
+	// iterate through all pages
+	for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+    // import a page
+    $templateId = $pdf->importPage($pageNo);
+    // get the size of the imported page
+    $size = $pdf->getTemplateSize($templateId);
+
+    // create a page (landscape or portrait depending on the imported page size)
+    if ($size['w'] > $size['h']) {
+        $pdf->AddPage('L', array($size['w'], $size['h']));
+    } else {
+        $pdf->AddPage('P', array($size['w'], $size['h']));
+    }
+
+    // use the imported page
+    $pdf->useTemplate($templateId);
+	}
+	$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
+	
+	$fs = get_file_storage();
+	
+	$file_record = array(
+			'contextid' => $context->id,
+			'component' => 'local_paperattendance',
+			'filearea' => 'draft',
+			'itemid' => 0,
+			'filepath' => '/',
+			'filename' => "paperattendance_".$courseid."_".$time.".pdf",
+			'timecreated' => time(),
+			'timemodified' => time(),
+			'userid' => $USER->id,
+			'author' => $USER->firstname." ".$USER->lastname,
+			'license' => 'allrightsreserved'
+	);
+	
+	// If the file already exists we delete it
+	if ($fs->file_exists($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$time.".pdf")) {
+		$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$time.".pdf");
+		$previousfile->delete();
+	}
+	
+	// Info for the new file
+	$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
+	
+	unlink($path."/".$filename);
+	
+	// Display confirmation page before moving out.
 	redirect($url, get_string('uploadsuccessful', 'local_paperattendance'), 3);
 	//die();
 	}
