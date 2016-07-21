@@ -282,7 +282,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->line(20, $top, (20+8+25+20+90+20), $top);
 }
 
-function paperattendance_readpdf($path, $filenamem, $course){
+function paperattendance_readpdf($path, $filename, $course){
 	
 	$pdf = new Imagick();
 	$pdf->setResolution( 100, 100 );
@@ -293,22 +293,36 @@ function paperattendance_readpdf($path, $filenamem, $course){
 	
 	$studentlist = paperattendance_students_list($course);
 	
-	for ($countpages = 0; $countpages < $pdftotalpages; $countpages++){
-		
-		$page = new Imagick( $path."/".$filename."[".$countpages."]" );
-		$page->setResolution( 100, 100);
-		$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
-		$page->setImageFormat('png');
-		
-		for ($studentsperpage = 1; $studentsperpage <= 26; $studentsperpage++){
+	$countstudent = 1;
+	foreach ($studentlist as $student){
 			
+		if($countstudent == 1){
+			$page = new Imagick( $path."/".$filename."[1]" );
+			$page->setResolution( 100, 100);
+			$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
+			$page->setImageFormat('png');
+	
+		}else if($countstudent%26 == 0){
+			$page->destroy();
+			
+			$numberpage = ceil($countstudent/26);
+			$page = new Imagick( $path."/".$filename."[".$numberpage."]" );
+			$page->setResolution( 100, 100);
+			$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
+			$page->setImageFormat('png');
 			
 		}
 		
+		$height = $page->getImageHeight();
+		$width = $page->getImageWidth();
 		
-		$page->destroy();
+		$attendancecircle = $page->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*($countstudent-1)));
+		
+		$graychannel = $frame->getImageChannelMean(Imagick::CHANNEL_GRAY);
+		echo "<br>Imagen $countstudent media ".$graychannel["mean"]." desviacion ".$graychannel["standardDeviation"];
+		
+		$countstudent++;
 	}
-		
 	
 	
 	
