@@ -87,7 +87,7 @@ foreach ($image as $frame){
 	$imagick->writeImage('student_'.$countstudents.'.png');
 }*/
 
-$imagick->writeImage('circles.png');
+//$imagick->writeImage('circles.png');
 /*
 
 // QR

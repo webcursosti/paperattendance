@@ -23,9 +23,8 @@
 * @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl) 					
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-//Pertenece al plugin PaperAttendance
 
-define('CLI_SCRIPT', true);
+//define('CLI_SCRIPT', true);
 require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 require_once ($CFG->libdir . '/clilib.php'); 
@@ -63,24 +62,23 @@ $read = 0;
 $found = 0;
 
 // Sql that brings the unread pdfs names
-$unreadpdfs = "SELECT  pdf as name
+$sqlunreadpdfs = "SELECT  id, pdf as name, courseid
 	FROM {paperattendance_session}
 	WHERE status = ?
 	ORDER BY lastmodified asc";
 
 // Parameters for the previous query
-$paramsunreadpdf = array(PAPERATTENDANCE_STATUS_UNREAD);
+$params = array(PAPERATTENDANCE_STATUS_UNREAD);
 
 // Read the pdfs if there is any unread, with readpdf function
-if($resources = $DB->get_record_sql($unreadpdfs, $paramsunreadpdf)){
+if($resources = $DB->get_record_sql($sqlunreadpdfs, $params)){
 	$path = $CFG -> dataroot. "temp/local/paperattendance/unread";
 	foreach($resources as $pdf){
-	$found++;
-	$name = $pdf-> name;
-	$process = readpdf($path."/".$name);
-	if($process){
-	$read++;	
-	}
+		$found++;
+		$process = paperattendance_readpdf($path, $pdf-> name, $pdf->courseid);
+		if($process){
+			$read++;	
+		}
 	}
 	
 	echo $found." pdfs found. \n";

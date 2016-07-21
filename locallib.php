@@ -22,7 +22,8 @@
 
 // Define whether the pdf has been processed or not 
 define('PAPERATTENDANCE_STATUS_UNREAD', 0); //not processed
-define('PAPERATTENDANCE_STATUS_READ', 1); //already processed
+define('PAPERATTENDANCE_STATUS_PROCESSED', 1); //already processed
+define('PAPERATTENDANCE_STATUS_SYNC', 2); //already synced with omega
 
 /**
 * Creates a QR image based on a string
@@ -64,6 +65,41 @@ function paperattendance_get_students_for_printing($course) {
 	$rs = $DB->get_recordset_sql($query, $params);
 	return $rs;
 }
+
+/**
+ * Get the student list
+ * 
+ * @param int $course
+ *            Id course
+ */
+function paperattendance_students_list($course){
+	//TODO: Add enrolments for omega, Remember change "manual".
+	$enrolincludes = array("manual");
+	$filedir = $CFG->dataroot . "/temp/emarking/$context->id";
+	$userimgdir = $filedir . "/u";
+	$students = paperattendance_get_students_for_printing($course);
+	
+	$studentinfo = array();
+	// Fill studentnames with student info (name, idnumber, id and picture).
+	foreach($students as $student) {
+		$studentenrolments = explode(",", $student->enrol);
+		// Verifies that the student is enrolled through a valid enrolment and that we haven't added her yet.
+		if (count(array_intersect($studentenrolments, $enrolincludes)) == 0 || isset($studentinfo[$student->id])) {
+			continue;
+		}
+		// We create a student info object.
+		$studentobj = new stdClass();
+		$studentobj->name = substr("$student->lastname, $student->firstname", 0, 65);
+		$studentobj->idnumber = $student->idnumber;
+		$studentobj->id = $student->id;
+		$studentobj->picture = emarking_get_student_picture($student, $userimgdir);
+		// Store student info in hash so every student is stored once.
+		$studentinfo[$student->id] = $studentobj;
+	}
+	
+	return $studentinfo;
+}
+
 
 /**
  * Draws a table with a list of students in the $pdf document
@@ -245,3 +281,36 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	}
 	$pdf->line(20, $top, (20+8+25+20+90+20), $top);
 }
+
+function paperattendance_readpdf($path, $filenamem, $course){
+	
+	$pdf = new Imagick();
+	$pdf->setResolution( 100, 100 );
+	$pdf->readImage( $path."/".$filename );
+	$pdf->setImageType( imagick::IMGTYPE_GRAYSCALE );
+	
+	$pdftotalpages = $pdf->getNumberImages();
+	
+	$studentlist = paperattendance_students_list($course);
+	
+	for ($countpages = 0; $countpages < $pdftotalpages; $countpages++){
+		
+		$page = new Imagick( $path."/".$filename."[".$countpages."]" );
+		$page->setResolution( 100, 100);
+		$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
+		$page->setImageFormat('png');
+		
+		for ($studentsperpage = 1; $studentsperpage <= 26; $studentsperpage++){
+			
+			
+		}
+		
+		
+		$page->destroy();
+	}
+		
+	
+	
+	
+}
+
