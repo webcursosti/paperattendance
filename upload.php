@@ -104,29 +104,29 @@ if ($addform->get_data()) {
 	else{
 
 	$DB->commit_delegated_transaction($transaction);
-	$time = strtotime(date());
-	$attendancepdffile = $path . "/paperattendance_".$courseid."_".$time.".pdf";
+	$time = time();
+	$attendancepdffile = $path . "/unread/paperattendance_".$courseid."_".$time.".pdf";
 
 	//read pdf and rewrite it 
-	$pdf = new PDF();
+	$pdf = new FPDI();
 	// get the page count
-	$pageCount = $pdf->setSourceFile($path."/".$filename);
+	$pageCount = $pdf->setSourceFile($path."/unread/".$filename);
 	// iterate through all pages
 	for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
-    // import a page
-    $templateId = $pdf->importPage($pageNo);
-    // get the size of the imported page
-    $size = $pdf->getTemplateSize($templateId);
-
-    // create a page (landscape or portrait depending on the imported page size)
-    if ($size['w'] > $size['h']) {
-        $pdf->AddPage('L', array($size['w'], $size['h']));
-    } else {
-        $pdf->AddPage('P', array($size['w'], $size['h']));
-    }
-
-    // use the imported page
-    $pdf->useTemplate($templateId);
+	    // import a page
+	    $templateId = $pdf->importPage($pageNo);
+	    // get the size of the imported page
+	    $size = $pdf->getTemplateSize($templateId);
+	
+	    // create a page (landscape or portrait depending on the imported page size)
+	    if ($size['w'] > $size['h']) {
+	        $pdf->AddPage('L', array($size['w'], $size['h']));
+	    } else {
+	        $pdf->AddPage('P', array($size['w'], $size['h']));
+	    }
+	
+	    // use the imported page
+	    $pdf->useTemplate($templateId);
 	}
 	$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
 	
@@ -155,7 +155,7 @@ if ($addform->get_data()) {
 	// Info for the new file
 	$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
 	
-	unlink($path."/".$filename);
+	unlink($path."/unread/".$filename);
 	
 	// Display confirmation page before moving out.
 	redirect($url, get_string('uploadsuccessful', 'local_paperattendance'), 3);

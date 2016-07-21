@@ -26,6 +26,7 @@
 require_once (dirname(dirname(dirname(__FILE__))) . "/config.php");
 require_once ($CFG->dirroot . '/local/paperattendance/phpqrcode/phpqrcode.php');
 require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
+require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 global $DB, $PAGE, $OUTPUT, $USER;
 
 $context = context_system::instance();
@@ -41,6 +42,8 @@ $PAGE->set_title($pagetitle);
 
 echo $OUTPUT->header();
 
+$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
+$process = paperattendance_readpdf($path, "paperattendance_3.pdf", 2);
 
 $imagick = new Imagick();
 $imagick->setResolution(100,100);
@@ -69,7 +72,7 @@ for ($countstudent = 0; $countstudent < 26; $countstudent++){
 	//$imagick->cropImage($width*0.04, $height*0.026, $width*0.765, $height*(0.18+0.016*$countstudents));
 	$frame->writeImage('student_'.$countstudent.'.png');
 	$x = $frame->getImageChannelMean(Imagick::CHANNEL_GRAY);
-	echo "<br>Imagen $countstudent media ".$x["mean"]." desviacion ".$x["standardDeviation"];
+	//echo "<br>Imagen $countstudent media ".$x["mean"]." desviacion ".$x["standardDeviation"];
 	/*
 	$pixels = $frame->exportImagePixels(0, 0, $width*0.035, $height*0.022, "RBG", Imagick::PIXEL_CHAR);
 	$average = array_sum($pixels)/count($pixels);
@@ -116,8 +119,8 @@ echo "<br>".$average."<br>";
 
 
 
-$qrcode = new QrReader('delcorte.png');
-$text = $qrcode->text(); //return decoded text from QR Code
+//$qrcode = new QrReader('delcorte.png');
+//$text = $qrcode->text(); //return decoded text from QR Code
 
 //echo "<br>".$text;
 /*
