@@ -76,7 +76,7 @@ if ($addform->get_data()) {
 		}	
 	// Save file
 	$filename = $addform->get_new_filename('file');
-	$file = $addform->save_file('file', "/temp/local/paperattandace/".$filename, false);
+	$file = $addform->save_file('file', $path."/unread/".$filename, false);
 	// Validate that file was correctly uploaded.
 	
 	$transaction = $DB->start_delegated_transaction();

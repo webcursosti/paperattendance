@@ -29,7 +29,6 @@ require_once ($CFG->libdir . '/pdflib.php');
 require_once ($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/fpdi.php');
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php");
 require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
-require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi.php");
 require_once ($CFG->dirroot . "/mod/emarking/print/locallib.php");
 require_once ("locallib.php");
 global $DB, $PAGE, $OUTPUT, $USER;
@@ -90,30 +89,10 @@ if($action == "add"){
 		$pdf = new PDF();
 		$pdf->setPrintHeader(false);
 		$pdf->setPrintFooter(false);
-	
-		//TODO: Add enrolments for omega, Remember change "manual".
-		$enrolincludes = array("manual");
-		$filedir = $CFG->dataroot . "/temp/emarking/$context->id";
-		$userimgdir = $filedir . "/u";
-		$students = paperattendance_get_students_for_printing($course);
-		
-		$studentinfo = array();
-		// Fill studentnames with student info (name, idnumber, id and picture).
-		foreach($students as $student) {
-			$studentenrolments = explode(",", $student->enrol);
-			// Verifies that the student is enrolled through a valid enrolment and that we haven't added her yet.
-			if (count(array_intersect($studentenrolments, $enrolincludes)) == 0 || isset($studentinfo[$student->id])) {
-				continue;
-			}
-			// We create a student info object.
-			$studentobj = new stdClass();
-			$studentobj->name = substr("$student->lastname, $student->firstname", 0, 65);
-			$studentobj->idnumber = $student->idnumber;
-			$studentobj->id = $student->id;
-			$studentobj->picture = emarking_get_student_picture($student, $userimgdir);
-			// Store student info in hash so every student is stored once.
-			$studentinfo[$student->id] = $studentobj;
-		}
+
+		// Get student for the list
+		$studentinfo = paperattendance_students_list($course);
+
 		// We validate the number of students as we are filtering by enrolment.
 		// type after getting the data.
 		$numberstudents = count($studentinfo);
