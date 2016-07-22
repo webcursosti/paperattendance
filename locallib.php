@@ -414,6 +414,7 @@ function get_orientation($path, $pdf, $page){
 }
 
 function get_qr_text($path, $pdf){
+	global $CFG, $DB;
 	require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
 
 	$pdfexplode = explode(".",$pdf);
@@ -500,21 +501,22 @@ function insert_session_module($moduleid, $sessionid, $time){
 }
 
 //returns {perfect, repited}
-function check_session_modules($arraymodule, $courseid, $time){
+function check_session_modules($arraymodules, $courseid, $time){
 	global $DB;
 
-	$query = "SELECT sessmodule.id FROM {paperattendance_session} AS sess
-				INNER JOIN {paperattendance_sessmodule} AS sessmodule ON (sessmodule.moduleid = sess.id)
-				WHERE sess.courseid = ? AND sessmodule.moduleid = ? AND sessmodule.date = ? '";
+	$query = "SELECT sessmodule.id
+			FROM {paperattendance_session} AS sess
+			INNER JOIN {paperattendance_sessmodule} AS sessmodule ON (sessmodule.sessionid = sess.id)
+			WHERE sess.courseid = ? AND sessmodule.moduleid = ? AND sessmodule.date = ? ";
 	$verification = 0;
 
 	$pos = substr_count($arraymodules, ':');
 	if ($pos == 0) {
 		$module = $arraymodules;
+		
+		$count = $DB->get_records_sql($query, array($courseid, $module, $time));
 
-		$count = $DB->count_records($query, array($courseid, $module, $time));
-
-		if($count == 0){
+		if(count($count) == 0){
 			return "perfect";
 		}
 		else{
@@ -527,7 +529,7 @@ function check_session_modules($arraymodule, $courseid, $time){
 
 			//for each module inside $arraymodules, check if records exists.
 			$module = $modulesexplode[$i];
-			$count = $DB->count_records($query, array($courseid, $module, $time));
+			$count = $DB->count_records_sql($query, array($courseid, $module, $time));
 			if($count != 0){
 				$verification++;
 			}
@@ -544,6 +546,7 @@ function check_session_modules($arraymodule, $courseid, $time){
 
 function read_pdf_save_session($path, $pdffile){
 	//path must end with "/"
+	global $USER;
 
 	$qrtext = get_qr_text($path, $pdffile);
 	if($qrtext != "error"){
@@ -592,7 +595,7 @@ function read_pdf_save_session($path, $pdffile){
 		else{
 			//couldnt read qr
 			echo "Couldn´t read qr";
-			echo "<br> Orientation is: " get_orientation($path, $pdffile, "0");
+			echo "<br> Orientation is: " .get_orientation($path, $pdffile, "0");
 			echo "<br> Please make sure pdf is straight, without tilt and header on top";
 		}
 	}
