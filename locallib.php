@@ -332,6 +332,7 @@ function paperattendance_readpdf($path, $filename, $course){
 // //returns orientation {straight, rotated, error}
 // //pdf = pdfname + extension (.pdf)
 function get_orientation($path, $pdf, $page){
+	global $CFG;
 	require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
 
 	$pdfexplode = explode(".",$pdf);
@@ -621,8 +622,12 @@ function rotate($path, $pdfname){
 	    // use the imported page
 	    $pdf->useTemplate($templateId);
 	}
-	$pdf->Output($path.$pdfname, "F"); // Se genera el nuevo pdf.
-
+	if($pdf->Output($path.$pdfname, "F")) // Se genera el nuevo pdf.
+	{
+	return true;
+}else{
+	return false;
+}
 }
 
 
