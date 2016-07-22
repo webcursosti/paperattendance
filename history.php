@@ -49,7 +49,6 @@ if (isguestuser()){
 }
 
 
-
 /////////Inicio vista profesor
 
 if( has_capability("local/paperattendance:history", $context) || is_siteadmin($USER) ){
@@ -217,6 +216,45 @@ if($action == "edit"){
 }
 }
 
+//Scan view
+if($action == "scan"){
+	
+	$back = new moodle_url("/local/paperattendance/history.php", array(
+			"action" => "view",
+			"idattendance" => $idattendance,
+			"courseid" => $idcurso
+			));
+	
+	$button = html_writer::nonempty_tag(
+			"div",
+			$OUTPUT->single_button($back, "Volver"),
+			array("align" => "left"
+			));
+
+	/*$sql = 'SELECT
+            itemid
+			FROM {files} AS f
+            WHERE f.filename = ? AND f.filesize != 0 ';
+	
+	$item = $DB->get_record_sql($sql, array("paperattendance_".$idattendance.".pdf"));
+	$itemid= (int) $item->itemid;
+	var_dump($itemid);*/
+	
+	$sql = 'SELECT
+            pdf
+			FROM {paperattendance_session} AS ps
+            WHERE ps.id = ?';
+	
+	$pdfname = $DB->get_record_sql($sql, array($idattendance));
+	//$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$idattendance.".pdf");
+	$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', $pdfname);
+
+	$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
+			"src" => $url,
+			"style" => "height:75vh; width:60vw"
+	));
+}
+
 // Lists all records in the database
 if ($action == "view"){
 	$sql = "SELECT s.id, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, s.pdf
@@ -301,6 +339,18 @@ if ($action == "asistenciaalumnos"){
 // Displays the form to edit a record
 if( $action == "edit" ){
 	$editform->display();
+}
+
+//Displays the scan file
+if($action == "scan"){
+
+	// Donwload and back buttons
+	echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "descargar"), null, array("target" => "_blank"));
+	echo "Descargar lista de asistencia";
+	echo $button;
+
+	// Preview PDF
+	echo $viewerpdf;
 }
 
 // Displays all the records and options
