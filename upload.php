@@ -96,13 +96,7 @@ if ($addform->get_data()) {
 // 	$pdfinsert->status = 0;
 // 	$pdfinsert->lastmodified = time();
 // 	$pdfinsert->id = $DB->insert_record('paperattendance_session', $pdfinsert);
-	
-	if (!$file) {
-		print_error('Could not upload file');
-//		$e = new exception('Failed to create file in moodle filesystem');
-//		$DB->rollback_delegated_transaction($transaction, $e);
-	}
-	else{
+
 
 //	$DB->commit_delegated_transaction($transaction);
 	$attendancepdffile = $path . "/unread/paperattendance_".$courseid."_".$time.".pdf";
@@ -164,7 +158,7 @@ if ($addform->get_data()) {
 	// Display confirmation page before moving out.
 	redirect($url, get_string('uploadsuccessful', 'local_paperattendance'), 3);
 	//die();
-	}
+	
 }
 // If there is no data or is it not cancelled show the header, the tabs and the form.
 echo $OUTPUT->header();
