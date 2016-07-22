@@ -459,12 +459,17 @@ function get_qr_text($path, $pdf){
 			return "error";
 		}
 		else {
+			//delete unused png
+			unlink($path."bottomright".$qrpath);
 			return $textbottom;
 		}
 	}
 	else {
+		//delete unused png
+		unlink($path."topright".$qrpath);
 		return $texttop;
 	}
+	$imagick->clear();
 }
 
 
@@ -504,44 +509,22 @@ function insert_session_module($moduleid, $sessionid, $time){
 function check_session_modules($arraymodules, $courseid, $time){
 	global $DB;
 
-	$query = "SELECT sessmodule.id
-			FROM {paperattendance_session} AS sess
-			INNER JOIN {paperattendance_sessmodule} AS sessmodule ON (sessmodule.sessionid = sess.id)
-			WHERE sess.courseid = ? AND sessmodule.moduleid = ? AND sessmodule.date = ? ";
 	$verification = 0;
-
-	$pos = substr_count($arraymodules, ':');
-	if ($pos == 0) {
-		$module = $arraymodules;
-		
-		$count = $DB->get_records_sql($query, array($courseid, $module, $time));
-
-		if(count($count) == 0){
+	$modulesexplode = explode(":",$arraymodules);
+	list ( $sqlin, $parametros1 ) = $DB->get_in_or_equal ( $modulesexplode );
+	$parametros2 = array($courseid, $time);
+	$parametros = array_merge($parametros1,$parametros2);
+	$query = "SELECT sess.id, sessmodule.id
+	FROM {paperattendance_session} AS sess
+	INNER JOIN {paperattendance_sessmodule} AS sessmodule ON (sessmodule.sessionid = sess.id)
+	WHERE sessmodule.moduleid $sqlin AND sess.courseid = ?  AND sessmodule.date = ? ";
+	$resultado = $DB->get_records_sql ($query, $parametros );
+		if(count($resultado) == 0){
 			return "perfect";
 		}
 		else{
 			return "repited";
 		}
-	}
-	else {
-		$modulesexplode = explode(":",$arraymodules);
-		for ($i = 0; $i <= $pos; $i++) {
-
-			//for each module inside $arraymodules, check if records exists.
-			$module = $modulesexplode[$i];
-			$count = $DB->count_records_sql($query, array($courseid, $module, $time));
-			if($count != 0){
-				$verification++;
-			}
-		}
-		if($verification == 0){
-			return "perfect";
-		}
-		else{
-			return "repited";
-		}
-
-	}
 }
 
 function read_pdf_save_session($path, $pdffile){
