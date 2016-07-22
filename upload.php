@@ -82,31 +82,31 @@ if ($addform->get_data()) {
 	// Save file
 	$filename = $addform->get_new_filename('file');
 	$file = $addform->save_file('file', $path."/unread/".$filename, false);
+	$time = strtotime(date("d-m-Y"));
 	// Validate that file was correctly uploaded.
 	
-	$transaction = $DB->start_delegated_transaction();
-	// Insert the record that associates a digitized file with a set of answers.
-	$pdfinsert = new stdClass();
-	$pdfinsert->id = "NULL";
-	$pdfinsert->courseid = $courseid;
-	$pdfinsert->teacherid = $teacherid;
-	$pdfinsert->uploaderid = $USER-> id;
-	$pdfinsert->pdf = $filename;
-	$pdfinsert->status = 0;
-	$pdfinsert->lastmodified = time();
-	$pdfinsert->id = $DB->insert_record('paperattendance_session', $pdfinsert);
+// 	$transaction = $DB->start_delegated_transaction();
+// 	// Insert the record that associates a digitized file with a set of answers.
+// 	$pdfinsert = new stdClass();
+// 	$pdfinsert->id = "NULL";
+// 	$pdfinsert->courseid = $courseid;
+// 	$pdfinsert->teacherid = $teacherid;
+// 	$pdfinsert->uploaderid = $USER-> id;
+// 	$pdfinsert->pdf = "paperattendance_".$courseid."_".$time.".pdf";
+// 	$pdfinsert->status = 0;
+// 	$pdfinsert->lastmodified = time();
+// 	$pdfinsert->id = $DB->insert_record('paperattendance_session', $pdfinsert);
 	
 	if (!$file) {
 		print_error('Could not upload file');
-		$e = new exception('Failed to create file in moodle filesystem');
-		$DB->rollback_delegated_transaction($transaction, $e);
+//		$e = new exception('Failed to create file in moodle filesystem');
+//		$DB->rollback_delegated_transaction($transaction, $e);
 	}
 	else{
 
-	$DB->commit_delegated_transaction($transaction);
-	$time = time();
+//	$DB->commit_delegated_transaction($transaction);
 	$attendancepdffile = $path . "/unread/paperattendance_".$courseid."_".$time.".pdf";
-
+	
 	//read pdf and rewrite it 
 	$pdf = new FPDI();
 	// get the page count
@@ -155,6 +155,10 @@ if ($addform->get_data()) {
 	// Info for the new file
 	$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
 	
+	//read pdf and save session and sessmodules
+	read_pdf_save_session($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
+	
+	//delete unused pdf
 	unlink($path."/unread/".$filename);
 	
 	// Display confirmation page before moving out.
