@@ -99,26 +99,5 @@ echo $OUTPUT->header();
 		echo "<br> Session already exists";
 	}
 	}
-	
-// $filename = "paperattendance_2.pdf";
 
-// $document = new Imagick($filename);
-// $pdftotalpages = $document->getNumberImages();
-// var_dump($pdftotalpages);
-// $document->clear();
-
-// for ($pdfpage = 0; $pdfpage < $pdftotalpages; $pdfpage++) {
-// 	//get pdf page orientation
-// 	$orientation = get_orientation($filename,"$pdfpage");
-// 	echo "<br>".$orientation;
-	
-// 	//rotate pdf page if necessary
-// 	if($orientation == "rotated"){
-// 		$rotate = rotate($filename,$pdfpage, $pdftotalpages);
-// 		echo "<br>".$rotate;
-// 	}
-// 	else {
-// 		echo "page ".$pdfpage." is straight";
-// 	}
-// }
 echo $OUTPUT->footer();

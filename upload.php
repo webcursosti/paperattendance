@@ -75,7 +75,7 @@ if ($addform->get_data()) {
 	$data = $addform -> get_data();
 	$teacherid = $data -> teacher;
 	
-	$path = $CFG -> dataroot. "/temp/local/paperattandace/";
+	$path = $CFG -> dataroot. "/temp/local/paperattandace";
 	if (!file_exists($path . "/unread/")) {
 			mkdir($path . "/unread/", 0777, true);
 		}	
@@ -84,21 +84,7 @@ if ($addform->get_data()) {
 	$file = $addform->save_file('file', $path."/unread/".$filename, false);
 	$time = strtotime(date("d-m-Y"));
 	// Validate that file was correctly uploaded.
-	
-// 	$transaction = $DB->start_delegated_transaction();
-// 	// Insert the record that associates a digitized file with a set of answers.
-// 	$pdfinsert = new stdClass();
-// 	$pdfinsert->id = "NULL";
-// 	$pdfinsert->courseid = $courseid;
-// 	$pdfinsert->teacherid = $teacherid;
-// 	$pdfinsert->uploaderid = $USER-> id;
-// 	$pdfinsert->pdf = "paperattendance_".$courseid."_".$time.".pdf";
-// 	$pdfinsert->status = 0;
-// 	$pdfinsert->lastmodified = time();
-// 	$pdfinsert->id = $DB->insert_record('paperattendance_session', $pdfinsert);
 
-
-//	$DB->commit_delegated_transaction($transaction);
 	$attendancepdffile = $path . "/unread/paperattendance_".$courseid."_".$time.".pdf";
 	
 	//read pdf and rewrite it 
@@ -148,6 +134,9 @@ if ($addform->get_data()) {
 	
 	// Info for the new file
 	$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
+	
+	//rotate pages of the pdf if necessary
+	rotate($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
 	
 	//read pdf and save session and sessmodules
 	read_pdf_save_session($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");

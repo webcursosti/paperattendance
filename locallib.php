@@ -586,40 +586,43 @@ function read_pdf_save_session($path, $pdffile){
 		echo "<br> Session already exists";
 	}
 }
+
 // //pdf = pdfname + extension (.pdf)
-// function rotate($pdf, $page, $totalpages){
+function rotate($path, $pdfname){
+	
+	//read pdf and rewrite it 
+	$pdf = new FPDI();
+	// get the page count
+	$pageCount = $pdf->setSourceFile($path.$pdfname);
+	// iterate through all pages
+	for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+		//get page orientation
+		$orientation = get_orientation($path, $pdfname,"$pageNo");
+	    // import a page
+	    $templateId = $pdf->importPage($pageNo);
+	    // get the size of the imported page
+	    $size = $pdf->getTemplateSize($templateId);
+	
+	    // create a page (landscape or portrait depending on the imported page size)
+	    if($orientation == "rotated"){
+		    if ($size['w'] > $size['h']) {
+		        $pdf->AddPage('L', array($size['w'], $size['h']),180);
+		    } else {
+		        $pdf->AddPage('P', array($size['w'], $size['h']),180);
+		    }
+	    }
+	    else{
+	    	if ($size['w'] > $size['h']) {
+	    		$pdf->AddPage('L', array($size['w'], $size['h']));
+	    	} else {
+	    		$pdf->AddPage('P', array($size['w'], $size['h']));
+	    	}
+	    }
+	    // use the imported page
+	    $pdf->useTemplate($templateId);
+	}
+	$pdf->Output($path.$pdfname, "F"); // Se genera el nuevo pdf.
 
-// 	//rotated
-// 	$myurl = $pdf.'['.$page.']';
-// 	$imagick = new Imagick();
-// 	$imagick->readImage($myurl);
-// 	$angle = 180;
-//  	$imagick->rotateimage(new ImagickPixel(), $angle);
-//  	$imagick->setImageFormat('pdf');
-//  	$imagick->setResolution(100,100);
-//  	$imagick->writeImage('rotated.pdf');
-
-// 	//combined
-// 	$combined = new Imagick();
-
-// 	for ($originalpage = 0; $originalpage < $totalpages; $originalpage++) {
-// 		if($originalpage != $page){
-// 		$addpage = new Imagick($pdf.'['.$originalpage.']');
-// 		$combined->addImage($addpage);
-// 		}
-// 		else{
-// 		$rotated = new Imagick('rotated.pdf');
-// 		$combined->addImage($rotated);
-// 		}
-// 	}
-
-// 	$combined->setImageFormat('pdf');
-// 	if( $combined->writeImage($pdf)){
-// 	return "1";
-// 	}
-// 	else{
-// 	return "0";
-// 	}
-// }
+}
 
 
