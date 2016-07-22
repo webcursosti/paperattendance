@@ -328,3 +328,312 @@ function paperattendance_readpdf($path, $filename, $course){
 	
 }
 
+
+// //returns orientation {straight, rotated, error}
+// //pdf = pdfname + extension (.pdf)
+function get_orientation($path, $pdf, $page){
+	require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
+
+	$pdfexplode = explode(".",$pdf);
+	$pdfname = $pdfexplode[0];
+	$qrpath = $pdfname.'qr.png';
+
+	//save the pdf page as a png
+	$myurl = $pdf.'['.$page.']';
+	$image = new Imagick($path.$myurl);
+	$image->setResolution(100,100);
+	$image->setImageFormat( 'png' );
+	$image->writeImage( $path.$pdfname.'.png' );
+	$image->clear();
+
+	//check if there's a qr on the top right corner
+	$imagick = new Imagick();
+	$imagick->setResolution(100,100);
+	$imagick->readImage( $path.$pdfname.'.png' );
+	$imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
+
+	$height = $imagick->getImageHeight();
+	$width = $imagick->getImageWidth();
+
+	$qrtop = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.652, $height*0.014);
+	$qrtop->writeImage($path."topright".$qrpath);
+
+	// QR
+	$qrcodetop = new QrReader($path."topright".$qrpath);
+	$texttop = $qrcodetop->text(); //return decoded text from QR Code
+
+	if($texttop == "" || $texttop == " " || empty($texttop)){
+
+		//check if there's a qr on the bottom right corner
+		$qrbottom = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.652, $height*0.846);
+		$qrbottom->writeImage($path."bottomright".$qrpath);
+
+		// QR
+		$qrcodebottom = new QrReader($path."bottomright".$qrpath);
+		$textbottom = $qrcodebottom->text(); //return decoded text from QR Code
+
+		if($textbottom == "" || $textbottom == " " || empty($textbottom)){
+
+			//check if there's a qr on the top left corner
+			$qrtopleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.1225, $height*0.014);
+			$qrtopleft->writeImage($path."topleft".$qrpath);
+
+			// QR
+			$qrcodetopleft = new QrReader($path."topleft".$qrpath);
+			$texttopleft = $qrcodetopleft->text(); //return decoded text from QR Code
+
+			if($texttopleft == "" || $texttopleft == " " || empty($texttopleft)){
+					
+				//check if there's a qr on the top left corner
+				$qrbottomleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.1255, $height*0.846);
+				$qrbottomleft->writeImage($path."bottomleft".$qrpath);
+					
+				// QR
+				$qrcodebottomleft = new QrReader($path."bottomleft".$qrpath);
+				$textbottomleft = $qrcodebottomleft->text(); //return decoded text from QR Code
+					
+				if($textbottomleft == "" || $textbottomleft == " " || empty($textbottomleft)){
+					return "error";
+				}
+				else{
+					return "rotated";
+				}
+			}
+			else{
+				return "rotated";
+			}
+		}
+		else{
+			return "straight";
+		}
+	}
+	else{
+		return "straight";
+	}
+	$imagick->clear();
+}
+
+function get_qr_text($path, $pdf){
+	require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
+
+	$pdfexplode = explode(".",$pdf);
+	$pdfname = $pdfexplode[0];
+	$qrpath = $pdfname.'qr.png';
+
+	//save the pdf page as a png
+	$myurl = $pdf.'[0]';
+	$image = new Imagick($path.$myurl);
+	$image->setResolution(100,100);
+	$image->setImageFormat( 'png' );
+	$image->writeImage( $path.$pdfname.'.png' );
+	$image->clear();
+
+	//check if there's a qr on the top right corner
+	$imagick = new Imagick();
+	$imagick->setResolution(100,100);
+	$imagick->readImage( $path.$pdfname.'.png' );
+	$imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
+
+	$height = $imagick->getImageHeight();
+	$width = $imagick->getImageWidth();
+
+	$qrtop = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.652, $height*0.014);
+	$qrtop->writeImage($path."topright".$qrpath);
+
+	// QR
+	$qrcodetop = new QrReader($path."topright".$qrpath);
+	$texttop = $qrcodetop->text(); //return decoded text from QR Code
+
+	if($texttop == "" || $texttop == " " || empty($texttop)){
+
+		//check if there's a qr on the bottom right corner
+		$qrbottom = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.652, $height*0.846);
+		$qrbottom->writeImage($path."bottomright".$qrpath);
+
+		// QR
+		$qrcodebottom = new QrReader($path."bottomright".$qrpath);
+		$textbottom = $qrcodebottom->text(); //return decoded text from QR Code
+
+		if($textbottom == "" || $textbottom == " " || empty($textbottom)){
+			return "error";
+		}
+		else {
+			return $textbottom;
+		}
+	}
+	else {
+		return $texttop;
+	}
+}
+
+
+function insert_session($courseid, $requestorid, $userid, $pdffile){
+	global $DB;
+
+	$sessioninsert = new stdClass();
+	$sessioninsert->id = "NULL";
+	$sessioninsert->courseid = $courseid;
+	$sessioninsert->teacherid = $requestorid;
+	$sessioninsert->uploaderid = $userid;
+	$sessioninsert->pdf = $pdffile;
+	$sessioninsert->status = 0;
+	$sessioninsert->lastmodified = time();
+	$sessionid = $DB->insert_record('paperattendance_session', $sessioninsert);
+	return $sessionid;
+}
+
+
+function insert_session_module($moduleid, $sessionid, $time){
+	global $DB;
+
+	$sessionmoduleinsert = new stdClass();
+	$sessionmoduleinsert->id = "NULL";
+	$sessionmoduleinsert->moduleid = $moduleid;
+	$sessionmoduleinsert->sessionid = $sessionid;
+	$sessionmoduleinsert->date = $time;
+	if($DB->insert_record('paperattendance_sessmodule', $sessionmoduleinsert)){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+//returns {perfect, repited}
+function check_session_modules($arraymodule, $courseid, $time){
+	global $DB;
+
+	$query = "SELECT sessmodule.id FROM {paperattendance_session} AS sess
+				INNER JOIN {paperattendance_sessmodule} AS sessmodule ON (sessmodule.moduleid = sess.id)
+				WHERE sess.courseid = ? AND sessmodule.moduleid = ? AND sessmodule.date = ? '";
+	$verification = 0;
+
+	$pos = substr_count($arraymodules, ':');
+	if ($pos == 0) {
+		$module = $arraymodules;
+
+		$count = $DB->count_records($query, array($courseid, $module, $time));
+
+		if($count == 0){
+			return "perfect";
+		}
+		else{
+			return "repited";
+		}
+	}
+	else {
+		$modulesexplode = explode(":",$arraymodules);
+		for ($i = 0; $i <= $pos; $i++) {
+
+			//for each module inside $arraymodules, check if records exists.
+			$module = $modulesexplode[$i];
+			$count = $DB->count_records($query, array($courseid, $module, $time));
+			if($count != 0){
+				$verification++;
+			}
+		}
+		if($verification == 0){
+			return "perfect";
+		}
+		else{
+			return "repited";
+		}
+
+	}
+}
+
+function read_pdf_save_session($path, $pdffile){
+	//path must end with "/"
+
+	$qrtext = get_qr_text($path, $pdffile);
+	if($qrtext != "error"){
+		//if there's a readable qr
+
+		$qrtextexplode = explode("*",$qrtext);
+		$courseid = $qrtextexplode[0];
+		$requestorid = $qrtextexplode[1];
+		$arraymodules = $qrtextexplode[2];
+		$time = $qrtextexplode[3];
+		$page = $qrtextexplode[4];
+
+		$verification = check_session_modules($arraymodules, $courseid, $time);
+		if($verification == "perfect"){
+			$pos = substr_count($arraymodules, ':');
+			if ($pos == 0) {
+				$module = $arraymodules;
+				$sessionid = insert_session($courseid, $requestorid, $USER-> id, $pdffile);
+				$verification = insert_session_module($module, $sessionid, $time);
+				if($verification == true){
+					echo "<br> Perfect";
+				}
+				else{
+					echo "<br> Error";
+				}
+			}
+			else {
+				$modulesexplode = explode(":",$arraymodules);
+
+				for ($i = 0; $i <= $pos; $i++) {
+						
+					//for each module inside $arraymodules, save records.
+					$module = $modulesexplode[$i];
+
+					$sessionid = insert_session($courseid, $requestorid, $USER-> id, $pdffile);
+					$verification = insert_session_module($module, $sessionid, $time);
+					if($verification == true){
+						echo "<br> Perfect";
+					}
+					else{
+						echo "<br> Error";
+					}
+				}
+			}
+		}
+		else{
+			//couldnt read qr
+			echo "Couldn´t read qr";
+			echo "<br> Orientation is: " get_orientation($path, $pdffile, "0");
+			echo "<br> Please make sure pdf is straight, without tilt and header on top";
+		}
+	}
+	else{
+		echo "<br> Session already exists";
+	}
+}
+// //pdf = pdfname + extension (.pdf)
+// function rotate($pdf, $page, $totalpages){
+
+// 	//rotated
+// 	$myurl = $pdf.'['.$page.']';
+// 	$imagick = new Imagick();
+// 	$imagick->readImage($myurl);
+// 	$angle = 180;
+//  	$imagick->rotateimage(new ImagickPixel(), $angle);
+//  	$imagick->setImageFormat('pdf');
+//  	$imagick->setResolution(100,100);
+//  	$imagick->writeImage('rotated.pdf');
+
+// 	//combined
+// 	$combined = new Imagick();
+
+// 	for ($originalpage = 0; $originalpage < $totalpages; $originalpage++) {
+// 		if($originalpage != $page){
+// 		$addpage = new Imagick($pdf.'['.$originalpage.']');
+// 		$combined->addImage($addpage);
+// 		}
+// 		else{
+// 		$rotated = new Imagick('rotated.pdf');
+// 		$combined->addImage($rotated);
+// 		}
+// 	}
+
+// 	$combined->setImageFormat('pdf');
+// 	if( $combined->writeImage($pdf)){
+// 	return "1";
+// 	}
+// 	else{
+// 	return "0";
+// 	}
+// }
+
+

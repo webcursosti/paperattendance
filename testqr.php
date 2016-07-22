@@ -24,13 +24,13 @@
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 require_once (dirname(dirname(dirname(__FILE__))) . "/config.php");
-require_once ($CFG->dirroot . '/local/paperattendance/phpqrcode/phpqrcode.php');
 require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
+require_once ("locallib.php");
 global $DB, $PAGE, $OUTPUT, $USER;
 
 $context = context_system::instance();
 
-$urlprint = new moodle_url("/local/paperattendance/testpdfs.php");
+$urlprint = new moodle_url("/local/paperattendance/testqr.php");
 // Page navigation and URL settings.
 $pagetitle = "TEST imagick";
 $PAGE->set_context($context);
@@ -40,145 +40,85 @@ $PAGE->set_title($pagetitle);
 
 echo $OUTPUT->header();
 
-$filename = "paperattendance_2.pdf";
-
-$document = new Imagick($filename);
-$pdftotalpages = $document->getNumberImages();
-var_dump($pdftotalpages);
-$document->clear();
-
-for ($pdfpage = 0; $pdfpage < $pdftotalpages; $pdfpage++) {
-	//get pdf page orientation
-	$orientation = get_orientation($filename,$pdfpage);
-	echo "<br>".$orientation;
+	$pdffile = "paperattendance_3_1469115554.pdf";
+	function read_pdf_save_session($path, $pdffile){
+	//path must end with "/"	
 	
-	//rotate pdf page if necessary
-	if($orientation == "rotated"){
-		$rotate = rotate($filename,$pdfpage, $pdftotalpages);
-		echo "<br>".$rotate;
-	}
+	$qrtext = get_qr_text($path, $pdffile);
+	if($qrtext != "error"){
+	//if there's a readable qr
+	
+	$qrtextexplode = explode("*",$qrtext);
+	$courseid = $qrtextexplode[0];
+	$requestorid = $qrtextexplode[1];
+	$arraymodules = $qrtextexplode[2];
+	$time = $qrtextexplode[3];
+	$page = $qrtextexplode[4];
+	
+	$verification = check_session_modules($arraymodules, $courseid, $time);
+	if($verification == "perfect"){
+	$pos = substr_count($arraymodules, ':');
+	if ($pos == 0) {
+		$module = $arraymodules;
+		$sessionid = insert_session($courseid, $requestorid, $USER-> id, $pdffile);
+	    $verification = insert_session_module($module, $sessionid, $time);
+		    if($verification == true){
+		    	echo "<br> Perfect";
+		    }
+		    else{
+		    	echo "<br> Error";
+		    }
+	} 
 	else {
-		echo "page ".$pdfpage." is straight";
+		$modulesexplode = explode(":",$arraymodules);
+		
+		for ($i = 0; $i <= $pos; $i++) {
+			
+			//for each module inside $arraymodules, save records.
+		    $module = $modulesexplode[$i];
+		    
+		    $sessionid = insert_session($courseid, $requestorid, $USER-> id, $pdffile);
+		    $verification = insert_session_module($module, $sessionid, $time);
+			    if($verification == true){
+			    	echo "<br> Perfect";
+			    }
+			    else{
+			    	echo "<br> Error";
+			    }
+		}
 	}
-}
+	}
+	else{
+		//couldnt read qr
+		echo "Couldn´t read qr";
+		echo "<br> Orientation is: " get_orientation($path, $pdffile, "0");
+		echo "<br> Please make sure pdf is straight, without tilt and header on top";
+	}
+	}
+	else{
+		echo "<br> Session already exists";
+	}
+	}
+	
+// $filename = "paperattendance_2.pdf";
 
+// $document = new Imagick($filename);
+// $pdftotalpages = $document->getNumberImages();
+// var_dump($pdftotalpages);
+// $document->clear();
 
+// for ($pdfpage = 0; $pdfpage < $pdftotalpages; $pdfpage++) {
+// 	//get pdf page orientation
+// 	$orientation = get_orientation($filename,"$pdfpage");
+// 	echo "<br>".$orientation;
+	
+// 	//rotate pdf page if necessary
+// 	if($orientation == "rotated"){
+// 		$rotate = rotate($filename,$pdfpage, $pdftotalpages);
+// 		echo "<br>".$rotate;
+// 	}
+// 	else {
+// 		echo "page ".$pdfpage." is straight";
+// 	}
+// }
 echo $OUTPUT->footer();
-
-
-//returns orientation {straight, rotated, error}
-//pdf = pdfname + extension (.pdf)
-function get_orientation($pdf , $page){
-	$pdfexplode = explode(".",$pdf);
-	$pdfname = $pdfexplode[0];
-	$qrpath = $pdfname.'qr.png';
-	
-	//save the pdf page as a png
-	$myurl = $pdf.'['.$page.']';
-	$image = new Imagick($myurl);
-	$image->setResolution(100,100);
-	$image->setImageFormat( 'png' );
-	$image->writeImage( $pdfname.'.png' );
-	$image->clear();
-	
-	//check if there's a qr on the top right corner
-	$imagick = new Imagick();
-	$imagick->setResolution(100,100);
-	$imagick->readImage( $pdfname.'.png' );
-	$imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
-	
-	$height = $imagick->getImageHeight();
-	$width = $imagick->getImageWidth();
-	
-	$qrtop = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.652, $height*0.014);
-	$qrtop->writeImage("topright".$qrpath);
-	
-	// QR
-	$qrcodetop = new QrReader("topright".$qrpath);
-	$texttop = $qrcodetop->text(); //return decoded text from QR Code
-
-	if($texttop == "" || $texttop == " " || empty($texttop)){
-		
-		//check if there's a qr on the bottom right corner
-		$qrbottom = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.652, $height*0.846);
-		$qrbottom->writeImage("bottomright".$qrpath);
-		
-		// QR
-		$qrcodebottom = new QrReader("bottomright".$qrpath);
-		$textbottom = $qrcodebottom->text(); //return decoded text from QR Code
-		
-			if($textbottom == "" || $textbottom == " " || empty($textbottom)){
-				
-				//check if there's a qr on the top left corner
-				$qrtopleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.1225, $height*0.014);
-				$qrtopleft->writeImage("topleft".$qrpath);
-		
-				// QR
-				$qrcodetopleft = new QrReader("topleft".$qrpath);
-				$texttopleft = $qrcodetopleft->text(); //return decoded text from QR Code
-				
-				if($texttopleft == "" || $texttopleft == " " || empty($texttopleft)){
-					
-					//check if there's a qr on the top left corner
-					$qrbottomleft = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.1255, $height*0.846);
-					$qrbottomleft->writeImage("bottomleft".$qrpath);
-					
-					// QR
-					$qrcodebottomleft = new QrReader("bottomleft".$qrpath);
-					$textbottomleft = $qrcodebottomleft->text(); //return decoded text from QR Code
-					
-					if($textbottomleft == "" || $textbottomleft == " " || empty($textbottomleft)){
-						return "error";
-					}
-					else{
-						return "rotated";
-					}
-				}
-				else{
-					return "rotated";
-				}
-			}
-			else{
-				return "straight";
-			}
-	}
-	else{
-		return "straight";
-	}
-	$imagick->clear();
-}
-
-//pdf = pdfname + extension (.pdf)
-function rotate($pdf, $page, $totalpages){
-	
-	//rotated
-	$myurl = $pdf.'['.$page.']';
-	$imagick = new Imagick();
-	$imagick->readImage($myurl);
-	$angle = 180;
- 	$imagick->rotateimage(new ImagickPixel(), $angle);
- 	$imagick->setImageFormat('pdf');
- 	$imagick->writeImage('rotated.pdf');
- 	
-	//combined
-	$combined = new Imagick();
-	
-	for ($originalpage = 0; $originalpage < $totalpages; $originalpage++) {
-		if($originalpage != $page){
-		$addpage = new Imagick($pdf.'['.$originalpage.']');
-		$combined->addImage($addpage);
-		}
-		else{
-		$rotated = new Imagick('rotated.pdf');
-		$combined->addImage($rotated);
-		}
-	}
-	
-	$combined->setImageFormat('pdf');
-	if( $combined->writeImage($pdf)){
-	return "1";
-	}
-	else{
-	return "0";	
-	}
-}
