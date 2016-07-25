@@ -73,6 +73,7 @@ function paperattendance_get_students_for_printing($course) {
  *            Id course
  */
 function paperattendance_students_list($course){
+	global $CFG;
 	//TODO: Add enrolments for omega, Remember change "manual".
 	$enrolincludes = array("manual");
 	$filedir = $CFG->dataroot . "/temp/emarking/$context->id";
