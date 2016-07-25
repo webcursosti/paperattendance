@@ -72,11 +72,11 @@ function paperattendance_get_students_for_printing($course) {
  * @param int $course
  *            Id course
  */
-function paperattendance_students_list($course){
+function paperattendance_students_list($contextid, $course){
 	global $CFG;
 	//TODO: Add enrolments for omega, Remember change "manual".
 	$enrolincludes = array("manual");
-	$filedir = $CFG->dataroot . "/temp/emarking/$context->id";
+	$filedir = $CFG->dataroot . "/temp/emarking/$contextid";
 	$userimgdir = $filedir . "/u";
 	$students = paperattendance_get_students_for_printing($course);
 	

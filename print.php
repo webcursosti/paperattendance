@@ -91,7 +91,7 @@ if($action == "add"){
 		$pdf->setPrintFooter(false);
 
 		// Get student for the list
-		$studentinfo = paperattendance_students_list($course);
+		$studentinfo = paperattendance_students_list($context->id, $course);
 
 		// We validate the number of students as we are filtering by enrolment.
 		// type after getting the data.
