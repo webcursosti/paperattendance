@@ -43,7 +43,7 @@ $PAGE->set_title($pagetitle);
 echo $OUTPUT->header();
 
 $path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
-$process = paperattendance_readpdf($path, "paperattendance_3.pdf", 2);
+$process = paperattendance_readpdf($path, "paperattendance_2.pdf", 2);
 
 $imagick = new Imagick();
 $imagick->setResolution(100,100);
