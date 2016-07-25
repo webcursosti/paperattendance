@@ -66,14 +66,15 @@ $PAGE->set_title($pagetitle . " " . $course -> fullname);
 $addform = new upload_form (null, array("courseid" => $courseid));
 // If the form is cancelled, refresh the instante.
 if ($addform->is_cancelled()) {
-    redirect($url);
+	$courseurl = new moodle_url('/course/view.php', array(
+			'id' => $courseid));
+    redirect($courseurl);
     die();
 } 
 if ($addform->get_data()) {
 	require_capability('local/paperattendance:upload', $context);
 	
 	$data = $addform -> get_data();
-	$teacherid = $data -> teacher;
 	
 	$path = $CFG -> dataroot. "/temp/local/paperattandace";
 	if (!file_exists($path . "/unread/")) {
@@ -139,14 +140,25 @@ if ($addform->get_data()) {
 	rotate($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
 	
 	//read pdf and save session and sessmodules
-	read_pdf_save_session($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
+	$pdfprocessed = read_pdf_save_session($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
 	
-	//delete unused pdf
-	unlink($path."/unread/".$filename);
+	if($pdfprocessed == "Perfect"){
 	
-	// Display confirmation page before moving out.
-	redirect($url, get_string('uploadsuccessful', 'local_paperattendance'), 3);
-	//die();
+		//delete unused pdf
+		unlink($path."/unread/".$filename);
+		
+		// Display confirmation page before moving out.
+		redirect($url, get_string('uploadsuccessful', 'local_paperattendance'), 3);
+		//die();
+	}
+	else{
+		
+		//delete unused pdf
+		unlink($path."/unread/".$filename);
+		
+		// Display confirmation page before moving out.
+		redirect($url, $pdfprocessed, 3);
+	}
 	
 }
 // If there is no data or is it not cancelled show the header, the tabs and the form.

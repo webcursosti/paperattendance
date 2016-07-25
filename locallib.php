@@ -551,10 +551,10 @@ function read_pdf_save_session($path, $pdffile){
 				$sessionid = insert_session($courseid, $requestorid, $USER-> id, $pdffile);
 				$verification = insert_session_module($module, $sessionid, $time);
 				if($verification == true){
-					echo "<br> Perfect";
+					return "Perfect";
 				}
 				else{
-					echo "<br> Error";
+					return "Error";
 				}
 			}
 			else {
@@ -568,23 +568,24 @@ function read_pdf_save_session($path, $pdffile){
 					$sessionid = insert_session($courseid, $requestorid, $USER-> id, $pdffile);
 					$verification = insert_session_module($module, $sessionid, $time);
 					if($verification == true){
-						echo "<br> Perfect";
+						return "Perfect";
 					}
 					else{
-						echo "<br> Error";
+						return "Error";
 					}
 				}
 			}
 		}
 		else{
 			//couldnt read qr
-			echo "Couldn´t read qr";
-			echo "<br> Orientation is: " .get_orientation($path, $pdffile, "0");
-			echo "<br> Please make sure pdf is straight, without tilt and header on top";
+			$return = "Couldn´t read qr";
+			$return += "<br> Orientation is: " .get_orientation($path, $pdffile, "0");
+			$return += "<br> Please make sure pdf is straight, without tilt and header on top";
+			return $return;
 		}
 	}
 	else{
-		echo "<br> Session already exists";
+		return "Session already exists";
 	}
 }
 
