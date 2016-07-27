@@ -76,7 +76,7 @@ if ($addform->get_data()) {
 	
 	$data = $addform -> get_data();
 	
-	$path = $CFG -> dataroot. "/temp/local/paperattandace";
+	$path = $CFG -> dataroot. "/temp/local/paperattendance";
 	if (!file_exists($path . "/unread/")) {
 			mkdir($path . "/unread/", 0777, true);
 		}	
