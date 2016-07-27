@@ -73,7 +73,7 @@ if($action == "add"){
 		// array idmodule => {0 = no checked, 1 = checked}
 		$modules = $data->modules;
 		
-		$path = $CFG -> dataroot. "/temp/local/paperattandace/";
+		$path = $CFG -> dataroot. "/temp/local/paperattendance/";
 		
 		//list($path, $filename) = paperattendance_create_qr_image($courseid."*".$requestor."*", $path);
 		

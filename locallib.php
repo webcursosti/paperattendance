@@ -284,6 +284,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 }
 
 function paperattendance_readpdf($path, $filename, $course){
+	global $DB;
 	
 	$pdf = new Imagick();
 	$pdf->setResolution( 100, 100 );
@@ -292,7 +293,8 @@ function paperattendance_readpdf($path, $filename, $course){
 	
 	$pdftotalpages = $pdf->getNumberImages();
 	
-	$studentlist = paperattendance_students_list($course);
+	$context = context_course::instance($course->id);
+	$studentlist = paperattendance_students_list($context ->id, $course);
 	
 	$countstudent = 1;
 	foreach ($studentlist as $student){
@@ -324,11 +326,7 @@ function paperattendance_readpdf($path, $filename, $course){
 		
 		$countstudent++;
 	}
-	
-	
-	
 }
-
 
 // //returns orientation {straight, rotated, error}
 // //pdf = pdfname + extension (.pdf)
