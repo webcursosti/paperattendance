@@ -31,7 +31,7 @@ require_once ($CFG->dirroot."/local/paperattendance/forms/history_form.php");
 
 global $DB, $PAGE, $OUTPUT, $USER;
 
-$context = context_system::instance();
+$context = context_course::instance($COURSE->id);
 $url = new moodle_url("/local/paperattendance/history.php");
 $PAGE->set_url($url);
 $PAGE->set_context($context);
@@ -51,9 +51,14 @@ if (isguestuser()){
 
 /////////Inicio vista profesor
 
-if( has_capability("local/paperattendance:history", $context) || is_siteadmin($USER) ){
+if( !has_capability("local/paperattendance:history", $context) ){
+	print_error("ACCESS DENIED");
+	}	
 	
-// action-> Asistencia alumnos
+		
+if( has_capability("local/paperattendance:teacherview", $context)) {
+	
+// action-> Students Attendance
 if ($action == "studentsattendance"){
 	
 	$sql = 'SELECT 
@@ -354,9 +359,10 @@ if ($action == "view"){
 	echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, "Volver al Curso"), array("align" => "left"));
 }
 
-}
+}	
 
 ////////Término vista profesor
+
 
 
 ////////Inicio vista alumno
