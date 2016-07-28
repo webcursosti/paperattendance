@@ -61,7 +61,7 @@ function paperattendance_get_students_for_printing($course) {
 				JOIN {user} u ON (ue.userid = u.id)
                 GROUP BY u.id
 				ORDER BY lastname ASC';
-	$params = array($course->id);
+	$params = array($course);
 	$rs = $DB->get_recordset_sql($query, $params);
 	return $rs;
 }
@@ -93,7 +93,7 @@ function paperattendance_students_list($contextid, $course){
 		$studentobj->name = substr("$student->lastname, $student->firstname", 0, 65);
 		$studentobj->idnumber = $student->idnumber;
 		$studentobj->id = $student->id;
-		$studentobj->picture = emarking_get_student_picture($student, $userimgdir);
+		//$studentobj->picture = emarking_get_student_picture($student, $userimgdir);
 		// Store student info in hash so every student is stored once.
 		$studentinfo[$student->id] = $studentobj;
 	}
@@ -293,40 +293,73 @@ function paperattendance_readpdf($path, $filename, $course){
 	
 	$pdftotalpages = $pdf->getNumberImages();
 	
-	$context = context_course::instance($course->id);
+	$context = context_course::instance($course);
 	$studentlist = paperattendance_students_list($context ->id, $course);
+	
+	$sessid = get_sessionid($filename);
 	
 	$countstudent = 1;
 	foreach ($studentlist as $student){
 			
 		if($countstudent == 1){
-			$page = new Imagick( $path."/".$filename."[1]" );
+			$page = new Imagick( $path."/".$filename."[0]" );
 			$page->setResolution( 100, 100);
+			$page = $page->flattenImages();
 			$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
 			$page->setImageFormat('png');
+//			$page->writeImage('pdf_'.$countstudent.'.png');
+			$height = $page->getImageHeight();
+			$width = $page->getImageWidth();
+			
+			$attendancecircle = $page->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*$countstudent));
+//			$attendancecircle->writeImage('student_'.$countstudent.'.png');
 	
 		}else if($countstudent%26 == 0){
 			$page->destroy();
 			
 			$numberpage = ceil($countstudent/26);
-			$page = new Imagick( $path."/".$filename."[".$numberpage."]" );
-			$page->setResolution( 100, 100);
-			$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
-			$page->setImageFormat('png');
+			$pagetwo = new Imagick( $path."/".$filename."[".$numberpage."]" );
+			$pagetwo->setResolution( 100, 100);
+			$pagetwo = $pagetwo->flattenImages();
+			$pagetwo->setImageType( imagick::IMGTYPE_GRAYSCALE );
+			$pagetwo->setImageFormat('png');
+			$pagetwo->writeImage('pdf_'.$countstudent.'.png');
+			$height = $pagetwo->getImageHeight();
+			$width = $pagetwo->getImageWidth();
 			
+			$attendancecircle = $pagetwo->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*$countstudent));
+//			$attendancecircle->writeImage('student_'.$countstudent.'.png');	
 		}
 		
-		$height = $page->getImageHeight();
-		$width = $page->getImageWidth();
+		$graychannel = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
+//		echo "<br>Imagen $countstudent media ".$graychannel["mean"]." desviacion ".$graychannel["standardDeviation"];
 		
-		$attendancecircle = $page->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*($countstudent-1)));
-		
-		$graychannel = $frame->getImageChannelMean(Imagick::CHANNEL_GRAY);
-		echo "<br>Imagen $countstudent media ".$graychannel["mean"]." desviacion ".$graychannel["standardDeviation"];
-		
+		save_student_presence($sessid, $student->id, '1');
 		$countstudent++;
 	}
 }
+
+function get_sessionid($pdffile){
+	global $DB;
+	
+	$query = "SELECT sess.id AS id
+	FROM {paperattendance_session} AS sess
+	WHERE pdf = ? ";
+	$resultado = $DB->get_record_sql($query, array($pdffile));
+	return $resultado -> id;
+}
+
+function save_student_presence($sessid, $studentid, $status){
+	global $DB;
+	
+	$sessioninsert->id = "NULL";
+	$sessioninsert->sessionid = $sessid;
+	$sessioninsert->userid = $studentid;
+	$sessioninsert->status = $status;
+	$sessioninsert->lastmodified = time();
+	$lastinsertid = $DB->insert_record('paperattendance_presence', $sessioninsert, false);
+}
+
 
 // //returns orientation {straight, rotated, error}
 // //pdf = pdfname + extension (.pdf)
