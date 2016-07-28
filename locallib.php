@@ -61,7 +61,7 @@ function paperattendance_get_students_for_printing($course) {
 				JOIN {user} u ON (ue.userid = u.id)
                 GROUP BY u.id
 				ORDER BY lastname ASC';
-	$params = array($course);
+	$params = array($course->id);
 	$rs = $DB->get_recordset_sql($query, $params);
 	return $rs;
 }
@@ -217,7 +217,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 		$x = $pdf->GetX();
 		$y = $pdf->GetY();
 		$pdf->Cell(20, 8, "", 0, 0, 'L', $fill);
-		$pdf->Image($stlist->picture, $x + 5, $y, 8, 8, "PNG", $fill);
+//		$pdf->Image($stlist->picture, $x + 5, $y, 8, 8, "PNG", $fill);
 		// Student name
 		$pdf->Cell(90, 8, core_text::strtoupper($stlist->name), 0, 0, 'L', $fill);
 		// Attendance
