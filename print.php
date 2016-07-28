@@ -41,8 +41,10 @@ $courseid = required_param("courseid", PARAM_INT);
 $action = optional_param("action", "add", PARAM_INT);
 
 $context = context_course::instance($COURSE->id);
-var_dump( has_capability("local/paperattendance:print", $context));
 
+if( !has_capability("local/paperattendance:print", $context) ){
+	print_error("ACCESS DENIED");
+}
 
 $urlprint = new moodle_url("/local/paperattendance/print.php", array("courseid" => $courseid));
 // Page navigation and URL settings.

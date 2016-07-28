@@ -48,14 +48,12 @@ if (isguestuser()){
 	die();
 }
 
-
-/////////Inicio vista profesor
-
 if( !has_capability("local/paperattendance:history", $context) ){
 	print_error("ACCESS DENIED");
-	}	
+}
+
+/////////Inicio vista profesor
 	
-		
 if( has_capability("local/paperattendance:teacherview", $context)) {
 	
 // action-> Students Attendance
