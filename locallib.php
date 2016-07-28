@@ -323,18 +323,57 @@ function paperattendance_readpdf($path, $filename, $course){
 			$pagetwo = $pagetwo->flattenImages();
 			$pagetwo->setImageType( imagick::IMGTYPE_GRAYSCALE );
 			$pagetwo->setImageFormat('png');
-			$pagetwo->writeImage('pdf_'.$countstudent.'.png');
+//			$pagetwo->writeImage('pdf_'.$countstudent.'.png');
 			$height = $pagetwo->getImageHeight();
 			$width = $pagetwo->getImageWidth();
 			
 			$attendancecircle = $pagetwo->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*$countstudent));
 //			$attendancecircle->writeImage('student_'.$countstudent.'.png');	
 		}
+		else if($countstudent%52 == 0){
+			$page->destroy();
+				
+			$numberpage = ceil($countstudent/26);
+			$pagethree = new Imagick( $path."/".$filename."[".$numberpage."]" );
+			$pagethree->setResolution( 100, 100);
+			$pagethree = $pagethree->flattenImages();
+			$pagethree->setImageType( imagick::IMGTYPE_GRAYSCALE );
+			$pagethree->setImageFormat('png');
+//			$pagethree->writeImage('pdf_'.$countstudent.'.png');
+			$height = $pagethree->getImageHeight();
+			$width = $pagethree->getImageWidth();
+				
+			$attendancecircle = $pagethree->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*$countstudent));
+			//			$attendancecircle->writeImage('student_'.$countstudent.'.png');
+		}
+		else if($countstudent%78 == 0){
+			$page->destroy();
+		
+			$numberpage = ceil($countstudent/26);
+			$pagefour = new Imagick( $path."/".$filename."[".$numberpage."]" );
+			$pagefour->setResolution( 100, 100);
+			$pagefour = $pagefour->flattenImages();
+			$pagefour->setImageType( imagick::IMGTYPE_GRAYSCALE );
+			$pagefour->setImageFormat('png');
+//			$pagefour->writeImage('pdf_'.$countstudent.'.png');
+			$height = $pagefour->getImageHeight();
+			$width = $pagefour->getImageWidth();
+		
+			$attendancecircle = $pagefour->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*$countstudent));
+			//			$attendancecircle->writeImage('student_'.$countstudent.'.png');
+		}
 		
 		$graychannel = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
 //		echo "<br>Imagen $countstudent media ".$graychannel["mean"]." desviacion ".$graychannel["standardDeviation"];
-		
-		save_student_presence($sessid, $student->id, '1');
+		if($x["mean"] < 62900){
+			//echo "Alumno".$countstudent ." presente";
+			save_student_presence($sessid, $student->id, '1');
+		}
+		else{
+			//echo "Alumno".$countstudent ." ausente";
+			save_student_presence($sessid, $student->id, '0');
+		}
+
 		$countstudent++;
 	}
 }

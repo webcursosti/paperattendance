@@ -27,6 +27,12 @@ require_once (dirname(dirname(dirname(__FILE__))) . "/config.php");
 require_once ($CFG->dirroot . '/local/paperattendance/phpqrcode/phpqrcode.php');
 require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
+require_once ($CFG->dirroot . "/repository/lib.php");
+require_once ($CFG->libdir . '/pdflib.php');
+require_once ($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/fpdi.php');
+require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php");
+require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
+require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi.php");
 global $DB, $PAGE, $OUTPUT, $USER;
 
 $context = context_system::instance();
@@ -43,32 +49,33 @@ $PAGE->set_title($pagetitle);
 echo $OUTPUT->header();
 
 $path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
-//$process = paperattendance_readpdf($path, "paperattendance_2_1469479057.pdf", 2);
 
-$imagick = new Imagick();
-$imagick->setResolution(300,300);
-$imagick->readImage($path.'/paperattendance_2_1469479057.pdf[0]');
-$imagick = $imagick->flattenImages();
-//$imagick->resizeImage(844, 1096, Imagick::FILTER_BOX, 0, false);
-$imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
+$process = paperattendance_readpdf($path, "paperattendance_2_1469479057.pdf", 2);
 
-$height = $imagick->getImageHeight();
-$width = $imagick->getImageWidth();
-//echo $height." ".$width;
+// $imagick = new Imagick();
+// $imagick->setResolution(300,300);
+// $imagick->readImage($path.'/paperattendance_2_1469479057.pdf[0]');
+// $imagick = $imagick->flattenImages();
+// //$imagick->resizeImage(844, 1096, Imagick::FILTER_BOX, 0, false);
+// $imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
 
-for ($countstudent = 0; $countstudent < 26; $countstudent++){
+// $height = $imagick->getImageHeight();
+// $width = $imagick->getImageWidth();
+// //echo $height." ".$width;
 
-	$frame = $imagick->getImageRegion($width*0.031, $height*0.02, $width*0.799, $height*(0.169 + 0.02692*$countstudent));
-	$frame->writeImage('student_'.$countstudent.'.png');
-	$x = $frame->getImageChannelMean(Imagick::CHANNEL_GRAY);
-	//echo "<br>Imagen $countstudent media ".$x["mean"]." desviacion ".$x["standardDeviation"];
-	if($x["mean"] < 62900){
-		echo "Alumno".$countstudent ." presente";
-	}
-	else{
-		echo "Alumno".$countstudent ." ausente";
-	}
-echo "<br>";
-}
+// for ($countstudent = 0; $countstudent < 26; $countstudent++){
+
+// 	$frame = $imagick->getImageRegion($width*0.031, $height*0.02, $width*0.799, $height*(0.169 + 0.02692*$countstudent));
+// 	$frame->writeImage('student_'.$countstudent.'.png');
+// 	$x = $frame->getImageChannelMean(Imagick::CHANNEL_GRAY);
+// 	//echo "<br>Imagen $countstudent media ".$x["mean"]." desviacion ".$x["standardDeviation"];
+// 	if($x["mean"] < 62900){
+// 		echo "Alumno".$countstudent ." presente";
+// 	}
+// 	else{
+// 		echo "Alumno".$countstudent ." ausente";
+// 	}
+// echo "<br>";
+// }
 
 echo $OUTPUT->footer();
