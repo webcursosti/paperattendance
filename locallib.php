@@ -391,6 +391,7 @@ function get_sessionid($pdffile){
 function save_student_presence($sessid, $studentid, $status){
 	global $DB;
 	
+	$sessioninsert = new stdClass();
 	$sessioninsert->id = "NULL";
 	$sessioninsert->sessionid = $sessid;
 	$sessioninsert->userid = $studentid;
