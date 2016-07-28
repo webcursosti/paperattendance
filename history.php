@@ -54,7 +54,7 @@ if (isguestuser()){
 if( has_capability("local/paperattendance:history", $context) || is_siteadmin($USER) ){
 	
 // action-> Asistencia alumnos
-if ($action == "asistenciaalumnos"){
+if ($action == "studentsattendance"){
 	
 	$sql = 'SELECT 
                 u.lastname,
@@ -153,7 +153,7 @@ if($action == "edit"){
 	if($idpresence == null){
 		print_error("Sesión no seleccionada");
 		$canceled = new moodle_url("/local/paperattendance/history.php", array(
-						"action" => "asistenciaalumnos",
+						"action" => "studentsattendance",
 						"idattendance" => $idattendance,
 						"courseid" => $idcurso
 				));
@@ -171,7 +171,7 @@ if($action == "edit"){
 
 			if($editform->is_cancelled()){
 				$canceled = new moodle_url("/local/paperattendance/history.php", array(
-						"action" => "asistenciaalumnos",
+						"action" => "studentsattendance",
 						"idattendance" => $idattendance,
 						"courseid" => $idcurso
 				));
@@ -194,7 +194,7 @@ if($action == "edit"){
 				$DB->update_record("paperattendance_presence", $record);
 				
 				$back = new moodle_url("/local/paperattendance/history.php", array(
-						"action" => "asistenciaalumnos",
+						"action" => "studentsattendance",
 						"idattendance" => $idattendance,
 						"courseid" => $idcurso
 				));
@@ -206,7 +206,7 @@ if($action == "edit"){
 		else{
 			print_error("Sesión no existe");
 			$canceled = new moodle_url("/local/paperattendance/history.php", array(
-					"action" => "asistenciaalumnos",
+					"action" => "studentsattendance",
 					"idattendance" => $idattendance,
 					"courseid" => $idcurso
 			));
@@ -293,15 +293,15 @@ if ($action == "view"){
 					);
 
 			// Define Asistencia alumnos icon and url
-			$asistenciaalumnosurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
-					"action" => "asistenciaalumnos",
+			$studentsattendanceurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
+					"action" => "studentsattendance",
 					"idattendance" => $attendance->id,
 					"courseid" => $idcurso
 			));
-			$asistenciaalumnosicon_attendance = new pix_icon("e/preview", "Ver Alumnos");
-			$asistenciaalumnosaction_attendance = $OUTPUT->action_icon(
-					$asistenciaalumnosurl_attendance,
-					$asistenciaalumnosicon_attendance
+			$studentsattendanceicon_attendance = new pix_icon("e/preview", "Ver Alumnos");
+			$studentsattendanceaction_attendance = $OUTPUT->action_icon(
+					$studentsattendanceurl_attendance,
+					$studentsattendanceicon_attendance
 					);
 			
 			$attendancestable->data[] = array(
@@ -309,7 +309,7 @@ if ($action == "view"){
 					date("d-m-Y", $attendance->date),
 					$attendance->hour,
 					$scanaction_attendance,
-					$asistenciaalumnosaction_attendance
+					$studentsattendanceaction_attendance
 			);
 			$contador++;
 		}
@@ -325,7 +325,7 @@ $PAGE->set_heading("HISTORIAL DE ASISTENCIA");
 echo $OUTPUT->header();
 
 // Displays vista asistencia alumnos
-if ($action == "asistenciaalumnos"){
+if ($action == "studentsattendance"){
 	
 	if (count($attendances) == 0){
 		echo html_writer::nonempty_tag("h4", "No existen registros", array("align" => "left"));
@@ -440,6 +440,9 @@ else {
 	
 	}
 	
+	$PAGE->set_title("Historial de Asistencia");
+	$PAGE->set_heading("HISTORIAL DE ASISTENCIA");
+	echo $OUTPUT->header();
 	// Displays all the records and options
 	if ($action == "view"){
 	

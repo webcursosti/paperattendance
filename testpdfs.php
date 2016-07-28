@@ -43,90 +43,32 @@ $PAGE->set_title($pagetitle);
 echo $OUTPUT->header();
 
 $path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
-$process = paperattendance_readpdf($path, "paperattendance_2.pdf", 2);
+//$process = paperattendance_readpdf($path, "paperattendance_2_1469479057.pdf", 2);
 
 $imagick = new Imagick();
-$imagick->setResolution(100,100);
-$imagick->readImage('b1.png');
+$imagick->setResolution(300,300);
+$imagick->readImage($path.'/paperattendance_2_1469479057.pdf[0]');
+$imagick = $imagick->flattenImages();
+//$imagick->resizeImage(844, 1096, Imagick::FILTER_BOX, 0, false);
 $imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
 
-
-//$imagick->writeImages('attendance.jpg', false);
-//$imagick->setImageFormat('png');
-//$imagick->writeImage('b1.png');
 $height = $imagick->getImageHeight();
 $width = $imagick->getImageWidth();
-echo $height." ".$width;
+//echo $height." ".$width;
 
-$circle = new Imagick();
-$circle->readImage('img/circle.png');
-$circle->resizeImage(29, 24, Imagick::FILTER_BOX ,0);
-
-$arraycompare = array();
 for ($countstudent = 0; $countstudent < 26; $countstudent++){
-	//$imagick->setImagePage(0,0,0,0);
-	//$imagick->resizeImage($width, $height, Imagick::FILTER_BOX, 0, false);
-	//$imagick->cropImage($width*0.04, $height*0.68, $width*0.765, $height*0.18);
 
-	$frame = $imagick->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*$countstudent));
-	//$imagick->cropImage($width*0.04, $height*0.026, $width*0.765, $height*(0.18+0.016*$countstudents));
+	$frame = $imagick->getImageRegion($width*0.031, $height*0.02, $width*0.799, $height*(0.169 + 0.02692*$countstudent));
 	$frame->writeImage('student_'.$countstudent.'.png');
 	$x = $frame->getImageChannelMean(Imagick::CHANNEL_GRAY);
 	//echo "<br>Imagen $countstudent media ".$x["mean"]." desviacion ".$x["standardDeviation"];
-	/*
-	$pixels = $frame->exportImagePixels(0, 0, $width*0.035, $height*0.022, "RBG", Imagick::PIXEL_CHAR);
-	$average = array_sum($pixels)/count($pixels);
-	echo "<br>Imagen $countstudent ".$average." ancho ".($width*0.035)." alto ".($height*0.022)."<br>";
-	*/
-
-	//$arraycompare[] = $frame->compareImages($circle, Imagick::METRIC_MEANSQUAREERROR);
+	if($x["mean"] < 62900){
+		echo "Alumno".$countstudent ." presente";
+	}
+	else{
+		echo "Alumno".$countstudent ." ausente";
+	}
+echo "<br>";
 }
-/* Export the image pixels */
-/*
-$image = $imagick->coalesceImages();
-foreach ($image as $frame){
-	$frame->cropImage($width*0.04, $height*0.026, $width*0.765, $height*(0.18+0.016*$countstudents));
-	$frame->setImagePage(0, 0, 0, 0); // Remove canvas
-	$imagick->writeImage('student_'.$countstudents.'.png');
-}*/
 
-//$imagick->writeImage('circles.png');
-/*
-
-// QR
-$imagick = new Imagick();
-$imagick->setResolution(100,100);
-$imagick->readImage('1.png');
-$imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
-
-$pixel = $imagick->getImagePixelColor(1, 1); 
-$colors = $pixel->getColor();
-print_r($colors); // produces Array([r]=>255,[g]=>255,[b]=>255,[a]=>1);
-
-$pixel->getColorAsString(); // produces rgb(255,255,255);
-
-
-var_dump($pixel->getColorAsString());
-
-$height2 = $imagick->getImageHeight();
-$width2 = $imagick->getImageWidth();
-
-$pixels = $imagick->exportImagePixels(0, 0, $width2, $height2, "G", Imagick::PIXEL_CHAR);
-$average = array_sum($pixels)/count($pixels);
-echo "<br>".$average."<br>";
-/* Output */
-//var_dump($pixels);
-
-
-
-//$qrcode = new QrReader('delcorte.png');
-//$text = $qrcode->text(); //return decoded text from QR Code
-
-//echo "<br>".$text;
-/*
-$imagick->readImage('b2.pdf[0]');
-//$imagick->writeImages('attendance.jpg', false);
-$imagick->setImageFormat('png');
-$imagick->writeImage('b2.png');
-*/
 echo $OUTPUT->footer();
