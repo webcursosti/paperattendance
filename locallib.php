@@ -174,7 +174,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	// Write date.
 	$top += 4;
 	$pdf->SetXY($left, $top);
-	$pdf->Write(1, core_text::strtoupper(get_string("date") . ': ' . date("h:s d-m-Y", time())));
+	$pdf->Write(1, core_text::strtoupper(get_string("date") . ': ' . date("d-m-Y", time())));
 	// Write modules.
 	$top += 4;
 	$pdf->SetXY($left, $top);
