@@ -116,7 +116,7 @@ function paperattendance_students_list($contextid, $course){
  * @param unknown $studentinfo
  *            the student info including name and idnumber
  */
-function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $qrstring, $webcursospath) {
+function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $qrstring, $webcursospath, $sessiondate) {
 	global $CFG;
 	// Pages should be added automatically while the list grows.
 	$pdf->SetAutoPageBreak(false);
@@ -170,15 +170,15 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	// Write requestor.
 	$top += 4;
 	$pdf->SetXY($left, $top);
-	$pdf->Write(1, core_text::strtoupper("Solicitante" . ': ' . $requestorinfo->firstname." ".$requestorinfo->lastname));
+	$pdf->Write(1, core_text::strtoupper(get_string("requestor", 'local_paperattendance') . ': ' . $requestorinfo->firstname." ".$requestorinfo->lastname));
 	// Write date.
 	$top += 4;
 	$pdf->SetXY($left, $top);
-	$pdf->Write(1, core_text::strtoupper(get_string("date") . ': ' . date("d-m-Y", time())));
+	$pdf->Write(1, core_text::strtoupper(get_string("date") . ': ' . date("d-m-Y", $sessiondate)));
 	// Write modules.
 	$top += 4;
 	$pdf->SetXY($left, $top);
-	$pdf->Write(1, core_text::strtoupper("Modulos" . ': ' . $stringmodules));
+	$pdf->Write(1, core_text::strtoupper(get_string("modulescheckbox", 'local_paperattendance') . ': ' . $stringmodules));
 	// Write number of students.
 	$top += 4;
 	$pdf->SetXY($left, $top);
@@ -191,7 +191,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->Cell(25, 8, core_text::strtoupper(get_string('idnumber')), 0, 0, 'L');
 	$pdf->Cell(20, 8, core_text::strtoupper(get_string('photo', 'mod_emarking')), 0, 0, 'L');
 	$pdf->Cell(90, 8, core_text::strtoupper(get_string('name')), 0, 0, 'L');
-	$pdf->Cell(20, 8, core_text::strtoupper("Asistencia"), 0, 0, 'L');
+	$pdf->Cell(20, 8, core_text::strtoupper(get_string('pdfattendance','local_paperattendance')), 0, 0, 'L');
 	$pdf->Ln();
 	$top += 8;
 	

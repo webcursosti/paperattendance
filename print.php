@@ -117,7 +117,7 @@ if($action == "add"){
 		
 		$stringqr = $courseid."*".$requestor."*".$arraymodules."*".$time."*";
 		
-		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $modules, $path, $stringqr, $webcursospath);
+		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $modules, $path, $stringqr, $webcursospath, $sessiondate);
 				
 		$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
 		

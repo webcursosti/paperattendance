@@ -40,3 +40,4 @@ $string['modulescheckbox']="Módulos";
 $string['pleaseselectteacher']="Porfavor seleccione profesor primero";
 $string['pleaseselectdate']="Por favor seleccione una fecha válida";
 $string['pleaseselectmodule']="Por favor seleccione al menos un módulo";
+$string['pdfattendance']="Asistencia";
