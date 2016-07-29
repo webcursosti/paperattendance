@@ -31,7 +31,7 @@ require_once ($CFG->dirroot."/local/paperattendance/forms/history_form.php");
 
 global $DB, $PAGE, $OUTPUT, $USER;
 
-$context = context_system::instance();
+$context = context_course::instance($COURSE->id);
 $url = new moodle_url("/local/paperattendance/history.php");
 $PAGE->set_url($url);
 $PAGE->set_context($context);
@@ -48,12 +48,15 @@ if (isguestuser()){
 	die();
 }
 
+if( !has_capability("local/paperattendance:history", $context) ){
+	print_error("ACCESS DENIED");
+}
 
 /////////Inicio vista profesor
-
-if( has_capability("local/paperattendance:history", $context) || is_siteadmin($USER) ){
 	
-// action-> Asistencia alumnos
+if( has_capability("local/paperattendance:teacherview", $context)) {
+	
+// action-> Students Attendance
 if ($action == "studentsattendance"){
 	
 	$sql = 'SELECT 
@@ -230,15 +233,6 @@ if($action == "scan"){
 			$OUTPUT->single_button($back, "Volver"),
 			array("align" => "left"
 			));
-
-	/*$sql = 'SELECT
-            itemid
-			FROM {files} AS f
-            WHERE f.filename = ? AND f.filesize != 0 ';
-	
-	$item = $DB->get_record_sql($sql, array("paperattendance_".$idattendance.".pdf"));
-	$itemid= (int) $item->itemid;
-	var_dump($itemid);*/
 	
 	$sql = 'SELECT
             pdf
@@ -246,8 +240,7 @@ if($action == "scan"){
             WHERE ps.id = ?';
 	
 	$pdfname = $DB->get_record_sql($sql, array($idattendance));
-	//$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$idattendance.".pdf");
-	$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', $pdfname);
+	$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', $pdfname->pdf);
 
 	$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
 			"src" => $url,
@@ -364,9 +357,10 @@ if ($action == "view"){
 	echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, "Volver al Curso"), array("align" => "left"));
 }
 
-}
+}	
 
 ////////Término vista profesor
+
 
 
 ////////Inicio vista alumno

@@ -40,8 +40,9 @@ if (isguestuser()) {
 $courseid = required_param("courseid", PARAM_INT);
 $action = optional_param("action", "add", PARAM_INT);
 
-$context = context_system::instance();
-if (! has_capability("local/paperattendance:print", $context)) {
+$context = context_course::instance($COURSE->id);
+
+if( !has_capability("local/paperattendance:print", $context) ){
 	print_error("ACCESS DENIED");
 }
 
