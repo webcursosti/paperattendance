@@ -31,3 +31,6 @@ $string['edit']="Edit module";
 $string['doyouwanteditmodule']="Are you sure you want to edit this module?";
 $string['editmodule']="PaperAttendance Edit module";
 $string['editmoduletitle']="Edit Module";
+$string['printtitle']="Print attendance list";
+$string['printgoback']="Go Back";
+$string['downloadprint']="Download Attendance List";

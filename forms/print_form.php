@@ -46,23 +46,23 @@ class print_form extends moodleform {
 		$teachers = $DB->get_records_sql($sqlteachers, array($courseid));
 		
 		$arrayteachers = array();
-		$arrayteachers["no"] = "Seleccione el profesor";
+		$arrayteachers["no"] = get_string('selectteacher', 'local_paperattendance');
 		foreach ($teachers as $teacher){
 			$arrayteachers[$teacher->id] = $teacher->name;
 		}
-		$mform->addElement("select", "requestor", "Solicitante", $arrayteachers);
-		$mform->addElement("date_selector", "sessiondate", "Fecha de Asistencia");
+		$mform->addElement("select", "requestor", get_string('requestor', 'local_paperattendance'), $arrayteachers);
+		$mform->addElement("date_selector", "sessiondate", get_string('attdate', 'local_paperattendance'));
 		
 		$modules = $DB->get_records("paperattendance_module");
 		$arraymodules = array();
 		foreach ($modules as $module){
 			$arraymodules[] = $mform->createElement('advcheckbox', $module->id."*".$module->initialtime."*".$module->endtime , '',$module->initialtime);	
 		}
-		$mform->addGroup($arraymodules, 'modules', "Modulos");
+		$mform->addGroup($arraymodules, 'modules', get_string('modulescheckbox', 'local_paperattendance'));
 		$mform->addElement("hidden", "courseid", $courseid);
 		$mform->setType( "courseid", PARAM_INT);
 		
-		$this->add_action_buttons(true, "Descargar");
+		$this->add_action_buttons(true, get_string('downloadprint', 'local_paperattendance'));
 		
 	}
 	
@@ -75,13 +75,13 @@ class print_form extends moodleform {
 		$modules = $data["modules"];
 		
 		if($requestor == "no"){
-			$errors["requestor"] = "Debe seleccionar un profesor.";
+			$errors["requestor"] =  get_string('pleaseselectteacher', 'local_paperattendance');
 		}
 		
 		$actualtime = strtotime(date("d-m-Y"));
 		//echo strtotime(date("d-m-Y"))." select".$sessiondate;
 		if($sessiondate < $actualtime){
-			$errors["sessiondate"] = "Debe seleccionar una fecha valida.";
+			$errors["sessiondate"] = get_string('pleaseselectdate', 'local_paperattendance');
 		}
 		
 		$count = 0;
@@ -91,7 +91,7 @@ class print_form extends moodleform {
 			}
 		}
 		if($count == 0){
-			$errors["modules"] = "Debe seleccionar al menos un modulo.";
+			$errors["modules"] =  get_string('pleaseselectmodule', 'local_paperattendance');
 		}
 
 		return $errors;

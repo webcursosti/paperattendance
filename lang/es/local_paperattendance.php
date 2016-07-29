@@ -30,3 +30,4 @@ $string['edit']="Editar módulo";
 $string['doyouwanteditmodule']="¿Está seguro que desea editar el módulo?";
 $string['editmodule']="Asistencias en papel Editar módulo";
 $string['editmoduletitle']="Editar módulo";
+$string['editmoduletitle']="Imprimir lista de asistencia";

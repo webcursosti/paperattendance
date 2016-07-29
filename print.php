@@ -48,7 +48,7 @@ if( !has_capability("local/paperattendance:print", $context) ){
 
 $urlprint = new moodle_url("/local/paperattendance/print.php", array("courseid" => $courseid));
 // Page navigation and URL settings.
-$pagetitle = "Imprimir lista de asistencia";
+$pagetitle = get_string('printtitle', 'local_paperattendance');
 $PAGE->set_context($context);
 $PAGE->requires->jquery();
 $PAGE->set_url($urlprint);
@@ -155,7 +155,7 @@ if($action == "download" && isset($attendancepdffile)){
 
 	$button = html_writer::nonempty_tag(
 			"div",
-			$OUTPUT->single_button($urlprint, "Volver"), 
+			$OUTPUT->single_button($urlprint, get_string('printgoback', 'local_paperattendance')), 
 			array("align" => "left"
 				
 	));
@@ -183,7 +183,7 @@ if($action == "download" && isset($attendancepdffile)){
 	
 	// Donwload and back buttons
 	echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "download"), null, array("target" => "_blank"));
-	echo "Descargar lista de asistencia";
+	echo get_string('downloadprint', 'local_paperattendance');
 	echo $button;
 	
 	// Preview PDF
