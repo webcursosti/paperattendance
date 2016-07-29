@@ -51,6 +51,8 @@ $urlprint = new moodle_url("/local/paperattendance/print.php", array("courseid" 
 $pagetitle = get_string('printtitle', 'local_paperattendance');
 $PAGE->set_context($context);
 $PAGE->requires->jquery();
+$PAGE->requires->jquery_plugin ( 'ui' );
+$PAGE->requires->jquery_plugin ( 'ui-css' );
 $PAGE->set_url($urlprint);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title($pagetitle);
@@ -182,12 +184,23 @@ if($action == "add"){
 if($action == "download" && isset($attendancepdffile)){
 	
 	// Donwload and back buttons
-	echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "download"), null, array("target" => "_blank"));
-	echo get_string('downloadprint', 'local_paperattendance');
-	echo $button;
+//	   echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "download"), null, array("target" => "_blank"));
+	   html_writer::div('<button style="margin-left:32%" type="button" class="btn btn-primary print">'.get_string("downloadprint", "local_paperattendance").'</button>');
+	   echo $button;
 	
-	// Preview PDF
-	echo $viewerpdf;
+	   // Preview PDF
+	   echo $viewerpdf;
+?>
+<script>
+$( document ).ready(function() {
+$( ".print" ).on( "click", function() {
+	var w = window.open('<?php echo $url ;?>');
+	w.print();
+});
+});
+</script>
+<?php 
 }
 
 echo $OUTPUT->footer();
+
