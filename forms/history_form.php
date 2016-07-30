@@ -36,7 +36,7 @@ class editattendance extends moodleform {
 
 		// Select user input
 		$status = array();
-		$status["no"] = "Seleccione asistencia";
+		$status[-1] = "Seleccione asistencia";
 		$status[0] = "Ausente";
 		$status[1] = "Presente";
 		
@@ -64,7 +64,7 @@ class editattendance extends moodleform {
 
 		$status = $data["status"];
 
-		if($status == "no"){
+		if($status == -1){
 			$errors["status"] = "Campo requerido";
 		}
 
