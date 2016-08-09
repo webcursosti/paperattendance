@@ -21,9 +21,9 @@
  */
 
 // Define whether the pdf has been processed or not 
-define('PAPERATTENDANCE_STATUS_UNREAD', 0); //not processed
-define('PAPERATTENDANCE_STATUS_PROCESSED', 1); //already processed
-define('PAPERATTENDANCE_STATUS_SYNC', 2); //already synced with omega
+define('PAPERATTENDANCE_STATUS_UNREAD', 0); 	//not processed
+define('PAPERATTENDANCE_STATUS_PROCESSED', 1); 	//already processed
+define('PAPERATTENDANCE_STATUS_SYNC', 2); 		//already synced with omega
 
 /**
 * Creates a QR image based on a string
@@ -53,16 +53,22 @@ function paperattendance_create_qr_image($qrstring , $path){
  */
 function paperattendance_get_students_for_printing($course) {
 	global $DB;
-	$query = 'SELECT u.id, u.idnumber, u.firstname, u.lastname, GROUP_CONCAT(e.enrol) as enrol
-				FROM {user_enrolments} ue
-				JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = ?)
-				JOIN {context} c ON (c.contextlevel = 50 AND c.instanceid = e.courseid)
-				JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.roleid = 5 AND ra.userid = ue.userid)
-				JOIN {user} u ON (ue.userid = u.id)
-                GROUP BY u.id
-				ORDER BY lastname ASC';
+	
+	$query = 'SELECT u.id, 
+			u.idnumber, 
+			u.firstname, 
+			u.lastname, 
+			GROUP_CONCAT(e.enrol) as enrol
+			FROM {user_enrolments} ue
+			INNER JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = ?)
+			INNER JOIN {context} c ON (c.contextlevel = 50 AND c.instanceid = e.courseid)
+			INNER JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.roleid = 5 AND ra.userid = ue.userid)
+			INNER JOIN {user} u ON (ue.userid = u.id)
+			GROUP BY u.id
+			ORDER BY lastname ASC';
 	$params = array($course->id);
 	$rs = $DB->get_recordset_sql($query, $params);
+	
 	return $rs;
 }
 
@@ -378,17 +384,18 @@ function paperattendance_readpdf($path, $filename, $course){
 	}
 }
 
-function get_sessionid($pdffile){
+function paperattendance_get_sessionid($pdffile){
 	global $DB;
 	
 	$query = "SELECT sess.id AS id
-	FROM {paperattendance_session} AS sess
-	WHERE pdf = ? ";
+			FROM {paperattendance_session} AS sess
+			WHERE pdf = ? ";
 	$resultado = $DB->get_record_sql($query, array($pdffile));
+	
 	return $resultado -> id;
 }
 
-function save_student_presence($sessid, $studentid, $status){
+function paperattendance_save_student_presence($sessid, $studentid, $status){
 	global $DB;
 	
 	$sessioninsert = new stdClass();
@@ -403,9 +410,10 @@ function save_student_presence($sessid, $studentid, $status){
 
 // //returns orientation {straight, rotated, error}
 // //pdf = pdfname + extension (.pdf)
-function get_orientation($path, $pdf, $page){
-	global $CFG;
+function paperattendance_get_orientation($path, $pdf, $page){
+	//TODO: la pagina donde se utiliza la funcion debe incluir el require_once
 	require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
+	global $CFG;
 
 	$pdfexplode = explode(".",$pdf);
 	$pdfname = $pdfexplode[0];
@@ -486,9 +494,10 @@ function get_orientation($path, $pdf, $page){
 	$imagick->clear();
 }
 
-function get_qr_text($path, $pdf){
-	global $CFG, $DB;
+function paperattendance_get_qr_text($path, $pdf){
+	//TODO: la pagina donde se utiliza la funcion debe incluir el require_once
 	require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
+	global $CFG, $DB;
 
 	$pdfexplode = explode(".",$pdf);
 	$pdfname = $pdfexplode[0];
@@ -546,7 +555,7 @@ function get_qr_text($path, $pdf){
 }
 
 
-function insert_session($courseid, $requestorid, $userid, $pdffile){
+function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffile){
 	global $DB;
 
 	$sessioninsert = new stdClass();
@@ -558,11 +567,12 @@ function insert_session($courseid, $requestorid, $userid, $pdffile){
 	$sessioninsert->status = 0;
 	$sessioninsert->lastmodified = time();
 	$sessionid = $DB->insert_record('paperattendance_session', $sessioninsert);
+	
 	return $sessionid;
 }
 
 
-function insert_session_module($moduleid, $sessionid, $time){
+function paperattendance_insert_session_module($moduleid, $sessionid, $time){
 	global $DB;
 
 	$sessionmoduleinsert = new stdClass();
@@ -570,6 +580,7 @@ function insert_session_module($moduleid, $sessionid, $time){
 	$sessionmoduleinsert->moduleid = $moduleid;
 	$sessionmoduleinsert->sessionid = $sessionid;
 	$sessionmoduleinsert->date = $time;
+	
 	if($DB->insert_record('paperattendance_sessmodule', $sessionmoduleinsert)){
 		return true;
 	}
@@ -579,28 +590,32 @@ function insert_session_module($moduleid, $sessionid, $time){
 }
 
 //returns {perfect, repited}
-function check_session_modules($arraymodules, $courseid, $time){
+function paperattendance_check_session_modules($arraymodules, $courseid, $time){
 	global $DB;
 
 	$verification = 0;
 	$modulesexplode = explode(":",$arraymodules);
 	list ( $sqlin, $parametros1 ) = $DB->get_in_or_equal ( $modulesexplode );
+	
 	$parametros2 = array($courseid, $time);
 	$parametros = array_merge($parametros1,$parametros2);
-	$query = "SELECT sess.id, sessmodule.id
-	FROM {paperattendance_session} AS sess
-	INNER JOIN {paperattendance_sessmodule} AS sessmodule ON (sessmodule.sessionid = sess.id)
-	WHERE sessmodule.moduleid $sqlin AND sess.courseid = ?  AND sessmodule.date = ? ";
-	$resultado = $DB->get_records_sql ($query, $parametros );
-		if(count($resultado) == 0){
-			return "perfect";
-		}
-		else{
-			return "repited";
-		}
+	
+	$sessionquery = "SELECT sess.id,
+			sessmodule.id
+			FROM {paperattendance_session} AS sess
+			INNER JOIN {paperattendance_sessmodule} AS sessmodule ON (sessmodule.sessionid = sess.id)
+			WHERE sessmodule.moduleid $sqlin AND sess.courseid = ?  AND sessmodule.date = ? ";
+	
+	$resultado = $DB->get_records_sql ($sessionquery, $parametros );
+	if(count($resultado) == 0){
+		return "perfect";
+	}
+	else{
+		return "repited";
+	}
 }
 
-function read_pdf_save_session($path, $pdffile){
+function paperattendance_read_pdf_save_session($path, $pdffile){
 	//path must end with "/"
 	global $USER;
 
@@ -662,7 +677,7 @@ function read_pdf_save_session($path, $pdffile){
 }
 
 // //pdf = pdfname + extension (.pdf)
-function rotate($path, $pdfname){
+function paperattendance_rotate($path, $pdfname){
 	
 	//read pdf and rewrite it 
 	$pdf = new FPDI();
@@ -695,12 +710,11 @@ function rotate($path, $pdfname){
 	    // use the imported page
 	    $pdf->useTemplate($templateId);
 	}
-	if($pdf->Output($path.$pdfname, "F")) // Se genera el nuevo pdf.
-	{
-	return true;
-}else{
-	return false;
+	
+	if($pdf->Output($path.$pdfname, "F")){
+		return true;
+	}else{
+		return false;
+	}
 }
-}
-
 
