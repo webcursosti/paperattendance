@@ -72,10 +72,11 @@ function paperattendance_get_students_for_printing($course) {
  * @param int $course
  *            Id course
  */
-function paperattendance_students_list($course){
+function paperattendance_students_list($contextid, $course){
+	global $CFG;
 	//TODO: Add enrolments for omega, Remember change "manual".
 	$enrolincludes = array("manual");
-	$filedir = $CFG->dataroot . "/temp/emarking/$context->id";
+	$filedir = $CFG->dataroot . "/temp/emarking/$contextid";
 	$userimgdir = $filedir . "/u";
 	$students = paperattendance_get_students_for_printing($course);
 	
@@ -92,7 +93,7 @@ function paperattendance_students_list($course){
 		$studentobj->name = substr("$student->lastname, $student->firstname", 0, 65);
 		$studentobj->idnumber = $student->idnumber;
 		$studentobj->id = $student->id;
-		$studentobj->picture = emarking_get_student_picture($student, $userimgdir);
+		//$studentobj->picture = emarking_get_student_picture($student, $userimgdir);
 		// Store student info in hash so every student is stored once.
 		$studentinfo[$student->id] = $studentobj;
 	}
@@ -115,7 +116,7 @@ function paperattendance_students_list($course){
  * @param unknown $studentinfo
  *            the student info including name and idnumber
  */
-function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $qrstring, $webcursospath) {
+function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $qrstring, $webcursospath, $sessiondate) {
 	global $CFG;
 	// Pages should be added automatically while the list grows.
 	$pdf->SetAutoPageBreak(false);
@@ -169,15 +170,15 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	// Write requestor.
 	$top += 4;
 	$pdf->SetXY($left, $top);
-	$pdf->Write(1, core_text::strtoupper("Solicitante" . ': ' . $requestorinfo->firstname." ".$requestorinfo->lastname));
+	$pdf->Write(1, core_text::strtoupper(get_string("requestor", 'local_paperattendance') . ': ' . $requestorinfo->firstname." ".$requestorinfo->lastname));
 	// Write date.
 	$top += 4;
 	$pdf->SetXY($left, $top);
-	$pdf->Write(1, core_text::strtoupper(get_string("date") . ': ' . date("h:s d-m-Y", time())));
+	$pdf->Write(1, core_text::strtoupper(get_string("date") . ': ' . date("d-m-Y", $sessiondate)));
 	// Write modules.
 	$top += 4;
 	$pdf->SetXY($left, $top);
-	$pdf->Write(1, core_text::strtoupper("Modulos" . ': ' . $stringmodules));
+	$pdf->Write(1, core_text::strtoupper(get_string("modulescheckbox", 'local_paperattendance') . ': ' . $stringmodules));
 	// Write number of students.
 	$top += 4;
 	$pdf->SetXY($left, $top);
@@ -190,7 +191,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->Cell(25, 8, core_text::strtoupper(get_string('idnumber')), 0, 0, 'L');
 	$pdf->Cell(20, 8, core_text::strtoupper(get_string('photo', 'mod_emarking')), 0, 0, 'L');
 	$pdf->Cell(90, 8, core_text::strtoupper(get_string('name')), 0, 0, 'L');
-	$pdf->Cell(20, 8, core_text::strtoupper("Asistencia"), 0, 0, 'L');
+	$pdf->Cell(20, 8, core_text::strtoupper(get_string('pdfattendance','local_paperattendance')), 0, 0, 'L');
 	$pdf->Ln();
 	$top += 8;
 	
@@ -216,7 +217,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 		$x = $pdf->GetX();
 		$y = $pdf->GetY();
 		$pdf->Cell(20, 8, "", 0, 0, 'L', $fill);
-		$pdf->Image($stlist->picture, $x + 5, $y, 8, 8, "PNG", $fill);
+//		$pdf->Image($stlist->picture, $x + 5, $y, 8, 8, "PNG", $fill);
 		// Student name
 		$pdf->Cell(90, 8, core_text::strtoupper($stlist->name), 0, 0, 'L', $fill);
 		// Attendance
@@ -283,6 +284,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 }
 
 function paperattendance_readpdf($path, $filename, $course){
+	global $DB;
 	
 	$pdf = new Imagick();
 	$pdf->setResolution( 100, 100 );
@@ -291,47 +293,118 @@ function paperattendance_readpdf($path, $filename, $course){
 	
 	$pdftotalpages = $pdf->getNumberImages();
 	
-	$studentlist = paperattendance_students_list($course);
+	$context = context_course::instance($course);
+	$studentlist = paperattendance_students_list($context ->id, $course);
+	
+	$sessid = get_sessionid($filename);
 	
 	$countstudent = 1;
 	foreach ($studentlist as $student){
 			
 		if($countstudent == 1){
-			$page = new Imagick( $path."/".$filename."[1]" );
+			$page = new Imagick( $path."/".$filename."[0]" );
 			$page->setResolution( 100, 100);
+			$page = $page->flattenImages();
 			$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
 			$page->setImageFormat('png');
+//			$page->writeImage('pdf_'.$countstudent.'.png');
+			$height = $page->getImageHeight();
+			$width = $page->getImageWidth();
+			
+			$attendancecircle = $page->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*$countstudent));
+//			$attendancecircle->writeImage('student_'.$countstudent.'.png');
 	
 		}else if($countstudent%26 == 0){
 			$page->destroy();
 			
 			$numberpage = ceil($countstudent/26);
-			$page = new Imagick( $path."/".$filename."[".$numberpage."]" );
-			$page->setResolution( 100, 100);
-			$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
-			$page->setImageFormat('png');
+			$pagetwo = new Imagick( $path."/".$filename."[".$numberpage."]" );
+			$pagetwo->setResolution( 100, 100);
+			$pagetwo = $pagetwo->flattenImages();
+			$pagetwo->setImageType( imagick::IMGTYPE_GRAYSCALE );
+			$pagetwo->setImageFormat('png');
+//			$pagetwo->writeImage('pdf_'.$countstudent.'.png');
+			$height = $pagetwo->getImageHeight();
+			$width = $pagetwo->getImageWidth();
 			
+			$attendancecircle = $pagetwo->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*$countstudent));
+//			$attendancecircle->writeImage('student_'.$countstudent.'.png');	
+		}
+		else if($countstudent%52 == 0){
+			$page->destroy();
+				
+			$numberpage = ceil($countstudent/26);
+			$pagethree = new Imagick( $path."/".$filename."[".$numberpage."]" );
+			$pagethree->setResolution( 100, 100);
+			$pagethree = $pagethree->flattenImages();
+			$pagethree->setImageType( imagick::IMGTYPE_GRAYSCALE );
+			$pagethree->setImageFormat('png');
+//			$pagethree->writeImage('pdf_'.$countstudent.'.png');
+			$height = $pagethree->getImageHeight();
+			$width = $pagethree->getImageWidth();
+				
+			$attendancecircle = $pagethree->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*$countstudent));
+			//			$attendancecircle->writeImage('student_'.$countstudent.'.png');
+		}
+		else if($countstudent%78 == 0){
+			$page->destroy();
+		
+			$numberpage = ceil($countstudent/26);
+			$pagefour = new Imagick( $path."/".$filename."[".$numberpage."]" );
+			$pagefour->setResolution( 100, 100);
+			$pagefour = $pagefour->flattenImages();
+			$pagefour->setImageType( imagick::IMGTYPE_GRAYSCALE );
+			$pagefour->setImageFormat('png');
+//			$pagefour->writeImage('pdf_'.$countstudent.'.png');
+			$height = $pagefour->getImageHeight();
+			$width = $pagefour->getImageWidth();
+		
+			$attendancecircle = $pagefour->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*$countstudent));
+			//			$attendancecircle->writeImage('student_'.$countstudent.'.png');
 		}
 		
-		$height = $page->getImageHeight();
-		$width = $page->getImageWidth();
-		
-		$attendancecircle = $page->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*($countstudent-1)));
-		
-		$graychannel = $frame->getImageChannelMean(Imagick::CHANNEL_GRAY);
-		echo "<br>Imagen $countstudent media ".$graychannel["mean"]." desviacion ".$graychannel["standardDeviation"];
-		
+		$graychannel = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
+//		echo "<br>Imagen $countstudent media ".$graychannel["mean"]." desviacion ".$graychannel["standardDeviation"];
+		if($x["mean"] < 62900){
+			//echo "Alumno".$countstudent ." presente";
+			save_student_presence($sessid, $student->id, '1');
+		}
+		else{
+			//echo "Alumno".$countstudent ." ausente";
+			save_student_presence($sessid, $student->id, '0');
+		}
+
 		$countstudent++;
 	}
+}
+
+function get_sessionid($pdffile){
+	global $DB;
 	
+	$query = "SELECT sess.id AS id
+	FROM {paperattendance_session} AS sess
+	WHERE pdf = ? ";
+	$resultado = $DB->get_record_sql($query, array($pdffile));
+	return $resultado -> id;
+}
+
+function save_student_presence($sessid, $studentid, $status){
+	global $DB;
 	
-	
+	$sessioninsert = new stdClass();
+	$sessioninsert->id = "NULL";
+	$sessioninsert->sessionid = $sessid;
+	$sessioninsert->userid = $studentid;
+	$sessioninsert->status = $status;
+	$sessioninsert->lastmodified = time();
+	$lastinsertid = $DB->insert_record('paperattendance_presence', $sessioninsert, false);
 }
 
 
 // //returns orientation {straight, rotated, error}
 // //pdf = pdfname + extension (.pdf)
 function get_orientation($path, $pdf, $page){
+	global $CFG;
 	require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
 
 	$pdfexplode = explode(".",$pdf);
@@ -550,10 +623,10 @@ function read_pdf_save_session($path, $pdffile){
 				$sessionid = insert_session($courseid, $requestorid, $USER-> id, $pdffile);
 				$verification = insert_session_module($module, $sessionid, $time);
 				if($verification == true){
-					echo "<br> Perfect";
+					return "Perfect";
 				}
 				else{
-					echo "<br> Error";
+					return "Error";
 				}
 			}
 			else {
@@ -567,23 +640,24 @@ function read_pdf_save_session($path, $pdffile){
 					$sessionid = insert_session($courseid, $requestorid, $USER-> id, $pdffile);
 					$verification = insert_session_module($module, $sessionid, $time);
 					if($verification == true){
-						echo "<br> Perfect";
+						return "Perfect";
 					}
 					else{
-						echo "<br> Error";
+						return "Error";
 					}
 				}
 			}
 		}
 		else{
 			//couldnt read qr
-			echo "Couldn´t read qr";
-			echo "<br> Orientation is: " .get_orientation($path, $pdffile, "0");
-			echo "<br> Please make sure pdf is straight, without tilt and header on top";
+			$return = "Couldn´t read qr";
+			$return += "<br> Orientation is: " .get_orientation($path, $pdffile, "0");
+			$return += "<br> Please make sure pdf is straight, without tilt and header on top";
+			return $return;
 		}
 	}
 	else{
-		echo "<br> Session already exists";
+		return "Session already exists";
 	}
 }
 
@@ -597,7 +671,7 @@ function rotate($path, $pdfname){
 	// iterate through all pages
 	for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
 		//get page orientation
-		$orientation = get_orientation($path, $pdfname,"$pageNo");
+		$orientation = get_orientation($path, $pdfname,$pageNo-1);
 	    // import a page
 	    $templateId = $pdf->importPage($pageNo);
 	    // get the size of the imported page
@@ -621,8 +695,12 @@ function rotate($path, $pdfname){
 	    // use the imported page
 	    $pdf->useTemplate($templateId);
 	}
-	$pdf->Output($path.$pdfname, "F"); // Se genera el nuevo pdf.
-
+	if($pdf->Output($path.$pdfname, "F")) // Se genera el nuevo pdf.
+	{
+	return true;
+}else{
+	return false;
+}
 }
 
 

@@ -71,7 +71,7 @@ $sqlunreadpdfs = "SELECT  id, pdf as name, courseid
 $params = array(PAPERATTENDANCE_STATUS_UNREAD);
 
 // Read the pdfs if there is any unread, with readpdf function
-if($resources = $DB->get_record_sql($sqlunreadpdfs, $params)){
+if($resources = $DB->get_records_sql($sqlunreadpdfs, $params)){
 	$path = $CFG -> dataroot. "temp/local/paperattendance/unread";
 	foreach($resources as $pdf){
 		$found++;

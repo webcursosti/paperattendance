@@ -40,16 +40,19 @@ if (isguestuser()) {
 $courseid = required_param("courseid", PARAM_INT);
 $action = optional_param("action", "add", PARAM_INT);
 
-$context = context_system::instance();
-if (! has_capability("local/paperattendance:print", $context)) {
+$context = context_course::instance($COURSE->id);
+
+if( !has_capability("local/paperattendance:print", $context) ){
 	print_error("ACCESS DENIED");
 }
 
 $urlprint = new moodle_url("/local/paperattendance/print.php", array("courseid" => $courseid));
 // Page navigation and URL settings.
-$pagetitle = "Imprimir lista de asistencia";
+$pagetitle = get_string('printtitle', 'local_paperattendance');
 $PAGE->set_context($context);
 $PAGE->requires->jquery();
+$PAGE->requires->jquery_plugin ( 'ui' );
+$PAGE->requires->jquery_plugin ( 'ui-css' );
 $PAGE->set_url($urlprint);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title($pagetitle);
@@ -73,7 +76,7 @@ if($action == "add"){
 		// array idmodule => {0 = no checked, 1 = checked}
 		$modules = $data->modules;
 		
-		$path = $CFG -> dataroot. "/temp/local/paperattandace/";
+		$path = $CFG -> dataroot. "/temp/local/paperattendance/";
 		
 		//list($path, $filename) = paperattendance_create_qr_image($courseid."*".$requestor."*", $path);
 		
@@ -91,7 +94,7 @@ if($action == "add"){
 		$pdf->setPrintFooter(false);
 
 		// Get student for the list
-		$studentinfo = paperattendance_students_list($course);
+		$studentinfo = paperattendance_students_list($context->id, $course);
 
 		// We validate the number of students as we are filtering by enrolment.
 		// type after getting the data.
@@ -116,7 +119,7 @@ if($action == "add"){
 		
 		$stringqr = $courseid."*".$requestor."*".$arraymodules."*".$time."*";
 		
-		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $modules, $path, $stringqr, $webcursospath);
+		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $modules, $path, $stringqr, $webcursospath, $sessiondate);
 				
 		$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
 		
@@ -154,7 +157,7 @@ if($action == "download" && isset($attendancepdffile)){
 
 	$button = html_writer::nonempty_tag(
 			"div",
-			$OUTPUT->single_button($urlprint, "Volver"), 
+			$OUTPUT->single_button($urlprint, get_string('printgoback', 'local_paperattendance')), 
 			array("align" => "left"
 				
 	));
@@ -181,12 +184,23 @@ if($action == "add"){
 if($action == "download" && isset($attendancepdffile)){
 	
 	// Donwload and back buttons
-	echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "download"), null, array("target" => "_blank"));
-	echo "Descargar lista de asistencia";
-	echo $button;
+//	   echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "download"), null, array("target" => "_blank"));
+	   html_writer::div('<button style="margin-left:32%" type="button" class="btn btn-primary print">'.get_string("downloadprint", "local_paperattendance").'</button>');
+	   echo $button;
 	
-	// Preview PDF
-	echo $viewerpdf;
+	   // Preview PDF
+	   echo $viewerpdf;
+?>
+<script>
+$( document ).ready(function() {
+$( ".print" ).on( "click", function() {
+	var w = window.open('<?php echo $url ;?>');
+	w.print();
+});
+});
+</script>
+<?php 
 }
 
 echo $OUTPUT->footer();
+
