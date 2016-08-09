@@ -42,3 +42,10 @@ $string['pleaseselectteacher']="You must select a teacher first";
 $string['pleaseselectdate']="Please select a valid date";
 $string['pleaseselectmodule']="Please select at least one module";
 $string['pdfattendance']="Attendance";
+// Capabilities
+$string["paperattendance:print"] = "View list";
+$string["paperattendance:upload"] = "Upload scaner list";
+$string["paperattendance:history"] = "View history attendance";
+$string["paperattendance:manageattendance"] = "Setting paper attendance";
+$string["paperattendance:modules"] = "Manage modules";
+$string["paperattendance:teacherview"] = "Teacher view";

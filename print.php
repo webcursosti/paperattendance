@@ -32,6 +32,7 @@ require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
 require_once ($CFG->dirroot . "/mod/emarking/print/locallib.php");
 require_once ("locallib.php");
 global $DB, $PAGE, $OUTPUT, $USER;
+
 require_login();
 if (isguestuser()) {
 	die();
@@ -76,8 +77,7 @@ if($action == "add"){
 		// array idmodule => {0 = no checked, 1 = checked}
 		$modules = $data->modules;
 		
-		$path = $CFG -> dataroot. "/temp/local/paperattendance/";
-		
+		$path = $CFG -> dataroot. "/temp/local/paperattendance/";		
 		//list($path, $filename) = paperattendance_create_qr_image($courseid."*".$requestor."*", $path);
 		
 		$uailogopath = $CFG->dirroot . '/local/paperattendance/img/uai.jpeg';
@@ -115,16 +115,14 @@ if($action == "add"){
 			}
 		}
 		
-		$time = strtotime(date("d-m-Y"));
-		
+		$time = strtotime(date("d-m-Y"));		
 		$stringqr = $courseid."*".$requestor."*".$arraymodules."*".$time."*";
 		
 		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $modules, $path, $stringqr, $webcursospath, $sessiondate);
-				
-		$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
+		// Created new pdf
+		$pdf->Output($attendancepdffile, "F");
 		
-		$fs = get_file_storage();
-		
+		$fs = get_file_storage();		
 		$file_record = array(
     			'contextid' => $context->id,
     			'component' => 'local_paperattendance',
@@ -136,20 +134,18 @@ if($action == "add"){
     			'timemodified' => time(),
     			'userid' => $USER->id,
     			'author' => $USER->firstname." ".$USER->lastname,
-    			'license' => 'allrightsreserved'
-    	);
+    			'license' => 'allrightsreserved'				
+		);
 		
 		// If the file already exists we delete it
 		if ($fs->file_exists($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
 			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
 			$previousfile->delete();
-		}
-		
+		}		
 		// Info for the new file
-    	$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);    	
+		$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);    	
 		
-		$action = "download";
-		
+		$action = "download";		
 	}
 }
 
@@ -158,12 +154,10 @@ if($action == "download" && isset($attendancepdffile)){
 	$button = html_writer::nonempty_tag(
 			"div",
 			$OUTPUT->single_button($urlprint, get_string('printgoback', 'local_paperattendance')), 
-			array("align" => "left"
-				
+			array("align" => "left"				
 	));
 	
-	$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
-	
+	$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");	
 	$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
 			"src" => $url,
 			"style" => "height:75vh; width:60vw"
@@ -176,31 +170,28 @@ if($action == "add"){
 
 	$PAGE->set_heading($pagetitle);
 	
-	echo html_writer::nonempty_tag("h2", $course->shortname." - ".$course->fullname);
-	
+	echo html_writer::nonempty_tag("h2", $course->shortname." - ".$course->fullname);	
 	$addform->display();
 }
 
 if($action == "download" && isset($attendancepdffile)){
 	
-	// Donwload and back buttons
-//	   echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "download"), null, array("target" => "_blank"));
-	   html_writer::div('<button style="margin-left:32%" type="button" class="btn btn-primary print">'.get_string("downloadprint", "local_paperattendance").'</button>');
-	   echo $button;
+	//echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "download"), null, array("target" => "_blank"));
+	echo html_writer::div('<button style="margin-left:1%" type="button" class="btn btn-primary print">'.get_string("downloadprint", "local_paperattendance").'</button>');
+	// Back button
+	echo $button;
+	// Preview PDF
+	echo $viewerpdf;
+}
 	
-	   // Preview PDF
-	   echo $viewerpdf;
+echo $OUTPUT->footer();
 ?>
 <script>
 $( document ).ready(function() {
-$( ".print" ).on( "click", function() {
-	var w = window.open('<?php echo $url ;?>');
-	w.print();
-});
+	$( ".print" ).on( "click", function() {
+		var w = window.open('<?php echo $url ;?>');
+		w.print();
+	});
 });
 </script>
-<?php 
-}
-
-echo $OUTPUT->footer();
 

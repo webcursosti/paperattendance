@@ -41,3 +41,10 @@ $string['pleaseselectteacher']="Porfavor seleccione profesor primero";
 $string['pleaseselectdate']="Por favor seleccione una fecha válida";
 $string['pleaseselectmodule']="Por favor seleccione al menos un módulo";
 $string['pdfattendance']="Asistencia";
+// Capabilities
+$string["paperattendance:print"] = "Ver impresiones de listas";
+$string["paperattendance:upload"] = "Subir listas escaneadas";
+$string["paperattendance:history"] = "Ver historial de asistencias";
+$string["paperattendance:manageattendance"] = "Configuración asistencias en papel";
+$string["paperattendance:modules"] = "Administrar modulos";
+$string["paperattendance:teacherview"] = "Vista del profesor";
