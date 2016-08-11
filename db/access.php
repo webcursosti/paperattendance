@@ -48,7 +48,7 @@ $capabilities = array(
 						'teacher' => CAP_ALLOW,
 						'editingteacher' => CAP_ALLOW,
 						'manager' => CAP_ALLOW
-						 )),
+				)),
 		'local/paperattendance:upload' => array(
 				'captype' => 'write',
 				'contextlevel' => CONTEXT_SYSTEM,
@@ -57,7 +57,7 @@ $capabilities = array(
 						'teacher' => CAP_PROHIBIT,
 						'editingteacher' => CAP_ALLOW,
 						'manager' => CAP_ALLOW
-						 )),
+				)),
 		'local/paperattendance:history' => array(
 				'captype' => 'read',
 				'contextlevel' => CONTEXT_COURSE,
@@ -66,7 +66,7 @@ $capabilities = array(
 						'teacher' => CAP_ALLOW,
 						'editingteacher' => CAP_ALLOW,
 						'manager' => CAP_ALLOW
-						 )),
+				)),
 		'local/paperattendance:manageattendance' => array(
 				'riskbitmask' => RISK_MANAGETRUST,
 				'captype' => 'write',
@@ -76,7 +76,7 @@ $capabilities = array(
 						'teacher' => CAP_ALLOW,
 						'editingteacher' => CAP_ALLOW,
 						'manager' => CAP_ALLOW
-						 )),
+				)),
 		'local/paperattendance:modules' => array(
 				'riskbitmask' => RISK_MANAGETRUST,
 				'captype' => 'write',
@@ -93,4 +93,4 @@ $capabilities = array(
 						'editingteacher' => CAP_ALLOW,
 						'manager' => CAP_ALLOW
 				))
-				);
+);
