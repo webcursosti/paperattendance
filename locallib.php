@@ -58,7 +58,7 @@ function paperattendance_get_students_for_printing($course) {
 			u.idnumber, 
 			u.firstname, 
 			u.lastname, 
-			GROUP_CONCAT(e.enrol) as enrol
+			GROUP_CONCAT(e.enrol) AS enrol
 			FROM {user_enrolments} ue
 			INNER JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = ?)
 			INNER JOIN {context} c ON (c.contextlevel = 50 AND c.instanceid = e.courseid)
@@ -302,7 +302,7 @@ function paperattendance_readpdf($path, $filename, $course){
 	$context = context_course::instance($course);
 	$studentlist = paperattendance_students_list($context ->id, $course);
 	
-	$sessid = get_sessionid($filename);
+	$sessid = paperattendance_get_sessionid($filename);
 	
 	$countstudent = 1;
 	foreach ($studentlist as $student){
@@ -373,11 +373,11 @@ function paperattendance_readpdf($path, $filename, $course){
 //		echo "<br>Imagen $countstudent media ".$graychannel["mean"]." desviacion ".$graychannel["standardDeviation"];
 		if($x["mean"] < 62900){
 			//echo "Alumno".$countstudent ." presente";
-			save_student_presence($sessid, $student->id, '1');
+			paperattendance_save_student_presence($sessid, $student->id, '1');
 		}
 		else{
 			//echo "Alumno".$countstudent ." ausente";
-			save_student_presence($sessid, $student->id, '0');
+			paperattendance_save_student_presence($sessid, $student->id, '0');
 		}
 
 		$countstudent++;
@@ -666,7 +666,7 @@ function paperattendance_read_pdf_save_session($path, $pdffile){
 		else{
 			//couldnt read qr
 			$return = "Couldn´t read qr";
-			$return += "<br> Orientation is: " .get_orientation($path, $pdffile, "0");
+			$return += "<br> Orientation is: " .paperattendance_get_orientation($path, $pdffile, "0");
 			$return += "<br> Please make sure pdf is straight, without tilt and header on top";
 			return $return;
 		}

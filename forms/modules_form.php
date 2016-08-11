@@ -27,10 +27,14 @@
 defined('MOODLE_INTERNAL') || die();
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 require_once($CFG->libdir . "/formslib.php");
+
 class paperattendance_editmodule_form extends moodleform {
+	
 	public function definition() {
 	global $CFG, $DB;
+	
 	$mform = $this->_form;
+	
 	$instance = $this->_customdata;
 	$idmodule = $instance ["idmodule"];
 	$mform->addElement("text", "name", get_string("modulename", "local_paperattendance"));
@@ -46,47 +50,54 @@ class paperattendance_editmodule_form extends moodleform {
 	$mform->setType("action", PARAM_TEXT);
 	$mform->addElement("hidden", "idmodule", $idmodule);
 	$mform->setType("idmodule", PARAM_INT);
+	
 	$this->add_action_buttons(true);
 	}
+	
 	public function validation($data, $files) {
 		global $DB;
+		
 		$errors = array();
 		$name = $data ["name"];
 		$initialtime = $data ["initialtime"];
 		$endtime = $data ["endtime"];
 		if (isset($data ["name"]) && ! empty($data ["name"]) && $data ["name"] != "" && $data ["name"] != null) {
-			if (! $DB->get_recordset_select("paperattendance_module", " name = ?", array(
-					$name))) {
-						$errors ["name"] = get_string("nameexist", "local_paperattendance");
-					}
-		} else {
+			if (! $DB->get_recordset_select("paperattendance_module", " name = ?", array($name))) {
+				$errors ["name"] = get_string("nameexist", "local_paperattendance");
+			}
+		}
+		else {
 			$errors ["name"] = get_string("required", "local_paperattendance");
 		}
 		if (isset($data ["initialtime"]) && ! empty($data ["initialtime"]) && $data ["initialtime"] != "" && $data ["initialtime"] != null) {
-			if (! $DB->get_recordset_select("paperattendance_module", " initialtime = ?", array(
-					$initialtime))) {
-						$errors ["initialtime"] = get_string("initialtimeexist", "local_paperattendance");
-					}
+			if (! $DB->get_recordset_select("paperattendance_module", " initialtime = ?", array($initialtime))) {
+				$errors ["initialtime"] = get_string("initialtimeexist", "local_paperattendance");
+			}
 
-		} else {
+		}
+		else {
 			$errors ["initialtime"] = get_string("required", "local_paperattendance");
 		}
 		if (isset($data ["endtime"]) && ! empty($data ["endtime"]) && $data ["endtime"] != "" && $data ["endtime"] != null) {
-			if (! $DB->get_recordset_select("paperattendance_module", " endtime = ?", array(
-					$endtime))) {
-						$errors ["endtime"] = get_string("endtimeexist", "local_paperattendance");
-					}
-		
-		} else {
+			if (! $DB->get_recordset_select("paperattendance_module", " endtime = ?", array($endtime))) {
+				$errors ["endtime"] = get_string("endtimeexist", "local_paperattendance");
+			}
+		}
+		else {
 			$errors ["endtime"] = get_string("required", "local_paperattendance");
 		}
+		
 		return $errors;
 	}
 }
+
 class paperattendance_addmodule_form extends moodleform {
+	
 	public function definition() {
 		global $DB;
+		
 		$mform = $this->_form;
+		
 		$mform->addElement("text", "name", get_string("modulename", "local_paperattendance"));
 		$mform->setType("name", PARAM_TEXT);
 		$mform->addRule("name", get_string("required", "local_paperattendance"), "required", null, "client");
@@ -98,40 +109,43 @@ class paperattendance_addmodule_form extends moodleform {
 		$mform->addRule("endtime", get_string("required", "local_paperattendance"), "required", null, "client");
 		$mform->addElement("hidden", "action", "add");
 		$mform->setType("action", PARAM_TEXT);
+		
 		$this->add_action_buttons(true);
 	}
+	
 	public function validation($data, $files) {
 		global $DB;
+		
 		$errors = array();
 		$name = $data ["name"];
 		$initialtime = $data ["initialtime"];
 		$endtime = $data ["endtime"];
-			if (isset($data ["name"]) && ! empty($data ["name"]) && $data ["name"] != "" && $data ["name"] != null) {
-			if (! $DB->get_recordset_select("paperattendance_module", " name = ?", array(
-					$name))) {
-						$errors ["name"] = get_string("nameexist", "local_paperattendance");
-					}
-		} else {
+		if (isset($data ["name"]) && ! empty($data ["name"]) && $data ["name"] != "" && $data ["name"] != null) {
+			if (! $DB->get_recordset_select("paperattendance_module", " name = ?", array($name))) {
+				$errors ["name"] = get_string("nameexist", "local_paperattendance");
+			}
+		}
+		else {
 			$errors ["name"] = get_string("required", "local_paperattendance");
 		}
 		if (isset($data ["initialtime"]) && ! empty($data ["initialtime"]) && $data ["initialtime"] != "" && $data ["initialtime"] != null) {
-			if (! $DB->get_recordset_select("paperattendance_module", " initialtime = ?", array(
-					$initialtime))) {
-						$errors ["initialtime"] = get_string("initialtimeexist", "local_paperattendance");
-					}
-
-		} else {
+			if (! $DB->get_recordset_select("paperattendance_module", " initialtime = ?", array($initialtime))) {
+				$errors ["initialtime"] = get_string("initialtimeexist", "local_paperattendance");
+			}
+		} 
+		else {
 			$errors ["initialtime"] = get_string("required", "local_paperattendance");
 		}
 		if (isset($data ["endtime"]) && ! empty($data ["endtime"]) && $data ["endtime"] != "" && $data ["endtime"] != null) {
-			if (! $DB->get_recordset_select("paperattendance_module", " endtime = ?", array(
-					$endtime))) {
-						$errors ["endtime"] = get_string("endtimeexist", "local_paperattendance");
-					}
-		
-		} else {
+			if (! $DB->get_recordset_select("paperattendance_module", " endtime = ?", array($endtime))) {
+				$errors ["endtime"] = get_string("endtimeexist", "local_paperattendance");
+			}
+		} 
+		else {
 			$errors ["endtime"] = get_string("required", "local_paperattendance");
 		}
+		
 		return $errors;
 	}
+	
 }

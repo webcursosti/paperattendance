@@ -53,7 +53,7 @@ class print_form extends moodleform {
 		$mform->addElement("select", "requestor", get_string('requestor', 'local_paperattendance'), $arrayteachers);
 		$mform->addElement("date_selector", "sessiondate", get_string('attdate', 'local_paperattendance'));
 		
-		$modules = $DB->get_records("paperattendance_module");
+		$modules = $DB->get_records_sql("SELECT * FROM {paperattendance_module} ORDER BY initialtime ASC");
 		$arraymodules = array();
 		foreach ($modules as $module){
 			$arraymodules[] = $mform->createElement('advcheckbox', $module->id."*".$module->initialtime."*".$module->endtime , '',$module->initialtime);	
