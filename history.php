@@ -41,343 +41,345 @@ $PAGE->set_pagelayout("standard");
 $action = optional_param("action", "view", PARAM_TEXT);
 $idattendance = optional_param("idattendance", null, PARAM_INT);
 $idpresence = optional_param("idpresence", null, PARAM_INT);
-$idcurso = required_param('courseid', PARAM_INT);
+$idcourse = required_param('courseid', PARAM_INT);
 
 require_login();
 if (isguestuser()){
 	die();
 }
-
+/*For the moment the capabilities isn't working right
 if( !has_capability("local/paperattendance:history", $context) ){
 	print_error("ACCESS DENIED");
 }
-
-/////////Inicio vista profesor
+*/
+/////////Begins Teacher's View
 	
 if( has_capability("local/paperattendance:teacherview", $context)) {
 	
-// action-> Students Attendance
-if ($action == "studentsattendance"){
-	
-	$sql = 'SELECT 
-                u.lastname,
-                u.firstname,
-                u.email,
-				p.status,
-				p.id AS idp
-                FROM {course} AS c
-                INNER JOIN {context} AS ct ON (c.id = ct.instanceid)
-                INNER JOIN {role_assignments} AS ra ON (ra.contextid = ct.id)
-                INNER JOIN {user} AS u ON (u.id = ra.userid)
-                INNER JOIN {role} AS r ON (r.id = ra.roleid)
-				INNER JOIN {paperattendance_presence} AS p ON (u.id = p.userid)				
-                WHERE c.id = ? AND r.archetype = "student" AND p.sessionid = ?  ';
-	
-	$attendances = $DB->get_records_sql($sql, array($idcurso, $idattendance));
-	
-	$attendancestable = new html_table();
-	
-	if (count($attendances) > 0){
-		$attendancestable->head = array(
-				"#",
-				"Alumno",
-				"Correo",
-				"Asistencia",
-				"Ajustes"
-		);
-	
-		$contador = 1;
-		foreach ($attendances as $attendance){
-	
-			$urlasistencia = new moodle_url("#");
-			
-			//Define presente or ausente icon and url
-			$presenteicon = new pix_icon("i/valid", "Presente");
-	
-			$presenteiconaction = $OUTPUT->action_icon(
-					$urlasistencia,
-					$presenteicon
-					);
-	
-			$ausenteicon = new pix_icon("i/invalid", "Ausente");
-	
-			$ausenteiconaction = $OUTPUT->action_icon(
-					$urlasistencia,
-					$ausenteicon
-					);
-			
-			// Define edition icon and url
-			$editurlasistencia = new moodle_url("/local/paperattendance/history.php", array(
-					"action" => "edit",
-					"idpresence" => $attendance->idp,
-					"idattendance" => $idattendance,
-					"courseid" => $idcurso
-			));
-			$editiconasistencia = new pix_icon("i/edit", "Editar");
-			$editactionasistencia = $OUTPUT->action_icon(
-					$editurlasistencia,
-					$editiconasistencia
-					);
-			
-			$name = ($attendance->firstname.' '.$attendance->lastname);
-	
-			if ($attendance->status == 1){
-					
-				$attendancestable->data[] = array(
-						$contador,
-						$name,
-						$attendance->email,
-						$presenteiconaction,
-						$editactionasistencia
-				);
-			}
-			else {
-					
-				$attendancestable->data[] = array(
-						$contador,
-						$name,
-						$attendance->email,
-						$ausenteiconaction,
-						$editactionasistencia
-				);
-			}
-			$contador++;
-		}
-	}
-	
-	$buttonurl2 = new moodle_url("/local/paperattendance/history.php", array("action" => "view", "courseid" => $idcurso));
-	
-	
-}
-
-
-// Edits an existent record
-if($action == "edit"){
-	if($idpresence == null){
-		print_error("Sesión no seleccionada");
-		$canceled = new moodle_url("/local/paperattendance/history.php", array(
-						"action" => "studentsattendance",
+	// action-> Students Attendance
+	if ($action == "studentsattendance"){
+		
+		$getstudentsattendance = 'SELECT 
+	                u.lastname,
+	                u.firstname,
+	                u.email,
+					p.status,
+					p.id AS idp
+	                FROM {course} AS c
+	                INNER JOIN {context} AS ct ON (c.id = ct.instanceid)
+	                INNER JOIN {role_assignments} AS ra ON (ra.contextid = ct.id)
+	                INNER JOIN {user} AS u ON (u.id = ra.userid)
+	                INNER JOIN {role} AS r ON (r.id = ra.roleid)
+					INNER JOIN {paperattendance_presence} AS p ON (u.id = p.userid)				
+	                WHERE c.id = ? AND r.archetype = "student" AND p.sessionid = ?  ';
+		
+		$attendances = $DB->get_records_sql($getstudentsattendance, array($idcourse, $idattendance));
+		
+		$attendancestable = new html_table();
+		
+		//Check if we have at least one attendance in the selected session
+		if (count($attendances) > 0){
+			$attendancestable->head = array(
+					"#",
+					"Alumno",
+					"Correo",
+					"Asistencia",
+					"Ajustes"
+			);
+			//A mere counter for de number of records in the table
+			$counter = 1;
+			foreach ($attendances as $attendance){
+		
+				$urlattendance = new moodle_url("#");
+				
+				//Define presente or ausente icon and url
+				$presenticon = new pix_icon("i/valid", "Presente");
+		
+				$presenticonaction = $OUTPUT->action_icon(
+						$urlattendance,
+						$presenticon
+						);
+		
+				$absenticon = new pix_icon("i/invalid", "Ausente");
+		
+				$absenticonaction = $OUTPUT->action_icon(
+						$urlattendance,
+						$absenticon
+						);
+				
+				// Define edition icon and url
+				$editurlattendance = new moodle_url("/local/paperattendance/history.php", array(
+						"action" => "edit",
+						"idpresence" => $attendance->idp,
 						"idattendance" => $idattendance,
-						"courseid" => $idcurso
+						"courseid" => $idcourse
 				));
-		redirect($canceled);
-	}
-	else{
+				$editiconattendance = new pix_icon("i/edit", "Editar");
+				$editactionasistencia = $OUTPUT->action_icon(
+						$editurlattendance,
+						$editiconattendance
+						);
+				
+				$name = ($attendance->firstname.' '.$attendance->lastname);
+				
+				//Now we check if the student is present or not
+				if ($attendance->status == 1){
+						
+					$attendancestable->data[] = array(
+							$counter,
+							$name,
+							$attendance->email,
+							$presenticonaction,
+							$editactionasistencia
+					);
+				}
+				else {
+						
+					$attendancestable->data[] = array(
+							$counter,
+							$name,
+							$attendance->email,
+							$absenticonaction,
+							$editactionasistencia
+					);
+				}
+				$counter++;
+			}
+		}
 		
-		if($attendance = $DB->get_record("paperattendance_presence", array("id" => $idpresence)) ){
-		
-			$editform = new editattendance(null, array(
-					"idattendance" => $idattendance,
-					"courseid" => $idcurso,
-					"idpresence" => $idpresence
-			));
-
-			if($editform->is_cancelled()){
+		$viewbackbutton = new moodle_url("/local/paperattendance/history.php", array("action" => "view", "courseid" => $idcourse));			
+	}	
+	// Edits an existent record for the students attendance view
+	if($action == "edit"){
+		if($idpresence == null){
+			print_error("Estudiante no seleccionado");
+			$canceled = new moodle_url("/local/paperattendance/history.php", array(
+							"action" => "studentsattendance",
+							"idattendance" => $idattendance,
+							"courseid" => $idcourse
+					));
+			redirect($canceled);
+		}
+		else{
+			
+			if($attendance = $DB->get_record("paperattendance_presence", array("id" => $idpresence)) ){
+			
+				$editform = new editattendance(null, array(
+						"idattendance" => $idattendance,
+						"courseid" => $idcourse,
+						"idpresence" => $idpresence
+				));
+	
+				if($editform->is_cancelled()){
+					$canceled = new moodle_url("/local/paperattendance/history.php", array(
+							"action" => "studentsattendance",
+							"idattendance" => $idattendance,
+							"courseid" => $idcourse
+					));
+					redirect($canceled);
+	
+				}
+				else if($editform->get_data()){
+	
+					$record = new stdClass();
+					$record->id = $idpresence;
+					$record->lastmodified = time();
+					
+					if ($editform->get_data()->status == 1){
+						$record->status = 1;
+					}
+					else {
+						$record->status = 0;
+					}
+							
+					$DB->update_record("paperattendance_presence", $record);
+					
+					$backurl = new moodle_url("/local/paperattendance/history.php", array(
+							"action" => "studentsattendance",
+							"idattendance" => $idattendance,
+							"courseid" => $idcourse
+					));
+					redirect($backurl);										
+				}
+			}
+			else{
+				print_error("Estudiante no existe");
 				$canceled = new moodle_url("/local/paperattendance/history.php", array(
 						"action" => "studentsattendance",
 						"idattendance" => $idattendance,
-						"courseid" => $idcurso
+						"courseid" => $idcourse
 				));
 				redirect($canceled);
-
+			
 			}
-			else if($editform->get_data()){
-
-				$record = new stdClass();
-				$record->id = $idpresence;
-				$record->lastmodified = time();
-				
-				if ($editform->get_data()->status == 1){
-					$record->status = 1;
-				}
-				else {
-					$record->status = 0;
-				}
-						
-				$DB->update_record("paperattendance_presence", $record);
-				
-				$back = new moodle_url("/local/paperattendance/history.php", array(
-						"action" => "studentsattendance",
-						"idattendance" => $idattendance,
-						"courseid" => $idcurso
+		}
+	}
+	
+	//Scan view
+	if($action == "scan"){
+		
+		$backurl = new moodle_url("/local/paperattendance/history.php", array(
+				"action" => "view",
+				"idattendance" => $idattendance,
+				"courseid" => $idcourse
 				));
-				redirect($back);
+		
+		$viewbackbutton = html_writer::nonempty_tag(
+				"div",
+				$OUTPUT->single_button($backurl, "Volver"),
+				array("align" => "left"
+				));
+		
+		$getpdfname = 'SELECT
+	            pdf
+				FROM {paperattendance_session} AS ps
+	            WHERE ps.id = ?';
+		
+		$pdfname = $DB->get_record_sql($getpdfname, array($idattendance));
+		
+		var_dump($context->id);
+		//Context id as 1 because the var gets the number 6 , check it later
+		$url = moodle_url::make_pluginfile_url(1, 'local_paperattendance', 'draft', 0, '/', $pdfname->pdf);
+	
+		$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
+				"src" => $url,
+				"style" => "height:75vh; width:60vw"
+		));
+	}
+	
+	// Lists all records in the database
+	if ($action == "view"){
+		$getattendances = "SELECT s.id, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, s.pdf
+		FROM {paperattendance_session} AS s 
+		INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid) 
+		INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id) 
+		WHERE s.courseid = ? 
+		ORDER BY sm.date ASC";
+		
+		$attendances = $DB->get_records_sql($getattendances, array($idcourse));
+		
+		$attendancestable = new html_table();
+		//we check if we have attendances for the selected course
+		if (count($attendances) > 0){
+			$attendancestable->head = array(
+					"#",
+					"Fecha",
+					"Hora",
+					"Scan",
+					"Asistencia alumnos"
+			);
+			//A mere counter for the number of records
+			$counter = 1;
+			foreach ($attendances as $attendance){
+				// Define scan icon and url
+				$scanurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
+						"action" => "scan",
+						"idattendance" => $attendance->id,
+						"courseid" => $idcourse
+						
+				));
+				$scanicon_attendance = new pix_icon("e/new_document", "Ver");
+				$scanaction_attendance = $OUTPUT->action_icon(
+						$scanurl_attendance,
+						$scanicon_attendance
+						);
+	
+				// Define Asistencia alumnos icon and url
+				$studentsattendanceurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
+						"action" => "studentsattendance",
+						"idattendance" => $attendance->id,
+						"courseid" => $idcourse
+				));
+				$studentsattendanceicon_attendance = new pix_icon("e/preview", "Ver Alumnos");
+				$studentsattendanceaction_attendance = $OUTPUT->action_icon(
+						$studentsattendanceurl_attendance,
+						$studentsattendanceicon_attendance
+						);
 				
-				
+				$attendancestable->data[] = array(
+						$counter,
+						date("d-m-Y", $attendance->date),
+						$attendance->hour,
+						$scanaction_attendance,
+						$studentsattendanceaction_attendance
+				);
+				$counter++;
 			}
+		}
+		
+		$buttonurl = new moodle_url("/course/view.php", array("id" => $idcourse));
+		
+	}	
+	
+	$PAGE->set_title("Historial de Asistencia");
+	$PAGE->set_heading("HISTORIAL DE ASISTENCIA");
+	
+	echo $OUTPUT->header();
+	
+	// Displays Students Attendance view
+	if ($action == "studentsattendance"){
+		
+		if (count($attendances) == 0){
+			echo html_writer::nonempty_tag("h4", "No existen registros", array("align" => "left"));
 		}
 		else{
-			print_error("Sesión no existe");
-			$canceled = new moodle_url("/local/paperattendance/history.php", array(
-					"action" => "studentsattendance",
-					"idattendance" => $idattendance,
-					"courseid" => $idcurso
-			));
-			redirect($canceled);
-		
-	}
-}
-}
-
-//Scan view
-if($action == "scan"){
-	
-	$back = new moodle_url("/local/paperattendance/history.php", array(
-			"action" => "view",
-			"idattendance" => $idattendance,
-			"courseid" => $idcurso
-			));
-	
-	$button = html_writer::nonempty_tag(
-			"div",
-			$OUTPUT->single_button($back, "Volver"),
-			array("align" => "left"
-			));
-	
-	$sql = 'SELECT
-            pdf
-			FROM {paperattendance_session} AS ps
-            WHERE ps.id = ?';
-	
-	$pdfname = $DB->get_record_sql($sql, array($idattendance));
-	$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', $pdfname->pdf);
-
-	$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
-			"src" => $url,
-			"style" => "height:75vh; width:60vw"
-	));
-}
-
-// Lists all records in the database
-if ($action == "view"){
-	$sql = "SELECT s.id, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, s.pdf
-	FROM {paperattendance_session} AS s 
-	INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid) 
-	INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id) 
-	WHERE s.courseid = $idcurso 
-	ORDER BY sm.date ASC";
-	
-	$attendances = $DB->get_records_sql($sql);
-	
-	$attendancestable = new html_table();
-
-	if (count($attendances) > 0){
-		$attendancestable->head = array(
-				"#",
-				"Fecha",
-				"Hora",
-				"Scan",
-				"Asistencia alumnos"
-		);
-		
-		$contador = 1;
-		foreach ($attendances as $attendance){
-			// Define scan icon and url
-			$scanurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
-					"action" => "scan",
-					"idattendance" => $attendance->id,
-					"courseid" => $idcurso
-					
-			));
-			$scanicon_attendance = new pix_icon("e/new_document", "Ver");
-			$scanaction_attendance = $OUTPUT->action_icon(
-					$scanurl_attendance,
-					$scanicon_attendance
-					);
-
-			// Define Asistencia alumnos icon and url
-			$studentsattendanceurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
-					"action" => "studentsattendance",
-					"idattendance" => $attendance->id,
-					"courseid" => $idcurso
-			));
-			$studentsattendanceicon_attendance = new pix_icon("e/preview", "Ver Alumnos");
-			$studentsattendanceaction_attendance = $OUTPUT->action_icon(
-					$studentsattendanceurl_attendance,
-					$studentsattendanceicon_attendance
-					);
-			
-			$attendancestable->data[] = array(
-					$contador,
-					date("d-m-Y", $attendance->date),
-					$attendance->hour,
-					$scanaction_attendance,
-					$studentsattendanceaction_attendance
-			);
-			$contador++;
+			echo html_writer::table($attendancestable);
 		}
+		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($viewbackbutton, "Atrás"), array("align" => "left"));
+		
 	}
 	
-	$buttonurl = new moodle_url("/course/view.php", array("id" => $idcurso));
-	
-}	
-
-$PAGE->set_title("Historial de Asistencia");
-$PAGE->set_heading("HISTORIAL DE ASISTENCIA");
-
-echo $OUTPUT->header();
-
-// Displays vista asistencia alumnos
-if ($action == "studentsattendance"){
-	
-	if (count($attendances) == 0){
-		echo html_writer::nonempty_tag("h4", "No existen registros", array("align" => "left"));
-	}else{
-		echo html_writer::table($attendancestable);
+	// Displays the form to edit a record
+	if( $action == "edit" ){
+		$editform->display();
 	}
-	echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl2, "Atrás"), array("align" => "left"));
 	
-}
-
-// Displays the form to edit a record
-if( $action == "edit" ){
-	$editform->display();
-}
-
-//Displays the scan file
-if($action == "scan"){
-
-	// Donwload and back buttons
-	echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "descargar"), null, array("target" => "_blank"));
-	echo "Descargar lista de asistencia";
-	echo $button;
-
-	// Preview PDF
-	echo $viewerpdf;
-}
-
-// Displays all the records and options
-if ($action == "view"){
-
-	if (count($attendances) == 0){
-		echo html_writer::nonempty_tag("h4", "No existen registros", array("align" => "left"));
-	}else{
-		echo html_writer::table($attendancestable);
+	//Displays the scan file
+	if($action == "scan"){
+	
+		// Donwload and back buttons
+		echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "descargar"), null, array("target" => "_blank"));
+		echo html_writer::nonempty_tag("h7", "Descargar asistencia", array("align" => "left"));
+		//echo "Descargar lista de asistencia";
+	
+		echo $viewbackbutton;
+	
+		// Preview PDF
+		echo $viewerpdf;
 	}
-	echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, "Volver al Curso"), array("align" => "left"));
-}
+	
+	// Displays all the records and options
+	if ($action == "view"){
+	
+		if (count($attendances) == 0){
+			echo html_writer::nonempty_tag("h4", "No existen registros", array("align" => "left"));
+		}
+		else{
+			echo html_writer::table($attendancestable);
+		}
+		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, "Volver al Curso"), array("align" => "left"));
+	}
 
 }	
 
-////////Término vista profesor
+////////Ends Teacher's view
 
 
-
-////////Inicio vista alumno
+////////Begins Student's view
 else {
 	
 	// Lists all records in the database
 	if ($action == "view"){
-		$sql = "SELECT s.id, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, p.status
+		$getstudentattendances = "SELECT s.id, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, p.status
 		FROM {paperattendance_session} AS s 
 		INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 		INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id) 
 		INNER JOIN {paperattendance_presence} AS p ON (s.id = p.sessionid) 
 		INNER JOIN {user} AS u ON (u.id = p.userid) 
-		WHERE s.courseid = $idcurso AND u.id = $USER->id 
+		WHERE s.courseid = ? AND u.id = ?
 		ORDER BY sm.date ASC";
 	
-		$attendances = $DB->get_records_sql($sql);
+		$attendances = $DB->get_records_sql($getstudentattendances, array($idcourse, $USER->id));
 	
 		$attendancestable = new html_table();
 	
@@ -388,49 +390,49 @@ else {
 					"Hora",
 					"Asistencia"
 			);
-	
-			$contador = 1;
+			//A mere counter for the numbers of records
+			$counter = 1;
 			foreach ($attendances as $attendance){
 				
-				$urlasistencia = new moodle_url("#");
+				$urlattendance = new moodle_url("#");
 				
-				$presenteicon = new pix_icon("i/valid", "Presente");
+				$presenticon = new pix_icon("i/valid", "Presente");
 				
-				$presenteiconaction = $OUTPUT->action_icon(
-						$urlasistencia,
-						$presenteicon
+				$presenticonaction = $OUTPUT->action_icon(
+						$urlattendance,
+						$presenticon
 						);
 				
-				$ausenteicon = new pix_icon("i/invalid", "Ausente");
+				$absenticon = new pix_icon("i/invalid", "Ausente");
 				
-				$ausenteiconaction = $OUTPUT->action_icon(
-						$urlasistencia,
-						$ausenteicon
+				$absenticonaction = $OUTPUT->action_icon(
+						$urlattendance,
+						$absenticon
 						);
-				
+				//We check if the student is present or not
 				if ($attendance->status == 1){
 					
 						$attendancestable->data[] = array(
-						$contador,
+						$counter,
 						date("d-m-Y", $attendance->date),
 						$attendance->hour,
-						$presenteiconaction
+						$presenticonaction
 						);
 				}
 				else {
 					
 						$attendancestable->data[] = array(
-						$contador,
+						$counter,
 						date("d-m-Y", $attendance->date),
 						$attendance->hour,
-						$ausenteiconaction
+						$absenticonaction
 						);
 				}
-				$contador++;
+				$counter++;
 			}
 		}
 	
-		$buttonurl = new moodle_url("/course/view.php", array("id" => $idcurso));
+		$backbuttonurl = new moodle_url("/course/view.php", array("id" => $idcourse));
 	
 	}
 	
@@ -442,14 +444,15 @@ else {
 	
 		if (count($attendances) == 0){
 			echo html_writer::nonempty_tag("h4", "No existen registros", array("align" => "left"));
-		}else{
+		}
+		else{
 			echo html_writer::table($attendancestable);
 		}
-		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, "Volver al Curso"), array("align" => "left"));
+		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($backbuttonurl, "Volver al Curso"), array("align" => "left"));
 	}
 	
 }
-////////Término vista de alumno
+///////Ends Student's view
 
 
 echo $OUTPUT->footer();
