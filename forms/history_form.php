@@ -27,7 +27,6 @@ class editattendance extends moodleform {
 
 	function definition (){
 
-		global $DB, $CFG;
 		$mform = $this->_form;
 		$instance = $this->_customdata;
 		$idattendance = $instance["idattendance"];
@@ -36,6 +35,8 @@ class editattendance extends moodleform {
 
 		// Select user input
 		$status = array();
+		
+		//Values -1 for present, 0 for non present and -1 for the initial value
 		$status[-1] = "Seleccione asistencia";
 		$status[0] = "Ausente";
 		$status[1] = "Presente";
@@ -59,7 +60,6 @@ class editattendance extends moodleform {
 
 	function validation ($data, $files){
 
-		global $DB;
 		$errors = array();
 
 		$status = $data["status"];

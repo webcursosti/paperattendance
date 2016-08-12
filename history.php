@@ -24,7 +24,7 @@
 * @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl) 					
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-//Pertenece al plugin PaperAttendance
+//Belongs to plugin PaperAttendance
 
 require_once (dirname(dirname(dirname(__FILE__)))."/config.php");
 require_once ($CFG->dirroot."/local/paperattendance/forms/history_form.php");
@@ -37,7 +37,7 @@ $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout("standard");
 
-// Possible actions -> view, scan or asistencia alumnos . Standard is view mode
+// Possible actions -> view, scan or students attendance . Standard is view mode
 $action = optional_param("action", "view", PARAM_TEXT);
 $idattendance = optional_param("idattendance", null, PARAM_INT);
 $idpresence = optional_param("idpresence", null, PARAM_INT);
@@ -52,26 +52,26 @@ if( !has_capability("local/paperattendance:history", $context) ){
 	print_error("ACCESS DENIED");
 }
 */
-/////////Begins Teacher's View
+//Begins Teacher's View
 	
 if( has_capability("local/paperattendance:teacherview", $context)) {
 	
 	// action-> Students Attendance
 	if ($action == "studentsattendance"){
 		
-		$getstudentsattendance = 'SELECT 
-	                u.lastname,
-	                u.firstname,
-	                u.email,
-					p.status,
-					p.id AS idp
-	                FROM {course} AS c
-	                INNER JOIN {context} AS ct ON (c.id = ct.instanceid)
-	                INNER JOIN {role_assignments} AS ra ON (ra.contextid = ct.id)
-	                INNER JOIN {user} AS u ON (u.id = ra.userid)
-	                INNER JOIN {role} AS r ON (r.id = ra.roleid)
-					INNER JOIN {paperattendance_presence} AS p ON (u.id = p.userid)				
-	                WHERE c.id = ? AND r.archetype = "student" AND p.sessionid = ?  ';
+		$getstudentsattendance = 'SELECT
+				u.lastname,
+				u.firstname,
+				u.email,
+				p.status,
+				p.id AS idp
+				FROM {course} AS c
+				INNER JOIN {context} AS ct ON (c.id = ct.instanceid)
+				INNER JOIN {role_assignments} AS ra ON (ra.contextid = ct.id)
+				INNER JOIN {user} AS u ON (u.id = ra.userid)
+				INNER JOIN {role} AS r ON (r.id = ra.roleid)
+				INNER JOIN {paperattendance_presence} AS p ON (u.id = p.userid)
+				WHERE c.id = ? AND r.archetype = "student" AND p.sessionid = ?  ';
 		
 		$attendances = $DB->get_records_sql($getstudentsattendance, array($idcourse, $idattendance));
 		
@@ -154,9 +154,8 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 		if($idpresence == null){
 			print_error("Estudiante no seleccionado");
 			$canceled = new moodle_url("/local/paperattendance/history.php", array(
-							"action" => "studentsattendance",
-							"idattendance" => $idattendance,
-							"courseid" => $idcourse
+					"idattendance" => $idattendance,
+					"courseid" => $idcourse
 					));
 			redirect($canceled);
 		}
@@ -231,9 +230,9 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 				));
 		
 		$getpdfname = 'SELECT
-	            pdf
+				pdf
 				FROM {paperattendance_session} AS ps
-	            WHERE ps.id = ?';
+				WHERE ps.id = ?';
 		
 		$pdfname = $DB->get_record_sql($getpdfname, array($idattendance));
 		
@@ -250,11 +249,11 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 	// Lists all records in the database
 	if ($action == "view"){
 		$getattendances = "SELECT s.id, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, s.pdf
-		FROM {paperattendance_session} AS s 
-		INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid) 
-		INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id) 
-		WHERE s.courseid = ? 
-		ORDER BY sm.date ASC";
+				FROM {paperattendance_session} AS s
+				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
+				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
+				WHERE s.courseid = ?
+				ORDER BY sm.date ASC";
 		
 		$attendances = $DB->get_records_sql($getattendances, array($idcourse));
 		
@@ -340,7 +339,6 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 		// Donwload and back buttons
 		echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "descargar"), null, array("target" => "_blank"));
 		echo html_writer::nonempty_tag("h7", "Descargar asistencia", array("align" => "left"));
-		//echo "Descargar lista de asistencia";
 	
 		echo $viewbackbutton;
 	
@@ -362,22 +360,22 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 
 }	
 
-////////Ends Teacher's view
+//Ends Teacher's view
 
 
-////////Begins Student's view
+//Begins Student's view
 else {
 	
 	// Lists all records in the database
 	if ($action == "view"){
 		$getstudentattendances = "SELECT s.id, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, p.status
-		FROM {paperattendance_session} AS s 
-		INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
-		INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id) 
-		INNER JOIN {paperattendance_presence} AS p ON (s.id = p.sessionid) 
-		INNER JOIN {user} AS u ON (u.id = p.userid) 
-		WHERE s.courseid = ? AND u.id = ?
-		ORDER BY sm.date ASC";
+				FROM {paperattendance_session} AS s
+				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
+				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
+				INNER JOIN {paperattendance_presence} AS p ON (s.id = p.sessionid)
+				INNER JOIN {user} AS u ON (u.id = p.userid)
+				WHERE s.courseid = ? AND u.id = ?
+				ORDER BY sm.date ASC";
 	
 		$attendances = $DB->get_records_sql($getstudentattendances, array($idcourse, $USER->id));
 	
@@ -452,7 +450,7 @@ else {
 	}
 	
 }
-///////Ends Student's view
+//Ends Student's view
 
 
 echo $OUTPUT->footer();
