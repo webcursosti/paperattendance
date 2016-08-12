@@ -91,13 +91,13 @@ if ($addform->get_data()) {
 	//read pdf and rewrite it 
 	$pdf = new FPDI();
 	// get the page count
-	$pageCount = $pdf->setSourceFile($path."/unread/".$filename);
+	$pagecount = $pdf->setSourceFile($path."/unread/".$filename);
 	// iterate through all pages
-	for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+	for ($pageno = 1; $pageno <= $pagecount; $pageno++) {
 	    // import a page
-	    $templateId = $pdf->importPage($pageNo);
+	    $templateid = $pdf->importPage($pageno);
 	    // get the size of the imported page
-	    $size = $pdf->getTemplateSize($templateId);
+	    $size = $pdf->getTemplateSize($templateid);
 	
 	    // create a page (landscape or portrait depending on the imported page size)
 	    if ($size['w'] > $size['h']) {
@@ -107,7 +107,7 @@ if ($addform->get_data()) {
 	    }
 	
 	    // use the imported page
-	    $pdf->useTemplate($templateId);
+	    $pdf->useTemplate($templateid);
 	}
 	$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
 	
@@ -137,10 +137,10 @@ if ($addform->get_data()) {
 	$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
 	
 	//rotate pages of the pdf if necessary
-	rotate($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
+	paperattendance_rotate($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
 	
 	//read pdf and save session and sessmodules
-	$pdfprocessed = read_pdf_save_session($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
+	$pdfprocessed = paperattendance_read_pdf_save_session($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
 	
 	if($pdfprocessed == "Perfect"){
 	

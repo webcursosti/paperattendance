@@ -29,7 +29,7 @@ require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 require_once ($CFG->libdir . '/clilib.php'); 
 
-global $DB,$COURSE;
+global $DB;
 
 // Now get cli options
 list($options, $unrecognized) = cli_get_params(
@@ -62,10 +62,10 @@ $read = 0;
 $found = 0;
 
 // Sql that brings the unread pdfs names
-$sqlunreadpdfs = "SELECT  id, pdf as name, courseid
+$sqlunreadpdfs = "SELECT  id, pdf AS name, courseid
 	FROM {paperattendance_session}
 	WHERE status = ?
-	ORDER BY lastmodified asc";
+	ORDER BY lastmodified ASC";
 
 // Parameters for the previous query
 $params = array(PAPERATTENDANCE_STATUS_UNREAD);

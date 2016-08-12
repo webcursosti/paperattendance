@@ -39,7 +39,7 @@ class upload_form extends moodleform {
 		//retrieve course id
 		$instance = $this ->_customdata;
 		$courseid = $instance['courseid'];
-		$maxbytes = 6000000;
+		$maxbytes = 8388608;
 		
 		//header
 		$mform->addElement('header', 'header', get_string('header', 'local_paperattendance'));

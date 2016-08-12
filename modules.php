@@ -28,7 +28,7 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 require_once ($CFG->dirroot . "/repository/lib.php");
 require_once($CFG->dirroot . '/local/paperattendance/forms/modules_form.php');
-global $CFG, $DB, $OUTPUT,$COURSE, $USER, $PAGE;
+global $CFG, $DB, $OUTPUT, $USER, $PAGE;
 
 // User must be logged in.
 require_login();
@@ -65,7 +65,7 @@ $idmodule = optional_param("idmodule", null, PARAM_INT);
 $sesskey = optional_param("sesskey", null, PARAM_ALPHANUM);
 
 if ($action == "view") {
-    $modules = $DB->get_records("paperattendance_module");
+    $modules = $DB->get_records_sql("SELECT * FROM {paperattendance_module} ORDER BY initialtime ASC");
     $modulestable = new html_table();
     if (count($modules) > 0) {
         $modulestable->head = array(
@@ -143,22 +143,24 @@ if ($action == "edit") {
 	if ($idmodule == null) {
 		print_error(get_string("moduledoesnotexist", "local_attendance"));
 		$action = "view";
-	} else {
-		if ($module = $DB->get_record("paperattendance_module", array(
-				"id" => $idmodule))) {
-				$editform = new paperattendance_editmodule_form(null, array(
-						"idmodule" => $idmodule));
+	}
+	else {
+		if ($module = $DB->get_record("paperattendance_module", array("id" => $idmodule))){
+				$editform = new paperattendance_editmodule_form(null, array("idmodule" => $idmodule));
 				$defaultdata = new stdClass();
 				$defaultdata->name = $module->name;
 				$defaultdata->initialtime = $module->initialtime;
 				$defaultdata->endtime = $module->endtime;
 				$editform->set_data($defaultdata);
+				
 				if ($editform->is_cancelled()) {
 					$action = "view";
 					
 					$url = new moodle_url('/local/paperattendance/modules.php');
 					redirect($url);
-				} else if ($editform->get_data() && $sesskey == $USER->sesskey) {
+					
+				}
+				else if ($editform->get_data() && $sesskey == $USER->sesskey) {
 					$record = new stdClass();
 					$record->id = $editform->get_data()->idmodule;
 					$record->name = $editform->get_data()->name;
@@ -170,7 +172,8 @@ if ($action == "edit") {
 					$url = new moodle_url('/local/paperattendance/modules.php');
 					redirect($url);
 				}
-		} else {
+		}
+		else {
 			print_error(get_string("moduledoesnotexist", "local_paperattendance"));
 			$action = "view";
 			$url = new moodle_url('/local/paperattendance/modules.php');
@@ -189,17 +192,18 @@ if ($action == "delete") {
 	if ($idmodule == null) {
 		print_error(get_string("moduledoesnotexist", "local_paperattendance"));
 		$action = "view";
-	} else {
-		if ($module = $DB->get_record("paperattendance_module", array(
-				"id" => $idmodule))) {
+	}
+	else {
+		if ($module = $DB->get_record("paperattendance_module", array("id" => $idmodule))) {
 				if ($sesskey == $USER->sesskey) {
-					$DB->delete_records("paperattendance_module", array(
-							"id" => $module->id));
+					$DB->delete_records("paperattendance_module", array("id" => $module->id));
 					$action = "view";
-				} else {
+				} 
+				else {
 					print_error(get_string("usernotloggedin", "local_paperattendance"));
 				}
-		} else {
+		}
+		else {
 			print_error(get_string("moduledoesnotexist", "local_paperattendance"));
 			$action = "view";
 		}
@@ -207,6 +211,5 @@ if ($action == "delete") {
 	$url = new moodle_url('/local/paperattendance/modules.php');
 	redirect($url);
 }
-
 
 echo $OUTPUT->footer();
