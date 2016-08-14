@@ -5,6 +5,7 @@
  * @package   paperattendance
  */
 
+
 $string['pluginname']="Asistencias en papel";
 $string['notallowedupload']="No tienes permisos para subir asistencias";
 $string['uploadtitle']="Asistencias en Papel";
@@ -41,6 +42,31 @@ $string['pleaseselectteacher']="Porfavor seleccione profesor primero";
 $string['pleaseselectdate']="Por favor seleccione una fecha válida";
 $string['pleaseselectmodule']="Por favor seleccione al menos un módulo";
 $string['pdfattendance']="Asistencia";
+$string['pleaseselectattendance']="Porfavor seleccione asistencia";
+$string['absentattendance']="Ausente";
+$string['presentattendance']="Presente";
+$string['hashtag']="#";
+$string['student']="Alumno";
+$string['mail']="Correo";
+$string['attendance']="Asistencia";
+$string['settings']="Ajustes";
+$string['nonselectedstudent']="Estudiante no seleccionado";
+$string['nonexiststudent']="Estudiante no existe";
+$string['date']="Fecha";
+$string['time']="Hora";
+$string['scan']="Scan";
+$string['studentsattendance']="Asistencia alumnos";
+$string['see']="Ver";
+$string['seestudents']="Ver alumnos";
+$string['historytitle']="Historial de Asistencia";
+$string['historyheading']="Historial de Asistencia";
+$string['nonexistintingrecords']="No existen registros";
+$string['back']="Atrás";
+$string['download']="Descargar";
+$string['downloadassistance']="Descargar asistencia";
+$string['backtocourse']="Volver al curso";
+$string['edithistory']="Editar";
+
 // Capabilities
 $string["paperattendance:print"] = "Ver impresiones de listas";
 $string["paperattendance:upload"] = "Subir listas escaneadas";

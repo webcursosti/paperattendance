@@ -16,7 +16,7 @@
 
 
 /**
- *
+*
 *
 * @package    local
 * @subpackage paperattendance
@@ -80,11 +80,11 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 		//Check if we have at least one attendance in the selected session
 		if (count($attendances) > 0){
 			$attendancestable->head = array(
-					"#",
-					"Alumno",
-					"Correo",
-					"Asistencia",
-					"Ajustes"
+					get_string('hashtag', 'local_paperattendance'),
+					get_string('student', 'local_paperattendance'),
+					get_string('mail', 'local_paperattendance'),
+					get_string('attendance', 'local_paperattendance'),
+					get_string('settings', 'local_paperattendance')
 			);
 			//A mere counter for de number of records in the table
 			$counter = 1;
@@ -93,14 +93,14 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 				$urlattendance = new moodle_url("#");
 				
 				//Define presente or ausente icon and url
-				$presenticon = new pix_icon("i/valid", "Presente");
+				$presenticon = new pix_icon("i/valid", get_string('presentattendance', 'local_paperattendance'));
 		
 				$presenticonaction = $OUTPUT->action_icon(
 						$urlattendance,
 						$presenticon
 						);
 		
-				$absenticon = new pix_icon("i/invalid", "Ausente");
+				$absenticon = new pix_icon("i/invalid", get_string('absentattendance', 'local_paperattendance'));
 		
 				$absenticonaction = $OUTPUT->action_icon(
 						$urlattendance,
@@ -114,7 +114,7 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 						"idattendance" => $idattendance,
 						"courseid" => $idcourse
 				));
-				$editiconattendance = new pix_icon("i/edit", "Editar");
+				$editiconattendance = new pix_icon("i/edit", get_string('edithistory', 'local_paperattendance'));
 				$editactionasistencia = $OUTPUT->action_icon(
 						$editurlattendance,
 						$editiconattendance
@@ -152,7 +152,7 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 	// Edits an existent record for the students attendance view
 	if($action == "edit"){
 		if($idpresence == null){
-			print_error("Estudiante no seleccionado");
+			print_error(get_string('nonselectedstudent', 'local_paperattendance'));
 			$canceled = new moodle_url("/local/paperattendance/history.php", array(
 					"idattendance" => $idattendance,
 					"courseid" => $idcourse
@@ -202,7 +202,7 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 				}
 			}
 			else{
-				print_error("Estudiante no existe");
+				print_error(get_string('nonexiststudent', 'local_paperattendance'));
 				$canceled = new moodle_url("/local/paperattendance/history.php", array(
 						"action" => "studentsattendance",
 						"idattendance" => $idattendance,
@@ -225,7 +225,7 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 		
 		$viewbackbutton = html_writer::nonempty_tag(
 				"div",
-				$OUTPUT->single_button($backurl, "Volver"),
+				$OUTPUT->single_button($backurl, get_string('back', 'local_paperattendance')),
 				array("align" => "left"
 				));
 		
@@ -236,8 +236,8 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 		
 		$pdfname = $DB->get_record_sql($getpdfname, array($idattendance));
 		
-		var_dump($context->id);
-		//Context id as 1 because the var gets the number 6 , check it later
+		//var_dump($context->id);
+		//Context id as 1 because the var context->id gets the number 6 , check it later
 		$url = moodle_url::make_pluginfile_url(1, 'local_paperattendance', 'draft', 0, '/', $pdfname->pdf);
 	
 		$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
@@ -261,11 +261,11 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 		//we check if we have attendances for the selected course
 		if (count($attendances) > 0){
 			$attendancestable->head = array(
-					"#",
-					"Fecha",
-					"Hora",
-					"Scan",
-					"Asistencia alumnos"
+					get_string('hashtag', 'local_paperattendance'),
+					get_string('date', 'local_paperattendance'),
+					get_string('time', 'local_paperattendance'),
+					get_string('scan', 'local_paperattendance'),
+					get_string('studentsattendance', 'local_paperattendance')
 			);
 			//A mere counter for the number of records
 			$counter = 1;
@@ -277,7 +277,7 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 						"courseid" => $idcourse
 						
 				));
-				$scanicon_attendance = new pix_icon("e/new_document", "Ver");
+				$scanicon_attendance = new pix_icon("e/new_document", get_string('see', 'local_paperattendance'));
 				$scanaction_attendance = $OUTPUT->action_icon(
 						$scanurl_attendance,
 						$scanicon_attendance
@@ -289,7 +289,7 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 						"idattendance" => $attendance->id,
 						"courseid" => $idcourse
 				));
-				$studentsattendanceicon_attendance = new pix_icon("e/preview", "Ver Alumnos");
+				$studentsattendanceicon_attendance = new pix_icon("e/preview", get_string('seestudents', 'local_paperattendance'));
 				$studentsattendanceaction_attendance = $OUTPUT->action_icon(
 						$studentsattendanceurl_attendance,
 						$studentsattendanceicon_attendance
@@ -310,8 +310,8 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 		
 	}	
 	
-	$PAGE->set_title("Historial de Asistencia");
-	$PAGE->set_heading("HISTORIAL DE ASISTENCIA");
+	$PAGE->set_title(get_string('historytitle', 'local_paperattendance'));
+	$PAGE->set_heading(get_string('historyheading', 'local_paperattendance'));
 	
 	echo $OUTPUT->header();
 	
@@ -319,12 +319,12 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 	if ($action == "studentsattendance"){
 		
 		if (count($attendances) == 0){
-			echo html_writer::nonempty_tag("h4", "No existen registros", array("align" => "left"));
+			echo html_writer::nonempty_tag("h4", get_string('nonexistintingrecords', 'local_paperattendance'), array("align" => "left"));
 		}
 		else{
 			echo html_writer::table($attendancestable);
 		}
-		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($viewbackbutton, "Atrás"), array("align" => "left"));
+		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($viewbackbutton, get_string('back', 'local_paperattendance')), array("align" => "left"));
 		
 	}
 	
@@ -337,8 +337,8 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 	if($action == "scan"){
 	
 		// Donwload and back buttons
-		echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "descargar"), null, array("target" => "_blank"));
-		echo html_writer::nonempty_tag("h7", "Descargar asistencia", array("align" => "left"));
+		echo $OUTPUT->action_icon($url, new pix_icon('i/grades', get_string('download', 'local_paperattendance')), null, array("target" => "_blank"));
+		echo html_writer::nonempty_tag("h7", get_string('downloadassistance', 'local_paperattendance'), array("align" => "left"));
 	
 		echo $viewbackbutton;
 	
@@ -350,12 +350,12 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 	if ($action == "view"){
 	
 		if (count($attendances) == 0){
-			echo html_writer::nonempty_tag("h4", "No existen registros", array("align" => "left"));
+			echo html_writer::nonempty_tag("h4", get_string('nonexistintingrecords', 'local_paperattendance'), array("align" => "left"));
 		}
 		else{
 			echo html_writer::table($attendancestable);
 		}
-		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, "Volver al Curso"), array("align" => "left"));
+		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left"));
 	}
 
 }	
@@ -383,10 +383,10 @@ else {
 	
 		if (count($attendances) > 0){
 			$attendancestable->head = array(
-					"#",
-					"Fecha",
-					"Hora",
-					"Asistencia"
+					get_string('hashtag', 'local_paperattendance'),
+					get_string('date', 'local_paperattendance'),
+					get_string('time', 'local_paperattendance'),
+					get_string('attendance', 'local_paperattendance')
 			);
 			//A mere counter for the numbers of records
 			$counter = 1;
@@ -394,14 +394,14 @@ else {
 				
 				$urlattendance = new moodle_url("#");
 				
-				$presenticon = new pix_icon("i/valid", "Presente");
+				$presenticon = new pix_icon("i/valid", get_string('presentattendance', 'local_paperattendance'));
 				
 				$presenticonaction = $OUTPUT->action_icon(
 						$urlattendance,
 						$presenticon
 						);
 				
-				$absenticon = new pix_icon("i/invalid", "Ausente");
+				$absenticon = new pix_icon("i/invalid", get_string('absentattendance', 'local_paperattendance'));
 				
 				$absenticonaction = $OUTPUT->action_icon(
 						$urlattendance,
@@ -434,19 +434,19 @@ else {
 	
 	}
 	
-	$PAGE->set_title("Historial de Asistencia");
-	$PAGE->set_heading("HISTORIAL DE ASISTENCIA");
+	$PAGE->set_title(get_string('historytitle', 'local_paperattendance'));
+	$PAGE->set_heading(get_string('historyheading', 'local_paperattendance'));
 	echo $OUTPUT->header();
 	// Displays all the records and options
 	if ($action == "view"){
 	
 		if (count($attendances) == 0){
-			echo html_writer::nonempty_tag("h4", "No existen registros", array("align" => "left"));
+			echo html_writer::nonempty_tag("h4", get_string('nonexistintingrecords', 'local_paperattendance'), array("align" => "left"));
 		}
 		else{
 			echo html_writer::table($attendancestable);
 		}
-		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($backbuttonurl, "Volver al Curso"), array("align" => "left"));
+		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($backbuttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left"));
 	}
 	
 }
