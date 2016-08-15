@@ -48,7 +48,9 @@ $url = new moodle_url('/local/paperattendance/modules.php');
 
 if($courseid){
 	$courseurl = new moodle_url('/course/view.php', array(
-			'id' => $courseid));
+			'id' => $courseid
+			
+	));
 	$course = $DB ->get_record("course", array("id" =>$courseid));
 	$PAGE->navbar->add($course->fullname, $courseurl );
 }
@@ -69,26 +71,35 @@ if ($action == "view") {
     $modulestable = new html_table();
     if (count($modules) > 0) {
         $modulestable->head = array(
-            get_string("modulename", "local_paperattendance"),
-            get_string("initialtime", "local_paperattendance"),
-            get_string("endtime", "local_paperattendance"));
+        		get_string("modulename", "local_paperattendance"),
+        		get_string("initialtime", "local_paperattendance"),
+        		get_string("endtime", "local_paperattendance"
+        				));
         foreach ($modules as $module) {
             $deleteurlmodule = new moodle_url("/local/paperattendance/modules.php",
                     array(
                         "action" => "delete",
                         "idmodule" => $module->id,
-                        "sesskey" => sesskey()));
-            $deleteiconmodule = new pix_icon("t/delete", get_string("delete", "local_paperattendance"));
+                        "sesskey" => sesskey()                    	 
+                    		
+                    ));
+            $deleteiconmodule = new pix_icon("t/delete", get_string("delete", "local_paperattendance"
+            		));
             $deleteactionmodule = $OUTPUT->action_icon($deleteurlmodule, $deleteiconmodule,
-                    new confirm_action(get_string("doyouwantdeletemodule", "local_paperattendance")));
+                    new confirm_action(get_string("doyouwantdeletemodule", "local_paperattendance")
+                    		));
             $editurlmodule = new moodle_url("/local/paperattendance/modules.php",
                     array(
                         "action" => "edit",
                         "idmodule" => $module->id,
-                        "sesskey" => sesskey()));
-            $editiconmodule = new pix_icon("i/edit", get_string("edit", "local_paperattendance"));
+                        "sesskey" => sesskey()
+                    		
+                    ));
+            $editiconmodule = new pix_icon("i/edit", get_string("edit", "local_paperattendance"
+            		));
             $editactionmodule = $OUTPUT->action_icon($editurlmodule, $editiconmodule,
-                    new confirm_action(get_string("doyouwanteditmodule", "local_paperattendance")));
+                    new confirm_action(get_string("doyouwanteditmodule", "local_paperattendance")
+                    		));
             $modulestable->data [] = array(
                 $module->name,
                 $module->initialtime,
@@ -105,13 +116,17 @@ if ($action == "view") {
     echo $OUTPUT->heading(get_string("modulestitle", "local_paperattendance"));
     if (count($modules) == 0) {
     	echo html_writer::nonempty_tag("h4", get_string("nomodules", "local_paperattendance"), array(
-    			"align" => "center"));
+    			"align" => "center"
+    			
+    	));
     } else {
     	echo html_writer::table($modulestable);
     }
     echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, get_string("addmoduletitle", "local_paperattendance")),
     		array(
-    				"align" => "center"));
+    				"align" => "center"
+    				
+    		));
     
 }
 if ($action == "add") {
