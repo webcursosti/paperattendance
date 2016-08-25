@@ -142,15 +142,17 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->Image($qrpath."/".$qrfilename, 153, 256, 35);
 	unlink($qrpath."/".$qrfilename);
 	
-	// We position to the right of the logo and write exam name.
+	// We position to the right of the logo.
 	$top = 7;
 	$pdf->SetFont('Helvetica', 'B', 12);
 	$pdf->SetXY($left, $top);
+
 	// Write course name.
+	$coursetrimmedtext = trim_text($course->fullname." - ".$course->shortname);
 	$top += 6;
 	$pdf->SetFont('Helvetica', '', 8);
 	$pdf->SetXY($left, $top);
-	$pdf->Write(1, core_text::strtoupper(get_string('course') . ': ' . $course->fullname." - ".$course->shortname));
+	$pdf->Write(1, core_text::strtoupper(get_string('course') . ': ' . $coursetrimmedtext));
 	
 	$teachers = get_enrolled_users(context_course::instance($course->id), 'mod/emarking:supervisegrading');
 	$teachersnames = array();
@@ -170,21 +172,24 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 		}
 	}
 	// Write teacher name.
+	$teachertrimmedtext = trim_text($teacherstring);
 	$top += 4;
 	$pdf->SetXY($left, $top);
-	$pdf->Write(1, core_text::strtoupper(get_string('teacher', 'mod_emarking') . ': ' . $teacherstring));
+	$pdf->Write(1, core_text::strtoupper(get_string('teacher', 'mod_emarking') . ': ' . $teachertrimmedtext));
 	// Write requestor.
+	$requestortrimmedtext = trim_text($requestorinfo->firstname." ".$requestorinfo->lastname);
 	$top += 4;
 	$pdf->SetXY($left, $top);
-	$pdf->Write(1, core_text::strtoupper(get_string("requestor", 'local_paperattendance') . ': ' . $requestorinfo->firstname." ".$requestorinfo->lastname));
+	$pdf->Write(1, core_text::strtoupper(get_string("requestor", 'local_paperattendance') . ': ' . $requestortrimmedtext));
 	// Write date.
 	$top += 4;
 	$pdf->SetXY($left, $top);
 	$pdf->Write(1, core_text::strtoupper(get_string("date") . ': ' . date("d-m-Y", $sessiondate)));
 	// Write modules.
+	$modulestrimmedtext = trim_text($stringmodules);
 	$top += 4;
 	$pdf->SetXY($left, $top);
-	$pdf->Write(1, core_text::strtoupper(get_string("modulescheckbox", 'local_paperattendance') . ': ' . $stringmodules));
+	$pdf->Write(1, core_text::strtoupper(get_string("modulescheckbox", 'local_paperattendance') . ': ' . $modulestrimmedtext));
 	// Write number of students.
 	$top += 4;
 	$pdf->SetXY($left, $top);
@@ -716,5 +721,28 @@ function paperattendance_rotate($path, $pdfname){
 	}else{
 		return false;
 	}
+}
+
+function trim_text($input, $length, $ellipses = true, $strip_html = true) {
+	//strip tags, if desired
+	if ($strip_html) {
+		$input = strip_tags($input);
+	}
+
+	//no need to trim, already shorter than trim length
+	if (strlen($input) <= $length) {
+		return $input;
+	}
+
+	//find last space within length
+	$last_space = strrpos(substr($input, 0, $length), ' ');
+	$trimmed_text = substr($input, 0, $last_space);
+
+	//add ellipses (...)
+	if ($ellipses) {
+		$trimmed_text .= '...';
+	}
+
+	return $trimmed_text;
 }
 
