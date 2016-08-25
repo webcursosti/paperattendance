@@ -20,6 +20,7 @@
  * @copyright  2016  Matías Queirolo (mqueirolo@alumnos.uai.cl)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
 require_once (dirname(dirname(dirname(dirname(__FILE__))))."/config.php");
 require_once ($CFG->libdir."/formslib.php");
 
@@ -27,7 +28,6 @@ class editattendance extends moodleform {
 
 	function definition (){
 
-		global $DB, $CFG;
 		$mform = $this->_form;
 		$instance = $this->_customdata;
 		$idattendance = $instance["idattendance"];
@@ -36,9 +36,11 @@ class editattendance extends moodleform {
 
 		// Select user input
 		$status = array();
-		$status[-1] = "Seleccione asistencia";
-		$status[0] = "Ausente";
-		$status[1] = "Presente";
+		
+		//Values 1 for present, 0 for non present and -1 for the initial value
+		$status[-1] = get_string('pleaseselectattendance', 'local_paperattendance');
+		$status[0] = get_string('absentattendance', 'local_paperattendance');
+		$status[1] = get_string('presentattendance', 'local_paperattendance');
 		
 		$mform->addElement("select", "status", "Asistencia alumno", $status);
 
@@ -46,6 +48,7 @@ class editattendance extends moodleform {
 		// Set action to "edit"
 		$mform->addElement("hidden", "action", "edit");
 		$mform->setType("action", PARAM_TEXT);
+		//Set the required parameters
 		$mform->addElement("hidden", "idattendance", $idattendance);
 		$mform->setType("idattendance", PARAM_INT);
 		$mform->addElement("hidden", "courseid", $courseid);
@@ -59,13 +62,12 @@ class editattendance extends moodleform {
 
 	function validation ($data, $files){
 
-		global $DB;
 		$errors = array();
 
 		$status = $data["status"];
 
 		if($status == -1){
-			$errors["status"] = "Campo requerido";
+			$errors["status"] = get_string('required', 'local_paperattendance');
 		}
 
 		return $errors;
