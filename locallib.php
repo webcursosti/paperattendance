@@ -376,7 +376,7 @@ function paperattendance_readpdf($path, $filename, $course){
 		
 		$graychannel = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
 //		echo "<br>Imagen $countstudent media ".$graychannel["mean"]." desviacion ".$graychannel["standardDeviation"];
-		if($x["mean"] < 62900){
+		if($x["mean"] < $CFG->paperattendance_greyscale){
 			//echo "Alumno".$countstudent ." presente";
 			paperattendance_save_student_presence($sessid, $student->id, '1');
 		}

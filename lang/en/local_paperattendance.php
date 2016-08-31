@@ -66,6 +66,9 @@ $string['download']="Download";
 $string['downloadassistance']="Download assistance";
 $string['backtocourse']="Back to course";
 $string['edithistory']="Edit";
+$string['settings']="Basic Configuration";
+$string['greyscale']="Grey Scale";
+$string['greyscaletext']="Maximum value to discern between present or absent, the lower, the darker.";
 
 // Capabilities
 $string["paperattendance:print"] = "View list";

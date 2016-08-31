@@ -66,6 +66,9 @@ $string['download']="Descargar";
 $string['downloadassistance']="Descargar asistencia";
 $string['backtocourse']="Volver al curso";
 $string['edithistory']="Editar";
+$string['settings']="Configuración Básica";
+$string['greyscale']="Escala de grises";
+$string['greyscaletext']="Valor máximo para discernir entre presente y ausente, más bajo es más oscuro.";
 
 // Capabilities
 $string["paperattendance:print"] = "Ver impresiones de listas";
