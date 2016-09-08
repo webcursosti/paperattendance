@@ -49,12 +49,23 @@ if ($hassiteconfig) {
 					''
 					)
 			);
+	//greyscale
 	$settings->add(
 			new admin_setting_configtext(
 					'paperattendance_greyscale',
 					get_string('greyscale', 'local_paperattendance'),
 					get_string('greyscaletext', 'local_paperattendance'),
 					'62900',
+					PARAM_INT
+					)
+			);
+	//minuteslate
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_minuteslate',
+					get_string('minuteslate', 'local_paperattendance'),
+					get_string('minuteslatetext', 'local_paperattendance'),
+					'20',
 					PARAM_INT
 					)
 			);
