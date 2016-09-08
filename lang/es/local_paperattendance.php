@@ -66,9 +66,13 @@ $string['download']="Descargar";
 $string['downloadassistance']="Descargar asistencia";
 $string['backtocourse']="Volver al curso";
 $string['edithistory']="Editar";
+
+// Settings
 $string['settings']="Configuración Básica";
 $string['greyscale']="Escala de grises";
 $string['greyscaletext']="Valor máximo para discernir entre presente y ausente, más bajo es más oscuro.";
+$string['minuteslate']="Minutos de atraso";
+$string['minuteslatetext']="Minutos máximos para atraso en imprimir lista en módulo actual";
 
 // Capabilities
 $string["paperattendance:print"] = "Ver impresiones de listas";

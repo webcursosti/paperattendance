@@ -53,7 +53,11 @@ class print_form extends moodleform {
 		$mform->addElement("select", "requestor", get_string('requestor', 'local_paperattendance'), $arrayteachers);
 		$mform->addElement("date_selector", "sessiondate", get_string('attdate', 'local_paperattendance'));
 		
-		$modules = $DB->get_records_sql("SELECT * FROM {paperattendance_module} ORDER BY initialtime ASC");
+		//the idea is that you can print the list even though you are late by "x minutes"
+		$currentmodule = date('H:i', time() - ($CFG->paperattendance_minuteslate*60));
+		
+		$modulesquery = "SELECT * FROM {paperattendance_module} where initialtime > ? ORDER BY initialtime ASC";
+		$modules = $DB->get_records_sql($modulesquery, array($currentmodule));
 		$arraymodules = array();
 		foreach ($modules as $module){
 			$arraymodules[] = $mform->createElement('advcheckbox', $module->id."*".$module->initialtime."*".$module->endtime , '',$module->initialtime);	
