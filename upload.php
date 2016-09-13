@@ -40,10 +40,9 @@ require_login();
 if (isguestuser()) {
     //die();
 }
-$courseid = required_param('courseid', PARAM_INT);
-// We are in the course context.
+$courseid = optional_param('courseid',null, PARAM_INT);
 $context = context_system::instance();
-// And have viewcostreport capability.
+
 if (! has_capability('local/paperattendance:upload', $context)) {
     // TODO: Log invalid access to upload attendance.
     print_error(get_string('notallowedupload', 'local_paperattendance'));
@@ -53,14 +52,20 @@ if (! has_capability('local/paperattendance:upload', $context)) {
 $url = new moodle_url('/local/paperattendance/upload.php', array(
     'courseid' => $courseid));
 
-$pagetitle = get_string('uploadtitle', 'local_paperattendance');
-$course = $DB ->get_record("course", array("id" =>$courseid));
+if($courseid){
+	$courseurl = new moodle_url('/course/view.php', array(
+			'id' => $courseid
+			
+	));
+	$course = $DB ->get_record("course", array("id" =>$courseid));
+	$PAGE->navbar->add($course->fullname, $courseurl );
+}
 
+$PAGE->navbar->add(get_string('uploadtitle', 'local_paperattendance'));
+$PAGE->navbar->add(get_string('header', 'local_paperattendance'),$url);
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
-$PAGE->set_heading(get_site()->fullname);
-$PAGE->set_title($pagetitle . " " . $course -> fullname);
 
 // Add the upload form for the course.
 $addform = new upload_form (null, array("courseid" => $courseid));
@@ -91,7 +96,7 @@ if ($addform->get_data()) {
 	//read pdf and rewrite it 
 	$pdf = new FPDI();
 	// get the page count
-	$pagecount = $pdf->setSourceFile($path."/unread/".$filename);
+	if($pagecount = $pdf->setSourceFile($path."/unread/".$filename)){
 	// iterate through all pages
 	for ($pageno = 1; $pageno <= $pagecount; $pageno++) {
 	    // import a page
@@ -159,7 +164,11 @@ if ($addform->get_data()) {
 		// Display confirmation page before moving out.
 		redirect($url, $pdfprocessed, 3);
 	}
-	
+	}
+	else{
+		print_error(get_string("pdfextensionunrecognized", "local_paperattendance"));
+		die();
+	}
 }
 // If there is no data or is it not cancelled show the header, the tabs and the form.
 echo $OUTPUT->header();
