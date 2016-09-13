@@ -31,7 +31,7 @@ require_once($CFG->libdir . "/formslib.php");
 class print_form extends moodleform {
 
 	public function definition() {
-		global $DB;
+		global $DB, $CFG;
 		
 		$mform = $this->_form;
 		$instance = $this->_customdata;		
