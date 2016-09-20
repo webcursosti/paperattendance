@@ -746,3 +746,18 @@ function trim_text($input, $length, $ellipses = true, $strip_html = true) {
 	return $trimmed_text;
 }
 
+//function for deleting files from moodle data print folder
+function paperattendance_recursiveRemoveDirectory($directory)
+{
+	foreach(glob("{$directory}/*") as $file)
+	{
+		if(is_dir($file)) {
+			paperattendance_recursiveRemoveDirectory($file);
+		} else {
+			unlink($file);
+		}
+	}
+	
+	//this comand delete the folder of the path, in this case we only want to delete the files inside the folder
+	//rmdir($directory);
+}
