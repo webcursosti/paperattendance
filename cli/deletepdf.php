@@ -20,16 +20,16 @@
 *
 * @package    local
 * @subpackage paperattendance
-* @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl) 					
+* @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl)  					
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
-//define('CLI_SCRIPT', true);
+define('CLI_SCRIPT', true);
 require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 require_once ($CFG->libdir . '/clilib.php'); 
 
-global $DB,$COURSE;
+global $CFG;
 
 // Now get cli options
 list($options, $unrecognized) = cli_get_params(
@@ -44,55 +44,36 @@ if($unrecognized) {
 if($options['help']) {
 	$help =
 	// Todo: localize - to be translated later when everything is finished
-	"Process pdf located at folder unread on moodle file system.
+	"Delete pdf located at folder print on moodle file system.
 	Options:
 	-h, --help            Print out this help
 	Example:
-	\$sudo /usr/bin/php /local/paperattendance/cli/processpdf.php";
+	\$sudo /usr/bin/php /local/paperattendance/cli/deletepdf.php";
 	echo $help;
 	die();
 }
 //heading
-cli_heading('Paper Attendance pdf processing'); // TODO: localize
-echo "\nSearching for unread pdfs\n";
+cli_heading('Paper Attendance pdf deleting'); // TODO: localize
+echo "\nSearching for print pdfs\n";
 echo "\nStarting at ".date("F j, Y, G:i:s")."\n";
 
-/*
 $initialtime = time();
-$read = 0;
-$found = 0;
 
-// Sql that brings the unread pdfs names
-$sqlunreadpdfs = "SELECT  id, pdf as name, courseid
-	FROM {paperattendance_session}
-	WHERE status = ?
-	ORDER BY lastmodified asc";
+$path = $CFG -> dataroot. "/temp/local/paperattendance/print/";
 
-// Parameters for the previous query
-$params = array(PAPERATTENDANCE_STATUS_UNREAD);
-
-// Read the pdfs if there is any unread, with readpdf function
-if($resources = $DB->get_record_sql($sqlunreadpdfs, $params)){
-	$path = $CFG -> dataroot. "temp/local/paperattendance/unread";
-	foreach($resources as $pdf){
-		$found++;
-		$process = paperattendance_readpdf($path, $pdf-> name, $pdf->courseid);
-		if($process){
-			$read++;	
-		}
-	}
+//call de function to delete the files from the print folder in moodledata
+if (file_exists($path)) {
+	paperattendance_recursiveRemoveDirectory($path);
+	echo "\nall files deleted from the print folder";
 	
-	echo $found." pdfs found. \n";
-	echo $read." pdfs processed. \n";
-	
-	// Displays the time required to complete the process
-	$finaltime = time();
-	$executiontime = $finaltime - $initialtime;
-	
-	echo "Execution time: ".$executiontime." seconds. \n";
 }else{
-	echo $found." pdfs found. \n";
+	echo "\nerror, files not deleted";
+	
 }
+// Displays the time required to complete the process
+$finaltime = time();
+$executiontime = $finaltime - $initialtime;
 
-*/
+echo "\nExecution time: ".$executiontime." seconds. \n";
+
 exit(0);
