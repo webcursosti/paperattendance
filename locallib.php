@@ -148,7 +148,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->SetXY($left, $top);
 
 	// Write course name.
-	$coursetrimmedtext = trim_text($course->fullname." - ".$course->shortname);
+	$coursetrimmedtext = trim_text($course->fullname." - ".$course->shortname,30);
 	$top += 6;
 	$pdf->SetFont('Helvetica', '', 8);
 	$pdf->SetXY($left, $top);
@@ -172,12 +172,12 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 		}
 	}
 	// Write teacher name.
-	$teachertrimmedtext = trim_text($teacherstring);
+	$teachertrimmedtext = trim_text($teacherstring,30);
 	$top += 4;
 	$pdf->SetXY($left, $top);
 	$pdf->Write(1, core_text::strtoupper(get_string('teacher', 'mod_emarking') . ': ' . $teachertrimmedtext));
 	// Write requestor.
-	$requestortrimmedtext = trim_text($requestorinfo->firstname." ".$requestorinfo->lastname);
+	$requestortrimmedtext = trim_text($requestorinfo->firstname." ".$requestorinfo->lastname,30);
 	$top += 4;
 	$pdf->SetXY($left, $top);
 	$pdf->Write(1, core_text::strtoupper(get_string("requestor", 'local_paperattendance') . ': ' . $requestortrimmedtext));
@@ -186,7 +186,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->SetXY($left, $top);
 	$pdf->Write(1, core_text::strtoupper(get_string("date") . ': ' . date("d-m-Y", $sessiondate)));
 	// Write modules.
-	$modulestrimmedtext = trim_text($stringmodules);
+	$modulestrimmedtext = trim_text($stringmodules,30);
 	$top += 4;
 	$pdf->SetXY($left, $top);
 	$pdf->Write(1, core_text::strtoupper(get_string("modulescheckbox", 'local_paperattendance') . ': ' . $modulestrimmedtext));
@@ -261,14 +261,14 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			$topprovisional += 6;
 			$pdf->SetFont('Helvetica', '', 8);
 			$pdf->SetXY($leftprovisional, $topprovisional);
-			$pdf->Write(1, core_text::strtoupper(get_string('course') . ': ' . $course->fullname." - ".$course->shortname));
+			$pdf->Write(1, core_text::strtoupper(get_string('course') . ': ' . $coursetrimmedtext));
 			$topprovisional += 4;
 			$pdf->SetXY($leftprovisional, $topprovisional);
-			$pdf->Write(1, core_text::strtoupper(get_string('teacher', 'mod_emarking') . ': ' . $teacherstring));
+			$pdf->Write(1, core_text::strtoupper(get_string('teacher', 'mod_emarking') . ': ' . $teachertrimmedtext));
 			// Write requestor.
 			$topprovisional += 4;
 			$pdf->SetXY($leftprovisional, $topprovisional);
-			$pdf->Write(1, core_text::strtoupper("Solicitante" . ': ' . $requestorinfo->firstname." ".$requestorinfo->lastname));
+			$pdf->Write(1, core_text::strtoupper("Solicitante" . ': ' . $requestortrimmedtext));
 			// Write date.
 			$topprovisional += 4;
 			$pdf->SetXY($leftprovisional, $topprovisional);
@@ -276,7 +276,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			// Write modules.
 			$topprovisional += 4;
 			$pdf->SetXY($leftprovisional, $topprovisional);
-			$pdf->Write(1, core_text::strtoupper("Modulos" . ': ' . $stringmodules));
+			$pdf->Write(1, core_text::strtoupper("Modulos" . ': ' . $modulestrimmedtext));
 			// Write number of students.
 			$topprovisional += 4;
 			$pdf->SetXY($leftprovisional, $topprovisional);
