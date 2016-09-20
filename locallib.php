@@ -691,7 +691,7 @@ function paperattendance_rotate($path, $pdfname){
 	// iterate through all pages
 	for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
 		//get page orientation
-		$orientation = get_orientation($path, $pdfname,$pageNo-1);
+		$orientation = paperattendance_get_orientation($path, $pdfname,$pageNo-1);
 	    // import a page
 	    $templateId = $pdf->importPage($pageNo);
 	    // get the size of the imported page
