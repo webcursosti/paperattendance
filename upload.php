@@ -118,6 +118,10 @@ if ($addform->get_data()) {
 	
 	$fs = get_file_storage();
 	
+	$qrtext = paperattendance_get_qr_text($path."/unread/", $filename);
+	$qrtextexplode = explode("*",$qrtext);
+	$courseid = $qrtextexplode[0];
+	
 	$file_record = array(
 			'contextid' => $context->id,
 			'component' => 'local_paperattendance',
