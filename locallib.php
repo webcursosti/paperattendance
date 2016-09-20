@@ -417,8 +417,8 @@ function paperattendance_save_student_presence($sessid, $studentid, $status){
 // //pdf = pdfname + extension (.pdf)
 function paperattendance_get_orientation($path, $pdf, $page){
 	//TODO: la pagina donde se utiliza la funcion debe incluir el require_once
-	require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
 	global $CFG;
+	require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
 
 	$pdfexplode = explode(".",$pdf);
 	$pdfname = $pdfexplode[0];
