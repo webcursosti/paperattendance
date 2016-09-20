@@ -501,8 +501,9 @@ function paperattendance_get_orientation($path, $pdf, $page){
 
 function paperattendance_get_qr_text($path, $pdf){
 	//TODO: la pagina donde se utiliza la funcion debe incluir el require_once
-	require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
 	global $CFG, $DB;
+	require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
+
 
 	$pdfexplode = explode(".",$pdf);
 	$pdfname = $pdfexplode[0];
