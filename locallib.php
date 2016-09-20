@@ -624,7 +624,7 @@ function paperattendance_read_pdf_save_session($path, $pdffile){
 	//path must end with "/"
 	global $USER;
 
-	$qrtext = get_qr_text($path, $pdffile);
+	$qrtext = paperattendance_get_qr_text($path, $pdffile);
 	if($qrtext != "error"){
 		//if there's a readable qr
 
@@ -635,13 +635,13 @@ function paperattendance_read_pdf_save_session($path, $pdffile){
 		$time = $qrtextexplode[3];
 		$page = $qrtextexplode[4];
 
-		$verification = check_session_modules($arraymodules, $courseid, $time);
+		$verification = paperattendance_check_session_modules($arraymodules, $courseid, $time);
 		if($verification == "perfect"){
 			$pos = substr_count($arraymodules, ':');
 			if ($pos == 0) {
 				$module = $arraymodules;
-				$sessionid = insert_session($courseid, $requestorid, $USER-> id, $pdffile);
-				$verification = insert_session_module($module, $sessionid, $time);
+				$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile);
+				$verification = paperattendance_insert_session_module($module, $sessionid, $time);
 				if($verification == true){
 					return "Perfect";
 				}
@@ -657,8 +657,8 @@ function paperattendance_read_pdf_save_session($path, $pdffile){
 					//for each module inside $arraymodules, save records.
 					$module = $modulesexplode[$i];
 
-					$sessionid = insert_session($courseid, $requestorid, $USER-> id, $pdffile);
-					$verification = insert_session_module($module, $sessionid, $time);
+					$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile);
+					$verification = paperattendance_insert_session_module($module, $sessionid, $time);
 					if($verification == true){
 						return "Perfect";
 					}
