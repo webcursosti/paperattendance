@@ -295,7 +295,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 }
 
 function paperattendance_readpdf($path, $filename, $course){
-	global $DB;
+	global $DB, $CFG;
 	
 	$pdf = new Imagick();
 	$pdf->setResolution( 100, 100 );
@@ -305,7 +305,10 @@ function paperattendance_readpdf($path, $filename, $course){
 	$pdftotalpages = $pdf->getNumberImages();
 	
 	$context = context_course::instance($course);
-	$studentlist = paperattendance_students_list($context ->id, $course);
+	$objcourse = new stdClass();
+	$objcourse -> id = $course;
+	
+	$studentlist = paperattendance_students_list($context ->id, $objcourse);
 	
 	$sessid = paperattendance_get_sessionid($filename);
 	
@@ -376,7 +379,7 @@ function paperattendance_readpdf($path, $filename, $course){
 		
 		$graychannel = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
 //		echo "<br>Imagen $countstudent media ".$graychannel["mean"]." desviacion ".$graychannel["standardDeviation"];
-		if($x["mean"] < $CFG->paperattendance_greyscale){
+		if($graychannel["mean"] < $CFG->paperattendance_greyscale){
 			//echo "Alumno".$countstudent ." presente";
 			paperattendance_save_student_presence($sessid, $student->id, '1');
 		}
