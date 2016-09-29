@@ -77,12 +77,14 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, $params)){
 		$found++;
 		$process = paperattendance_readpdf($path, $pdf-> name, $pdf->courseid);
 		if($process){
-			$read++;	
+			$read++;
+			$pdf->status = 1;
+			$DB->update_record("paperattendance_session", $pdf);
 		}
 	}
 	
-	echo $found." pdfs found. \n";
-	echo $read." pdfs processed. \n";
+	echo $found." PDF found. \n";
+	echo $read." PDF processed. \n";
 	
 	// Displays the time required to complete the process
 	$finaltime = time();

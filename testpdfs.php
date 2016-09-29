@@ -48,34 +48,67 @@ $PAGE->set_title($pagetitle);
 
 echo $OUTPUT->header();
 
-$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
+$path = $CFG -> dirroot. "/local/paperattendance/test";
 
-$process = paperattendance_readpdf($path, "paperattendance_2_1469479057.pdf", 2);
+//$process = paperattendance_readpdf($path, "paperattendance_2_1469479057.pdf", 2);
 
-// $imagick = new Imagick();
-// $imagick->setResolution(300,300);
-// $imagick->readImage($path.'/paperattendance_2_1469479057.pdf[0]');
-// $imagick = $imagick->flattenImages();
-// //$imagick->resizeImage(844, 1096, Imagick::FILTER_BOX, 0, false);
-// $imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
+/*
+$pdf = new Imagick();
+$pdf->setResolution( 300, 300 );
+$pdf->readImage( $path."/paperattendance_1_1475118000.pdf[0]" );
+$pdf->setImageType( imagick::IMGTYPE_GRAYSCALE );
+*/
 
-// $height = $imagick->getImageHeight();
-// $width = $imagick->getImageWidth();
-// //echo $height." ".$width;
+$page = new Imagick();
+$page->setResolution(300, 300);
+$page->readImage($path."/paperattendance_1_1475118000.pdf");
 
-// for ($countstudent = 0; $countstudent < 26; $countstudent++){
+$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
+$page->setImageFormat('png');
+//$page = $page->flattenImages();
+//$page->writeImage($path.'/pdf_2.png');
+$height = $page->getImageHeight();
+$width = $page->getImageWidth();
+	
+$pdftotalpages = $page->getNumberImages();
 
-// 	$frame = $imagick->getImageRegion($width*0.031, $height*0.02, $width*0.799, $height*(0.169 + 0.02692*$countstudent));
-// 	$frame->writeImage('student_'.$countstudent.'.png');
-// 	$x = $frame->getImageChannelMean(Imagick::CHANNEL_GRAY);
-// 	//echo "<br>Imagen $countstudent media ".$x["mean"]." desviacion ".$x["standardDeviation"];
-// 	if($x["mean"] < 62900){
-// 		echo "Alumno".$countstudent ." presente";
-// 	}
-// 	else{
-// 		echo "Alumno".$countstudent ." ausente";
-// 	}
-// echo "<br>";
-// }
+echo " NUMERO DE PAGINAS ".$pdftotalpages."<br>";
+/*
+ $imagick = new Imagick();
+ $imagick->setResolution(300,300);
+ $imagick->readImage($path.'/paperattendance_2_1469479057.pdf[0]');
+ $imagick = $imagick->flattenImages();
+ $imagick->resizeImage(844, 1096, Imagick::FILTER_BOX, 0, false);
+ $imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
+*/
+ echo $height." ".$width;
+ /*
+ 
 
+ for ($countstudent = 0; $countstudent < 26; $countstudent++){
+
+ 	$attendancecircle = $page->getImageRegion(
+ 		$width * 0.028,
+ 		$height * 0.018,
+ 		$width * 0.7556,
+ 		$height * (0.16 + 0.02640 * $countstudent)
+ 	);
+ 	$x = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
+ 	echo "alto chico ".$attendancecircle->getImageHeight()." ancho chico ".$attendancecircle->getImageWidth()."<br>";
+ 	$attendancecircle->writeImage($path.'/student_'.$countstudent.'.png');
+ 	
+ 	//$frame = $imagick->getImageRegion($width*0.031, $height*0.02, $width*0.799, $height*(0.169 + 0.02692*$countstudent));
+ 	//$frame->writeImage('student_'.$countstudent.'.png');
+ 	
+ 	//$x = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
+ 	echo "<br>Imagen $countstudent media ".$x["mean"]." desviacion ".$x["standardDeviation"];
+ 	if($x["mean"] < 61000){
+		echo "Alumno".$countstudent ." presente";
+ 	}
+ 	else{
+		echo "Alumno".$countstudent ." ausente";
+ 	}
+ echo "<br>";
+ }
+*/
 echo $OUTPUT->footer();

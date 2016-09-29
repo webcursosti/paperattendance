@@ -68,7 +68,7 @@ $PAGE->navbar->add(get_string('printtitle', 'local_paperattendance'), new moodle
 
 if($action == "add"){
 	// Add the print form 
-	$addform = new print_form(null, array("courseid" => $courseid));
+	$addform = new paperattendance_print_form(null, array("courseid" => $courseid));
 	// If the form is cancelled, redirect to course.
 	if ($addform->is_cancelled()) {
 		$backtocourse = new moodle_url("/course/view.php", array('id' => $courseid));
