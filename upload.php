@@ -13,8 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-
 /**
  *
 *
@@ -34,7 +32,6 @@ require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php
 require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi.php");
 global $DB, $OUTPUT,$COURSE, $USER;
-
 // User must be logged in.
 require_login();
 if (isguestuser()) {
@@ -42,7 +39,6 @@ if (isguestuser()) {
 }
 $courseid = optional_param('courseid',null, PARAM_INT);
 $context = context_system::instance();
-
 if (! has_capability('local/paperattendance:upload', $context)) {
     // TODO: Log invalid access to upload attendance.
     print_error(get_string('notallowedupload', 'local_paperattendance'));
@@ -51,7 +47,6 @@ if (! has_capability('local/paperattendance:upload', $context)) {
 // This page url.
 $url = new moodle_url('/local/paperattendance/upload.php', array(
     'courseid' => $courseid));
-
 if($courseid && $courseid != 1){
 	$courseurl = new moodle_url('/course/view.php', array(
 			'id' => $courseid
@@ -60,13 +55,11 @@ if($courseid && $courseid != 1){
 	$course = $DB ->get_record("course", array("id" =>$courseid));
 	$PAGE->navbar->add($course->fullname, $courseurl );
 }
-
 $PAGE->navbar->add(get_string('uploadtitle', 'local_paperattendance'));
 $PAGE->navbar->add(get_string('header', 'local_paperattendance'),$url);
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
-
 // Add the upload form for the course.
 $addform = new upload_form (null, array("courseid" => $courseid));
 // If the form is cancelled, refresh the instante.
@@ -90,13 +83,13 @@ if ($addform->get_data()) {
 	$file = $addform->save_file('file', $path."/unread/".$filename, false);
 	$time = strtotime(date("d-m-Y H:s:i"));
 	// Validate that file was correctly uploaded.
-
 	$attendancepdffile = $path . "/unread/paperattendance_".$courseid."_".$time.".pdf";
 	
 	//read pdf and rewrite it 
 	$pdf = new FPDI();
 	// get the page count
 	if($pagecount = $pdf->setSourceFile($path."/unread/".$filename)){
+<<<<<<< HEAD
 <<<<<<< HEAD
 	// iterate through all pages
 	for ($pageno = 1; $pageno <= $pagecount; $pageno++) {
@@ -157,13 +150,18 @@ if ($addform->get_data()) {
 		//delete unused pdf
 		unlink($path."/unread/".$filename);
 =======
+=======
+>>>>>>> origin/master
 		// iterate through all pages
 		for ($pageno = 1; $pageno <= $pagecount; $pageno++) {
 		    // import a page
 		    $templateid = $pdf->importPage($pageno);
 		    // get the size of the imported page
 		    $size = $pdf->getTemplateSize($templateid);
+<<<<<<< HEAD
 >>>>>>> refs/remotes/webcursosuai/master
+=======
+>>>>>>> origin/master
 		
 		    // create a page (landscape or portrait depending on the imported page size)
 		    if ($size['w'] > $size['h']) {
@@ -233,14 +231,11 @@ if ($addform->get_data()) {
 }
 // If there is no data or is it not cancelled show the header, the tabs and the form.
 echo $OUTPUT->header();
-
 if($courseid && $courseid != 1){
 	echo $OUTPUT->heading("Subir lista escaneada " . $course->shortname . " " . $course->fullname);
 }else{
 	echo $OUTPUT->heading("Subir lista escaneada ");
 }
-
 // Display the form.
 $addform->display();
-
 echo $OUTPUT->footer();

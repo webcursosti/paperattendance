@@ -61,8 +61,6 @@ $PAGE->set_title($pagetitle);
 $course = $DB->get_record("course",array("id" => $courseid));
 
 //breadcrumb for navigation
-$PAGE->navbar->ignore_active();
-$PAGE->navbar->add(get_string('courses', 'local_paperattendance'), new moodle_url('/course/index.php'));
 $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array("id" => $courseid)));
 $PAGE->navbar->add(get_string('printtitle', 'local_paperattendance'), new moodle_url("/local/paperattendance/print.php", array("courseid" => $courseid)));
 
@@ -200,6 +198,7 @@ $( document ).ready(function() {
 	});
 });
 </script>
+
 <script>
 var currentdate = new Date();
 var datetwo = new Date();
@@ -278,6 +277,7 @@ $('.felement').find('span').each(function( index ) {
 	// now time
 	var now = new Date();
 	var time = gettime(now);
+	time.setMinutes(time.getMinutes() - <?php echo ($CFG->paperattendance_minuteslate*60); ?>);
 
 	//compare
 	if(compare < time){
