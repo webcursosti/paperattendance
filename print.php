@@ -225,7 +225,6 @@ $('#id_sessiondate_year').change(function() {
 
 function comparedates (currentdate, datetwo){
 
-	alert("current: "+ currentdate + " compare: " + datetwo);
 	if (currentdate == datetwo){
 		$('.nomodulos').remove();	
 		var count = hidemodules();
