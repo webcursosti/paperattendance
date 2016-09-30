@@ -89,79 +89,12 @@ if ($addform->get_data()) {
 	$pdf = new FPDI();
 	// get the page count
 	if($pagecount = $pdf->setSourceFile($path."/unread/".$filename)){
-<<<<<<< HEAD
-<<<<<<< HEAD
-	// iterate through all pages
-	for ($pageno = 1; $pageno <= $pagecount; $pageno++) {
-	    // import a page
-	    $templateid = $pdf->importPage($pageno);
-	    // get the size of the imported page
-	    $size = $pdf->getTemplateSize($templateid);
-	
-	    // create a page (landscape or portrait depending on the imported page size)
-	    if ($size['w'] > $size['h']) {
-	        $pdf->AddPage('L', array($size['w'], $size['h']));
-	    } else {
-	        $pdf->AddPage('P', array($size['w'], $size['h']));
-	    }
-	
-	    // use the imported page
-	    $pdf->useTemplate($templateid);
-	}
-	$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
-	
-	$fs = get_file_storage();
-	
-	$qrtext = paperattendance_get_qr_text($path."/unread/", $filename);
-	$qrtextexplode = explode("*",$qrtext);
-	$courseid = $qrtextexplode[0];
-	
-	$file_record = array(
-			'contextid' => $context->id,
-			'component' => 'local_paperattendance',
-			'filearea' => 'draft',
-			'itemid' => 0,
-			'filepath' => '/',
-			'filename' => "paperattendance_".$courseid."_".$time.".pdf",
-			'timecreated' => time(),
-			'timemodified' => time(),
-			'userid' => $USER->id,
-			'author' => $USER->firstname." ".$USER->lastname,
-			'license' => 'allrightsreserved'
-	);
-	
-	// If the file already exists we delete it
-	if ($fs->file_exists($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$time.".pdf")) {
-		$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$time.".pdf");
-		$previousfile->delete();
-	}
-	
-	// Info for the new file
-	$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
-	
-	//rotate pages of the pdf if necessary
-	paperattendance_rotate($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
-	
-	//read pdf and save session and sessmodules
-	$pdfprocessed = paperattendance_read_pdf_save_session($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
-	
-	if($pdfprocessed == "Perfect"){
-	
-		//delete unused pdf
-		unlink($path."/unread/".$filename);
-=======
-=======
->>>>>>> origin/master
 		// iterate through all pages
 		for ($pageno = 1; $pageno <= $pagecount; $pageno++) {
 		    // import a page
 		    $templateid = $pdf->importPage($pageno);
 		    // get the size of the imported page
 		    $size = $pdf->getTemplateSize($templateid);
-<<<<<<< HEAD
->>>>>>> refs/remotes/webcursosuai/master
-=======
->>>>>>> origin/master
 		
 		    // create a page (landscape or portrait depending on the imported page size)
 		    if ($size['w'] > $size['h']) {
