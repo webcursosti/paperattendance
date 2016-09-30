@@ -31,7 +31,7 @@ require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php
 require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
 require_once ($CFG->dirroot . "/mod/emarking/print/locallib.php");
 require_once ("locallib.php");
-global $DB, $PAGE, $OUTPUT, $USER;
+global $DB, $PAGE, $OUTPUT, $USER, $CFG;
 
 require_login();
 if (isguestuser()) {
