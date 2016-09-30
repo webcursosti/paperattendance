@@ -60,9 +60,15 @@ $PAGE->set_title($pagetitle);
 
 $course = $DB->get_record("course",array("id" => $courseid));
 
+//breadcrumb for navigation
+$PAGE->navbar->ignore_active();
+$PAGE->navbar->add(get_string('courses', 'local_paperattendance'), new moodle_url('/course/index.php'));
+$PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array("id" => $courseid)));
+$PAGE->navbar->add(get_string('printtitle', 'local_paperattendance'), new moodle_url("/local/paperattendance/print.php", array("courseid" => $courseid)));
+
 if($action == "add"){
 	// Add the print form 
-	$addform = new print_form(null, array("courseid" => $courseid));
+	$addform = new paperattendance_print_form(null, array("courseid" => $courseid));
 	// If the form is cancelled, redirect to course.
 	if ($addform->is_cancelled()) {
 		$backtocourse = new moodle_url("/course/view.php", array('id' => $courseid));

@@ -67,6 +67,7 @@ $string['downloadassistance']="Descargar asistencia";
 $string['backtocourse']="Volver al curso";
 $string['edithistory']="Editar";
 $string['pdfextensionunrecognized']="Extension del pdf no reconocido";
+$string['courses']="Cursos";
 
 // Settings
 $string['settings']="Configuración Básica";

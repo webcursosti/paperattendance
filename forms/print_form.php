@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 require_once($CFG->libdir . "/formslib.php");
 
-class print_form extends moodleform {
+class paperattendance_print_form extends moodleform {
 
 	public function definition() {
 		global $DB, $CFG;
@@ -56,7 +56,10 @@ class print_form extends moodleform {
 		//the idea is that you can print the list even though you are late by "x minutes"
 		$currentmodule = date('H:i', time() - ($CFG->paperattendance_minuteslate*60));
 		
-		$modulesquery = "SELECT * FROM {paperattendance_module} where initialtime > ? ORDER BY initialtime ASC";
+		$modulesquery = "SELECT * 
+				FROM {paperattendance_module} 
+				WHERE initialtime > ? 
+				ORDER BY initialtime ASC";
 		$modules = $DB->get_records_sql($modulesquery, array($currentmodule));
 		$arraymodules = array();
 		foreach ($modules as $module){

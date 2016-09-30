@@ -72,17 +72,19 @@ $params = array(PAPERATTENDANCE_STATUS_UNREAD);
 
 // Read the pdfs if there is any unread, with readpdf function
 if($resources = $DB->get_records_sql($sqlunreadpdfs, $params)){
-	$path = $CFG -> dataroot. "temp/local/paperattendance/unread";
+	$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
 	foreach($resources as $pdf){
 		$found++;
 		$process = paperattendance_readpdf($path, $pdf-> name, $pdf->courseid);
 		if($process){
-			$read++;	
+			$read++;
+			$pdf->status = 1;
+			$DB->update_record("paperattendance_session", $pdf);
 		}
 	}
 	
-	echo $found." pdfs found. \n";
-	echo $read." pdfs processed. \n";
+	echo $found." PDF found. \n";
+	echo $read." PDF processed. \n";
 	
 	// Displays the time required to complete the process
 	$finaltime = time();
