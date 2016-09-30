@@ -295,98 +295,85 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 }
 
 function paperattendance_readpdf($path, $filename, $course){
-	global $DB;
+	global $DB, $CFG;
 	
-	$pdf = new Imagick();
-	$pdf->setResolution( 100, 100 );
-	$pdf->readImage( $path."/".$filename );
-	$pdf->setImageType( imagick::IMGTYPE_GRAYSCALE );
-	
-	$pdftotalpages = $pdf->getNumberImages();
-	
+	$return = FALSE;
 	$context = context_course::instance($course);
-	$studentlist = paperattendance_students_list($context ->id, $course);
+	$objcourse = new stdClass();
+	$objcourse -> id = $course;
 	
+	$studentlist = paperattendance_students_list($context ->id, $objcourse);	
 	$sessid = paperattendance_get_sessionid($filename);
 	
-	$countstudent = 1;
-	foreach ($studentlist as $student){
-			
-		if($countstudent == 1){
-			$page = new Imagick( $path."/".$filename."[0]" );
-			$page->setResolution( 100, 100);
-			$page = $page->flattenImages();
-			$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
-			$page->setImageFormat('png');
-//			$page->writeImage('pdf_'.$countstudent.'.png');
-			$height = $page->getImageHeight();
-			$width = $page->getImageWidth();
-			
-			$attendancecircle = $page->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*$countstudent));
-//			$attendancecircle->writeImage('student_'.$countstudent.'.png');
+	// pre process pdf
+	$pdf = new Imagick($path."/".$filename);
+	$pdftotalpages = (int)$pdf->getNumberImages();	
+	$pdfpages = array();
 	
-		}else if($countstudent%26 == 0){
-			$page->destroy();
-			
-			$numberpage = ceil($countstudent/26);
-			$pagetwo = new Imagick( $path."/".$filename."[".$numberpage."]" );
-			$pagetwo->setResolution( 100, 100);
-			$pagetwo = $pagetwo->flattenImages();
-			$pagetwo->setImageType( imagick::IMGTYPE_GRAYSCALE );
-			$pagetwo->setImageFormat('png');
-//			$pagetwo->writeImage('pdf_'.$countstudent.'.png');
-			$height = $pagetwo->getImageHeight();
-			$width = $pagetwo->getImageWidth();
-			
-			$attendancecircle = $pagetwo->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*$countstudent));
-//			$attendancecircle->writeImage('student_'.$countstudent.'.png');	
-		}
-		else if($countstudent%52 == 0){
-			$page->destroy();
-				
-			$numberpage = ceil($countstudent/26);
-			$pagethree = new Imagick( $path."/".$filename."[".$numberpage."]" );
-			$pagethree->setResolution( 100, 100);
-			$pagethree = $pagethree->flattenImages();
-			$pagethree->setImageType( imagick::IMGTYPE_GRAYSCALE );
-			$pagethree->setImageFormat('png');
-//			$pagethree->writeImage('pdf_'.$countstudent.'.png');
-			$height = $pagethree->getImageHeight();
-			$width = $pagethree->getImageWidth();
-				
-			$attendancecircle = $pagethree->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*$countstudent));
-			//			$attendancecircle->writeImage('student_'.$countstudent.'.png');
-		}
-		else if($countstudent%78 == 0){
-			$page->destroy();
+	//$debugpath = $CFG -> dirroot. "/local/paperattendance/test/";
+	for($numpage = 0; $numpage < $pdftotalpages; $numpage++){
+		$page = new Imagick();
+		$page->setResolution( 300, 300);
+		$page->readImage($path."/".$filename."[$numpage]");
+		$page = $page->flattenImages();
+		$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
+		$page->setImageFormat('png');
+		//$page->writeImage($debugpath."pdf_$numpage.pdf");
+		$pdfpages[] = $page;
+	}
+	
+	$countstudent = 1;
+	$numberpage = 0;
+	$factor = 0;
+	foreach ($studentlist as $student){
+		$return = TRUE;
 		
-			$numberpage = ceil($countstudent/26);
-			$pagefour = new Imagick( $path."/".$filename."[".$numberpage."]" );
-			$pagefour->setResolution( 100, 100);
-			$pagefour = $pagefour->flattenImages();
-			$pagefour->setImageType( imagick::IMGTYPE_GRAYSCALE );
-			$pagefour->setImageFormat('png');
-//			$pagefour->writeImage('pdf_'.$countstudent.'.png');
-			$height = $pagefour->getImageHeight();
-			$width = $pagefour->getImageWidth();
+		// Page size
+		$height = $pdfpages[$numberpage]->getImageHeight();
+		$width = $pdfpages[$numberpage]->getImageWidth();
 		
-			$attendancecircle = $pagefour->getImageRegion($width*0.0285, $height*0.022, $width*0.767, $height*(0.18+0.02625*$countstudent));
-			//			$attendancecircle->writeImage('student_'.$countstudent.'.png');
+		if($numberpage == 0){
+			$attendancecircle = $pdfpages[$numberpage]->getImageRegion(
+					$width * 0.028,
+					$height * 0.018,
+					$width * 0.7556,
+					$height * (0.179 + 0.02640 * $factor)
+			);
+			//$attendancecircle->writeImage($debugpath.'student_'.$countstudent.' * '.$student->name.'.png');
+			//echo "<br> Pagina 1: $numberpage estudiante $countstudent ".$student->name;
+	
+		}else{
+			$attendancecircle = $pdfpages[$numberpage]->getImageRegion(
+					$width * 0.028,
+					$height * 0.018,
+					$width * 0.7556,
+					$height * (0.16 + 0.02640 * $factor)
+			);
+			//$attendancecircle->writeImage($debugpath.'student_'.$countstudent.' * '.$student->name.'.png');	
+			//echo "<br> Pagina 2: $numberpage estudiante $countstudent ".$student->name;
 		}
 		
 		$graychannel = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
-//		echo "<br>Imagen $countstudent media ".$graychannel["mean"]." desviacion ".$graychannel["standardDeviation"];
-		if($x["mean"] < $CFG->paperattendance_greyscale){
-			//echo "Alumno".$countstudent ." presente";
+		if($graychannel["mean"] < $CFG->paperattendance_greyscale){
 			paperattendance_save_student_presence($sessid, $student->id, '1');
 		}
 		else{
-			//echo "Alumno".$countstudent ." ausente";
 			paperattendance_save_student_presence($sessid, $student->id, '0');
 		}
-
+		
+		// 26 student per each page
+		$numberpage = floor($countstudent/26);
+		$attendancecircle->destroy();
+		
+		if($countstudent%26 == 0 && $countstudent != 1){
+			$factor = $factor - 26;
+		}
+		
 		$countstudent++;
+		$factor++;
 	}
+	
+	return $return;
 }
 
 function paperattendance_get_sessionid($pdffile){
@@ -404,7 +391,6 @@ function paperattendance_save_student_presence($sessid, $studentid, $status){
 	global $DB;
 	
 	$sessioninsert = new stdClass();
-	$sessioninsert->id = "NULL";
 	$sessioninsert->sessionid = $sessid;
 	$sessioninsert->userid = $studentid;
 	$sessioninsert->status = $status;
