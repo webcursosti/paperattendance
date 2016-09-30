@@ -61,8 +61,6 @@ $PAGE->set_title($pagetitle);
 $course = $DB->get_record("course",array("id" => $courseid));
 
 //breadcrumb for navigation
-$PAGE->navbar->ignore_active();
-$PAGE->navbar->add(get_string('courses', 'local_paperattendance'), new moodle_url('/course/index.php'));
 $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array("id" => $courseid)));
 $PAGE->navbar->add(get_string('printtitle', 'local_paperattendance'), new moodle_url("/local/paperattendance/print.php", array("courseid" => $courseid)));
 
