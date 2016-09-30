@@ -194,4 +194,97 @@ $( document ).ready(function() {
 	});
 });
 </script>
+<script>
+var currentdate = new Date();
+var datetwo = new Date();
 
+comparedates(currentdate, datetwo);
+
+$('#id_sessiondate_day').change(function() {
+	  var selected = $('#id_sessiondate_day option:selected').val();
+	  datetwo.setDate(selected);
+	  comparedates(currentdate, datetwo);
+	});
+
+$('#id_sessiondate_month').change(function() {
+	  var selected = $('#id_sessiondate_month option:selected').val();
+	  datetwo.setMonth(selected - 1);
+	  comparedates(currentdate, datetwo);
+	});
+
+$('#id_sessiondate_year').change(function() {
+	 var selected =$('#id_sessiondate_year option:selected').val();
+	 datetwo.setFullYear(selected);
+     comparedates(currentdate, datetwo);
+	});
+
+function comparedates (currentdate, datetwo){
+
+	alert("current: "+ currentdate + " compare: " + datetwo);
+	if (currentdate == datetwo){
+		$('.nomodulos').remove();	
+		var count = hidemodules();
+		var currentcount = 0;
+		$('.felement').find('span').each(function( index ) {
+		currentcount++;
+		});
+		if(count == currentcount){
+		$('.fgroup').first().append('<div class="nomodulos alert alert-warning">No hay módulos disponibles para la fecha seleccionada.</div>');
+		}
+	}
+	if (currentdate < datetwo ){
+		$('.nomodulos').remove();
+		showmodules();
+	}
+	if (currentdate > datetwo ){
+		$('.nomodulos').remove();
+		hideallmodules();
+		$('.fgroup').first().append('<div class="nomodulos alert alert-warning">No hay módulos disponibles para la fecha seleccionada.</div>');
+	}
+	
+}
+
+function showmodules(){
+	$('.felement').find('span').each(function( index ) {
+		$(this).show();
+	});
+}
+
+function hideallmodules(){
+	$('.felement').find('span').each(function( index ) {
+		$(this).hide();
+	});
+}
+
+function hidemodules(){
+	var count = 0;
+$('.felement').find('span').each(function( index ) {
+	  console.log( index + ": " + $( this ).text() );
+	var result = $(this).text().split(':');
+
+	//compare time
+	var compare = new Date();
+	compare.setHours(result[0]);
+	compare.setMinutes(result[1]);
+	compare = new Date(compare);
+	compare = gettime(compare);
+
+	// now time
+	var now = new Date();
+	var time = gettime(now);
+
+	//compare
+	if(compare < time){
+		$(this).hide();
+		count++;
+	}
+
+	});
+	return count;
+}
+
+function gettime(date) {
+	return ((date.getHours() < 10)?"0":"") + date.getHours() +":"+ ((date.getMinutes() < 10)?"0":"") + date.getMinutes() +":"+ ((date.getSeconds() < 10)?"0":"") + date.getSeconds();
+	
+}
+</script>
