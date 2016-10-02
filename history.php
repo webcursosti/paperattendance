@@ -42,6 +42,9 @@ $action = optional_param("action", "view", PARAM_TEXT);
 $idattendance = optional_param("idattendance", null, PARAM_INT);
 $idpresence = optional_param("idpresence", null, PARAM_INT);
 $idcourse = required_param('courseid', PARAM_INT);
+//Page
+$page = optional_param('page', 0, PARAM_INT);
+$perpage = 26;
 
 require_login();
 if (isguestuser()){
@@ -59,6 +62,21 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 	// action-> Students Attendance
 	if ($action == "studentsattendance"){
 		
+		$params = array($idcourse, $idattendance);
+		//Query for the total count of attendances
+		$getstudentsattendancecount = 'SELECT
+				count(*)
+				FROM {course} AS c
+				INNER JOIN {context} AS ct ON (c.id = ct.instanceid)
+				INNER JOIN {role_assignments} AS ra ON (ra.contextid = ct.id)
+				INNER JOIN {user} AS u ON (u.id = ra.userid)
+				INNER JOIN {role} AS r ON (r.id = ra.roleid)
+				INNER JOIN {paperattendance_presence} AS p ON (u.id = p.userid)
+				WHERE c.id = ? AND r.archetype = "student" AND p.sessionid = ?  ';
+		
+		$attendancescount = $DB->count_records_sql($getstudentsattendancecount, $params);
+		
+		//Query to get the table data of attendances
 		$getstudentsattendance = 'SELECT
 				u.lastname,
 				u.firstname,
@@ -73,21 +91,24 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 				INNER JOIN {paperattendance_presence} AS p ON (u.id = p.userid)
 				WHERE c.id = ? AND r.archetype = "student" AND p.sessionid = ?  ';
 		
-		$attendances = $DB->get_records_sql($getstudentsattendance, array($idcourse, $idattendance));
+		//$attendances = $DB->get_records_sql($getstudentsattendance, array($idcourse, $idattendance));
+		
+		//Getting attendances per page, initial page = 0.
+		$attendances = $DB->get_records_sql($getstudentsattendance, $params, $page * $perpage, ($page + 1) * $perpage);
 		
 		$attendancestable = new html_table();
 		
 		//Check if we have at least one attendance in the selected session
-		if (count($attendances) > 0){
+		if ($attendancescount > 0){
 			$attendancestable->head = array(
 					get_string('hashtag', 'local_paperattendance'),
 					get_string('student', 'local_paperattendance'),
 					get_string('mail', 'local_paperattendance'),
 					get_string('attendance', 'local_paperattendance'),
-					get_string('settings', 'local_paperattendance')
+					get_string('setting', 'local_paperattendance')
 			);
 			//A mere counter for de number of records in the table
-			$counter = 1;
+			$counter = $page * $perpage + 1;
 			foreach ($attendances as $attendance){
 		
 				$urlattendance = new moodle_url("#");
@@ -322,8 +343,12 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 			echo html_writer::nonempty_tag("h4", get_string('nonexistintingrecords', 'local_paperattendance'), array("align" => "left"));
 		}
 		else{
+			//displays the table
 			echo html_writer::table($attendancestable);
-		}
+			//displays de pagination bar
+			echo $OUTPUT->paging_bar($attendancescount, $page, $perpage,
+				 	$CFG->wwwroot . '/local/paperattendance/history.php?action=' . $action . '&idattendance=' . $idattendance . '&courseid=' . $idcourse . '&page=');
+		}	
 		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($viewbackbutton, get_string('back', 'local_paperattendance')), array("align" => "left"));
 		
 	}
