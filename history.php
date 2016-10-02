@@ -78,11 +78,11 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 		
 		//Query to get the table data of attendances
 		$getstudentsattendance = 'SELECT
+				p.id AS idp,
 				u.lastname,
 				u.firstname,
 				u.email,
-				p.status,
-				p.id AS idp
+				p.status				
 				FROM {course} AS c
 				INNER JOIN {context} AS ct ON (c.id = ct.instanceid)
 				INNER JOIN {role_assignments} AS ra ON (ra.contextid = ct.id)
@@ -94,7 +94,8 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 		//$attendances = $DB->get_records_sql($getstudentsattendance, array($idcourse, $idattendance));
 		
 		//Getting attendances per page, initial page = 0.
-		$attendances = $DB->get_records_sql($getstudentsattendance, $params, $page * $perpage, ($page + 1) * $perpage);
+		//$attendances = $DB->get_records_sql($getstudentsattendance, $params, $page * $perpage, ($page + 1) * $perpage);
+		$attendances = $DB->get_records_sql($getstudentsattendance, $params, $page * $perpage, $perpage);
 		
 		$attendancestable = new html_table();
 		
