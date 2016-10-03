@@ -6,7 +6,7 @@
  */
 
 
-$string['pluginname']="Asistencias en papel";
+$string['pluginname']="Asistencias en Papel";
 $string['notallowedupload']="No tienes permisos para subir asistencias";
 $string['uploadtitle']="Asistencias en Papel";
 $string['uploadsuccessful']="Asistencia subida correctamente";
@@ -38,24 +38,24 @@ $string['selectteacher']="Seleccione Profesor";
 $string['requestor']="Solicitante";
 $string['attdate']="Fecha de la sesión";
 $string['modulescheckbox']="Módulos";
-$string['pleaseselectteacher']="Porfavor seleccione profesor primero";
+$string['pleaseselectteacher']="Por favor seleccione profesor primero";
 $string['pleaseselectdate']="Por favor seleccione una fecha válida";
 $string['pleaseselectmodule']="Por favor seleccione al menos un módulo";
 $string['pdfattendance']="Asistencia";
-$string['pleaseselectattendance']="Porfavor seleccione asistencia";
+$string['pleaseselectattendance']="Por favor seleccione asistencia";
 $string['absentattendance']="Ausente";
 $string['presentattendance']="Presente";
 $string['hashtag']="#";
 $string['student']="Alumno";
 $string['mail']="Correo";
 $string['attendance']="Asistencia";
-$string['settings']="Ajustes";
+$string['setting']="Ajustes";
 $string['nonselectedstudent']="Estudiante no seleccionado";
 $string['nonexiststudent']="Estudiante no existe";
 $string['date']="Fecha";
 $string['time']="Hora";
 $string['scan']="Scan";
-$string['studentsattendance']="Asistencia alumnos";
+$string['studentsattendance']="Asistencia Alumnos";
 $string['see']="Ver";
 $string['seestudents']="Ver alumnos";
 $string['historytitle']="Historial de Asistencia";
