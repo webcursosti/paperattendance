@@ -59,7 +59,7 @@ if( !has_capability("local/paperattendance:history", $context) ){
 */
 //Begins Teacher's View
 	
-if( has_capability("local/paperattendance:teacherview", $context)) {
+if( has_capability("local/paperattendance:teacherview", $context) || is_siteadmin($USER)) {
 	
 	//breadcrumb for navigation
 	$PAGE->navbar->ignore_active();
