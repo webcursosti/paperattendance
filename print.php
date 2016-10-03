@@ -31,7 +31,7 @@ require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php
 require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
 require_once ($CFG->dirroot . "/mod/emarking/print/locallib.php");
 require_once ("locallib.php");
-global $DB, $PAGE, $OUTPUT, $USER;
+global $DB, $PAGE, $OUTPUT, $USER, $CFG;
 
 require_login();
 if (isguestuser()) {
@@ -61,8 +61,6 @@ $PAGE->set_title($pagetitle);
 $course = $DB->get_record("course",array("id" => $courseid));
 
 //breadcrumb for navigation
-$PAGE->navbar->ignore_active();
-$PAGE->navbar->add(get_string('courses', 'local_paperattendance'), new moodle_url('/course/index.php'));
 $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array("id" => $courseid)));
 $PAGE->navbar->add(get_string('printtitle', 'local_paperattendance'), new moodle_url("/local/paperattendance/print.php", array("courseid" => $courseid)));
 
@@ -201,3 +199,97 @@ $( document ).ready(function() {
 });
 </script>
 
+<script>
+var currentdate = new Date();
+var datetwo = new Date();
+
+comparedates(currentdate, datetwo);
+
+$('#id_sessiondate_day').change(function() {
+	  var selected = $('#id_sessiondate_day option:selected').val();
+	  datetwo.setDate(selected);
+	  comparedates(currentdate, datetwo);
+	});
+
+$('#id_sessiondate_month').change(function() {
+	  var selected = $('#id_sessiondate_month option:selected').val();
+	  datetwo.setMonth(selected - 1);
+	  comparedates(currentdate, datetwo);
+	});
+
+$('#id_sessiondate_year').change(function() {
+	 var selected =$('#id_sessiondate_year option:selected').val();
+	 datetwo.setFullYear(selected);
+     comparedates(currentdate, datetwo);
+	});
+
+function comparedates (currentdate, datetwo){
+
+	if (currentdate == datetwo){
+		$('.nomodulos').remove();	
+		var count = hidemodules();
+		var currentcount = 0;
+		$('.felement').find('span').each(function( index ) {
+		currentcount++;
+		});
+		if(count == currentcount){
+		$('.fgroup').first().append('<div class="nomodulos alert alert-warning">No hay módulos disponibles para la fecha seleccionada.</div>');
+		}
+	}
+	if (currentdate < datetwo ){
+		$('.nomodulos').remove();
+		showmodules();
+	}
+	if (currentdate > datetwo ){
+		$('.nomodulos').remove();
+		hideallmodules();
+		$('.fgroup').first().append('<div class="nomodulos alert alert-warning">No hay módulos disponibles para la fecha seleccionada.</div>');
+	}
+	
+}
+
+function showmodules(){
+	$('.felement').find('span').each(function( index ) {
+		$(this).show();
+	});
+}
+
+function hideallmodules(){
+	$('.felement').find('span').each(function( index ) {
+		$(this).hide();
+	});
+}
+
+function hidemodules(){
+	var count = 0;
+$('.felement').find('span').each(function( index ) {
+	  console.log( index + ": " + $( this ).text() );
+	var result = $(this).text().split(':');
+
+	//compare time
+	var compare = new Date();
+	compare.setHours(result[0]);
+	compare.setMinutes(result[1]);
+	compare = new Date(compare);
+	compare = gettime(compare);
+
+	// now time
+	var now = new Date();
+	var time = gettime(now);
+	time.setMinutes(time.getMinutes() - <?php echo ($CFG->paperattendance_minuteslate*60); ?>);
+
+	//compare
+	if(compare < time){
+		$(this).hide();
+		count++;
+	}
+
+	});
+	return count;
+}
+
+function gettime(date) {
+	return ((date.getHours() < 10)?"0":"") + date.getHours() +":"+ ((date.getMinutes() < 10)?"0":"") + date.getMinutes() +":"+ ((date.getSeconds() < 10)?"0":"") + date.getSeconds();
+	
+}
+</script>
