@@ -121,6 +121,7 @@ if( has_capability("local/paperattendance:teacherview", $context) || is_siteadmi
 					get_string('attendance', 'local_paperattendance'),
 					get_string('setting', 'local_paperattendance')
 			);
+			
 			//A mere counter for de number of records in the table
 			$counter = $page * $perpage + 1;
 			foreach ($attendances as $attendance){
@@ -302,6 +303,20 @@ if( has_capability("local/paperattendance:teacherview", $context) || is_siteadmi
 					get_string('scan', 'local_paperattendance'),
 					get_string('studentsattendance', 'local_paperattendance')
 			);
+			$attendancestable->size = array(
+					'10%',
+					'27%',
+					'27%',
+					'18%',
+					'18%');
+				
+			$attendancestable->align = array(
+					'left',
+					'left',
+					'left',
+					'center',
+					'center');
+				
 			//A mere counter for the number of records
 			$counter = 1;
 			foreach ($attendances as $attendance){
@@ -324,7 +339,7 @@ if( has_capability("local/paperattendance:teacherview", $context) || is_siteadmi
 						"idattendance" => $attendance->id,
 						"courseid" => $idcourse
 				));
-				$studentsattendanceicon_attendance = new pix_icon("e/preview", get_string('seestudents', 'local_paperattendance'));
+				$studentsattendanceicon_attendance = new pix_icon("e/fullpage", get_string('seestudents', 'local_paperattendance'));
 				$studentsattendanceaction_attendance = $OUTPUT->action_icon(
 						$studentsattendanceurl_attendance,
 						$studentsattendanceicon_attendance
@@ -332,7 +347,10 @@ if( has_capability("local/paperattendance:teacherview", $context) || is_siteadmi
 				
 				$attendancestable->data[] = array(
 						$counter,
-						date("d-m-Y", $attendance->date),
+						//date("d-m-Y", $attendance->date),
+						//date("l jS F g:ia", $attendance->date), en inglés con hora
+						//date("l jS F", $attendance->date), en inglés
+						ucfirst(strftime("%A, %d de %B del %Y", $attendance->date)),
 						$attendance->hour,
 						$scanaction_attendance,
 						$studentsattendanceaction_attendance
