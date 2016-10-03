@@ -200,6 +200,7 @@ $( document ).ready(function() {
 </script>
 
 <script>
+$( document ).ready(function() {
 var currentdate = new Date();
 var datetwo = new Date();
 
@@ -222,6 +223,7 @@ $('#id_sessiondate_year').change(function() {
 	 datetwo.setFullYear(selected);
      comparedates(currentdate, datetwo);
 	});
+
 
 function comparedates (currentdate, datetwo){
 
@@ -292,4 +294,6 @@ function gettime(date) {
 	return ((date.getHours() < 10)?"0":"") + date.getHours() +":"+ ((date.getMinutes() < 10)?"0":"") + date.getMinutes() +":"+ ((date.getSeconds() < 10)?"0":"") + date.getSeconds();
 	
 }
+
+});
 </script>
