@@ -6,7 +6,7 @@
  */
 
 
-$string['pluginname']="Asistencias en papel";
+$string['pluginname']="Asistencias en Papel";
 $string['notallowedupload']="No tienes permisos para subir asistencias";
 $string['uploadtitle']="Asistencias en Papel";
 $string['uploadsuccessful']="Asistencia subida correctamente";
@@ -55,7 +55,7 @@ $string['nonexiststudent']="Estudiante no existe";
 $string['date']="Fecha";
 $string['time']="Hora";
 $string['scan']="Scan";
-$string['studentsattendance']="Asistencia alumnos";
+$string['studentsattendance']="Asistencia Alumnos";
 $string['see']="Ver";
 $string['seestudents']="Ver alumnos";
 $string['historytitle']="Historial de Asistencia";

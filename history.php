@@ -45,12 +45,14 @@ $idcourse = required_param('courseid', PARAM_INT);
 //Page
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = 26;
+//for navbar
+$course = $DB->get_record("course",array("id" => $idcourse));
 
 require_login();
 if (isguestuser()){
 	die();
 }
-/*For the moment the capabilities isn't working right
+/*
 if( !has_capability("local/paperattendance:history", $context) ){
 	print_error("ACCESS DENIED");
 }
@@ -59,8 +61,19 @@ if( !has_capability("local/paperattendance:history", $context) ){
 	
 if( has_capability("local/paperattendance:teacherview", $context)) {
 	
+	//breadcrumb for navigation
+	$PAGE->navbar->ignore_active();
+	$PAGE->navbar->add(get_string('courses', 'local_paperattendance'), new moodle_url('/course/index.php'));
+	$PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array("id" => $idcourse)));
+	$PAGE->navbar->add(get_string('pluginname', 'local_paperattendance'));
+	$PAGE->navbar->add(get_string('historytitle', 'local_paperattendance'), new moodle_url("/local/paperattendance/history.php", array("courseid" => $idcourse)));
+	
 	// action-> Students Attendance
 	if ($action == "studentsattendance"){
+		
+		$PAGE->navbar->add(get_string('studentsattendance', 'local_paperattendance'),
+				new moodle_url("/local/paperattendance/history.php", array("courseid" => $idcourse , "idattendance" => $idattendance, "action" => $action)));
+		
 		
 		$params = array($idcourse, $idattendance);
 		//Query for the total count of attendances
@@ -391,6 +404,13 @@ if( has_capability("local/paperattendance:teacherview", $context)) {
 
 //Begins Student's view
 else {
+	
+	//breadcrumb for navigation
+	$PAGE->navbar->ignore_active();
+	$PAGE->navbar->add(get_string('courses', 'local_paperattendance'), new moodle_url('/course/index.php'));
+	$PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array("id" => $idcourse)));
+	$PAGE->navbar->add(get_string('pluginname', 'local_paperattendance'));
+	$PAGE->navbar->add(get_string('historytitle', 'local_paperattendance'), new moodle_url("/local/paperattendance/history.php", array("courseid" => $idcourse)));
 	
 	// Lists all records in the database
 	if ($action == "view"){
