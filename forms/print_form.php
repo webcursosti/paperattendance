@@ -51,7 +51,7 @@ class paperattendance_print_form extends moodleform {
 		$modulesquery = "SELECT * 
 				FROM {paperattendance_module} 
 				ORDER BY initialtime ASC";
-		$modules = $DB->get_records_sql($modulesquery, array($currentmodule));
+		$modules = $DB->get_records_sql($modulesquery);
 		$arraymodules = array();
 		foreach ($modules as $module){
 			$arraymodules[] = $mform->createElement('advcheckbox', $module->id."*".$module->initialtime."*".$module->endtime , '',$module->initialtime);	

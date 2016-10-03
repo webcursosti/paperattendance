@@ -221,11 +221,11 @@ $('#id_sessiondate_month').change(function() {
 $('#id_sessiondate_year').change(function() {
 	 var selected =$('#id_sessiondate_year option:selected').val();
 	 datetwo.setFullYear(selected);
-     comparedates(currentdate, datetwo);
+	 comparedates(currentdate, datetwo);
 	});
 
 
-function comparedates (currentdate, datetwo){
+function comparedates(currentdate, datetwo){
 
 	if (currentdate == datetwo){
 		$('.nomodulos').remove();	
