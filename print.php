@@ -228,7 +228,8 @@ $('#id_sessiondate_year').change(function() {
 function comparedates(currentdate, datetwo){
 
 	if (currentdate.getTime() === datetwo.getTime()){
-		$('.nomodulos').remove();	
+		$('.nomodulos').remove();
+		showmodules();	
 		var count = hidemodules();
 		var currentcount = 0;
 		$('.felement').find('span').each(function( index ) {
