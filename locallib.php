@@ -748,3 +748,11 @@ function paperattendance_recursiveRemoveDirectory($directory)
 	//this comand delete the folder of the path, in this case we only want to delete the files inside the folder
 	//rmdir($directory);
 }
+function paperattendance_convertdate($i){
+	//arrays of days and months
+	$days = array("Domingo","Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado");
+	$months =array("","Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
+	
+	$dateconverted = $days[date('w',$i)]." ".date('d',$i)." de ".$months[date('n',$i)]. " del ".date('Y',$i);
+	return $dateconverted;
+}

@@ -28,6 +28,7 @@
 
 require_once (dirname(dirname(dirname(__FILE__)))."/config.php");
 require_once ($CFG->dirroot."/local/paperattendance/forms/history_form.php");
+require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 
 global $DB, $PAGE, $OUTPUT, $USER;
 
@@ -345,12 +346,16 @@ if( has_capability("local/paperattendance:teacherview", $context) || is_siteadmi
 						$studentsattendanceicon_attendance
 						);
 				
+				$date= $attendance->date;
+				$dateconverted = $paperattendance_convertdate($date);
+				var_dump($paperattendance_convertdate($date));
 				$attendancestable->data[] = array(
 						$counter,
 						//date("d-m-Y", $attendance->date),
-						//date("l jS F g:ia", $attendance->date), en inglés con hora
-						//date("l jS F", $attendance->date), en inglés
-						ucfirst(strftime("%A, %d de %B del %Y", $attendance->date)),
+						//date("l jS F g:ia", $attendance->date), in english with hour
+						//date("l jS F", $attendance->date), in english
+						//ucfirst(strftime("%A, %d de %B del %Y", $attendance->date)) in spanish
+						$dateconverted,
 						$attendance->hour,
 						$scanaction_attendance,
 						$studentsattendanceaction_attendance
