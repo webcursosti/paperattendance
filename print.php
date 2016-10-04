@@ -265,7 +265,7 @@ function hideallmodules(){
 function hidemodules(){
 	var count = 0;
 	$('.felement').find('span').each(function( index ) {
-		  console.log( index + ": " + $( this ).text() );
+
 		var result = $(this).text().split(':');
 
 		//compare time
