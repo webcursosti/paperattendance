@@ -200,6 +200,7 @@ $( document ).ready(function() {
 </script>
 
 <script>
+$( document ).ready(function() {
 var currentdate = new Date();
 var datetwo = new Date();
 
@@ -220,10 +221,11 @@ $('#id_sessiondate_month').change(function() {
 $('#id_sessiondate_year').change(function() {
 	 var selected =$('#id_sessiondate_year option:selected').val();
 	 datetwo.setFullYear(selected);
-     comparedates(currentdate, datetwo);
+	 comparedates(currentdate, datetwo);
 	});
 
-function comparedates (currentdate, datetwo){
+
+function comparedates(currentdate, datetwo){
 
 	if (currentdate == datetwo){
 		$('.nomodulos').remove();	
@@ -292,4 +294,6 @@ function gettime(date) {
 	return ((date.getHours() < 10)?"0":"") + date.getHours() +":"+ ((date.getMinutes() < 10)?"0":"") + date.getMinutes() +":"+ ((date.getSeconds() < 10)?"0":"") + date.getSeconds();
 	
 }
+
+});
 </script>
