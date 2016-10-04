@@ -228,7 +228,8 @@ $('#id_sessiondate_year').change(function() {
 function comparedates(currentdate, datetwo){
 
 	if (currentdate.getTime() === datetwo.getTime()){
-		$('.nomodulos').remove();	
+		$('.nomodulos').remove();
+		showmodules();	
 		var count = hidemodules();
 		var currentcount = 0;
 		$('.felement').find('span').each(function( index ) {
@@ -265,7 +266,7 @@ function hideallmodules(){
 function hidemodules(){
 	var count = 0;
 	$('.felement').find('span').each(function( index ) {
-		  console.log( index + ": " + $( this ).text() );
+
 		var result = $(this).text().split(':');
 
 		//compare time
@@ -289,6 +290,49 @@ function hidemodules(){
 
 	return count;
 }
+
+});
+</script>
+
+<script>
+$( document ).ready(function() {
+	
+$( "form input:checkbox" ).change(function() {
+
+	var split = $(this).parent().text().split(':');
+    var hora = split[0];
+    var min = split[1]; 
+
+    if($(this).prop( "checked" )){
+    hidecheckbox(hora, min);
+    }
+    else{
+    showcheckbox(hora, min);
+    }
+	});
+
+function hidecheckbox(hora, min){
+	 
+    $( "form input:checkbox" ).each(function( index ) {
+	var split2 = $(this).parent().text().split(':');
+	var horacompare = split2[0];
+	var mincompare = split2[1];
+	if (hora == horacompare && min != mincompare){
+		$(this).parent().fadeOut( "slow" )();
+	}
+	});
+    }
+function showcheckbox(hora, min){
+	 
+    $( "form input:checkbox" ).each(function( index ) {
+	var split2 = $(this).parent().text().split(':');
+	var horacompare = split2[0];
+	var mincompare = split2[1];
+	if (hora == horacompare && min != mincompare){
+		$(this).parent().fadeIn();
+	}
+	});
+    }
 
 });
 </script>
