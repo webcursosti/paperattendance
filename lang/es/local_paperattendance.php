@@ -89,6 +89,7 @@ $string['november']="noviembre";
 $string['december']="diciembre";
 $string['of']=" de ";
 $string['from']=" del ";
+$string['error']="ACCESO DENEGADO - Alumno no matriculado en el curso";
 
 
 // Settings

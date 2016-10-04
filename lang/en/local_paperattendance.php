@@ -89,6 +89,7 @@ $string['november']="november";
 $string['december']="ecember";
 $string['of']=" ";
 $string['from']=" ";
+$string['error']="ACCESS DENIED - Student not enrolled in course";
 
 // Settings
 $string['settings']="Basic Configuration";
