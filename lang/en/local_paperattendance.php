@@ -68,6 +68,27 @@ $string['backtocourse']="Back to course";
 $string['edithistory']="Edit";
 $string['pdfextensionunrecognized']="Pdf extension not recognized";
 $string['courses']="Courses";
+$string['sunday']="Sunday";
+$string['monday']="Monday";
+$string['tuesday']="Tuesday";
+$string['wednesday']="Wednesday";
+$string['thursday']="Thursday";
+$string['friday']="Friday";
+$string['saturday']="Saturday";
+$string['january']="january";
+$string['february']="february";
+$string['march']="march";
+$string['april']="april";
+$string['may']="may";
+$string['june']="june";
+$string['july']="july";
+$string['august']="august";
+$string['september']="september";
+$string['october']="october";
+$string['november']="november";
+$string['december']="ecember";
+$string['of']=" ";
+$string['from']=" ";
 
 // Settings
 $string['settings']="Basic Configuration";
