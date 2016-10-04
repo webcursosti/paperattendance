@@ -59,8 +59,11 @@ if( !has_capability("local/paperattendance:history", $context) ){
 }
 */
 //Begins Teacher's View
-	
-if( has_capability("local/paperattendance:teacherview", $context) || is_siteadmin($USER)) {
+$isteacher = paperattendance_getteacherfromcourse($idcourse, $USER->id);
+
+$isstudent = paperattendance_getstudentfromcourse($idcourse, $USER->id);
+
+if( $isteacher || is_siteadmin($USER)) {
 	
 	//breadcrumb for navigation
 	$PAGE->navbar->ignore_active();
@@ -426,7 +429,7 @@ if( has_capability("local/paperattendance:teacherview", $context) || is_siteadmi
 
 
 //Begins Student's view
-else {
+else if ($isstudent) {
 	
 	//breadcrumb for navigation
 	$PAGE->navbar->ignore_active();
@@ -520,7 +523,9 @@ else {
 	
 }
 //Ends Student's view
-
+else{
+	print_error(get_string('error', 'local_paperattendance'));
+}
 
 echo $OUTPUT->footer();
 
