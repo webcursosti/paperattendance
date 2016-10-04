@@ -306,8 +306,8 @@ if( has_capability("local/paperattendance:teacherview", $context) || is_siteadmi
 			);
 			$attendancestable->size = array(
 					'10%',
-					'27%',
-					'27%',
+					'32%',
+					'22%',
 					'18%',
 					'18%');
 				
@@ -347,8 +347,8 @@ if( has_capability("local/paperattendance:teacherview", $context) || is_siteadmi
 						);
 				
 				$date= $attendance->date;
-				$dateconverted = $paperattendance_convertdate($date);
-				var_dump($paperattendance_convertdate($date));
+				$dateconverted = paperattendance_convertdate($date);
+				//var_dump(paperattendance_convertdate($date));
 				$attendancestable->data[] = array(
 						$counter,
 						//date("d-m-Y", $attendance->date),
