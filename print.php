@@ -278,7 +278,7 @@ $('.felement').find('span').each(function( index ) {
 	// now time
 	var now = new Date();
 	var time = gettime(now);
-	time.setMinutes(time.getMinutes() - <?php echo ($CFG->paperattendance_minuteslate*60); ?>);
+	time.setMinutes(time.getMinutes() - <?php echo ($CFG->paperattendance_minuteslate); ?>);
 
 	//compare
 	if(compare < time){
