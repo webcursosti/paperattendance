@@ -756,3 +756,33 @@ function paperattendance_convertdate($i){
 	$dateconverted = $days[date('w',$i)].", ".date('d',$i).get_string('of', 'local_paperattendance').$months[date('n',$i)].get_string('from', 'local_paperattendance').date('Y',$i);
 	return $dateconverted;
 }
+
+function paperattendance_getteacherfromcourse($courseid, $userid){
+	global $DB;
+	$sqlteacher = "SELECT u.id
+			FROM {user} AS u
+			INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+			INNER JOIN {context} ct ON (ct.id = ra.contextid)
+			INNER JOIN {course} c ON (c.id = ct.instanceid AND c.id = ?)
+			INNER JOIN {role} r ON (r.id = ra.roleid AND r.shortname IN ('teacher', 'editingteacher'))
+			WHERE u.id = ?";
+	
+	$teacher = $DB->get_record_sql($sqlteacher, array($courseid,$userid));
+	
+	return $teacher;
+}
+
+function paperattendance_getstudentfromcourse($courseid, $userid){
+	global $DB;
+	$sqlstudent = "SELECT u.id
+			FROM {user} AS u
+			INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+			INNER JOIN {context} ct ON (ct.id = ra.contextid)
+			INNER JOIN {course} c ON (c.id = ct.instanceid AND c.id = ?)
+			INNER JOIN {role} r ON (r.id = ra.roleid AND r.shortname = 'student')
+			WHERE u.id = ?";
+
+	$student = $DB->get_record_sql($sqlstudent, array($courseid,$userid));
+
+	return $student;
+}
