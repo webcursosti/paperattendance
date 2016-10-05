@@ -656,15 +656,15 @@ function paperattendance_read_pdf_save_session($path, $pdffile){
 			}
 		}
 		else{
-			//couldnt read qr
-			$return = "Couldn´t read qr";
-			$return += "<br> Orientation is: " .paperattendance_get_orientation($path, $pdffile, "0");
-			$return += "<br> Please make sure pdf is straight, without tilt and header on top";
+			//couldnt save session
+			$return = get_string("couldntsavesession", "local_paperattendance");
 			return $return;
 		}
 	}
 	else{
-		return "Session already exists";
+			//couldnt read qr
+			$return = get_string("couldntreadqrcode", "local_paperattendance");
+			return $return;
 	}
 }
 
