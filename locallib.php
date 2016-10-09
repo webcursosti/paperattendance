@@ -429,7 +429,8 @@ function paperattendance_get_orientation($path, $pdf, $page){
 
 	$qrtop = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.652, $height*0.014);
 	$qrtop->writeImage($path."topright".$qrpath);
-
+	
+	unlink($path.$pdfname.'.png');
 	// QR
 	$qrcodetop = new QrReader($path."topright".$qrpath);
 	$texttop = $qrcodetop->text(); //return decoded text from QR Code
@@ -500,14 +501,14 @@ function paperattendance_get_qr_text($path, $pdf){
 	$image = new Imagick($path.$myurl);
 	$image->setResolution(100,100);
 	$image->setImageFormat( 'png' );
-	/*
+	//*//
 	$image->writeImage( $path.$pdfname.'.png' );
 	$image->clear();
 
 	//check if there's a qr on the top right corner
 	$imagick = new Imagick();
 	$imagick->setResolution(100,100);
-	*/
+	//*//
 	$imagick->readImage( $path.$pdfname.'.png' );
 	$imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
 
@@ -517,6 +518,7 @@ function paperattendance_get_qr_text($path, $pdf){
 	$qrtop = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.652, $height*0.014);
 	$qrtop->writeImage($path."topright".$qrpath);
 
+	unlink($path.$pdfname.'.png');
 	// QR
 	$qrcodetop = new QrReader($path."topright".$qrpath);
 	$texttop = $qrcodetop->text(); //return decoded text from QR Code

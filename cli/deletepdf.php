@@ -48,7 +48,7 @@ if($options['help']) {
 	Options:
 	-h, --help            Print out this help
 	Example:
-	\$sudo /usr/bin/php /local/paperattendance/cli/deletepng.php";
+	\$sudo /usr/bin/php /local/paperattendance/cli/deletepdf.php";
 	echo $help;
 	die();
 }
