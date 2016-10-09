@@ -515,7 +515,7 @@ function paperattendance_get_qr_text($path, $pdf){
 	$height = $imagick->getImageHeight();
 	$width = $imagick->getImageWidth();
 
-	$qrtop = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.652, $height*0.014);
+	$qrtop = $imagick->getImageRegion($width*0.12, $height*0.094, $width*0.720, $height*0.045);
 	$qrtop->writeImage($path."topright".$qrpath);
 
 	unlink($path.$pdfname.'.png');
