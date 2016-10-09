@@ -45,8 +45,8 @@ $capabilities = array(
 				'contextlevel' => CONTEXT_COURSE,
 				'archetypes' => array(
 						'student' => CAP_PROHIBIT,
-						'teacher' => CAP_ALLOW,
-						'editingteacher' => CAP_ALLOW,
+						'teacher' => CAP_PROHIBIT,
+						'editingteacher' => CAP_PROHIBIT,
 						'manager' => CAP_ALLOW
 				)),
 		'local/paperattendance:upload' => array(
@@ -55,7 +55,7 @@ $capabilities = array(
 				'archetypes' => array(
 						'student' => CAP_PROHIBIT,
 						'teacher' => CAP_PROHIBIT,
-						'editingteacher' => CAP_ALLOW,
+						'editingteacher' => CAP_PROHIBIT,
 						'manager' => CAP_ALLOW
 				)),
 		'local/paperattendance:history' => array(
