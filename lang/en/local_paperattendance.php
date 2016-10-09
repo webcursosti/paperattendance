@@ -90,6 +90,8 @@ $string['december']="ecember";
 $string['of']=" ";
 $string['from']=" ";
 $string['error']="ACCESS DENIED - Student not enrolled in course";
+$string['couldntsavesession']="Error, the session on the given modules already exists";
+$string['couldntreadqrcode']="Couldn´t read QR code, Please make sure it is readable and not scratched.";
 
 // Settings
 $string['settings']="Basic Configuration";
