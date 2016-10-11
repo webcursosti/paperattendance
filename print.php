@@ -200,6 +200,7 @@ $( document ).ready(function() {
 </script>
 
 <script>
+$( document ).ready(function() {
 var currentdate = new Date();
 var datetwo = new Date();
 
@@ -220,13 +221,15 @@ $('#id_sessiondate_month').change(function() {
 $('#id_sessiondate_year').change(function() {
 	 var selected =$('#id_sessiondate_year option:selected').val();
 	 datetwo.setFullYear(selected);
-     comparedates(currentdate, datetwo);
+	 comparedates(currentdate, datetwo);
 	});
 
-function comparedates (currentdate, datetwo){
 
-	if (currentdate == datetwo){
-		$('.nomodulos').remove();	
+function comparedates(currentdate, datetwo){
+
+	if (currentdate.getTime() === datetwo.getTime()){
+		$('.nomodulos').remove();
+		showmodules();	
 		var count = hidemodules();
 		var currentcount = 0;
 		$('.felement').find('span').each(function( index ) {
@@ -262,34 +265,74 @@ function hideallmodules(){
 
 function hidemodules(){
 	var count = 0;
-$('.felement').find('span').each(function( index ) {
-	  console.log( index + ": " + $( this ).text() );
-	var result = $(this).text().split(':');
+	$('.felement').find('span').each(function( index ) {
 
-	//compare time
-	var compare = new Date();
-	compare.setHours(result[0]);
-	compare.setMinutes(result[1]);
-	compare = new Date(compare);
-	compare = gettime(compare);
+		var result = $(this).text().split(':');
 
-	// now time
-	var now = new Date();
-	var time = gettime(now);
-	time.setMinutes(time.getMinutes() - <?php echo ($CFG->paperattendance_minuteslate*60); ?>);
+		//compare time
+		var compare = new Date();
+		compare.setHours(result[0]);
+		compare.setMinutes(result[1]);
+		compare = new Date(compare);
 
-	//compare
-	if(compare < time){
-		$(this).hide();
-		count++;
-	}
+		// now time
+		var now = new Date();
+		now.setMinutes(now.getMinutes() - <?php echo ($CFG->paperattendance_minuteslate); ?>);
 
-	});
+		//compare
+		if(compare < now){
+			$(this).hide();
+			count++;
+		}
+
+		});
+
+
 	return count;
 }
 
-function gettime(date) {
-	return ((date.getHours() < 10)?"0":"") + date.getHours() +":"+ ((date.getMinutes() < 10)?"0":"") + date.getMinutes() +":"+ ((date.getSeconds() < 10)?"0":"") + date.getSeconds();
+});
+</script>
+
+<script>
+$( document ).ready(function() {
 	
-}
+$( "form input:checkbox" ).change(function() {
+
+	var split = $(this).parent().text().split(':');
+    var hora = split[0];
+    var min = split[1]; 
+
+    if($(this).prop( "checked" )){
+    hidecheckbox(hora, min);
+    }
+    else{
+    showcheckbox(hora, min);
+    }
+	});
+
+function hidecheckbox(hora, min){
+	 
+    $( "form input:checkbox" ).each(function( index ) {
+	var split2 = $(this).parent().text().split(':');
+	var horacompare = split2[0];
+	var mincompare = split2[1];
+	if (hora == horacompare && min != mincompare){
+		$(this).parent().fadeOut( "slow" )();
+	}
+	});
+    }
+function showcheckbox(hora, min){
+	 
+    $( "form input:checkbox" ).each(function( index ) {
+	var split2 = $(this).parent().text().split(':');
+	var horacompare = split2[0];
+	var mincompare = split2[1];
+	if (hora == horacompare && min != mincompare){
+		$(this).parent().fadeIn();
+	}
+	});
+    }
+
+});
 </script>

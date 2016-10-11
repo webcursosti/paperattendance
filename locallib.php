@@ -656,15 +656,15 @@ function paperattendance_read_pdf_save_session($path, $pdffile){
 			}
 		}
 		else{
-			//couldnt read qr
-			$return = "Couldn´t read qr";
-			$return += "<br> Orientation is: " .paperattendance_get_orientation($path, $pdffile, "0");
-			$return += "<br> Please make sure pdf is straight, without tilt and header on top";
+			//couldnt save session
+			$return = get_string("couldntsavesession", "local_paperattendance");
 			return $return;
 		}
 	}
 	else{
-		return "Session already exists";
+			//couldnt read qr
+			$return = get_string("couldntreadqrcode", "local_paperattendance");
+			return $return;
 	}
 }
 
@@ -747,4 +747,42 @@ function paperattendance_recursiveRemoveDirectory($directory)
 	
 	//this comand delete the folder of the path, in this case we only want to delete the files inside the folder
 	//rmdir($directory);
+}
+function paperattendance_convertdate($i){
+	//arrays of days and months
+	$days = array(get_string('sunday', 'local_paperattendance'),get_string('monday', 'local_paperattendance'), get_string('tuesday', 'local_paperattendance'), get_string('wednesday', 'local_paperattendance'), get_string('thursday', 'local_paperattendance'), get_string('friday', 'local_paperattendance'), get_string('saturday', 'local_paperattendance'));
+	$months = array("",get_string('january', 'local_paperattendance'), get_string('february', 'local_paperattendance'), get_string('march', 'local_paperattendance'), get_string('april', 'local_paperattendance'), get_string('may', 'local_paperattendance'), get_string('june', 'local_paperattendance'), get_string('july', 'local_paperattendance'), get_string('august', 'local_paperattendance'), get_string('september', 'local_paperattendance'), get_string('october', 'local_paperattendance'), get_string('november', 'local_paperattendance'), get_string('december', 'local_paperattendance'));
+	
+	$dateconverted = $days[date('w',$i)].", ".date('d',$i).get_string('of', 'local_paperattendance').$months[date('n',$i)].get_string('from', 'local_paperattendance').date('Y',$i);
+	return $dateconverted;
+}
+
+function paperattendance_getteacherfromcourse($courseid, $userid){
+	global $DB;
+	$sqlteacher = "SELECT u.id
+			FROM {user} AS u
+			INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+			INNER JOIN {context} ct ON (ct.id = ra.contextid)
+			INNER JOIN {course} c ON (c.id = ct.instanceid AND c.id = ?)
+			INNER JOIN {role} r ON (r.id = ra.roleid AND r.shortname IN ('teacher', 'editingteacher'))
+			WHERE u.id = ?";
+	
+	$teacher = $DB->get_record_sql($sqlteacher, array($courseid,$userid));
+	
+	return $teacher;
+}
+
+function paperattendance_getstudentfromcourse($courseid, $userid){
+	global $DB;
+	$sqlstudent = "SELECT u.id
+			FROM {user} AS u
+			INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+			INNER JOIN {context} ct ON (ct.id = ra.contextid)
+			INNER JOIN {course} c ON (c.id = ct.instanceid AND c.id = ?)
+			INNER JOIN {role} r ON (r.id = ra.roleid AND r.shortname = 'student')
+			WHERE u.id = ?";
+
+	$student = $DB->get_record_sql($sqlstudent, array($courseid,$userid));
+
+	return $student;
 }

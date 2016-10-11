@@ -51,7 +51,7 @@ class paperattendance_print_form extends moodleform {
 		$modulesquery = "SELECT * 
 				FROM {paperattendance_module} 
 				ORDER BY initialtime ASC";
-		$modules = $DB->get_records_sql($modulesquery, array($currentmodule));
+		$modules = $DB->get_records_sql($modulesquery);
 		$arraymodules = array();
 		foreach ($modules as $module){
 			$arraymodules[] = $mform->createElement('advcheckbox', $module->id."*".$module->initialtime."*".$module->endtime , '',$module->initialtime);	
@@ -82,13 +82,7 @@ class paperattendance_print_form extends moodleform {
 			$errors["sessiondate"] = get_string('pleaseselectdate', 'local_paperattendance');
 		}
 		
-		$count = 0;
-		foreach ($modules as $module){
-			if($module == 1){
-				$count++;
-			}
-		}
-		if($count == 0){
+		if($modules == false){
 			$errors["modules"] =  get_string('pleaseselectmodule', 'local_paperattendance');
 		}
 		return $errors;

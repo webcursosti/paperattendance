@@ -39,7 +39,9 @@ class upload_form extends moodleform {
 		//retrieve course id
 		$instance = $this ->_customdata;
 		$courseid = $instance['courseid'];
-		$maxbytes = 8388608;
+		
+		//max file size 8388608 default (in bytes)
+		$maxbytes = $CFG->paperattendance_maxfilesize;
 		
 		//header
 		$mform->addElement('header', 'header', get_string('header', 'local_paperattendance'));
