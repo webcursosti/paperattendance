@@ -27,7 +27,7 @@ $tasks = array(
 		array(
 				'classname' => 'local_paperattendance\task\processpdf',
 				'blocking' => 0,
-				'minute' => '*',
+				'minute' => '*',	
 				'hour' => '6-8',
 				'day' => '*',
 				'dayofweek' => '*',
