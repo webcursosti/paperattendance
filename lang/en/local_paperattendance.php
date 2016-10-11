@@ -99,6 +99,8 @@ $string['greyscale']="Grey Scale";
 $string['greyscaletext']="Maximum value to discern between present or absent, the lower, the darker.";
 $string['minuteslate']="Minutes late";
 $string['minuteslatetext']="Maximum minutes of delay on printing current module attendance's list";
+$string['maxfilesize']="Maximum upload file size";
+$string['maxfilesizetext']="Maximum upload file size in bytes";
 
 // Capabilities
 $string["paperattendance:print"] = "View list";

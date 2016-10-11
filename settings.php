@@ -69,4 +69,14 @@ if ($hassiteconfig) {
 					PARAM_INT
 					)
 			);
+	//max file size
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_maxfilesize',
+					get_string('maxfilesize', 'local_paperattendance'),
+					get_string('maxfilesizetext', 'local_paperattendance'),
+					'8388608',
+					PARAM_INT
+			)
+	);
 }
