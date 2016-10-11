@@ -158,6 +158,10 @@ if ($addform->get_data()) {
 		}
 	}
 	else{
+
+		//delete unused pdf
+		unlink($path."/unread/".$filename);
+		
 		print_error(get_string("pdfextensionunrecognized", "local_paperattendance"));
 		die();
 	}
