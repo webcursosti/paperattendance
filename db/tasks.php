@@ -14,20 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- *
+*
 *
 * @package    local
 * @subpackage paperattendance
-* @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl) 					
+* @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl) 					
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-//Pertenece al plugin PaperAttendance
 
-
-defined('MOODLE_INTERNAL') || die();
-$plugin->pluginname = "local_paperattendance";
-$plugin->component = 'local_paperattendance';
-$plugin->version   = '2016102501';
-
+$tasks = array(
+		array(
+				'classname' => 'local_paperattendance\task\processpdf',
+				'blocking' => 0,
+				'minute' => '*',	
+				'hour' => '6-8',
+				'day' => '*',
+				'dayofweek' => '*',
+				'month' => '*'
+		)
+);
