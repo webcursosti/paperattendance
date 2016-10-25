@@ -34,11 +34,9 @@ class processpdf extends \core\task\scheduled_task {
 		return get_string('task', 'local_paperattendance');
 	}
 
-	public function execute() {
-		
-		require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/config.php');
-		require_once($CFG->dirroot . '/local/paperattendance/locallib.php');		
-		global $DB;
+	public function execute() {	
+		global $CFG, $DB;
+		require_once ($CFG->dirroot . '/local/paperattendance/locallib.php');
 		
 		// Sql that brings the unread pdfs names
 		$sqlunreadpdfs = "SELECT id, 
@@ -47,7 +45,6 @@ class processpdf extends \core\task\scheduled_task {
 				FROM {paperattendance_session}
 				WHERE status = ?
 				ORDER BY lastmodified ASC";
-	
 		// Parameters for the previous query
 		$params = array(PAPERATTENDANCE_STATUS_UNREAD);
 	
