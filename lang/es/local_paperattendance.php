@@ -103,6 +103,9 @@ $string['minuteslatetext']="Minutos máximos para atraso en imprimir lista en m�
 $string['maxfilesize']="Tamaño máximo de archivo escaneado";
 $string['maxfilesizetext']="Tamaño máximo de archivo escaneado en bytes";
 
+// Task
+$string['task']="Procesar PDFs";
+
 // Capabilities
 $string["paperattendance:print"] = "Ver impresiones de listas";
 $string["paperattendance:upload"] = "Subir listas escaneadas";

@@ -102,6 +102,9 @@ $string['minuteslatetext']="Maximum minutes of delay on printing current module 
 $string['maxfilesize']="Maximum upload file size";
 $string['maxfilesizetext']="Maximum upload file size in bytes";
 
+// Task
+$string['task']="Process PDFs";
+
 // Capabilities
 $string["paperattendance:print"] = "View list";
 $string["paperattendance:upload"] = "Upload scaner list";
