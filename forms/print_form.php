@@ -82,9 +82,16 @@ class paperattendance_print_form extends moodleform {
 			$errors["sessiondate"] = get_string('pleaseselectdate', 'local_paperattendance');
 		}
 		
-		if($modules == false){
-			$errors["modules"] =  get_string('pleaseselectmodule', 'local_paperattendance');
+		$count = 0;
+		foreach ($modules as $module){
+			if($module == 1){
+				$count++;
+			}
 		}
+		if($count == 0){
+			$errors["modules"] = get_string('pleaseselectmodule', 'local_paperattendance');
+		}
+		
 		return $errors;
 	}
 }
