@@ -35,6 +35,7 @@
  * @package mod
  * @subpackage paperattendance
  * @copyright 2016 Jorge Cabané <jcabane@alumnos.uai.cl>
+ * @copyright 2016 Hans Jeria <hansjeria@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */  
 defined('MOODLE_INTERNAL') || die();
@@ -45,8 +46,8 @@ $capabilities = array(
 				'contextlevel' => CONTEXT_COURSE,
 				'archetypes' => array(
 						'student' => CAP_PROHIBIT,
-						'teacher' => CAP_PROHIBIT,
-						'editingteacher' => CAP_PROHIBIT,
+						'teacher' => CAP_ALLOW,
+						'editingteacher' => CAP_ALLOW,
 						'manager' => CAP_ALLOW
 				)),
 		'local/paperattendance:upload' => array(

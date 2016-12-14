@@ -85,6 +85,14 @@ if ($addform->get_data()) {
 	// Validate that file was correctly uploaded.
 	$attendancepdffile = $path . "/unread/paperattendance_".$courseid."_".$time.".pdf";
 	
+	//first check if there's a readable QR code 
+	if(paperattendance_get_qr_text($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf") == "error"){
+		$courseurl = new moodle_url('/course/view.php', array(
+				'id' => $courseid));
+		redirect($courseurl, get_string('couldntreadqrcode', 'local_paperattendance'), 3);
+		die();
+	}
+	
 	//read pdf and rewrite it 
 	$pdf = new FPDI();
 	// get the page count

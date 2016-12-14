@@ -19,18 +19,18 @@
 *
 * @package    local
 * @subpackage paperattendance
+* @copyright  2016 Hans Jeria <hansjeria@gmail.com>
 * @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl) 					
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
 $tasks = array(
-		array(
-				'classname' => 'local_paperattendance\task\processpdf',
-				'blocking' => 0,
-				'minute' => '*',	
-				'hour' => '6-8',
-				'day' => '*',
-				'dayofweek' => '*',
-				'month' => '*'
-		)
-);
+	array(
+			'classname' => 'local_paperattendance\task\processpdf',
+			'blocking' => 0,
+			'minute' => '*',
+			'hour' => '6-8',
+			'day' => '*',
+			'dayofweek' => '*',
+			'month' => '*'
+));
