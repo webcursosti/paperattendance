@@ -2,14 +2,14 @@
 Moodle plugin 
 
 ------------------------------------------
-Paper Attendance activity for Moodle 2.4+
+Paper Attendance activity for Moodle 2.6+
 Version: 1.0.0
 ------------------------------------------
 
 Authors:
-Hans Jeria (hansjeria@gmail.com)
-Jorge Cabané (jcabane@alumnos.uai.cl) 
-Matías Queirolo (mqueirolo@alumnos.uai.cl)
+* Hans Jeria (hansjeria@gmail.com)
+* Jorge Cabané (jcabane@alumnos.uai.cl) 
+* Matías Queirolo (mqueirolo@alumnos.uai.cl)
  
 
 Release notes
