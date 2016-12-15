@@ -40,9 +40,9 @@ installation. Then visit your admin page to install the module.
 
 Also this plugin uses the library included in Moodle that is in the directory mod/assign next to the following libraries that must be installed:
 
--Phpdecoder
--Phpqrcode
--Imagick
+- Phpdecoder
+- Phpqrcode
+- Imagick
 
 As for scanning and using the scanner, you must install the PaperPort program and use the black and white configuration with a resolution of 600 dpi and sensitivity 30.
 
