@@ -35,13 +35,16 @@ Installation
 ------------
 
 In order to install PaperAttendance, the paperattendance directory in which this
-README file is should be copied to the /local/ directory in your Moodle
+README file is, should be copied to the /local/ directory in your Moodle
 installation. Then visit your admin page to install the module.
 
-Also this plugin uses the library included in Moodle that is in the directory mod/assign next to the following libraries that must be installed:
+Also this plugin uses the library included in Moodle that is in the directory mod/assign along with the following libraries that come in the paperattendance project:
 
 - Phpdecoder
 - Phpqrcode
+
+However, the following library must be installed in php:
+
 - Imagick
 
 As for scanning and using the scanner, you must install the PaperPort program and use the black and white configuration with a resolution of 600 dpi and sensitivity 30.
