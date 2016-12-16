@@ -204,6 +204,13 @@ $( document ).ready(function() {
 var currentdate = new Date();
 var datetwo = new Date();
 
+selectdate = $('#id_sessiondate_day option:selected').val();
+selectmonth = $('#id_sessiondate_month option:selected').val();
+selectyear =  $('#id_sessiondate_year option:selected').val();
+datetwo.setDate(selectdate);
+datetwo.setMonth(selectmonth);
+datetwo.setFullYear(selectyear);
+
 comparedates(currentdate, datetwo);
 
 $('#id_sessiondate_day').change(function() {
@@ -219,7 +226,7 @@ $('#id_sessiondate_month').change(function() {
 	});
 
 $('#id_sessiondate_year').change(function() {
-	 var selected =$('#id_sessiondate_year option:selected').val();
+	 var selected = $('#id_sessiondate_year option:selected').val();
 	 datetwo.setFullYear(selected);
 	 comparedates(currentdate, datetwo);
 	});
