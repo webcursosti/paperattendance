@@ -366,7 +366,6 @@ if( $isteacher || is_siteadmin($USER)) {
 				$counter++;
 			}
 		}
-		
 		$buttonurl = new moodle_url("/course/view.php", array("id" => $idcourse));
 		
 	}	
