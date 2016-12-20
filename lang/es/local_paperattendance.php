@@ -96,8 +96,8 @@ $string['couldntreadqrcode']="No se pudo leer el código QR, asegurese que éste
 
 // Settings
 $string['settings']="Configuración Básica";
-$string['greyscale']="Escala de grises";
-$string['greyscaletext']="Valor máximo para discernir entre presente y ausente, más bajo es más oscuro.";
+$string['grayscale']="Escala de grises";
+$string['grayscaletext']="Valor máximo para discernir entre presente y ausente, más bajo es más oscuro.";
 $string['minuteslate']="Minutos de atraso";
 $string['minuteslatetext']="Minutos máximos para atraso en imprimir lista en módulo actual";
 $string['maxfilesize']="Tamaño máximo de archivo escaneado";

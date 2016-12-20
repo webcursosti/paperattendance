@@ -354,14 +354,14 @@ function paperattendance_readpdf($path, $filename, $course){
 		}
 		
 		$graychannel = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
-		if($graychannel["mean"] < $CFG->paperattendance_greyscale){
+		if($graychannel["mean"] < $CFG->paperattendance_grayscale){
 			mtrace($graychannel["mean"]." <- valor de gris del alumnos ID ".$student->id." de la pagina".$numberpage."\n");
-			paperattendance_save_student_presence($sessid, $student->id, '1');
+			paperattendance_save_student_presence($sessid, $student->id, '1', $graychannel["mean"]);
 			
 		}
 		else{
 			mtrace($graychannel["mean"]." <- valor de gris del alumnos ID ".$student->id." de la pagina".$numberpage."\n");
-			paperattendance_save_student_presence($sessid, $student->id, '0');
+			paperattendance_save_student_presence($sessid, $student->id, '0', $graychannel["mean"]);
 		}
 		
 		// 26 student per each page
@@ -390,7 +390,7 @@ function paperattendance_get_sessionid($pdffile){
 	return $resultado -> id;
 }
 
-function paperattendance_save_student_presence($sessid, $studentid, $status){
+function paperattendance_save_student_presence($sessid, $studentid, $status, $grayscale){
 	global $DB;
 	
 	$sessioninsert = new stdClass();
@@ -398,6 +398,7 @@ function paperattendance_save_student_presence($sessid, $studentid, $status){
 	$sessioninsert->userid = $studentid;
 	$sessioninsert->status = $status;
 	$sessioninsert->lastmodified = time();
+	$sessioninsert->grayscale = $grayscale;
 	$lastinsertid = $DB->insert_record('paperattendance_presence', $sessioninsert, false);
 }
 

@@ -49,13 +49,13 @@ if ($hassiteconfig) {
 					''
 					)
 			);
-	//greyscale
+	//grayscale
 	$settings->add(
 			new admin_setting_configtext(
-					'paperattendance_greyscale',
-					get_string('greyscale', 'local_paperattendance'),
-					get_string('greyscaletext', 'local_paperattendance'),
-					'61000',
+					'paperattendance_grayscale',
+					get_string('grayscale', 'local_paperattendance'),
+					get_string('grayscaletext', 'local_paperattendance'),
+					'63500',
 					PARAM_INT
 					)
 			);
