@@ -81,7 +81,7 @@ function paperattendance_get_students_for_printing($course) {
 function paperattendance_students_list($contextid, $course){
 	global $CFG;
 	//TODO: Add enrolments for omega, Remember change "manual".
-	$enrolincludes = array("manual");
+	$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
 	$filedir = $CFG->dataroot . "/temp/emarking/$contextid";
 	$userimgdir = $filedir . "/u";
 	$students = paperattendance_get_students_for_printing($course);
@@ -127,21 +127,31 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	// Pages should be added automatically while the list grows.
 	$pdf->SetAutoPageBreak(false);
 	$pdf->AddPage();
+	$pdf->SetFont('Helvetica', '', 8);
+	// Top QR
+	$qrfilename = paperattendance_create_qr_image($qrstring.$pdf->PageNo(), $qrpath);
+	$goodcirlepath = $CFG->dirroot . '/local/paperattendance/img/goodcircle.png';
+	$pdf->Image($qrpath."/".$qrfilename, 153, 5, 35);
+	// Botton QR, messege to fill the circle and Webcursos Logo
+	$pdf->Image($webcursospath, 18, 265, 35);
+
+	$pdf->SetXY(70,264);
+	$pdf->Write(1, "Recuerde NO utilizar Lápiz mina ni destacador,");
+	$pdf->SetXY(70,268);
+	$pdf->Write(1, "de lo contrario la  asistencia no quedará valida.");
+	$pdf->SetXY(70,272);
+	$pdf->Write(1, "Se recomienda rellenar así");
+	$pdf->Image($goodcirlepath, 107, 272, 5);
+	
+	$pdf->Image($qrpath."/".$qrfilename, 153, 256, 35);
+	unlink($qrpath."/".$qrfilename);
+	
 	// If we have a logo we draw it.
 	$left = 20;
 	if ($logofilepath) {
 		$pdf->Image($logofilepath, $left, 15, 50);
 		$left += 55;
 	}
-	
-	// Top QR
-	$qrfilename = paperattendance_create_qr_image($qrstring.$pdf->PageNo(), $qrpath);
-	$pdf->Image($qrpath."/".$qrfilename, 153, 5, 35);
-	// Botton QR and Logo Webcursos
-	$pdf->Image($webcursospath, 18, 265, 35);
-	$pdf->Image($qrpath."/".$qrfilename, 153, 256, 35);
-	unlink($qrpath."/".$qrfilename);
-	
 	// We position to the right of the logo.
 	$top = 7;
 	$pdf->SetFont('Helvetica', 'B', 12);
@@ -200,7 +210,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->SetXY($left, $top);
 	$pdf->Cell(8, 8, "N°", 0, 0, 'C');
 	$pdf->Cell(25, 8, core_text::strtoupper(get_string('idnumber')), 0, 0, 'L');
-	$pdf->Cell(20, 8, core_text::strtoupper(get_string('photo', 'mod_emarking')), 0, 0, 'L');
+	$pdf->Cell(20, 8, core_text::strtoupper(""), 0, 0, 'L');
 	$pdf->Cell(90, 8, core_text::strtoupper(get_string('name')), 0, 0, 'L');
 	$pdf->Cell(20, 8, core_text::strtoupper(get_string('pdfattendance','local_paperattendance')), 0, 0, 'L');
 	$pdf->Ln();
@@ -282,8 +292,17 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			$pdf->SetXY($leftprovisional, $topprovisional);
 			$pdf->Write(1, core_text::strtoupper(get_string('students') . ': ' . count($studentinfo)));
 			
-			// Botton QR and Logo Webcursos
+			// Botton QR, messege to fill the circle and Logo Webcursos
 			$pdf->Image($webcursospath, 18, 265, 35);
+			
+			$pdf->SetXY(60,264);
+			$pdf->Write(1, "Recuerde NO utilizar Lápiz mina ni destacador,");
+			$pdf->SetXY(60,268);
+			$pdf->Write(1, "de lo  contrario la  asistencia no  quedará valida.");
+			$pdf->SetXY(60,272);
+			$pdf->Write(1, "Se recomienda rellenar así");
+			$pdf->Image($goodcirlepath, 109, 273, 5);
+			
 			$pdf->Image($qrpath."/".$qrfilename, 153, 256, 35);
 			unlink($qrpath."/".$qrfilename);
 		}

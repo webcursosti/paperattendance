@@ -49,6 +49,16 @@ if ($hassiteconfig) {
 					''
 					)
 			);
+	// Enrol method
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_enrolmethod',
+					get_string('enrolmethod', 'local_paperattendance'),
+					get_string('enrolmethodpro', 'local_paperattendance'),
+					'manual',
+					PARAM_TEXT
+			)
+	);
 	//grayscale
 	$settings->add(
 			new admin_setting_configtext(

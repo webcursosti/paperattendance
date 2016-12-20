@@ -102,6 +102,8 @@ $string['minuteslate']="Minutos de atraso";
 $string['minuteslatetext']="Minutos máximos para atraso en imprimir lista en módulo actual";
 $string['maxfilesize']="Tamaño máximo de archivo escaneado";
 $string['maxfilesizetext']="Tamaño máximo de archivo escaneado en bytes";
+$string['enrolmethod']="Métodos de matriculación por defecto";
+$string['enrolmethodpro']="Los métodos de matriculación que por defecto se seleccionarán al generar una lista de asistencias. Para producción se requiere 'database,meta'.";
 
 // Task
 $string['task']="Procesar PDFs";
