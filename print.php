@@ -118,9 +118,8 @@ if($action == "add"){
 				}
 			}
 		}
-		
-		$time = strtotime(date("d-m-Y"));		
-		$stringqr = $courseid."*".$requestor."*".$arraymodules."*".$time."*";
+				
+		$stringqr = $courseid."*".$requestor."*".$arraymodules."*".$sessiondate."*";
 		
 		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $modules, $path, $stringqr, $webcursospath, $sessiondate);
 		// Created new pdf
