@@ -355,6 +355,7 @@ function paperattendance_readpdf($path, $filename, $course){
 		
 		$graychannel = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
 		if($graychannel["mean"] < $CFG->paperattendance_greyscale){
+			mtrace($graychannel["mean"]." <- valor de gris del alumnos ID ".$student->id." de la pagina".$numberpage."\n");
 			paperattendance_save_student_presence($sessid, $student->id, '1');
 		}
 		else{
