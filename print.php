@@ -204,9 +204,9 @@ $( document ).ready(function() {
 var currentdate = new Date();
 var datetwo = new Date();
 
-selectdate = $('#id_sessiondate_day option:selected').val();
-selectmonth = $('#id_sessiondate_month option:selected').val();
-selectyear =  $('#id_sessiondate_year option:selected').val();
+selectdate = parseFloat($('#id_sessiondate_day option:selected').val());
+selectmonth = parseFloat($('#id_sessiondate_month option:selected').val())-1;
+selectyear =  parseFloat($('#id_sessiondate_year option:selected').val());
 datetwo.setDate(selectdate);
 datetwo.setMonth(selectmonth);
 datetwo.setFullYear(selectyear);
