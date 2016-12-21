@@ -141,7 +141,8 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->Write(1, "de lo contrario la  asistencia no quedará valida.");
 	$pdf->SetXY(70,272);
 	$pdf->Write(1, "Se recomienda rellenar así");
-	$pdf->Image($goodcirlepath, 107, 272, 5);
+	//$pdf->Image($goodcirlepath, 107, 272, 5);
+	$pdf->Image($goodcirlepath, 107, 272, 5, 5, "PNG", 0);
 	
 	$pdf->Image($qrpath."/".$qrfilename, 153, 256, 35);
 	unlink($qrpath."/".$qrfilename);
@@ -295,13 +296,13 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			// Botton QR, messege to fill the circle and Logo Webcursos
 			$pdf->Image($webcursospath, 18, 265, 35);
 			
-			$pdf->SetXY(60,264);
+			$pdf->SetXY(70,264);
 			$pdf->Write(1, "Recuerde NO utilizar Lápiz mina ni destacador,");
-			$pdf->SetXY(60,268);
-			$pdf->Write(1, "de lo  contrario la  asistencia no  quedará valida.");
-			$pdf->SetXY(60,272);
+			$pdf->SetXY(70,268);
+			$pdf->Write(1, "de lo contrario la  asistencia no quedará valida.");
+			$pdf->SetXY(70,272);
 			$pdf->Write(1, "Se recomienda rellenar así");
-			$pdf->Image($goodcirlepath, 109, 273, 5);
+			$pdf->Image($goodcirlepath, 107, 272, 5, 5, "PNG", 0);
 			
 			$pdf->Image($qrpath."/".$qrfilename, 153, 256, 35);
 			unlink($qrpath."/".$qrfilename);
