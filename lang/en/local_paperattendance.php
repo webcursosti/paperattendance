@@ -92,6 +92,9 @@ $string['from']=" ";
 $string['error']="ACCESS DENIED - Student not enrolled in course";
 $string['couldntsavesession']="Error, the session on the given modules already exists";
 $string['couldntreadqrcode']="Couldn´t read QR code, Please make sure it is readable and not scratched.";
+$string['omegasync']="Omega";
+$string['synchronized']="Synchronized";
+$string['unsynchronized']="Unsynchronized";
 
 // Settings
 $string['settings']="Basic Configuration";

@@ -99,7 +99,8 @@ if( $isteacher || is_siteadmin($USER)) {
 				u.lastname,
 				u.firstname,
 				u.email,
-				p.status				
+				p.status,
+				p.omegasync
 				FROM {course} AS c
 				INNER JOIN {context} AS ct ON (c.id = ct.instanceid)
 				INNER JOIN {role_assignments} AS ra ON (ra.contextid = ct.id)
@@ -123,16 +124,33 @@ if( $isteacher || is_siteadmin($USER)) {
 					get_string('student', 'local_paperattendance'),
 					get_string('mail', 'local_paperattendance'),
 					get_string('attendance', 'local_paperattendance'),
-					get_string('setting', 'local_paperattendance')
+					get_string('setting', 'local_paperattendance'),
+					get_string('omegasync', 'local_paperattendance')
 			);
 			
 			//A mere counter for de number of records in the table
 			$counter = $page * $perpage + 1;
 			foreach ($attendances as $attendance){
-		
-				$urlattendance = new moodle_url("#");
+				
+				//Define synchronized or unsynchronized icon and url
+				$urlomegasync = new moodle_url("#");
+				
+				$synchronizedicon = new pix_icon("i/checkpermissions", get_string('synchronized', 'local_paperattendance'));
+				
+				$synchronizediconaction = $OUTPUT->action_icon(
+						$urlomegasync,
+						$synchronizedicon
+						);
+				
+				$unsynchronizedicon = new pix_icon("i/scheduled", get_string('unsynchronized', 'local_paperattendance'));
+				
+				$unsynchronizediconaction = $OUTPUT->action_icon(
+						$urlomegasync,
+						$unsynchronizedicon
+						);
 				
 				//Define presente or ausente icon and url
+				$urlattendance = new moodle_url("#");
 				$presenticon = new pix_icon("i/valid", get_string('presentattendance', 'local_paperattendance'));
 		
 				$presenticonaction = $OUTPUT->action_icon(
@@ -164,24 +182,56 @@ if( $isteacher || is_siteadmin($USER)) {
 				
 				//Now we check if the student is present or not
 				if ($attendance->status == 1){
+					//Now we check if the student is synchronized with omega or not	
+					if ($attendance->omegasync == 1){
 						
-					$attendancestable->data[] = array(
-							$counter,
-							$name,
-							$attendance->email,
-							$presenticonaction,
-							$editactionasistencia
-					);
+						$attendancestable->data[] = array(
+								$counter,
+								$name,
+								$attendance->email,
+								$presenticonaction,
+								$editactionasistencia,
+								$synchronizediconaction
+						);
+						
+					}
+					else {
+						$attendancestable->data[] = array(
+								$counter,
+								$name,
+								$attendance->email,
+								$presenticonaction,
+								$editactionasistencia,
+								$unsynchronizediconaction
+						);	
+					}
+					
 				}
 				else {
+					
+					if ($attendance->omegasync == 1){
+					
+						$attendancestable->data[] = array(
+								$counter,
+								$name,
+								$attendance->email,
+								$absenticonaction,
+								$editactionasistencia,
+								$synchronizediconaction
+						);
+					
+					}
+					else {
+						$attendancestable->data[] = array(
+								$counter,
+								$name,
+								$attendance->email,
+								$absenticonaction,
+								$editactionasistencia,
+								$unsynchronizediconaction
+						);
+					}
 						
-					$attendancestable->data[] = array(
-							$counter,
-							$name,
-							$attendance->email,
-							$absenticonaction,
-							$editactionasistencia
-					);
 				}
 				$counter++;
 			}
