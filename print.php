@@ -118,8 +118,9 @@ if($action == "add"){
 				}
 			}
 		}
-				
-		$stringqr = $courseid."*".$requestor."*".$arraymodules."*".$sessiondate."*";
+		
+		$time = strtotime(date("d-m-Y"));		
+		$stringqr = $courseid."*".$requestor."*".$arraymodules."*".$time."*";
 		
 		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $modules, $path, $stringqr, $webcursospath, $sessiondate);
 		// Created new pdf
@@ -324,8 +325,8 @@ function hide(hora, min){
 	var horacompare = split2[0];
 	var mincompare = split2[1];
 	//if (hora == horacompare && min != mincompare){
-	if (hora != horacompare && min != mincompare){
-		$(this).parent().fadeOut( "slow" )();
+	if (hora != horacompare || min != mincompare){
+		$(this).parent().fadeOut( "slow" );
 	}
 	});
     }
@@ -336,33 +337,12 @@ function show(hora, min){
 	var horacompare = split2[0];
 	var mincompare = split2[1];
 	//if (hora == horacompare && min != mincompare){
-	if (hora != horacompare && min != mincompare){
+	if (hora != horacompare || min != mincompare){
 		$(this).parent().fadeIn();
 	}
 	});
     }
-function hidecheckbox(hora, min){
-	 
-    $( "form input:checkbox" ).each(function( index ) {
-	var split2 = $(this).parent().text().split(':');
-	var horacompare = split2[0];
-	var mincompare = split2[1];
-	if (hora == horacompare && min != mincompare){
-		$(this).parent().fadeOut( "slow" )();
-	}
-	});
-    }
-function showcheckbox(hora, min){
-	 
-    $( "form input:checkbox" ).each(function( index ) {
-	var split2 = $(this).parent().text().split(':');
-	var horacompare = split2[0];
-	var mincompare = split2[1];
-	if (hora == horacompare && min != mincompare){
-		$(this).parent().fadeIn();
-	}
-	});
-    }
+
 
 });
 </script>
