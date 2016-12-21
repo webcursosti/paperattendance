@@ -37,8 +37,12 @@ class paperattendance_print_form extends moodleform {
 					INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
 					INNER JOIN {context} ct ON (ct.id = ra.contextid)
 					INNER JOIN {course} c ON (c.id = ct.instanceid AND c.id = ?)
-					INNER JOIN {role} r ON (r.id = ra.roleid AND r.shortname IN ('teacher', 'editingteacher'))";
-		$teachers = $DB->get_records_sql($sqlteachers, array($courseid));
+					INNER JOIN {role} r ON (r.id = ra.roleid AND r.shortname IN ('?', '?'))";
+		$teachers = $DB->get_records_sql($sqlteachers, array($courseid, 'teacher', 'editingteacher'));
+		
+		if(count($teachers) == 0){
+			$teachers = $DB->get_records_sql($sqlteachers, array($courseid, 'profesoreditor', 'ayudante'));
+		}
 		
 		$arrayteachers = array();
 		$arrayteachers["no"] = get_string('selectteacher', 'local_paperattendance');
