@@ -197,6 +197,33 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		upgrade_plugin_savepoint(true, 2016071201, 'local', 'paperattendance');
 	}
 	
+	if ($oldversion < 2016122001) {
+	
+		// Define field greyscale to be added to paperattendance_presence.
+		$table = new xmldb_table('paperattendance_presence');
+		$field = new xmldb_field('greyscale', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'lastmodified');
+	
+		// Conditionally launch add field greyscale.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2016122001, 'local', 'paperattendance');
+	}
+	
+	if ($oldversion < 2016122002) {
+	
+		// Rename field greyscale on table paperattendance_presence to grayscale.
+		$table = new xmldb_table('paperattendance_presence');
+		$field = new xmldb_field('greyscale', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'lastmodified');
+	
+		// Launch rename field graeyscale.
+		$dbman->rename_field($table, $field, 'grayscale');
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2016122002, 'local', 'paperattendance');
+	}
 	
     
 	return true;
