@@ -92,6 +92,9 @@ $string['from']=" del ";
 $string['error']="ACCESO DENEGADO - Alumno no matriculado en el curso";
 $string['couldntsavesession']="Error, la sesión dado los módulos entregados ya existe";
 $string['couldntreadqrcode']="No se pudo leer el código QR, asegurese que éste sea legible y no esté rayado";
+$string['omegasync']="Omega";
+$string['synchronized']="Sincronizado";
+$string['unsynchronized']="Sin sincronizar";
 
 
 // Settings
