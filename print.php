@@ -324,52 +324,24 @@ function hide(hora, min){
 	var horacompare = split2[0];
 	var mincompare = split2[1];
 	//if (hora == horacompare && min != mincompare){
-	if (hora != horacompare && min != mincompare){
-		$(this).parent().fadeOut( "slow" )();
+	if (hora != horacompare || min != mincompare){
+		$(this).parent().fadeOut( "slow" );
 	}
 	});
     }
 function show(hora, min){
 	 
-	$( "form input:checkbox" ).change(function() {
-
-		var split = $(this).parent().text().split(':');
-	    var hora = split[0];
-	    var min = split[1]; 
-
-	    if($(this).prop( "checked" )){
-	    hide(hora, min);
-	    }
-	    else{
-	    show(hora, min);
-	    }
-		});
-		
-	function hide(hora, min){
-		 
-	    $( "form input:checkbox" ).each(function( index ) {
-		var split2 = $(this).parent().text().split(':');
-		var horacompare = split2[0];
-		var mincompare = split2[1];
-		//if (hora == horacompare && min != mincompare){
-		if (hora != horacompare || min != mincompare){
-			$(this).parent().fadeOut( "slow" );
-		}
-		});
-	    }
-	function show(hora, min){
-		 
-	    $( "form input:checkbox" ).each(function( index ) {
-		var split2 = $(this).parent().text().split(':');
-		var horacompare = split2[0];
-		var mincompare = split2[1];
-		//if (hora == horacompare && min != mincompare){
-		if (hora != horacompare || min != mincompare){
-			$(this).parent().fadeIn();
-		}
-		});
-	    }
-
-
+    $( "form input:checkbox" ).each(function( index ) {
+	var split2 = $(this).parent().text().split(':');
+	var horacompare = split2[0];
+	var mincompare = split2[1];
+	//if (hora == horacompare && min != mincompare){
+	if (hora != horacompare || min != mincompare){
+		$(this).parent().fadeIn();
+	}
 	});
-	</script>
+    }
+
+
+});
+</script>
