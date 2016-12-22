@@ -345,6 +345,8 @@ function paperattendance_readpdf($path, $filename, $course){
 	$countstudent = 1;
 	$numberpage = 0;
 	$factor = 0;
+	$arrayalumnos = array();
+	
 	foreach ($studentlist as $student){
 		$return = TRUE;
 		
@@ -373,16 +375,23 @@ function paperattendance_readpdf($path, $filename, $course){
 			//echo "<br> Pagina 2: $numberpage estudiante $countstudent ".$student->name;
 		}
 		
+		$line = array();
+		$line['emailAlumno'] = paperattendance_getusername($student->id);
+		$line['resultado'] = "true";
+		
 		$graychannel = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
 		if($graychannel["mean"] < $CFG->paperattendance_grayscale){
 			mtrace($graychannel["mean"]." <- valor de gris del alumnos ID ".$student->id." de la pagina".$numberpage."\n");
 			paperattendance_save_student_presence($sessid, $student->id, '1', $graychannel["mean"]);
-			
+			$line['asistencia'] = "true";
 		}
 		else{
 			mtrace($graychannel["mean"]." <- valor de gris del alumnos ID ".$student->id." de la pagina".$numberpage."\n");
 			paperattendance_save_student_presence($sessid, $student->id, '0', $graychannel["mean"]);
+			$line['asistencia'] = "false";
 		}
+		
+		$arrayalumnos[] = $line;
 		
 		// 26 student per each page
 		$numberpage = floor($countstudent/26);
@@ -395,6 +404,8 @@ function paperattendance_readpdf($path, $filename, $course){
 		$countstudent++;
 		$factor++;
 	}
+	
+	paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid);
 	
 	return $return;
 }
@@ -813,4 +824,132 @@ function paperattendance_getstudentfromcourse($courseid, $userid){
 	$student = $DB->get_record_sql($sqlstudent, array($courseid,$userid));
 
 	return $student;
+}
+
+
+function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid){
+	global $DB,$CFG;
+
+	//GET WEBCURSOS SHORTNAME FROM ID
+	$sqlshortname = "SELECT shortname FROM {course}	WHERE id = ?";
+	$shortname = $DB->get_record_sql($sqlshortname, array($courseid));
+	$webcshortname = $shortname -> shortname;
+
+	//GET FECHA Y MODULE FROM SESS ID $fecha, $modulo,
+	$sqldatemodule = "SELECT FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
+					FROM {paperattendance_sessmodule} AS sessmodule
+					INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
+	$sqldatemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
+	$fecha = $sqldatemodule -> date;
+	$modulo = $sqldatemodule -> time;
+
+	//GET OMEGA COURSE ID FROM WEBCURSOS SHORTNAME
+	$connection = new mysqli("webcursos-db.uai.cl", "webcursos", "arquitectura.2015", "omega");
+	if (!$connection)
+		throw new \Exception("Imposible conectarse a BBDD local");
+		mysqli_set_charset($connection, "utf8");
+
+		$sql = "SELECT * FROM cursos WHERE shortname = '$webcshortname'";
+		$result = $connection->query($sql);
+		if ($result->num_rows > 0) {
+			$row = $result->fetch_assoc();
+			$omegaid = $row['idnumber'];
+		}
+		mysqli_close($connection);
+
+		//CURL CREATE ATTENDANCE OMEGA
+		$curl = curl_init();
+
+		$url =  $CFG->paperattendance_omegacreateattendanceurl;
+		$token =  $CFG->paperattendance_omegatoken;
+
+		$fields = array (
+				"token" => $token,
+				"seccionId" => $omegaid,
+				"fecha" => $fecha,
+				"modulos" => array( array("hora" => $modulo) ),
+				"alumnos" => $arrayalumnos
+		);
+
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($curl, CURLOPT_POST, TRUE);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($fields));
+		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+		$result = curl_exec ($curl);
+		curl_close ($curl);
+
+		$alumnos = new stdClass();
+		$alumnos = json_decode($result)->alumnos;
+
+		// FOR EACH STUDENT ON THE RESULT, SAVE HIS SYNC WITH OMEGA (true or false)
+		for ($i = 0 ; $i < count($alumnos); $i++){
+			if($alumnos[$i]->resultado == true){
+				// el estado es 0 por default, asi que solo update en caso de ser verdadero el resultado
+					
+				// get student id from its username
+				$username = $alumnos[$i]->emailAlumno;
+				$sqlgetstudentid = "SELECT id from {user} WHERE username = ?";
+				$studentid = $DB->get_record_sql($sqlgetstudentid, array($username));
+				$studentid = $studentid -> id;
+					
+				//save student sync
+				$sqlsyncstate = "UPDATE {paperattendance_presence} SET omegasync = ? WHERE sessionid  = ? AND userid = ?";
+				$studentid = $DB->execute($sqlsyncstate, array('1', $sessid, $studentid));
+			}
+		}
+}
+
+function paperattendance_getusername($userid){
+	$sql = "SELECT username from {user} WHERE id = ?";
+	$username = $DB->get_record_sql($sql, array($userid));
+	$username = $username -> id;
+	return $username;
+}
+
+function paperattendance_omegaupdateattendance($presenceid, $update, $sessid){
+
+	//CURL UPDATE ATTENDANCE OMEGA
+	$curl = curl_init();
+	$url =  $CFG->paperattendance_omegaupdateattendanceurl;
+	$token =  $CFG->paperattendance_omegatoken;
+
+	$sqldatemodule = "SELECT FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
+					FROM {paperattendance_sessmodule} AS sessmodule
+					INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
+	$sqldatemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
+	$fecha = $sqldatemodule -> date;
+	$modulo = $sqldatemodule -> time;
+
+	$sqluserid = "SELECT userid
+					FROM {paperattendance_presence}
+					WHERE id = ?";
+	$sqluserid = $DB->get_record_sql($sqluserid, array($presenceid));
+	$userid = $sqluserid -> userid;
+	$username = paperattendance_getusername($userid);
+
+
+	if($update == 1){
+		$update = "true";
+	}
+	else{
+		$update = "false";
+	}
+
+	$fields = array (
+			"hora" => $modulo,
+			"fecha" => $fecha,
+			"emailAlumno" => $username,
+			"token" => $token,
+			"asistencia" => $update
+	);
+
+	curl_setopt($curl, CURLOPT_URL, $url);
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+	curl_setopt($curl, CURLOPT_POST, TRUE);
+	curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($fields));
+	curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+	$result = curl_exec ($curl);
+	curl_close ($curl);
+
 }

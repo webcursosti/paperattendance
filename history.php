@@ -283,6 +283,8 @@ if( $isteacher || is_siteadmin($USER)) {
 							
 					$DB->update_record("paperattendance_presence", $record);
 					
+					paperattendance_omegaupdateattendance($idpresence, $record->status, $idattendance);
+					
 					$backurl = new moodle_url("/local/paperattendance/history.php", array(
 							"action" => "studentsattendance",
 							"idattendance" => $idattendance,

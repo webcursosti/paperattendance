@@ -89,4 +89,34 @@ if ($hassiteconfig) {
 					PARAM_INT
 			)
 	);
+	//omega's token
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_omegatoken',
+					get_string('token', 'local_paperattendance'),
+					get_string('tokentext', 'local_paperattendance'),
+					'webisis54521kJusm32ADDddiiIsdksndQoQ01',
+					PARAM_TEXT
+					)
+			);
+	//omega's create attendance url
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_omegacreateattendanceurl',
+					get_string('omegacreateattendance', 'local_paperattendance'),
+					get_string('omegacreateattendancetext', 'local_paperattendance'),
+					'http://webapitest.uai.cl/webcursos/createattendance',
+					PARAM_TEXT
+					)
+			);
+	//omega's create attendance url
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_omegaupdateattendanceurl',
+					get_string('omegaupdateattendance', 'local_paperattendance'),
+					get_string('omegaupdateattendancetext', 'local_paperattendance'),
+					'http://webapitest.uai.cl/webcursos/createattendance',
+					PARAM_TEXT
+					)
+			);
 }
