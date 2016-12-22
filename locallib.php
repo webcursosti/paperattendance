@@ -908,6 +908,7 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 }
 
 function paperattendance_getusername($userid){
+	global $DB;
 	$sql = "SELECT id, username from {user} WHERE id = ?";
 	$username = $DB->get_record_sql($sql, array($userid));
 	$username = $username -> id;
@@ -915,7 +916,7 @@ function paperattendance_getusername($userid){
 }
 
 function paperattendance_omegaupdateattendance($presenceid, $update, $sessid){
-
+	global $CFG, $DB;
 	//CURL UPDATE ATTENDANCE OMEGA
 	$curl = curl_init();
 	$url =  $CFG->paperattendance_omegaupdateattendanceurl;
