@@ -808,8 +808,7 @@ function paperattendance_getteacherfromcourse($courseid, $userid){
 
 	$teacher = $DB->get_record_sql($sqlteacher, array($courseid, 'teacher', 'editingteacher', $userid));
 
-
-	if(count($teacher) == 0){
+	if(!isset($teacher->id)){
 		$teacher = $DB->get_record_sql($sqlteacher, array($courseid, 'profesoreditor', 'ayudante', $userid));
 	}
 
