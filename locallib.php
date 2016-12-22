@@ -283,7 +283,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			// Write date.
 			$topprovisional += 4;
 			$pdf->SetXY($leftprovisional, $topprovisional);
-			$pdf->Write(1, core_text::strtoupper(get_string("date") . ': ' . date("h:s d-m-Y", time())));
+			$pdf->Write(1, core_text::strtoupper(get_string("date") . ': ' . date("d-m-Y", $sessiondate)));
 			// Write modules.
 			$topprovisional += 4;
 			$pdf->SetXY($leftprovisional, $topprovisional);
@@ -809,7 +809,7 @@ function paperattendance_getteacherfromcourse($courseid, $userid){
 	$teacher = $DB->get_record_sql($sqlteacher, array($courseid, 'teacher', 'editingteacher', $userid));
 
 
-	if(!isset($teacher->id)){
+	if(count($teacher) == 0){
 		$teacher = $DB->get_record_sql($sqlteacher, array($courseid, 'profesoreditor', 'ayudante', $userid));
 	}
 
