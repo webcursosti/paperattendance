@@ -106,6 +106,10 @@ $string['maxfilesize']="Maximum upload file size";
 $string['maxfilesizetext']="Maximum upload file size in bytes";
 $string['enrolmethod']="Default enrolment methods";
 $string['enrolmethodpro']="The enrolment methods that will be selected when creating a new attendance. For main server is required 'database,meta'.";
+$string['token']="Omega's Token";
+$string['tokentext']="Omega's Token for its webapi";
+$string['omegacreateattendance']="Omega's CreateAttendance Url";
+$string['omegacreateattendancetext']="Omega's CreateAttendance Url webapi";
 
 
 // Task
