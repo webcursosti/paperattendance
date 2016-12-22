@@ -95,7 +95,7 @@ if ($hassiteconfig) {
 					'paperattendance_omegatoken',
 					get_string('token', 'local_paperattendance'),
 					get_string('tokentext', 'local_paperattendance'),
-					'webisis54521kJusm32ADDddiiIsdksndQoQ01',
+					null,
 					PARAM_TEXT
 					)
 			);
@@ -105,7 +105,7 @@ if ($hassiteconfig) {
 					'paperattendance_omegacreateattendanceurl',
 					get_string('omegacreateattendance', 'local_paperattendance'),
 					get_string('omegacreateattendancetext', 'local_paperattendance'),
-					'http://webapitest.uai.cl/webcursos/createattendance',
+					null,
 					PARAM_TEXT
 					)
 			);
@@ -115,7 +115,7 @@ if ($hassiteconfig) {
 					'paperattendance_omegaupdateattendanceurl',
 					get_string('omegaupdateattendance', 'local_paperattendance'),
 					get_string('omegaupdateattendancetext', 'local_paperattendance'),
-					'http://webapitest.uai.cl/webcursos/createattendance',
+					null,
 					PARAM_TEXT
 					)
 			);

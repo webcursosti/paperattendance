@@ -405,7 +405,9 @@ function paperattendance_readpdf($path, $filename, $course){
 		$factor++;
 	}
 	
+	if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid);
+	}
 	
 	return $return;
 }
@@ -957,4 +959,13 @@ function paperattendance_omegaupdateattendance($presenceid, $update, $sessid){
 	$result = curl_exec ($curl);
 	curl_close ($curl);
 
+}
+
+function paperattendance_checktoken($token){
+	if (!isset($token) || empty($token) || $token == "" || $token == null) {
+		return false;
+	}
+	else{
+		return true;
+	}
 }
