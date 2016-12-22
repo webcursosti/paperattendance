@@ -29,6 +29,6 @@
 defined('MOODLE_INTERNAL') || die();
 $plugin->pluginname = "local_paperattendance";
 $plugin->component = 'local_paperattendance';
-$plugin->version   = '2016122101';
+$plugin->version   = '2016122201';
 $plugin->requires = 2015111600;
 
