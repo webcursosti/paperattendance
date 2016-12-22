@@ -109,4 +109,14 @@ if ($hassiteconfig) {
 					PARAM_TEXT
 					)
 			);
+	//omega's create attendance url
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_omegaupdateattendanceurl',
+					get_string('omegaupdateattendance', 'local_paperattendance'),
+					get_string('omegaupdateattendancetext', 'local_paperattendance'),
+					'http://webapitest.uai.cl/webcursos/createattendance',
+					PARAM_TEXT
+					)
+			);
 }

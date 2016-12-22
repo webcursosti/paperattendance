@@ -81,7 +81,7 @@ function paperattendance_get_students_for_printing($course) {
 function paperattendance_students_list($contextid, $course){
 	global $CFG;
 	//TODO: Add enrolments for omega, Remember change "manual".
-	$enrolincludes = array("manual");
+	$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
 	$filedir = $CFG->dataroot . "/temp/emarking/$contextid";
 	$userimgdir = $filedir . "/u";
 	$students = paperattendance_get_students_for_printing($course);
@@ -127,21 +127,32 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	// Pages should be added automatically while the list grows.
 	$pdf->SetAutoPageBreak(false);
 	$pdf->AddPage();
+	$pdf->SetFont('Helvetica', '', 8);
+	// Top QR
+	$qrfilename = paperattendance_create_qr_image($qrstring.$pdf->PageNo(), $qrpath);
+	$goodcirlepath = $CFG->dirroot . '/local/paperattendance/img/goodcircle.png';
+	$pdf->Image($qrpath."/".$qrfilename, 153, 5, 35);
+	// Botton QR, messege to fill the circle and Webcursos Logo
+	$pdf->Image($webcursospath, 18, 265, 35);
+
+	$pdf->SetXY(70,264);
+	$pdf->Write(1, "Recuerde NO utilizar Lápiz mina ni destacador,");
+	$pdf->SetXY(70,268);
+	$pdf->Write(1, "de lo contrario la  asistencia no quedará valida.");
+	$pdf->SetXY(70,272);
+	$pdf->Write(1, "Se recomienda rellenar así");
+	//$pdf->Image($goodcirlepath, 107, 272, 5);
+	$pdf->Image($goodcirlepath, 107, 272, 5, 5, "PNG", 0);
+	
+	$pdf->Image($qrpath."/".$qrfilename, 153, 256, 35);
+	unlink($qrpath."/".$qrfilename);
+	
 	// If we have a logo we draw it.
 	$left = 20;
 	if ($logofilepath) {
 		$pdf->Image($logofilepath, $left, 15, 50);
 		$left += 55;
 	}
-	
-	// Top QR
-	$qrfilename = paperattendance_create_qr_image($qrstring.$pdf->PageNo(), $qrpath);
-	$pdf->Image($qrpath."/".$qrfilename, 153, 5, 35);
-	// Botton QR and Logo Webcursos
-	$pdf->Image($webcursospath, 18, 265, 35);
-	$pdf->Image($qrpath."/".$qrfilename, 153, 256, 35);
-	unlink($qrpath."/".$qrfilename);
-	
 	// We position to the right of the logo.
 	$top = 7;
 	$pdf->SetFont('Helvetica', 'B', 12);
@@ -200,7 +211,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->SetXY($left, $top);
 	$pdf->Cell(8, 8, "N°", 0, 0, 'C');
 	$pdf->Cell(25, 8, core_text::strtoupper(get_string('idnumber')), 0, 0, 'L');
-	$pdf->Cell(20, 8, core_text::strtoupper(get_string('photo', 'mod_emarking')), 0, 0, 'L');
+	$pdf->Cell(20, 8, core_text::strtoupper(""), 0, 0, 'L');
 	$pdf->Cell(90, 8, core_text::strtoupper(get_string('name')), 0, 0, 'L');
 	$pdf->Cell(20, 8, core_text::strtoupper(get_string('pdfattendance','local_paperattendance')), 0, 0, 'L');
 	$pdf->Ln();
@@ -282,8 +293,17 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			$pdf->SetXY($leftprovisional, $topprovisional);
 			$pdf->Write(1, core_text::strtoupper(get_string('students') . ': ' . count($studentinfo)));
 			
-			// Botton QR and Logo Webcursos
+			// Botton QR, messege to fill the circle and Logo Webcursos
 			$pdf->Image($webcursospath, 18, 265, 35);
+			
+			$pdf->SetXY(70,264);
+			$pdf->Write(1, "Recuerde NO utilizar Lápiz mina ni destacador,");
+			$pdf->SetXY(70,268);
+			$pdf->Write(1, "de lo contrario la  asistencia no quedará valida.");
+			$pdf->SetXY(70,272);
+			$pdf->Write(1, "Se recomienda rellenar así");
+			$pdf->Image($goodcirlepath, 107, 272, 5, 5, "PNG", 0);
+			
 			$pdf->Image($qrpath."/".$qrfilename, 153, 256, 35);
 			unlink($qrpath."/".$qrfilename);
 		}
@@ -355,23 +375,24 @@ function paperattendance_readpdf($path, $filename, $course){
 			//echo "<br> Pagina 2: $numberpage estudiante $countstudent ".$student->name;
 		}
 		
-		$graychannel = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
-		
 		$line = array();
 		$line['emailAlumno'] = paperattendance_getusername($student->id);
 		$line['resultado'] = "true";
 		
-		if($graychannel["mean"] < $CFG->paperattendance_greyscale){
-			paperattendance_save_student_presence($sessid, $student->id, '1');
+		$graychannel = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
+		if($graychannel["mean"] < $CFG->paperattendance_grayscale){
+			mtrace($graychannel["mean"]." <- valor de gris del alumnos ID ".$student->id." de la pagina".$numberpage."\n");
+			paperattendance_save_student_presence($sessid, $student->id, '1', $graychannel["mean"]);
 			$line['asistencia'] = "true";
 		}
 		else{
-			paperattendance_save_student_presence($sessid, $student->id, '0');
+			mtrace($graychannel["mean"]." <- valor de gris del alumnos ID ".$student->id." de la pagina".$numberpage."\n");
+			paperattendance_save_student_presence($sessid, $student->id, '0', $graychannel["mean"]);
 			$line['asistencia'] = "false";
 		}
 		
 		$arrayalumnos[] = $line;
-
+		
 		// 26 student per each page
 		$numberpage = floor($countstudent/26);
 		$attendancecircle->destroy();
@@ -400,7 +421,7 @@ function paperattendance_get_sessionid($pdffile){
 	return $resultado -> id;
 }
 
-function paperattendance_save_student_presence($sessid, $studentid, $status){
+function paperattendance_save_student_presence($sessid, $studentid, $status, $grayscale){
 	global $DB;
 	
 	$sessioninsert = new stdClass();
@@ -408,7 +429,7 @@ function paperattendance_save_student_presence($sessid, $studentid, $status){
 	$sessioninsert->userid = $studentid;
 	$sessioninsert->status = $status;
 	$sessioninsert->lastmodified = time();
-	$sessioninsert->omegasync = "0";
+	$sessioninsert->grayscale = $grayscale;
 	$lastinsertid = $DB->insert_record('paperattendance_presence', $sessioninsert, false);
 }
 
@@ -805,77 +826,78 @@ function paperattendance_getstudentfromcourse($courseid, $userid){
 	return $student;
 }
 
+
 function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid){
 	global $DB,$CFG;
-	
+
 	//GET WEBCURSOS SHORTNAME FROM ID
 	$sqlshortname = "SELECT shortname FROM {course}	WHERE id = ?";
 	$shortname = $DB->get_record_sql($sqlshortname, array($courseid));
 	$webcshortname = $shortname -> shortname;
-	
+
 	//GET FECHA Y MODULE FROM SESS ID $fecha, $modulo,
-	$sqldatemodule = "SELECT FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time 
+	$sqldatemodule = "SELECT FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
 					FROM {paperattendance_sessmodule} AS sessmodule
 					INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
 	$sqldatemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
 	$fecha = $sqldatemodule -> date;
 	$modulo = $sqldatemodule -> time;
-	
+
 	//GET OMEGA COURSE ID FROM WEBCURSOS SHORTNAME
 	$connection = new mysqli("webcursos-db.uai.cl", "webcursos", "arquitectura.2015", "omega");
 	if (!$connection)
 		throw new \Exception("Imposible conectarse a BBDD local");
-	mysqli_set_charset($connection, "utf8");
-	
-	$sql = "SELECT * FROM cursos WHERE shortname = '$webcshortname'";
-	$result = $connection->query($sql);
-	if ($result->num_rows > 0) {
-		$row = $result->fetch_assoc();
-		$omegaid = $row['idnumber'];
-	}
-	mysqli_close($connection);
-	
-	//CURL CREATE ATTENDANCE OMEGA
-	$curl = curl_init();
-	
-	$url =  $CFG->paperattendance_omegacreateattendanceurl;
-	$token =  $CFG->paperattendance_omegatoken;
-	
-	$fields = array (
-		"token" => $token,
-		"seccionId" => $omegaid,
-		"fecha" => $fecha,
-		"modulos" => array( array("hora" => $modulo) ),
-		"alumnos" => $arrayalumnos 
-	);
-	
-	curl_setopt($curl, CURLOPT_URL, $url);
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-	curl_setopt($curl, CURLOPT_POST, TRUE);
-	curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($fields));
-	curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-	$result = curl_exec ($curl);
-	curl_close ($curl);
+		mysqli_set_charset($connection, "utf8");
 
-	$alumnos = new stdClass();
-	$alumnos = json_decode($result)->alumnos;
-	
-	// FOR EACH STUDENT ON THE RESULT, SAVE HIS SYNC WITH OMEGA (true or false)
-	for ($i = 0 ; $i < count($alumnos); $i++){
-		if($alumnos[$i]->resultado == true){
-			// el estado es 0 por default, asi que solo update en caso de ser verdadero el resultado
-			
-			// get student id from its username
-			$username = $alumnos[$i]->emailAlumno;
-			$sqlgetstudentid = "SELECT id from {user} WHERE username = ?";
-			$studentid = $DB->get_record_sql($sqlgetstudentid, array($username));
-			$studentid = $studentid -> id;
-			
-			//save student sync
-			$sqlsyncstate = "UPDATE {paperattendance_presence} SET omegasync = ? WHERE sessionid  = ? AND userid = ?";
-			$studentid = $DB->execute($sqlsyncstate, array('1', $sessid, $studentid));
+		$sql = "SELECT * FROM cursos WHERE shortname = '$webcshortname'";
+		$result = $connection->query($sql);
+		if ($result->num_rows > 0) {
+			$row = $result->fetch_assoc();
+			$omegaid = $row['idnumber'];
 		}
-	}
+		mysqli_close($connection);
+
+		//CURL CREATE ATTENDANCE OMEGA
+		$curl = curl_init();
+
+		$url =  $CFG->paperattendance_omegacreateattendanceurl;
+		$token =  $CFG->paperattendance_omegatoken;
+
+		$fields = array (
+				"token" => $token,
+				"seccionId" => $omegaid,
+				"fecha" => $fecha,
+				"modulos" => array( array("hora" => $modulo) ),
+				"alumnos" => $arrayalumnos
+		);
+
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($curl, CURLOPT_POST, TRUE);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($fields));
+		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+		$result = curl_exec ($curl);
+		curl_close ($curl);
+
+		$alumnos = new stdClass();
+		$alumnos = json_decode($result)->alumnos;
+
+		// FOR EACH STUDENT ON THE RESULT, SAVE HIS SYNC WITH OMEGA (true or false)
+		for ($i = 0 ; $i < count($alumnos); $i++){
+			if($alumnos[$i]->resultado == true){
+				// el estado es 0 por default, asi que solo update en caso de ser verdadero el resultado
+					
+				// get student id from its username
+				$username = $alumnos[$i]->emailAlumno;
+				$sqlgetstudentid = "SELECT id from {user} WHERE username = ?";
+				$studentid = $DB->get_record_sql($sqlgetstudentid, array($username));
+				$studentid = $studentid -> id;
+					
+				//save student sync
+				$sqlsyncstate = "UPDATE {paperattendance_presence} SET omegasync = ? WHERE sessionid  = ? AND userid = ?";
+				$studentid = $DB->execute($sqlsyncstate, array('1', $sessid, $studentid));
+			}
+		}
 }
 
 function paperattendance_getusername($userid){
@@ -885,3 +907,49 @@ function paperattendance_getusername($userid){
 	return $username;
 }
 
+function paperattendance_omegaupdateattendance($presenceid, $update, $sessid){
+
+	//CURL UPDATE ATTENDANCE OMEGA
+	$curl = curl_init();
+	$url =  $CFG->paperattendance_omegaupdateattendanceurl;
+	$token =  $CFG->paperattendance_omegatoken;
+
+	$sqldatemodule = "SELECT FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
+					FROM {paperattendance_sessmodule} AS sessmodule
+					INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
+	$sqldatemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
+	$fecha = $sqldatemodule -> date;
+	$modulo = $sqldatemodule -> time;
+
+	$sqluserid = "SELECT userid
+					FROM {paperattendance_presence}
+					WHERE id = ?";
+	$sqluserid = $DB->get_record_sql($sqluserid, array($presenceid));
+	$userid = $sqluserid -> userid;
+	$username = paperattendance_getusername($userid);
+
+
+	if($update == 1){
+		$update = "true";
+	}
+	else{
+		$update = "false";
+	}
+
+	$fields = array (
+			"hora" => $modulo,
+			"fecha" => $fecha,
+			"emailAlumno" => $username,
+			"token" => $token,
+			"asistencia" => $update
+	);
+
+	curl_setopt($curl, CURLOPT_URL, $url);
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+	curl_setopt($curl, CURLOPT_POST, TRUE);
+	curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($fields));
+	curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+	$result = curl_exec ($curl);
+	curl_close ($curl);
+
+}

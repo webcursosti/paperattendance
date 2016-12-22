@@ -111,6 +111,9 @@ $string['token']="Token de Omega";
 $string['tokentext']="Token de Omega para uso de webapi";
 $string['omegacreateattendance']="Url Omega CreateAttendance";
 $string['omegacreateattendancetext']="Url Omega CreateAttendance webapi";
+$string['omegaupdateattendance']="Url Omega UpdateAttendance";
+$string['omegaupdateattendancetext']="Url Omega UpdateAttendance webapi";
+
 
 // Task
 $string['task']="Procesar PDFs";
