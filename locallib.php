@@ -831,12 +831,12 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 	global $DB,$CFG;
 
 	//GET WEBCURSOS SHORTNAME FROM ID
-	$sqlshortname = "SELECT shortname FROM {course}	WHERE id = ?";
+	$sqlshortname = "SELECT id, shortname FROM {course}	WHERE id = ?";
 	$shortname = $DB->get_record_sql($sqlshortname, array($courseid));
 	$webcshortname = $shortname -> shortname;
 
 	//GET FECHA Y MODULE FROM SESS ID $fecha, $modulo,
-	$sqldatemodule = "SELECT FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
+	$sqldatemodule = "SELECT sessmodule.id, FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
 					FROM {paperattendance_sessmodule} AS sessmodule
 					INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
 	$sqldatemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
@@ -901,7 +901,7 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 }
 
 function paperattendance_getusername($userid){
-	$sql = "SELECT username from {user} WHERE id = ?";
+	$sql = "SELECT id, username from {user} WHERE id = ?";
 	$username = $DB->get_record_sql($sql, array($userid));
 	$username = $username -> id;
 	return $username;
@@ -914,7 +914,7 @@ function paperattendance_omegaupdateattendance($presenceid, $update, $sessid){
 	$url =  $CFG->paperattendance_omegaupdateattendanceurl;
 	$token =  $CFG->paperattendance_omegatoken;
 
-	$sqldatemodule = "SELECT FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
+	$sqldatemodule = "SELECT sessmodule.id, FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
 					FROM {paperattendance_sessmodule} AS sessmodule
 					INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
 	$sqldatemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
