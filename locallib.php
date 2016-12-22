@@ -803,11 +803,16 @@ function paperattendance_getteacherfromcourse($courseid, $userid){
 			INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
 			INNER JOIN {context} ct ON (ct.id = ra.contextid)
 			INNER JOIN {course} c ON (c.id = ct.instanceid AND c.id = ?)
-			INNER JOIN {role} r ON (r.id = ra.roleid AND r.shortname IN ('teacher', 'editingteacher'))
+			INNER JOIN {role} r ON (r.id = ra.roleid AND r.shortname IN ( ?, ?))
 			WHERE u.id = ?";
-	
-	$teacher = $DB->get_record_sql($sqlteacher, array($courseid,$userid));
-	
+
+	$teacher = $DB->get_record_sql($sqlteacher, array($courseid, 'teacher', 'editingteacher', $userid));
+
+
+	if(count($teacher) == 0){
+		$teacher = $DB->get_record_sql($sqlteacher, array($courseid, 'profesoreditor', 'ayudante', $userid));
+	}
+
 	return $teacher;
 }
 
