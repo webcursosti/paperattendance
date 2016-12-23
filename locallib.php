@@ -283,7 +283,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			// Write date.
 			$topprovisional += 4;
 			$pdf->SetXY($leftprovisional, $topprovisional);
-			$pdf->Write(1, core_text::strtoupper(get_string("date") . ': ' . date("h:s d-m-Y", time())));
+			$pdf->Write(1, core_text::strtoupper(get_string("date") . ': ' . date("d-m-Y", $sessiondate)));
 			// Write modules.
 			$topprovisional += 4;
 			$pdf->SetXY($leftprovisional, $topprovisional);
@@ -808,7 +808,6 @@ function paperattendance_getteacherfromcourse($courseid, $userid){
 
 	$teacher = $DB->get_record_sql($sqlteacher, array($courseid, 'teacher', 'editingteacher', $userid));
 
-
 	if(!isset($teacher->id)){
 		$teacher = $DB->get_record_sql($sqlteacher, array($courseid, 'profesoreditor', 'ayudante', $userid));
 	}
@@ -906,6 +905,7 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 }
 
 function paperattendance_getusername($userid){
+	global $DB;
 	$sql = "SELECT id, username from {user} WHERE id = ?";
 	$username = $DB->get_record_sql($sql, array($userid));
 	$username = $username -> id;
@@ -913,7 +913,7 @@ function paperattendance_getusername($userid){
 }
 
 function paperattendance_omegaupdateattendance($presenceid, $update, $sessid){
-
+	global $CFG, $DB;
 	//CURL UPDATE ATTENDANCE OMEGA
 	$curl = curl_init();
 	$url =  $CFG->paperattendance_omegaupdateattendanceurl;
