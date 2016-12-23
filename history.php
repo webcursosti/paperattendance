@@ -100,7 +100,8 @@ if( $isteacher || is_siteadmin($USER)) {
 				u.firstname,
 				u.email,
 				p.status,
-				p.omegasync
+				p.omegasync,
+				p.grayscale
 				FROM {course} AS c
 				INNER JOIN {context} AS ct ON (c.id = ct.instanceid)
 				INNER JOIN {role_assignments} AS ra ON (ra.contextid = ct.id)
@@ -119,15 +120,27 @@ if( $isteacher || is_siteadmin($USER)) {
 		
 		//Check if we have at least one attendance in the selected session
 		if ($attendancescount > 0){
-			$attendancestable->head = array(
-					get_string('hashtag', 'local_paperattendance'),
-					get_string('student', 'local_paperattendance'),
-					get_string('mail', 'local_paperattendance'),
-					get_string('attendance', 'local_paperattendance'),
-					get_string('setting', 'local_paperattendance'),
-					get_string('omegasync', 'local_paperattendance')
-			);
-			
+			if (is_siteadmin($USER)){
+				$attendancestable->head = array(
+						get_string('hashtag', 'local_paperattendance'),
+						get_string('student', 'local_paperattendance'),
+						get_string('mail', 'local_paperattendance'),
+						get_string('attendance', 'local_paperattendance'),
+						get_string('setting', 'local_paperattendance'),
+						get_string('omegasync', 'local_paperattendance'),
+						get_string('grayscale', 'local_paperattendance')
+				);
+			}
+			else {
+				$attendancestable->head = array(
+						get_string('hashtag', 'local_paperattendance'),
+						get_string('student', 'local_paperattendance'),
+						get_string('mail', 'local_paperattendance'),
+						get_string('attendance', 'local_paperattendance'),
+						get_string('setting', 'local_paperattendance'),
+						get_string('omegasync', 'local_paperattendance')
+				);
+			}
 			//A mere counter for de number of records in the table
 			$counter = $page * $perpage + 1;
 			foreach ($attendances as $attendance){
@@ -185,51 +198,111 @@ if( $isteacher || is_siteadmin($USER)) {
 					//Now we check if the student is synchronized with omega or not	
 					if ($attendance->omegasync == 1){
 						
-						$attendancestable->data[] = array(
-								$counter,
-								$name,
-								$attendance->email,
-								$presenticonaction,
-								$editactionasistencia,
-								$synchronizediconaction
-						);
+						if (is_siteadmin($USER)){
+							$attendancestable->data[] = array(
+									$counter,
+									$name,
+									$attendance->email,
+									$presenticonaction,
+									$editactionasistencia,
+									$synchronizediconaction,
+									$attendance->grayscale
+							);
+						}
+						else {
+							$attendancestable->data[] = array(
+									$counter,
+									$name,
+									$attendance->email,
+									$presenticonaction,
+									$editactionasistencia,
+									$synchronizediconaction
+							);
+						}
 						
 					}
 					else {
-						$attendancestable->data[] = array(
-								$counter,
-								$name,
-								$attendance->email,
-								$presenticonaction,
-								$editactionasistencia,
-								$unsynchronizediconaction
-						);	
+						
+						if (is_siteadmin($USER)){
+							$attendancestable->data[] = array(
+									$counter,
+									$name,
+									$attendance->email,
+									$presenticonaction,
+									$editactionasistencia,
+									$unsynchronizediconaction,
+									$attendance->grayscale
+							);
+							
+						}
+						else {
+							$attendancestable->data[] = array(
+									$counter,
+									$name,
+									$attendance->email,
+									$presenticonaction,
+									$editactionasistencia,
+									$unsynchronizediconaction,
+							);
+							
+						}
+						
 					}
 					
 				}
 				else {
 					
 					if ($attendance->omegasync == 1){
-					
-						$attendancestable->data[] = array(
-								$counter,
-								$name,
-								$attendance->email,
-								$absenticonaction,
-								$editactionasistencia,
-								$synchronizediconaction
-						);
-					
+						
+						if (is_siteadmin($USER)){
+							$attendancestable->data[] = array(
+									$counter,
+									$name,
+									$attendance->email,
+									$absenticonaction,
+									$editactionasistencia,
+									$synchronizediconaction,
+									$attendance->grayscale
+							);
+						}
+						else {
+							$attendancestable->data[] = array(
+									$counter,
+									$name,
+									$attendance->email,
+									$absenticonaction,
+									$editactionasistencia,
+									$synchronizediconaction
+							);
+						}
+						
 					}
 					else {
-						$attendancestable->data[] = array(
-								$counter,
-								$name,
-								$attendance->email,
-								$absenticonaction,
-								$editactionasistencia,
-								$unsynchronizediconaction
-						);
+						
+						if (is_siteadmin($USER)){
+							$attendancestable->data[] = array(
+									$counter,
+									$name,
+									$attendance->email,
+									$absenticonaction,
+									$editactionasistencia,
+									$unsynchronizediconaction,
+									$attendance->grayscale
+							);
+								
+						}
+						else {
+							$attendancestable->data[] = array(
+									$counter,
+									$name,
+									$attendance->email,
+									$absenticonaction,
+									$editactionasistencia,
+									$unsynchronizediconaction
+							);
+							
+						}
+						
 					}
 						
 				}
