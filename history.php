@@ -30,7 +30,7 @@ require_once (dirname(dirname(dirname(__FILE__)))."/config.php");
 require_once ($CFG->dirroot."/local/paperattendance/forms/history_form.php");
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 
-global $DB, $PAGE, $OUTPUT, $USER;
+global $DB, $PAGE, $OUTPUT, $USER, $CFG;
 
 $context = context_course::instance($COURSE->id);
 $url = new moodle_url("/local/paperattendance/history.php");
@@ -356,7 +356,9 @@ if( $isteacher || is_siteadmin($USER)) {
 							
 					$DB->update_record("paperattendance_presence", $record);
 					
+					if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 					paperattendance_omegaupdateattendance($idpresence, $record->status, $idattendance);
+					}
 					
 					$backurl = new moodle_url("/local/paperattendance/history.php", array(
 							"action" => "studentsattendance",

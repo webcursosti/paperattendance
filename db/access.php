@@ -52,7 +52,7 @@ $capabilities = array(
 				)),
 		'local/paperattendance:upload' => array(
 				'captype' => 'write',
-				'contextlevel' => CONTEXT_SYSTEM,
+				'contextlevel' => CONTEXT_COURSECAT,
 				'archetypes' => array(
 						'student' => CAP_PROHIBIT,
 						'teacher' => CAP_PROHIBIT,
