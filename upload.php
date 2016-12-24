@@ -18,7 +18,8 @@
 *
 * @package    local
 * @subpackage paperattendance
-* @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl) 					
+* @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl) 
+* @copyright  2016 Hans Jeria (hansjeria@gmail.com) 					
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 //Pertenece al plugin PaperAttendance
@@ -31,28 +32,34 @@ require_once ($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/fpdi.php');
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php");
 require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi.php");
-global $DB, $OUTPUT,$COURSE, $USER;
+global $DB, $OUTPUT, $USER;
 // User must be logged in.
 require_login();
 if (isguestuser()) {
-    //die();
-}
-$courseid = optional_param('courseid',null, PARAM_INT);
-$context = context_system::instance();
-if (! has_capability('local/paperattendance:upload', $context)) {
-    // TODO: Log invalid access to upload attendance.
     print_error(get_string('notallowedupload', 'local_paperattendance'));
-   //	 die();
+    die();
+}
+$courseid = optional_param('courseid', null, PARAM_INT);
+$category = optional_param('categoryid', 1, PARAM_INT);
+
+if($course = $DB->get_record("course", array("id" => $courseid))){
+	if($category == 1){
+		$category = $course->category;
+	}
+}
+
+$context = context_coursecat::instance($category);
+
+if (! has_capability('local/paperattendance:upload', $context)) {
+    print_error(get_string('notallowedupload', 'local_paperattendance'));
 }
 // This page url.
 $url = new moodle_url('/local/paperattendance/upload.php', array(
     'courseid' => $courseid));
 if($courseid && $courseid != 1){
 	$courseurl = new moodle_url('/course/view.php', array(
-			'id' => $courseid
-			
+			'id' => $courseid			
 	));
-	$course = $DB ->get_record("course", array("id" =>$courseid));
 	$PAGE->navbar->add($course->fullname, $courseurl );
 }
 $PAGE->navbar->add(get_string('uploadtitle', 'local_paperattendance'));
@@ -61,7 +68,7 @@ $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
 // Add the upload form for the course.
-$addform = new upload_form (null, array("courseid" => $courseid));
+$addform = new paperattendance_upload_form (null, array("courseid" => $courseid));
 // If the form is cancelled, refresh the instante.
 if ($addform->is_cancelled()) {
 	$courseurl = new moodle_url('/course/view.php', array(
@@ -148,26 +155,21 @@ if ($addform->get_data()) {
 		//read pdf and save session and sessmodules
 		$pdfprocessed = paperattendance_read_pdf_save_session($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
 		
-		if($pdfprocessed == "Perfect"){
-		
+		if($pdfprocessed == "Perfect"){		
 			//delete unused pdf
-			unlink($path."/unread/".$filename);
-			
+			unlink($path."/unread/".$filename);		
 			// Display confirmation page before moving out.
 			redirect($url, get_string('uploadsuccessful', 'local_paperattendance'), 3);
 			//die();
 		}
-		else{
-			
+		else{			
 			//delete unused pdf
-			unlink($path."/unread/".$filename);
-			
+			unlink($path."/unread/".$filename);		
 			// Display confirmation page before moving out.
 			redirect($url, $pdfprocessed, 3);
 		}
 	}
 	else{
-
 		//delete unused pdf
 		unlink($path."/unread/".$filename);
 		
@@ -184,4 +186,5 @@ if($courseid && $courseid != 1){
 }
 // Display the form.
 $addform->display();
+
 echo $OUTPUT->footer();
