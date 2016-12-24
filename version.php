@@ -20,15 +20,14 @@
 *
 * @package    local
 * @subpackage paperattendance
-* @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl) 					
+* @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl) 
+* @copyright  2016 Hans Jeria (hansjeria@gmail.com) 
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-//Pertenece al plugin PaperAttendance
-
 
 defined('MOODLE_INTERNAL') || die();
 $plugin->pluginname = "local_paperattendance";
 $plugin->component = 'local_paperattendance';
-$plugin->version   = '2016122201';
+$plugin->version   = '2016122401';
 $plugin->requires = 2015111600;
 
