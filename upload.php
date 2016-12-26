@@ -55,10 +55,13 @@ if (! has_capability('local/paperattendance:upload', $context)) {
 }
 // This page url.
 $url = new moodle_url('/local/paperattendance/upload.php', array(
-    'courseid' => $courseid));
+    'courseid' => $courseid,
+	"categoryid" => $category
+));
 if($courseid && $courseid != 1){
 	$courseurl = new moodle_url('/course/view.php', array(
-			'id' => $courseid			
+			'courseid' => $courseid,
+			"categoryid" => $category		
 	));
 	$PAGE->navbar->add($course->fullname, $courseurl );
 }
