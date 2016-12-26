@@ -239,6 +239,22 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		// Paperattendance savepoint reached.
 		upgrade_plugin_savepoint(true, 2016122101, 'local', 'paperattendance');
 	}
+	
+	if ($oldversion < 2016122601) {
+	
+		// Define field omegaid to be added to paperattendance_presence.
+		$table = new xmldb_table('paperattendance_presence');
+		$field = new xmldb_field('omegaid', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'omegasync');
+	
+		// Conditionally launch add field omegaid.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2016122601, 'local', 'paperattendance');
+	}
+	
 	    
 	return true;
 }

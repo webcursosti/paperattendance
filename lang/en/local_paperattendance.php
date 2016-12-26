@@ -95,6 +95,7 @@ $string['couldntreadqrcode']="Couldn´t read QR code, Please make sure it is rea
 $string['omegasync']="Omega";
 $string['synchronized']="Synchronized";
 $string['unsynchronized']="Unsynchronized";
+$string['module']="Module";
 
 // Settings
 $string['settings']="Basic Configuration";
