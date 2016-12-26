@@ -566,7 +566,7 @@ else if ($isstudent) {
 	
 	// Lists all records in the database
 	if ($action == "view"){
-		$getstudentattendances = "SELECT s.id, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, p.status
+		$getstudentattendances = "SELECT s.id, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, p.status, m.name
 				FROM {paperattendance_session} AS s
 				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
@@ -583,6 +583,7 @@ else if ($isstudent) {
 			$attendancestable->head = array(
 					get_string('hashtag', 'local_paperattendance'),
 					get_string('date', 'local_paperattendance'),
+					get_string('module', 'local_paperattendance'),
 					get_string('time', 'local_paperattendance'),
 					get_string('attendance', 'local_paperattendance')
 			);
@@ -611,6 +612,7 @@ else if ($isstudent) {
 						$attendancestable->data[] = array(
 						$counter,
 						date("d-m-Y", $attendance->date),
+						$attendance->name,
 						$attendance->hour,
 						$presenticonaction
 						);
@@ -620,6 +622,7 @@ else if ($isstudent) {
 						$attendancestable->data[] = array(
 						$counter,
 						date("d-m-Y", $attendance->date),
+						$attendance->name,
 						$attendance->hour,
 						$absenticonaction
 						);
