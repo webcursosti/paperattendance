@@ -308,7 +308,6 @@ function hidemodules(){
 
 		});
 
-
 	return count;
 }
 
@@ -335,6 +334,7 @@ function hide(hora, min){
 	//if (hora == horacompare && min != mincompare){
 	if (hora != horacompare || min != mincompare){
 		$(this).parent().fadeOut( "slow" );
+		uncheck(this);
 	}
 	});
     }
@@ -350,6 +350,10 @@ function show(hora, min){
 	}
 	});
     comparedates(currentdate, datetwo);
+    }
+
+    function uncheck(where){
+    $( where ).prop( "checked", false);
     }
 
 });
