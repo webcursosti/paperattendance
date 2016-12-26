@@ -40,6 +40,7 @@ class paperattendance_upload_form extends moodleform {
 		//retrieve course id
 		$instance = $this ->_customdata;
 		$courseid = $instance['courseid'];
+		$categoryid = $instance['categoryid'];
 		
 		//max file size 8388608 default (in bytes)
 		$maxbytes = $CFG->paperattendance_maxfilesize;
@@ -51,9 +52,11 @@ class paperattendance_upload_form extends moodleform {
 		$mform->setType('file', PARAM_FILE);
 		$mform->addRule('file', get_string('uploadrule', 'local_paperattendance'), 'required', null, 'client');
 		
-		//courseid
+		//Courseid and categoryid
 		$mform->addElement('hidden', 'courseid', $courseid);
 		$mform->setType('courseid', PARAM_INT);
+		$mform->addElement('hidden', 'categoryid', $categoryid);
+		$mform->setType('categoryid', PARAM_INT);
 		$this->add_action_buttons(true);
 	}
 	public function validation($data, $files) {

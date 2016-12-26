@@ -71,7 +71,10 @@ $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
 // Add the upload form for the course.
-$addform = new paperattendance_upload_form (null, array("courseid" => $courseid));
+$addform = new paperattendance_upload_form (null, array(
+		"courseid" => $courseid, 
+		"categoryid" => $category
+));
 // If the form is cancelled, refresh the instante.
 if ($addform->is_cancelled()) {
 	$courseurl = new moodle_url('/course/view.php', array(
