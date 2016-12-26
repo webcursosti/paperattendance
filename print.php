@@ -61,7 +61,8 @@ if(!has_capability("local/paperattendance:print", $context)){
 }
 
 $urlprint = new moodle_url("/local/paperattendance/print.php", array(
-		"courseid" => $courseid
+		"courseid" => $courseid,
+		"categoryid" => $category
 ));
 // Page navigation and URL settings.
 $pagetitle = get_string('printtitle', 'local_paperattendance');
