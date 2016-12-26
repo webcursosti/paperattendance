@@ -14,47 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
-*
+ *
 *
 * @package    local
 * @subpackage paperattendance
-* @copyright  2016 Hans Jeria <hansjeria@gmail.com>
-* @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl) 
-* @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl) 				
+* @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl)  					
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
-$tasks = array(
-	array(
-			'classname' => 'local_paperattendance\task\processpdf',
-			'blocking' => 0,
-			'minute' => '*',
-			'hour' => '6-8',
-			'day' => '*',
-			'dayofweek' => '*',
-			'month' => '*'
-	),
-	array(
-			'classname' => 'local_paperattendance\task\deletepdf',
-			'blocking' => 0,
-			'minute' => '*',
-			'hour' => '6-8',
-			'day' => '*',
-			'dayofweek' => '*',
-			'month' => '*'
-	)
+namespace local_paperattendance\task;
+
+class deletepdf extends \core\task\scheduled_task {
+	
+	public function get_name() {
+		return get_string('task', 'local_paperattendance');
+	}
+
+	public function execute() {
+		global $CFG, $DB;
+		require_once ($CFG->dirroot . '/local/paperattendance/locallib.php');
+		$path = $CFG -> dataroot. "/temp/local/paperattendance/print/";
 		
-);
+		//call de function to delete the files from the print folder in moodledata
+		if (file_exists($path)) {
+			paperattendance_recursiveRemoveDirectory($path);
+		
+		}
 
-
-
-
-
-
-
-
-
-
-
+	}
+}	
 
