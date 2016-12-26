@@ -349,7 +349,7 @@ function show(hora, min){
 		$(this).parent().fadeIn();
 	}
 	});
-	hidemodules();
+    comparedates(currentdate, datetwo);
     }
 
 });
