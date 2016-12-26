@@ -20,17 +20,18 @@
 *
 * @package    local
 * @subpackage paperattendance
-* @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl) 					
+* @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl) 
+* @copyright  2016 Hans Jeria (hansjeria@gmail.com) 					
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-//Pertenece al plugin PaperAttendance
+
 defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 require_once($CFG->libdir . "/formslib.php");
-class upload_form extends moodleform {
-	/**
-	 * Defines forms elements
-	 */
+
+class paperattendance_upload_form extends moodleform {
+
 	public function definition() {
 		global $CFG, $DB;
 		
@@ -59,7 +60,8 @@ class upload_form extends moodleform {
 
 		$errors = array();
 		$realfilename = $data ['file'];
-	    if($realfilename ==''){  // checking this to see if any file has been uploaded
+		// checking this to see if any file has been uploaded
+	    if($realfilename ==''){
            $errors ['upload'] = get_string('uploadplease', 'local_paperattendance');
         }
 		return $errors;
