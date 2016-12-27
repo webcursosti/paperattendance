@@ -775,12 +775,12 @@ function trim_text($input, $length, $ellipses = true, $strip_html = true) {
 }
 
 //function for deleting files from moodle data print folder
-function paperattendance_recursiveRemoveDirectory($directory)
+function paperattendance_recursiveremovedirectory($directory)
 {
 	foreach(glob("{$directory}/*") as $file)
 	{
 		if(is_dir($file)) {
-			paperattendance_recursiveRemoveDirectory($file);
+			paperattendance_recursiveremovedirectory($file);
 		} else {
 			unlink($file);
 		}

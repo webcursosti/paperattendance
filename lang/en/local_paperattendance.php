@@ -117,6 +117,7 @@ $string['omegaupdateattendancetext']="Omega's UpdateAttendance Url webapi";
 
 // Task
 $string['task']="Process PDFs";
+$string['taskdelete']="Delete PDFs";
 
 // Capabilities
 $string["paperattendance:print"] = "View list";

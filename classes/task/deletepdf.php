@@ -29,17 +29,17 @@ namespace local_paperattendance\task;
 class deletepdf extends \core\task\scheduled_task {
 	
 	public function get_name() {
-		return get_string('task', 'local_paperattendance');
+		return get_string('taskdelete', 'local_paperattendance');
 	}
 
 	public function execute() {
-		global $CFG, $DB;
+		global $CFG;
 		require_once ($CFG->dirroot . '/local/paperattendance/locallib.php');
 		$path = $CFG -> dataroot. "/temp/local/paperattendance/print/";
 		
 		//call de function to delete the files from the print folder in moodledata
 		if (file_exists($path)) {
-			paperattendance_recursiveRemoveDirectory($path);
+			paperattendance_recursiveremovedirectory($path);
 		
 		}
 

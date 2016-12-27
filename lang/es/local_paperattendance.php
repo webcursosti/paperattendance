@@ -118,6 +118,7 @@ $string['omegaupdateattendancetext']="Url Omega UpdateAttendance webapi";
 
 // Task
 $string['task']="Procesar PDFs";
+$string['taskdelete']="Borrar PDFs";
 
 // Capabilities
 $string["paperattendance:print"] = "Ver impresiones de listas";
