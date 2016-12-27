@@ -39,16 +39,20 @@ if (isguestuser()) {
     print_error(get_string('notallowedupload', 'local_paperattendance'));
     die();
 }
-$courseid = optional_param('courseid', null, PARAM_INT);
+$courseid = optional_param('courseid',1, PARAM_INT);
 $category = optional_param('categoryid', 1, PARAM_INT);
 
-if($course = $DB->get_record("course", array("id" => $courseid))){
-	if($category == 1){
-		$category = $course->category;
+if($courseid > 1){
+	if($course = $DB->get_record("course", array("id" => $courseid))){
+		if($category == 1){
+			$category = $course->category;
+			$context = context_coursecat::instance($category);
+		}
 	}
+}else{
+	$context = context_system::instance();
 }
 
-$context = context_coursecat::instance($category);
 
 if (! has_capability('local/paperattendance:upload', $context)) {
     print_error(get_string('notallowedupload', 'local_paperattendance'));
