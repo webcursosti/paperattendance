@@ -64,7 +64,7 @@ $url = new moodle_url('/local/paperattendance/upload.php', array(
 ));
 if($courseid && $courseid != 1){
 	$courseurl = new moodle_url('/course/view.php', array(
-			'courseid' => $courseid,
+			'id' => $courseid,
 			"categoryid" => $category		
 	));
 	$PAGE->navbar->add($course->fullname, $courseurl );
