@@ -38,6 +38,8 @@ $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout("standard");
 
+$contextsystem = context_system::instance();
+
 // Possible actions -> view, scan or students attendance . Standard is view mode
 $action = optional_param("action", "view", PARAM_TEXT);
 $idattendance = optional_param("idattendance", null, PARAM_INT);
@@ -403,9 +405,9 @@ if( $isteacher || is_siteadmin($USER)) {
 		
 		$pdfname = $DB->get_record_sql($getpdfname, array($idattendance));
 		
-		//var_dump($context->id);
+		//var_dump($contextsystem->id);
 		//Context id as 1 because the var context->id gets the number 6 , check it later
-		$url = moodle_url::make_pluginfile_url(1, 'local_paperattendance', 'draft', 0, '/', $pdfname->pdf);
+		$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $pdfname->pdf);
 	
 		$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
 				"src" => $url,
