@@ -114,6 +114,8 @@ $string['omegacreateattendance']="Url Omega CreateAttendance";
 $string['omegacreateattendancetext']="Url Omega CreateAttendance webapi";
 $string['omegaupdateattendance']="Url Omega UpdateAttendance";
 $string['omegaupdateattendancetext']="Url Omega UpdateAttendance webapi";
+$string['omegagetmoduloshorarios']="Url Omega Get Modulos Horarios";
+$string['omegagetmoduloshorariostext']="Url Omega Get Modulos Horarios webapi";
 
 
 // Task

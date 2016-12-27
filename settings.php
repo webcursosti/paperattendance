@@ -120,4 +120,14 @@ if ($hassiteconfig) {
 					PARAM_TEXT
 					)
 			);
+	//omega's get módulos horarios url
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_omegagetmoduloshorariosurl',
+					get_string('omegagetmoduloshorarios', 'local_paperattendance'),
+					get_string('omegagetmoduloshorariostext', 'local_paperattendance'),
+					null,
+					PARAM_TEXT
+					)
+			);
 }
