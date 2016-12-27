@@ -506,7 +506,7 @@ if( $isteacher || is_siteadmin($USER)) {
 	if ($action == "studentsattendance"){
 		
 		if (count($attendances) == 0){
-			echo html_writer::nonempty_tag("h4", get_string('nonexistintingrecords', 'local_paperattendance'), array("align" => "left"));
+			echo html_writer::nonempty_tag("h4", get_string('nonprocessingattendance', 'local_paperattendance'), array("align" => "left"));
 		}
 		else{
 			//displays the table

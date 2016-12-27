@@ -96,6 +96,7 @@ $string['omegasync']="Omega";
 $string['synchronized']="Sincronizado";
 $string['unsynchronized']="Sin sincronizar";
 $string['module']="Módulo";
+$string['nonprocessingattendance']="Asistencia aun no procesada";
 
 
 // Settings
@@ -118,6 +119,7 @@ $string['omegaupdateattendancetext']="Url Omega UpdateAttendance webapi";
 
 // Task
 $string['task']="Procesar PDFs";
+$string['taskdelete']="Borrar PDFs";
 
 // Capabilities
 $string["paperattendance:print"] = "Ver impresiones de listas";
