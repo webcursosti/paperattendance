@@ -96,6 +96,8 @@ $string['omegasync']="Omega";
 $string['synchronized']="Synchronized";
 $string['unsynchronized']="Unsynchronized";
 $string['module']="Module";
+$string['nonprocessingattendance']="Attendance non processed yet";
+
 
 // Settings
 $string['settings']="Basic Configuration";
@@ -119,6 +121,7 @@ $string['omegagetmoduloshorariostext']="Omega's Get Modulos Horarios Url webapi"
 
 // Task
 $string['task']="Process PDFs";
+$string['taskdelete']="Delete PDFs";
 
 // Capabilities
 $string["paperattendance:print"] = "View list";
