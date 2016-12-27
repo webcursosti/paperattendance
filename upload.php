@@ -53,6 +53,7 @@ if($courseid > 1){
 	$context = context_system::instance();
 }
 
+$contextsystem = context_system::instance();
 
 if (! has_capability('local/paperattendance:upload', $context)) {
     print_error(get_string('notallowedupload', 'local_paperattendance'));
@@ -137,7 +138,7 @@ if ($addform->get_data()) {
 		$fs = get_file_storage();
 		
 		$file_record = array(
-				'contextid' => $context->id,
+				'contextid' => $contextsystem->id,
 				'component' => 'local_paperattendance',
 				'filearea' => 'draft',
 				'itemid' => 0,
