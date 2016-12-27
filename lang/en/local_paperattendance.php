@@ -96,6 +96,8 @@ $string['omegasync']="Omega";
 $string['synchronized']="Synchronized";
 $string['unsynchronized']="Unsynchronized";
 $string['module']="Module";
+$string['nonprocessingattendance']="Attendance non processed yet";
+
 
 // Settings
 $string['settings']="Basic Configuration";
