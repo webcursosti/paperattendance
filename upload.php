@@ -49,6 +49,9 @@ if($courseid > 1){
 			$category = $course->category;
 			$context = context_coursecat::instance($category);
 		}
+		else{
+			$context = context_coursecat::instance($category);
+		}
 	}
 }else{
 	$context = context_system::instance();
@@ -56,7 +59,7 @@ if($courseid > 1){
 
 $contextsystem = context_system::instance();
 
-if (! has_capability('local/paperattendance:upload', $context)) {
+if (! has_capability('local/paperattendance:upload', $context) && ! has_capability('local/paperattendance:upload', $contextsystem)) {
     print_error(get_string('notallowedupload', 'local_paperattendance'));
 }
 // This page url.
@@ -118,7 +121,29 @@ if ($addform->get_data()) {
 	//read pdf and rewrite it 
 	$pdf = new FPDI();
 	// get the page count
-	if($pagecount = $pdf->setSourceFile($path."/unread/".$filename)){
+	$pagecount = $pdf->setSourceFile($path."/unread/".$filename);
+	if($pagecount){
+		$idcourseexplode = explode("*",$qrtext);
+		$idcourse = $idcourseexplode[0];
+		
+		$object = new stdClass();
+		$object -> id = $idcourse;
+		$students = paperattendance_get_students_for_printing($object);
+		//now we count the students in course
+		$count = 0;
+		foreach($students as $student) {
+			$count ++;
+		}
+		$students->close();
+		$pages = ceil($count/26);
+		if ($pages != $pagecount){
+			$courseurl = new moodle_url('/course/view.php', array(
+					'id' => $courseid));
+			redirect($courseurl, get_string('missingpages', 'local_paperattendance'), 3);
+			die();
+			
+		}
+		
 		// iterate through all pages
 		for ($pageno = 1; $pageno <= $pagecount; $pageno++) {
 		    // import a page

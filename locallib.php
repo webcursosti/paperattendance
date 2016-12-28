@@ -985,3 +985,4 @@ function paperattendance_checktoken($token){
 		return true;
 	}
 }
+
