@@ -106,7 +106,6 @@ if ($addform->get_data()) {
 	
 	//first check if there's a readable QR code 
 	$qrtext = paperattendance_get_qr_text($path."/unread/", $filename);
-	//if(paperattendance_get_qr_text($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf") == "error"){
 	if($qrtext == "error"){
 		//delete the unused pdf
 		unlink($path."/unread/".$filename);

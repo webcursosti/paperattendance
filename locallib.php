@@ -579,15 +579,10 @@ function paperattendance_get_qr_text($path, $pdf){
 			return "error";
 		}
 		else {
-			//delete unused png
-			//var_dump($textbottom);
-			echo "entre a text bottom";
 			return $textbottom;
 		}
 	}
 	else {
-		var_dump($texttop);
-		echo "entre a text top";
 		$imagick->clear();
 		return $texttop;
 	}
@@ -659,7 +654,6 @@ function paperattendance_read_pdf_save_session($path, $pdffile, $qrtext){
 	//path must end with "/"
 	global $USER;
 
-	//$qrtext = paperattendance_get_qr_text($path, $pdffile);
 	if($qrtext != "error"){
 		//if there's a readable qr
 
