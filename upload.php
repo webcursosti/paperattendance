@@ -180,7 +180,7 @@ if ($addform->get_data()) {
 		);
 		
 		// If the file already exists we delete it
-		if ($fs->file_exists($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$time.".pdf")) {
+		if ($fs->file_exists($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$time.".pdf")) {
 			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$time.".pdf");
 			$previousfile->delete();
 		}

@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
  *
 *
@@ -32,34 +31,35 @@ require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
 require_once ($CFG->dirroot . "/mod/emarking/print/locallib.php");
 require_once ("locallib.php");
 global $DB, $PAGE, $OUTPUT, $USER, $CFG;
-
 require_login();
 if (isguestuser()) {
 	print_error("ACCESS DENIED");
 	die();
 }
-
 $courseid = required_param("courseid", PARAM_INT);
 $action = optional_param("action", "add", PARAM_INT);
 $category = optional_param('categoryid', 1, PARAM_INT);
 
-if($course = $DB->get_record("course", array("id" => $courseid))){
-	if($category == 1){
-		$category = $course->category;
+if($courseid > 1){
+	if($course = $DB->get_record("course", array("id" => $courseid))){
+		if($category == 1){
+			$category = $course->category;
+			$context = context_coursecat::instance($category);
+		}
+		else{
+			$context = context_coursecat::instance($category);
+		}
 	}
 }else{
-	print_error("Invalid Course ID");
+	$context = context_system::instance();
 }
 
-$contextsecre = context_coursecat::instance($category);
-$context = context_course::instance($courseid);
 
-if(!has_capability("local/paperattendance:print", $context)){
-	if(!has_capability("local/paperattendance:print", $contextsecre)){
-		print_error("ACCESS DENIED");
-	}
+$contextsystem = context_system::instance();
+
+if(!has_capability("local/paperattendance:print", $context) && ! has_capability('local/paperattendance:upload', $contextsystem)){
+	print_error(get_string('notallowedupload', 'local_paperattendance'));
 }
-
 $urlprint = new moodle_url("/local/paperattendance/print.php", array(
 		"courseid" => $courseid,
 		"categoryid" => $category
@@ -143,7 +143,7 @@ if($action == "add"){
 
 		$fs = get_file_storage();
 		$file_record = array(
-				'contextid' => $context->id,
+				'contextid' => $contextsystem->id,
 				'component' => 'local_paperattendance',
 				'filearea' => 'draft',
 				'itemid' => 0,
@@ -157,7 +157,7 @@ if($action == "add"){
 		);
 
 		// If the file already exists we delete it
-		if ($fs->file_exists($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
+		if ($fs->file_exists($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
 			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
 			$previousfile->delete();
 		}
@@ -226,6 +226,7 @@ datetwo.setDate(selectdate);
 datetwo.setMonth(selectmonth);
 datetwo.setFullYear(selectyear);
 
+omegamodulescheck(datetwo);
 comparedates(currentdate, datetwo);
 
 $('#id_sessiondate_day').change(function() {
@@ -248,10 +249,10 @@ $('#id_sessiondate_year').change(function() {
 
 
 function comparedates(currentdate, datetwo){
-
 	if (currentdate.getTime() === datetwo.getTime()){
 		$('.nomodulos').remove();
 		showmodules();	
+		omegamodulescheck(datetwo);
 		var count = hidemodules();
 		var currentcount = 0;
 		$('.felement').find('span').each(function( index ) {
@@ -264,26 +265,27 @@ function comparedates(currentdate, datetwo){
 	if (currentdate < datetwo ){
 		$('.nomodulos').remove();
 		showmodules();
+		omegamodulescheck(datetwo);
 	}
 	if (currentdate > datetwo ){
 		$('.nomodulos').remove();
 		hideallmodules();
 		$('.fgroup').first().append('<div class="nomodulos alert alert-warning">No hay módulos disponibles para la fecha seleccionada.</div>');
 	}
-	
-}
+	}
 
 function showmodules(){
 	$('.felement').find('span').each(function( index ) {
 		$(this).show();
 	});
-}
+	}
 
 function hideallmodules(){
+	$( "form input:checkbox" ).prop( "checked", false);
 	$('.felement').find('span').each(function( index ) {
 		$(this).hide();
 	});
-}
+	}
 
 function hidemodules(){
 	var count = 0;
@@ -304,58 +306,41 @@ function hidemodules(){
 		//compare
 		if(compare < now){
 			$(this).hide();
+			$(this).prop( "checked", false);
 			count++;
 		}
 
 		});
 
 	return count;
-}
-
-$( "form input:checkbox" ).change(function() {
-
-	var split = $(this).parent().text().split(':');
-    var hora = split[0];
-    var min = split[1]; 
-
-    if($(this).prop( "checked" )){
-    hide(hora, min);
-    }
-    else{
-    show(hora, min);
-    }
-	});
-	
-function hide(hora, min){
-	 
-    $( "form input:checkbox" ).each(function( index ) {
-	var split2 = $(this).parent().text().split(':');
-	var horacompare = split2[0];
-	var mincompare = split2[1];
-	//if (hora == horacompare && min != mincompare){
-	if (hora != horacompare || min != mincompare){
-		$(this).parent().fadeOut( "slow" );
-		uncheck(this);
 	}
-	});
-    }
-function show(hora, min){
-	 
-    $( "form input:checkbox" ).each(function( index ) {
-	var split2 = $(this).parent().text().split(':');
-	var horacompare = split2[0];
-	var mincompare = split2[1];
-	//if (hora == horacompare && min != mincompare){
-	if (hora != horacompare || min != mincompare){
-		$(this).parent().fadeIn();
-	}
-	});
-    comparedates(currentdate, datetwo);
-    }
 
-    function uncheck(where){
-    $( where ).prop( "checked", false);
-    }
+function omegamodulescheck(datetwo){
+	dayofweek = datetwo.getDay();
+	 $( "form input:checkbox" ).prop( "checked", false);
+	$.ajax({
+	    type: 'POST',
+	    url: 'ajax/paperattendance_ajax.php',
+	    data: {
+		      'action' : 'curlgetmoduloshorario',
+		      'omegaid' : '<?php echo ($course -> idnumber); ?>',	
+	    	  'diasemana': dayofweek
+	    	},
+	    success: function (response) {
+	    	var data = $.parseJSON(response);  
+	       	$.each(data, function(index, datos) {
+				var horainicio = data[index].horaInicio;
+			    $( "form input:checkbox" ).each(function( index ) {
+			    	var horacompare = $(this).parent().text();
+			    	var split = horainicio.split(':');
+			    	if (split[0]+":"+split[1] == horacompare){
+			    		$(this).prop( "checked", true );
+			    	}
+			    });
+	       	});
+	    }  	
+	});
+	}
 
 });
 </script>

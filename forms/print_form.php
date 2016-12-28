@@ -52,6 +52,8 @@ class paperattendance_print_form extends moodleform {
 		$mform->addElement("select", "requestor", get_string('requestor', 'local_paperattendance'), $arrayteachers);
 		$mform->addElement("date_selector", "sessiondate", get_string('attdate', 'local_paperattendance'));
 		
+		$mform->addElement('html', '<div class="alert alert-info">'.get_string('modulesinfoomega','local_paperattendance').'</div>');
+		
 		$modulesquery = "SELECT * 
 				FROM {paperattendance_module} 
 				ORDER BY initialtime ASC";
