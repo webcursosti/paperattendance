@@ -108,6 +108,7 @@ $string['mailerror']="Invalid Email";
 $string['filter'] ="It must be an UAI email";
 $string['filter_help']="You should enter the student's UAI email. Example: studentname@alumnos.uai.cl";
 $string['missingpages'] ="Incomplete Pdf, missing pages";
+$string['modulesinfoomega'] ="Default modules are <strong>checked from omega</strong> for your current course and selected date.";
 
 // Settings
 $string['settings']="Basic Configuration";

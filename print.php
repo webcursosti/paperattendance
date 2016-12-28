@@ -13,18 +13,15 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
  *
 *
 * @package    local
 * @subpackage paperattendance
-* @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl)
 * @copyright  2016 Hans Jeria (hansjeria@gmail.com)
+* @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl)
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-
-
 require_once (dirname(dirname(dirname(__FILE__))) . "/config.php");
 require_once ($CFG->dirroot . "/local/paperattendance/forms/print_form.php");
 require_once ($CFG->libdir . '/pdflib.php');
@@ -33,23 +30,40 @@ require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php
 require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
 require_once ($CFG->dirroot . "/mod/emarking/print/locallib.php");
 require_once ("locallib.php");
-global $DB, $PAGE, $OUTPUT, $USER, $CFG, $COURSE;
-
+global $DB, $PAGE, $OUTPUT, $USER, $CFG;
 require_login();
 if (isguestuser()) {
+	print_error("ACCESS DENIED");
 	die();
 }
-
 $courseid = required_param("courseid", PARAM_INT);
 $action = optional_param("action", "add", PARAM_INT);
+$category = optional_param('categoryid', 1, PARAM_INT);
 
-$context = context_course::instance($courseid);
-
-if( !has_capability("local/paperattendance:print", $context) ){
-	print_error("ACCESS DENIED");
+if($courseid > 1){
+	if($course = $DB->get_record("course", array("id" => $courseid))){
+		if($category == 1){
+			$category = $course->category;
+			$context = context_coursecat::instance($category);
+		}
+		else{
+			$context = context_coursecat::instance($category);
+		}
+	}
+}else{
+	$context = context_system::instance();
 }
 
-$urlprint = new moodle_url("/local/paperattendance/print.php", array("courseid" => $courseid));
+
+$contextsystem = context_system::instance();
+
+if(!has_capability("local/paperattendance:print", $context) && ! has_capability('local/paperattendance:upload', $contextsystem)){
+	print_error(get_string('notallowedupload', 'local_paperattendance'));
+}
+$urlprint = new moodle_url("/local/paperattendance/print.php", array(
+		"courseid" => $courseid,
+		"categoryid" => $category
+));
 // Page navigation and URL settings.
 $pagetitle = get_string('printtitle', 'local_paperattendance');
 $PAGE->set_context($context);
@@ -129,7 +143,7 @@ if($action == "add"){
 
 		$fs = get_file_storage();
 		$file_record = array(
-				'contextid' => $context->id,
+				'contextid' => $contextsystem->id,
 				'component' => 'local_paperattendance',
 				'filearea' => 'draft',
 				'itemid' => 0,
@@ -143,7 +157,7 @@ if($action == "add"){
 		);
 
 		// If the file already exists we delete it
-		if ($fs->file_exists($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
+		if ($fs->file_exists($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
 			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
 			$previousfile->delete();
 		}
