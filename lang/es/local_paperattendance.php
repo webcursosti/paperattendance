@@ -97,7 +97,16 @@ $string['synchronized']="Sincronizado";
 $string['unsynchronized']="Sin sincronizar";
 $string['module']="Módulo";
 $string['nonprocessingattendance']="Asistencia aun no procesada";
-
+$string['insertby']="Insertar por";
+$string['insertstudentinfo']="Inserte la información del alumno";
+$string['insertstudentmanually']="Insertar alumno manualmente";
+$string['studentstatus']="Estado";
+$string['idnumber']="Rut";
+$string['iderror']="Rut invalido";
+$string['mailuai']="Debes ingresar un correo UAI";
+$string['mailerror']="Correo Invalido";
+$string['filter'] ="Debe ser un correo UAI";
+$string['filter_help']="Debes ingresar el correo UAI del estudiante. Ejemplo: alumno@alumnos.uai.cl";
 
 // Settings
 $string['settings']="Configuración Básica";

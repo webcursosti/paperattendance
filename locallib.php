@@ -318,6 +318,7 @@ function paperattendance_readpdf($path, $filename, $course){
 	global $DB, $CFG;
 	
 	$return = FALSE;
+	mtrace("id curso ".$course);
 	$context = context_course::instance($course);
 	$objcourse = new stdClass();
 	$objcourse -> id = $course;
@@ -556,35 +557,35 @@ function paperattendance_get_qr_text($path, $pdf){
 	$qrtop->writeImage($path."topright".$qrpath);
 
 	unlink($path.$pdfname.'.png');
+	
 	// QR
 	$qrcodetop = new QrReader($path."topright".$qrpath);
 	$texttop = $qrcodetop->text(); //return decoded text from QR Code
-
+	
+	unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/topright".$qrpath);
+	
 	if($texttop == "" || $texttop == " " || empty($texttop)){
 
 		//check if there's a qr on the bottom right corner
-		$qrbottom = $imagick->getImageRegion($width*0.25, $height*0.14, $width*0.652, $height*0.846);
+		$qrbottom = $imagick->getImageRegion($width*0.12, $height*0.094, $width*0.710, $height*0.866);
 		$qrbottom->writeImage($path."bottomright".$qrpath);
 
 		// QR
 		$qrcodebottom = new QrReader($path."bottomright".$qrpath);
 		$textbottom = $qrcodebottom->text(); //return decoded text from QR Code
-
+		$imagick->clear();
+		unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/bottomright".$qrpath);
 		if($textbottom == "" || $textbottom == " " || empty($textbottom)){
 			return "error";
 		}
 		else {
-			//delete unused png
-			unlink($path."bottomright".$qrpath);
 			return $textbottom;
 		}
 	}
 	else {
-		//delete unused png
-		unlink($path."topright".$qrpath);
+		$imagick->clear();
 		return $texttop;
 	}
-	$imagick->clear();
 }
 
 
@@ -648,11 +649,11 @@ function paperattendance_check_session_modules($arraymodules, $courseid, $time){
 	}
 }
 
-function paperattendance_read_pdf_save_session($path, $pdffile){
+function paperattendance_read_pdf_save_session($path, $pdffile, $qrtext){
+	
 	//path must end with "/"
 	global $USER;
 
-	$qrtext = paperattendance_get_qr_text($path, $pdffile);
 	if($qrtext != "error"){
 		//if there's a readable qr
 
@@ -786,6 +787,21 @@ function paperattendance_recursiveremovedirectory($directory)
 		}
 	}
 	
+	//this comand delete the folder of the path, in this case we only want to delete the files inside the folder
+	//rmdir($directory);
+}
+
+//function for deleting pngs from moodle data unread folder
+function paperattendance_recursiveremovepng($directory)
+{
+	foreach(glob("{$directory}/*.png") as $file)
+	{
+		if(is_dir($file)) {
+			paperattendance_recursiveremovepng($file);
+		} else {
+			unlink($file);
+		}
+	}
 	//this comand delete the folder of the path, in this case we only want to delete the files inside the folder
 	//rmdir($directory);
 }
