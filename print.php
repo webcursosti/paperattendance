@@ -19,10 +19,12 @@
 *
 * @package    local
 * @subpackage paperattendance
-* @copyright  2016 Hans Jeria (hansjeria@gmail.com)
 * @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl)
+* @copyright  2016 Hans Jeria (hansjeria@gmail.com)
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
+
+
 require_once (dirname(dirname(dirname(__FILE__))) . "/config.php");
 require_once ($CFG->dirroot . "/local/paperattendance/forms/print_form.php");
 require_once ($CFG->libdir . '/pdflib.php');
@@ -31,39 +33,23 @@ require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php
 require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
 require_once ($CFG->dirroot . "/mod/emarking/print/locallib.php");
 require_once ("locallib.php");
-global $DB, $PAGE, $OUTPUT, $USER, $CFG;
+global $DB, $PAGE, $OUTPUT, $USER, $CFG, $COURSE;
 
 require_login();
 if (isguestuser()) {
-	print_error("ACCESS DENIED");
 	die();
 }
 
 $courseid = required_param("courseid", PARAM_INT);
 $action = optional_param("action", "add", PARAM_INT);
-$category = optional_param('categoryid', 1, PARAM_INT);
 
-if($course = $DB->get_record("course", array("id" => $courseid))){
-	if($category == 1){
-		$category = $course->category;
-	}
-}else{
-	print_error("Invalid Course ID");
-}
-
-$contextsecre = context_coursecat::instance($category);
 $context = context_course::instance($courseid);
 
-if(!has_capability("local/paperattendance:print", $context)){
-	if(!has_capability("local/paperattendance:print", $contextsecre)){
-		print_error("ACCESS DENIED");
-	}
+if( !has_capability("local/paperattendance:print", $context) ){
+	print_error("ACCESS DENIED");
 }
 
-$urlprint = new moodle_url("/local/paperattendance/print.php", array(
-		"courseid" => $courseid,
-		"categoryid" => $category
-));
+$urlprint = new moodle_url("/local/paperattendance/print.php", array("courseid" => $courseid));
 // Page navigation and URL settings.
 $pagetitle = get_string('printtitle', 'local_paperattendance');
 $PAGE->set_context($context);
@@ -226,6 +212,7 @@ datetwo.setDate(selectdate);
 datetwo.setMonth(selectmonth);
 datetwo.setFullYear(selectyear);
 
+omegamodulescheck(datetwo);
 comparedates(currentdate, datetwo);
 
 $('#id_sessiondate_day').change(function() {
@@ -248,10 +235,10 @@ $('#id_sessiondate_year').change(function() {
 
 
 function comparedates(currentdate, datetwo){
-
 	if (currentdate.getTime() === datetwo.getTime()){
 		$('.nomodulos').remove();
 		showmodules();	
+		omegamodulescheck(datetwo);
 		var count = hidemodules();
 		var currentcount = 0;
 		$('.felement').find('span').each(function( index ) {
@@ -264,26 +251,27 @@ function comparedates(currentdate, datetwo){
 	if (currentdate < datetwo ){
 		$('.nomodulos').remove();
 		showmodules();
+		omegamodulescheck(datetwo);
 	}
 	if (currentdate > datetwo ){
 		$('.nomodulos').remove();
 		hideallmodules();
 		$('.fgroup').first().append('<div class="nomodulos alert alert-warning">No hay módulos disponibles para la fecha seleccionada.</div>');
 	}
-	
-}
+	}
 
 function showmodules(){
 	$('.felement').find('span').each(function( index ) {
 		$(this).show();
 	});
-}
+	}
 
 function hideallmodules(){
+	$( "form input:checkbox" ).prop( "checked", false);
 	$('.felement').find('span').each(function( index ) {
 		$(this).hide();
 	});
-}
+	}
 
 function hidemodules(){
 	var count = 0;
@@ -304,58 +292,44 @@ function hidemodules(){
 		//compare
 		if(compare < now){
 			$(this).hide();
+			$(this).prop( "checked", false);
 			count++;
 		}
 
 		});
 
 	return count;
-}
-
-$( "form input:checkbox" ).change(function() {
-
-	var split = $(this).parent().text().split(':');
-    var hora = split[0];
-    var min = split[1]; 
-
-    if($(this).prop( "checked" )){
-    hide(hora, min);
-    }
-    else{
-    show(hora, min);
-    }
-	});
-	
-function hide(hora, min){
-	 
-    $( "form input:checkbox" ).each(function( index ) {
-	var split2 = $(this).parent().text().split(':');
-	var horacompare = split2[0];
-	var mincompare = split2[1];
-	//if (hora == horacompare && min != mincompare){
-	if (hora != horacompare || min != mincompare){
-		$(this).parent().fadeOut( "slow" );
-		uncheck(this);
 	}
-	});
-    }
-function show(hora, min){
-	 
-    $( "form input:checkbox" ).each(function( index ) {
-	var split2 = $(this).parent().text().split(':');
-	var horacompare = split2[0];
-	var mincompare = split2[1];
-	//if (hora == horacompare && min != mincompare){
-	if (hora != horacompare || min != mincompare){
-		$(this).parent().fadeIn();
-	}
-	});
-    comparedates(currentdate, datetwo);
-    }
 
-    function uncheck(where){
-    $( where ).prop( "checked", false);
-    }
+function omegamodulescheck(datetwo){
+	dayofweek = datetwo.getDay();
+	 $( "form input:checkbox" ).prop( "checked", false);
+	$.ajax({
+	    type: 'POST',
+	    url: 'ajax/paperattendance_ajax.php',
+	    data: {
+		      'action' : 'curlgetmoduloshorario',
+		      'omegaid' : '<?php echo ($course -> idnumber); ?>',	
+	    	  'diasemana': dayofweek,
+	    	  'url' : '<?php echo ($CFG->paperattendance_omegagetmoduloshorariosurl); ?>',
+	    	  'token': '<?php echo ($CFG->paperattendance_omegatoken); ?>',
+
+	    	},
+	    success: function (response) {
+	    	var data = $.parseJSON(response);  
+	       	$.each(data, function(index, datos) {
+				var horainicio = data[index].horaInicio;
+			    $( "form input:checkbox" ).each(function( index ) {
+			    	var horacompare = $(this).parent().text();
+			    	var split = horainicio.split(':');
+			    	if (split[0]+":"+split[1] == horacompare){
+			    		$(this).prop( "checked", true );
+			    	}
+			    });
+	       	});
+	    }  	
+	});
+	}
 
 });
 </script>
