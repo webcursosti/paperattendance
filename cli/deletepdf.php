@@ -24,7 +24,7 @@
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
-define('CLI_SCRIPT', true);
+//define('CLI_SCRIPT', true);
 require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 require_once ($CFG->libdir . '/clilib.php'); 
@@ -60,6 +60,7 @@ echo "\nStarting at ".date("F j, Y, G:i:s")."\n";
 $initialtime = time();
 
 $path = $CFG -> dataroot. "/temp/local/paperattendance/print/";
+$pathpng = $CFG -> dataroot. "/temp/local/paperattendance/unread/";
 
 //call de function to delete the files from the print folder in moodledata
 if (file_exists($path)) {
@@ -70,6 +71,14 @@ if (file_exists($path)) {
 	echo "\nerror, files not deleted";
 	
 }
+if (file_exists($pathpng)) {
+	paperattendance_recursiveremovepng($pathpng);
+	echo "\nall files deleted from the unread folder";
+	
+	}else{
+		echo "\nerror, files not deleted";
+	
+	}
 // Displays the time required to complete the process
 $finaltime = time();
 $executiontime = $finaltime - $initialtime;
