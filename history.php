@@ -28,23 +28,26 @@
 
 require_once (dirname(dirname(dirname(__FILE__)))."/config.php");
 require_once ($CFG->dirroot."/local/paperattendance/forms/history_form.php");
+require_once ($CFG->dirroot."/local/paperattendance/forms/addstudent_form.php");
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 
 global $DB, $PAGE, $OUTPUT, $USER, $CFG;
-
-$context = context_course::instance($COURSE->id);
-$url = new moodle_url("/local/paperattendance/history.php");
-$PAGE->set_url($url);
-$PAGE->set_context($context);
-$PAGE->set_pagelayout("standard");
-
-$contextsystem = context_system::instance();
 
 // Possible actions -> view, scan or students attendance . Standard is view mode
 $action = optional_param("action", "view", PARAM_TEXT);
 $idattendance = optional_param("idattendance", null, PARAM_INT);
 $idpresence = optional_param("idpresence", null, PARAM_INT);
 $idcourse = required_param('courseid', PARAM_INT);
+
+$context = context_course::instance($COURSE->id);
+$url = new moodle_url("/local/paperattendance/history.php", array('courseid' => $idcourse));
+$PAGE->set_url($url);
+$PAGE->set_context($context);
+$PAGE->set_pagelayout("standard");
+
+$contextsystem = context_system::instance();
+
+
 //Page
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = 26;
@@ -312,7 +315,12 @@ if( $isteacher || is_siteadmin($USER)) {
 			}
 		}
 		
-		$viewbackbutton = new moodle_url("/local/paperattendance/history.php", array("action" => "view", "courseid" => $idcourse));			
+		$viewbackbutton = new moodle_url("/local/paperattendance/history.php", array("action" => "view", "courseid" => $idcourse));	
+		$insertstudenturl = new moodle_url("/local/paperattendance/history.php", array(
+				"action" => "insertstudent",
+				"courseid" => $idcourse,
+				"idattendance" => $idattendance
+		));
 	}	
 	// Edits an existent record for the students attendance view
 	if($action == "edit"){
@@ -499,6 +507,40 @@ if( $isteacher || is_siteadmin($USER)) {
 		
 	}	
 	
+	if($action == "insertstudent"){
+		$mform = new paperattendance_addstudent_form(null, array(
+				"idcourse" => $idcourse,
+				"idattendance" => $idattendance
+		));
+		if($mform->is_cancelled()){
+			$goback = new moodle_url("/local/paperattendance/history.php", array(
+					"action" => "studentsattendance",
+					"idattendance" => $idattendance,
+					"courseid" => $idcourse
+			));
+			redirect($goback);
+		}
+		else if($data = $mform->get_data()){
+			$insertby = $data->insertby;
+			$filter = $data->filter;
+			$status = $data->status;
+			$user = $DB->get_record("user", array($insertby => $filter));
+			$addstudent = new stdClass();
+			$addstudent->sessionid = $idattendance;
+			$addstudent->userid = $user->id;
+			$addstudent->status = $status;
+			$addstudent->lastmodified = time();
+			$addstudent->omegasync = 0;
+			$insertattendance = $DB->insert_record("paperattendance_presence", $addstudent, false);
+			$goback = new moodle_url("/local/paperattendance/history.php", array(
+					"action" => "studentsattendance",
+					"idattendance" => $idattendance,
+					"courseid" => $idcourse
+			));
+			redirect($goback);
+		}
+	}
+	
 	$PAGE->set_title(get_string('historytitle', 'local_paperattendance'));
 	$PAGE->set_heading(get_string('historyheading', 'local_paperattendance'));
 	
@@ -506,7 +548,7 @@ if( $isteacher || is_siteadmin($USER)) {
 	
 	// Displays Students Attendance view
 	if ($action == "studentsattendance"){
-		
+		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "left"));
 		if (count($attendances) == 0){
 			echo html_writer::nonempty_tag("h4", get_string('nonprocessingattendance', 'local_paperattendance'), array("align" => "left"));
 		}
@@ -549,6 +591,11 @@ if( $isteacher || is_siteadmin($USER)) {
 			echo html_writer::table($attendancestable);
 		}
 		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left"));
+	}
+	
+	//Displays the insert student form
+	if($action == "insertstudent"){
+		$mform->display();
 	}
 
 }	
