@@ -107,6 +107,7 @@ $string['mailuai']="Debes ingresar un correo UAI";
 $string['mailerror']="Correo Invalido";
 $string['filter'] ="Debe ser un correo UAI";
 $string['filter_help']="Debes ingresar el correo UAI del estudiante. Ejemplo: alumno@alumnos.uai.cl";
+$string['missingpages'] ="Pdf incompleto, faltan páginas";
 
 // Settings
 $string['settings']="Configuración Básica";

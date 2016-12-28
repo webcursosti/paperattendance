@@ -107,6 +107,7 @@ $string['mailuai']="You must enter an UAI email";
 $string['mailerror']="Invalid Email";
 $string['filter'] ="It must be an UAI email";
 $string['filter_help']="You should enter the student's UAI email. Example: studentname@alumnos.uai.cl";
+$string['missingpages'] ="Incomplete Pdf, missing pages";
 
 // Settings
 $string['settings']="Basic Configuration";
