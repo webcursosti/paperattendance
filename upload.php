@@ -19,7 +19,8 @@
 * @package    local
 * @subpackage paperattendance
 * @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl) 
-* @copyright  2016 Hans Jeria (hansjeria@gmail.com) 					
+* @copyright  2016 Hans Jeria (hansjeria@gmail.com)
+* @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl)  					
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 //Pertenece al plugin PaperAttendance
@@ -104,8 +105,10 @@ if ($addform->get_data()) {
 	$attendancepdffile = $path . "/unread/paperattendance_".$courseid."_".$time.".pdf";
 	
 	//first check if there's a readable QR code 
-	//if(paperattendance_get_qr_text($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf") == "error"){
-	if(paperattendance_get_qr_text($path."/unread/", $filename) == "error"){
+	$qrtext = paperattendance_get_qr_text($path."/unread/", $filename);
+	if($qrtext == "error"){
+		//delete the unused pdf
+		unlink($path."/unread/".$filename);
 		$courseurl = new moodle_url('/course/view.php', array(
 				'id' => $courseid));
 		redirect($courseurl, get_string('couldntreadqrcode', 'local_paperattendance'), 3);
@@ -161,10 +164,10 @@ if ($addform->get_data()) {
 		$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
 		
 		//rotate pages of the pdf if necessary
-		paperattendance_rotate($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
+		//paperattendance_rotate($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
 		
 		//read pdf and save session and sessmodules
-		$pdfprocessed = paperattendance_read_pdf_save_session($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
+		$pdfprocessed = paperattendance_read_pdf_save_session($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf", $qrtext);
 		
 		if($pdfprocessed == "Perfect"){		
 			//delete unused pdf

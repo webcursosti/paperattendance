@@ -60,6 +60,7 @@ echo "\nStarting at ".date("F j, Y, G:i:s")."\n";
 $initialtime = time();
 
 $path = $CFG -> dataroot. "/temp/local/paperattendance/print/";
+$pathpng = $CFG -> dataroot. "/temp/local/paperattendance/unread/";
 
 //call de function to delete the files from the print folder in moodledata
 if (file_exists($path)) {
@@ -70,6 +71,14 @@ if (file_exists($path)) {
 	echo "\nerror, files not deleted";
 	
 }
+if (file_exists($pathpng)) {
+	paperattendance_recursiveremovepng($pathpng);
+	echo "\nall files deleted from the unread folder";
+	
+	}else{
+		echo "\nerror, files not deleted";
+	
+	}
 // Displays the time required to complete the process
 $finaltime = time();
 $executiontime = $finaltime - $initialtime;
