@@ -324,10 +324,7 @@ function omegamodulescheck(datetwo){
 	    data: {
 		      'action' : 'curlgetmoduloshorario',
 		      'omegaid' : '<?php echo ($course -> idnumber); ?>',	
-	    	  'diasemana': dayofweek,
-	    	  'url' : '<?php echo ($CFG->paperattendance_omegagetmoduloshorariosurl); ?>',
-	    	  'token': '<?php echo ($CFG->paperattendance_omegatoken); ?>',
-
+	    	  'diasemana': dayofweek
 	    	},
 	    success: function (response) {
 	    	var data = $.parseJSON(response);  

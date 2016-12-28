@@ -38,8 +38,8 @@ if (isguestuser()) {
 $action = required_param('action', PARAM_ALPHA);
 $omegaid = optional_param('omegaid', null, PARAM_TEXT);
 $diasemana = optional_param('diasemana', null, PARAM_TEXT);
-$token = optional_param('token', null, PARAM_TEXT);
-$url = optional_param('url', null, PARAM_TEXT);
+$token = $CFG->paperattendance_omegatoken;
+$url = $CFG->paperattendance_omegagetmoduloshorariosurl;
 
 switch ($action) {
 	case 'curlgetmoduloshorario' :
