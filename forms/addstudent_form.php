@@ -39,11 +39,15 @@ class paperattendance_addstudent_form extends moodleform {
 		$status = [get_string("absentattendance", "local_paperattendance"), get_string("presentattendance", "local_paperattendance")];
 		$mform->addElement("select", "insertby", get_string("insertby", "local_paperattendance"), $insertby);
 		$mform->addElement("text", "filter", get_string("insertstudentinfo", "local_paperattendance"));
+		$mform->setType("filter", PARAM_TEXT);
 		$mform->addHelpButton('filter', 'filter', 'local_paperattendance');
 		$mform->addElement("select", "status", get_string("studentstatus", "local_paperattendance"), $status);
 		$mform->addElement("hidden", "action", "insertstudent");
+		$mform->setType("action", PARAM_TEXT);
 		$mform->addElement("hidden", "courseid", $idcourse);
+		$mform->setType("courseid", PARAM_INT);
 		$mform->addElement("hidden", "idattendance", $idattendance);
+		$mform->setType("idattendance", PARAM_INT);
 		$this->add_action_buttons(true);
 	}
 	public function validation($data, $files){
@@ -51,6 +55,7 @@ class paperattendance_addstudent_form extends moodleform {
 		$errors = array();
 		$insertby = $data["insertby"];
 		$filter = $data["filter"];
+		$sessionid = $data["idattendance"];
 		if($insertby == "idnumber"){
 			if(!isset($filter) || empty($filter) || $filter == "" || $filter == null){
 				$errors["filter"] = get_string("iderror", "local_paperattendance");
@@ -60,16 +65,23 @@ class paperattendance_addstudent_form extends moodleform {
 			if(!isset($filter) || empty($filter) || $filter == "" || $filter == null){
 				$errors["filter"] = get_string("mailerror", "local_paperattendance");
 			}
+		}
+		if(empty($errors["filter"])){
+			$user = $DB->get_record("user", array($insertby => $filter));
+			if(!$user){
+					$errors["filter"] = get_string("nonexiststudent", "local_paperattendance");
+			}
 			else{
-				$email = explode("@", $filter);
-				if($email[1] != "alumnos.uai.cl"){
-					$errors["filter"] = get_string("mailuai", "local_paperattendance");
+				if($DB->record_exists("paperattendance_presence", array("userid"=>$user->id, "sessionid"=>$sessionid))){
+					$errors["filter"] = "usuario ya ingresado";
+				}
+				else{
+					$email = explode("@", $user->email);
+					if($email[1] != "alumnos.uai.cl"){
+						$errors["filter"] = get_string("nonexiststudent", "local_paperattendance");
+					}
 				}
 			}
-		}
-		if(!$DB->get_record("user", array($insertby => $filter))){
-			if(empty($errors["filter"]))
-				$errors["filter"] = get_string("nonexiststudent", "local_paperattendance");
 		}
 		return $errors;
 	}
