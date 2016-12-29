@@ -109,6 +109,7 @@ $string['filter'] ="Debe ser un correo UAI";
 $string['filter_help']="Debes ingresar el correo UAI del estudiante. Ejemplo: alumno@alumnos.uai.cl";
 $string['missingpages'] ="Pdf incompleto, faltan páginas";
 $string['modulesinfoomega'] ="Módulos por defecto vienen <strong>pre-checkeados desde omega</strong> para su curso actual y fecha seleccionada.";
+$string['notallowedprint'] ="No tienes permisos para imprimir";
 
 // Settings
 $string['settings']="Configuración Básica";
