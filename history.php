@@ -21,7 +21,8 @@
 * @package    local
 * @subpackage paperattendance
 * @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl) 	
-* @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl) 					
+* @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl) 
+* @copyright  2016 Cristobal Silva (cristobal.isilvap@gmail.com) 					
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 //Belongs to plugin PaperAttendance
@@ -107,19 +108,15 @@ if( $isteacher || is_siteadmin($USER)) {
 				p.status,
 				p.omegasync,
 				p.grayscale
-				FROM {course} AS c
-				INNER JOIN {context} AS ct ON (c.id = ct.instanceid)
-				INNER JOIN {role_assignments} AS ra ON (ra.contextid = ct.id)
-				INNER JOIN {user} AS u ON (u.id = ra.userid)
-				INNER JOIN {role} AS r ON (r.id = ra.roleid)
-				INNER JOIN {paperattendance_presence} AS p ON (u.id = p.userid)
-				WHERE c.id = ? AND r.archetype = "student" AND p.sessionid = ?  ';
+				FROM {paperattendance_presence} AS p
+				INNER JOIN {user} AS u ON (u.id = p.userid)
+				WHERE p.sessionid = ?  ';
 		
 		//$attendances = $DB->get_records_sql($getstudentsattendance, array($idcourse, $idattendance));
 		
 		//Getting attendances per page, initial page = 0.
 		//$attendances = $DB->get_records_sql($getstudentsattendance, $params, $page * $perpage, ($page + 1) * $perpage);
-		$attendances = $DB->get_records_sql($getstudentsattendance, $params, $page * $perpage, $perpage);
+		$attendances = $DB->get_records_sql($getstudentsattendance, array($idattendance), $page * $perpage, $perpage);
 		
 		$attendancestable = new html_table();
 		
@@ -548,11 +545,12 @@ if( $isteacher || is_siteadmin($USER)) {
 	
 	// Displays Students Attendance view
 	if ($action == "studentsattendance"){
-		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "left"));
 		if (count($attendances) == 0){
 			echo html_writer::nonempty_tag("h4", get_string('nonprocessingattendance', 'local_paperattendance'), array("align" => "left"));
 		}
 		else{
+			//displays button to add a student manually
+			echo html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "left"));
 			//displays the table
 			echo html_writer::table($attendancestable);
 			//displays de pagination bar
