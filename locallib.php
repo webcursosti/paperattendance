@@ -251,7 +251,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 		$pdf->line(20, $top, (20+8+25+20+90+20), $top);
 		$pdf->Ln();
 		
-		if($current%26 == 0 && $current != 0){
+		if($current%26 == 0 && $current != 0 && count($studentinfo) > $current){
 			$pdf->AddPage();
 			$top = 35;
 			
