@@ -110,6 +110,16 @@ $string['filter_help']="Debes ingresar el correo UAI del estudiante. Ejemplo: al
 $string['missingpages'] ="Pdf incompleto, faltan páginas";
 $string['modulesinfoomega'] ="Módulos por defecto vienen <strong>pre-checkeados desde omega</strong> para su curso actual y fecha seleccionada.";
 $string['notallowedprint'] ="No tienes permisos para imprimir";
+$string['insertby']="Insertar por";
+$string['insertstudentinfo']="Inserte la información del alumno";
+$string['insertstudentmanually']="Insertar alumno manualmente";
+$string['studentstatus']="Estado";
+$string['idnumber']="Rut";
+$string['iderror']="Rut invalido";
+$string['mailerror']="Correo Invalido";
+$string['filter'] ="Ayuda para insertar un alumno";
+$string['filter_help']="<ul><li>Por correo: Debes ingresar el correo UAI del estudiante. Ejemplo: alumno@alumnos.uai.cl</li><li>Por rut: No debe contener puntos ni el digito verificador. Ejemplo: 19123456</li></ul>";
+
 
 // Settings
 $string['settings']="Configuración Básica";
