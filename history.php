@@ -427,7 +427,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
 				WHERE s.courseid = ?
-				ORDER BY sm.date ASC";
+				ORDER BY sm.date DESC";
 		
 		$attendances = $DB->get_records_sql($getattendances, array($idcourse));
 		
@@ -620,7 +620,7 @@ else if ($isstudent) {
 				INNER JOIN {paperattendance_presence} AS p ON (s.id = p.sessionid)
 				INNER JOIN {user} AS u ON (u.id = p.userid)
 				WHERE s.courseid = ? AND u.id = ?
-				ORDER BY sm.date ASC";
+				ORDER BY sm.date DESC";
 	
 		$attendances = $DB->get_records_sql($getstudentattendances, array($idcourse, $USER->id));
 	
