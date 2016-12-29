@@ -143,7 +143,7 @@ if($action == "add"){
 
 		$fs = get_file_storage();
 		$file_record = array(
-				'contextid' => $contextsystem->id,
+				'contextid' => $context->id,
 				'component' => 'local_paperattendance',
 				'filearea' => 'draft',
 				'itemid' => 0,
@@ -157,7 +157,7 @@ if($action == "add"){
 		);
 
 		// If the file already exists we delete it
-		if ($fs->file_exists($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
+		if ($fs->file_exists($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
 			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
 			$previousfile->delete();
 		}
