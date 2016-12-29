@@ -137,6 +137,7 @@ if ($addform->get_data()) {
 		$students->close();
 		$pages = ceil($count/26);
 		if ($pages != $pagecount){
+			unlink($path."/unread/".$filename);
 			$courseurl = new moodle_url('/course/view.php', array(
 					'id' => $courseid));
 			redirect($courseurl, get_string('missingpages', 'local_paperattendance'), 3);
