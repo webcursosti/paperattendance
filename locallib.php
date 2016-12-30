@@ -171,17 +171,8 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 		$teachersnames[] = $teacher->firstname . ' ' . $teacher->lastname;
 	}
 	$teacherstring = implode(',', $teachersnames);
-	$stringmodules = "";
-	foreach ($modules as $key => $value){
-		if($value == 1){
-			$schedule = explode("*", $key);
-			if($stringmodules == ""){
-				$stringmodules .= $schedule[1]." - ".$schedule[2];
-			}else{
-				$stringmodules .= " / ".$schedule[1]." - ".$schedule[2];
-			}
-		}
-	}
+	$schedule = explode("*", $modules);
+	$stringmodules = $schedule[1]." - ".$schedule[2];
 	// Write teacher name.
 	$teachertrimmedtext = trim_text($teacherstring,30);
 	$top += 4;
