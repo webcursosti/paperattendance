@@ -124,12 +124,13 @@ function paperattendance_students_list($contextid, $course){
  */
 function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $qrstring, $webcursospath, $sessiondate) {
 	global $CFG;
+	$modulecount = 1;
 	// Pages should be added automatically while the list grows.
 	$pdf->SetAutoPageBreak(false);
 	$pdf->AddPage();
 	$pdf->SetFont('Helvetica', '', 8);
 	// Top QR
-	$qrfilename = paperattendance_create_qr_image($qrstring.$pdf->PageNo(), $qrpath);
+	$qrfilename = paperattendance_create_qr_image($qrstring.$modulecount, $qrpath);
 	$goodcirlepath = $CFG->dirroot . '/local/paperattendance/img/goodcircle.png';
 	$pdf->Image($qrpath."/".$qrfilename, 153, 5, 35);
 	// Botton QR, messege to fill the circle and Webcursos Logo
@@ -245,11 +246,12 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 		if($current%26 == 0 && $current != 0 && count($studentinfo) > $current){
 			$pdf->AddPage();
 			$top = 35;
+			$modulecount++;
 			
 			// Logo UAI and Top QR
 			$pdf->Image($logofilepath, 20, 15, 50);
 			// Top QR
-			$qrfilename = paperattendance_create_qr_image($qrstring.$pdf->PageNo(), $qrpath);
+			$qrfilename = paperattendance_create_qr_image($qrstring.$modulecount, $qrpath);
 			//echo $qrfilename."  ".$qrpath."<br>";
 			$pdf->Image($qrpath."/".$qrfilename, 153, 5, 35);
 			
