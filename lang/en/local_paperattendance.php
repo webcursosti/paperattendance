@@ -145,8 +145,9 @@ $string['task']="Process PDFs";
 $string['taskdelete']="Delete PDFs";
 
 // Capabilities
-$string["paperattendance:print"] = "View list";
-$string["paperattendance:upload"] = "Upload scaner list";
+$string["paperattendance:print"] = "Print attendance list";
+$string["paperattendance:printsecre"] =  "Print attendance list";
+$string["paperattendance:upload"] = "Upload scanned list";
 $string["paperattendance:history"] = "View history attendance";
 $string["paperattendance:manageattendance"] = "Setting paper attendance";
 $string["paperattendance:modules"] = "Manage modules";
