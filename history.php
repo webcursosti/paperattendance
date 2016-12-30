@@ -84,20 +84,14 @@ if( $isteacher || is_siteadmin($USER)) {
 		$PAGE->navbar->add(get_string('studentsattendance', 'local_paperattendance'),
 				new moodle_url("/local/paperattendance/history.php", array("courseid" => $idcourse , "idattendance" => $idattendance, "action" => $action)));
 		
-		
-		$params = array($idcourse, $idattendance);
 		//Query for the total count of attendances
 		$getstudentsattendancecount = 'SELECT
 				count(*)
-				FROM {course} AS c
-				INNER JOIN {context} AS ct ON (c.id = ct.instanceid)
-				INNER JOIN {role_assignments} AS ra ON (ra.contextid = ct.id)
-				INNER JOIN {user} AS u ON (u.id = ra.userid)
-				INNER JOIN {role} AS r ON (r.id = ra.roleid)
-				INNER JOIN {paperattendance_presence} AS p ON (u.id = p.userid)
-				WHERE c.id = ? AND r.archetype = "student" AND p.sessionid = ?  ';
+				FROM {paperattendance_presence} AS p
+				INNER JOIN {user} AS u ON (u.id = p.userid)
+				WHERE p.sessionid = ? ';
 		
-		$attendancescount = $DB->count_records_sql($getstudentsattendancecount, $params);
+		$attendancescount = $DB->count_records_sql($getstudentsattendancecount, array($idattendance));
 		
 		//Query to get the table data of attendances
 		$getstudentsattendance = 'SELECT
@@ -427,7 +421,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
 				WHERE s.courseid = ?
-				ORDER BY sm.date ASC";
+				ORDER BY sm.date DESC";
 		
 		$attendances = $DB->get_records_sql($getattendances, array($idcourse));
 		
@@ -620,7 +614,7 @@ else if ($isstudent) {
 				INNER JOIN {paperattendance_presence} AS p ON (s.id = p.sessionid)
 				INNER JOIN {user} AS u ON (u.id = p.userid)
 				WHERE s.courseid = ? AND u.id = ?
-				ORDER BY sm.date ASC";
+				ORDER BY sm.date DESC";
 	
 		$attendances = $DB->get_records_sql($getstudentattendances, array($idcourse, $USER->id));
 	

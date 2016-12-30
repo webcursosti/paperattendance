@@ -112,21 +112,17 @@ if($action == "add"){
 			throw new Exception('No students to print');
 		}
 		// Contruction string for QR encode
-		$arraymodules = "";
 		foreach ($modules as $key => $value){
 			if($value == 1){
 				$schedule = explode("*", $key);
-				if($arraymodules == ""){
-					$arraymodules .= $schedule[0];
-				}else{
-					$arraymodules .= ":".$schedule[0];
-				}
+				$arraymodule = $schedule[0];
+				$stringqr = $courseid."*".$requestor."*".$arraymodule."*".$sessiondate."*";
+				
+				paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $key, $path, $stringqr, $webcursospath, $sessiondate);
+				
 			}
 		}
 
-		$stringqr = $courseid."*".$requestor."*".$arraymodules."*".$sessiondate."*";
-
-		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $modules, $path, $stringqr, $webcursospath, $sessiondate);
 		// Created new pdf
 		$pdf->Output($attendancepdffile, "F");
 
