@@ -109,7 +109,7 @@ $string['modulesinfoomega'] ="Default modules are <strong>checked from omega</st
 $string['notallowedprint'] ="Not allowed to print";
 $string['filter'] ="Help to add a student";
 $string['filter_help']="<ul><li>By email: You should enter the student's UAI email. Example: studentname@alumnos.uai.cl</li><li>By ID number: It must be the ID number without point and the check digit. Example: 19123456</li></ul>";
-$string['alreadyinsertedstudent'] = "Student has already been added.";string['filter_help']="<ul><li>By email: You should enter the student's UAI email. Example: studentname@alumnos.uai.cl</li><li>By ID number: It must be the ID number without point and the check digit. Example: 19123456</li></ul>";
+$string['alreadyinsertedstudent'] = "Student has already been added.";
 
 // Settings
 $string['settings']="Basic Configuration";
