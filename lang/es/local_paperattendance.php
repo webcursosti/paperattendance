@@ -136,7 +136,8 @@ $string['task']="Procesar PDFs";
 $string['taskdelete']="Borrar PDFs";
 
 // Capabilities
-$string["paperattendance:print"] = "Ver impresiones de listas";
+$string["paperattendance:print"] = "Imprimir lista";
+$string["paperattendance:printsecre"] = "Imprimir lista";
 $string["paperattendance:upload"] = "Subir listas escaneadas";
 $string["paperattendance:history"] = "Ver historial de asistencias";
 $string["paperattendance:manageattendance"] = "Configuración asistencias en papel";
