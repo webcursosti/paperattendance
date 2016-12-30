@@ -103,22 +103,13 @@ $string['insertstudentmanually']="Insert student manually";
 $string['studentstatus']="Status";
 $string['idnumber']="ID number (RUT)";
 $string['iderror']="Invalid ID";
-$string['mailuai']="You must enter an UAI email";
 $string['mailerror']="Invalid Email";
-$string['filter'] ="It must be an UAI email";
-$string['filter_help']="You should enter the student's UAI email. Example: studentname@alumnos.uai.cl";
 $string['missingpages'] ="Incomplete Pdf, missing pages";
 $string['modulesinfoomega'] ="Default modules are <strong>checked from omega</strong> for your current course and selected date.";
 $string['notallowedprint'] ="Not allowed to print";
-$string['insertby']="Insert by";
-$string['insertstudentinfo']="Insert the student info";
-$string['insertstudentmanually']="Insert student manually";
-$string['studentstatus']="Status";
-$string['idnumber']="ID number (Rut)";
-$string['iderror']="Invalid ID";
-$string['mailerror']="Invalid Email";
 $string['filter'] ="Help to add a student";
 $string['filter_help']="<ul><li>By email: You should enter the student's UAI email. Example: studentname@alumnos.uai.cl</li><li>By ID number: It must be the ID number without point and the check digit. Example: 19123456</li></ul>";
+$string['alreadyinsertedstudent'] = "Student has already been added.";string['filter_help']="<ul><li>By email: You should enter the student's UAI email. Example: studentname@alumnos.uai.cl</li><li>By ID number: It must be the ID number without point and the check digit. Example: 19123456</li></ul>";
 
 // Settings
 $string['settings']="Basic Configuration";

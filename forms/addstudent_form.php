@@ -73,7 +73,7 @@ class paperattendance_addstudent_form extends moodleform {
 			}
 			else{
 				if($DB->record_exists("paperattendance_presence", array("userid"=>$user->id, "sessionid"=>$sessionid))){
-					$errors["filter"] = "usuario ya ingresado";
+					$errors["filter"] = get_string("alreadyinsertedstudent", "local_paperattendance");
 				}
 				else{
 					$email = explode("@", $user->email);
