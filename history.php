@@ -433,21 +433,26 @@ if( $isteacher || is_siteadmin($USER)) {
 					get_string('date', 'local_paperattendance'),
 					get_string('time', 'local_paperattendance'),
 					get_string('scan', 'local_paperattendance'),
-					get_string('studentsattendance', 'local_paperattendance')
+					get_string('studentsattendance', 'local_paperattendance'),
+					get_string('omegasync', 'local_paperattendance')
 			);
 			$attendancestable->size = array(
-					'10%',
-					'32%',
-					'22%',
-					'18%',
-					'18%');
+					'9%',
+					'33%',
+					'19%',
+					'16%',
+					'16%',
+					'17%'
+			);
 				
 			$attendancestable->align = array(
 					'left',
 					'left',
 					'left',
 					'center',
-					'center');
+					'center',
+					'center'
+			);
 				
 			//A mere counter for the number of records
 			$counter = 1;
@@ -477,21 +482,55 @@ if( $isteacher || is_siteadmin($USER)) {
 						$studentsattendanceicon_attendance
 						);
 				
+				//Define synchronized or unsynchronized icon and url
+				$urlomegasync = new moodle_url("#");
+				
+				$synchronizedicon = new pix_icon("t/go", get_string('synchronized', 'local_paperattendance'));
+				
+				$synchronizediconaction = $OUTPUT->action_icon(
+						$urlomegasync,
+						$synchronizedicon
+						);
+				
+				$unsynchronizedicon = new pix_icon("i/scheduled", get_string('unsynchronized', 'local_paperattendance'));
+				
+				$unsynchronizediconaction = $OUTPUT->action_icon(
+						$urlomegasync,
+						$unsynchronizedicon
+						);
+				//Convert the unix date to a local date
 				$date= $attendance->date;
 				$dateconverted = paperattendance_convertdate($date);
-				//var_dump(paperattendance_convertdate($date));
-				$attendancestable->data[] = array(
-						$counter,
-						//date("d-m-Y", $attendance->date),
-						//date("l jS F g:ia", $attendance->date), in english with hour
-						//date("l jS F", $attendance->date), in english
-						//ucfirst(strftime("%A, %d de %B del %Y", $attendance->date)) in spanish
-						$dateconverted,
-						$attendance->hour,
-						$scanaction_attendance,
-						$studentsattendanceaction_attendance
-				);
-				$counter++;
+				
+				//We get the total count of sync students for this session
+				$synchronizedstudentnscount = paperattendance_getcountstudentssynchronizedbysession($attendance->id);
+				//We get the total count of students for this session
+				$studentscount = paperattendance_getcountstudentsbysession($attendance->id);
+				//Check if this session is fully synchronized with omega and create de table
+				if ( $synchronizedstudentnscount == $studentscount){
+					
+					$attendancestable->data[] = array(
+							$counter,
+							$dateconverted,
+							$attendance->hour,
+							$scanaction_attendance,
+							$studentsattendanceaction_attendance,
+							$synchronizediconaction
+					);
+					$counter++;
+					
+				}
+				else {
+					$attendancestable->data[] = array(
+							$counter,
+							$dateconverted,
+							$attendance->hour,
+							$scanaction_attendance,
+							$studentsattendanceaction_attendance,
+							$unsynchronizediconaction
+					);
+					$counter++;
+				}
 			}
 		}
 		$buttonurl = new moodle_url("/course/view.php", array("id" => $idcourse));
