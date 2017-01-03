@@ -302,7 +302,6 @@ function omegamodulescheck(datetwo, when){
 	 $( "form input:checkbox" ).prop( "checked", false);
 	$.ajax({
 	    type: 'POST',
-	    async: false,
 	    url: 'ajax/paperattendance_ajax.php',
 	    data: {
 		      'action' : 'curlgetmoduloshorario',
