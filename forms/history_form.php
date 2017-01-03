@@ -27,12 +27,15 @@ require_once ($CFG->libdir."/formslib.php");
 class editattendance extends moodleform {
 
 	function definition (){
+		global $DB;
 
 		$mform = $this->_form;
 		$instance = $this->_customdata;
 		$idattendance = $instance["idattendance"];
 		$courseid = $instance["courseid"];
 		$idpresence = $instance["idpresence"];
+		
+		$presence = $DB->get_record("paperattendance_presence", array('id'=>$idpresence));
 
 		// Select user input
 		$status = array();
@@ -43,7 +46,7 @@ class editattendance extends moodleform {
 		$status[1] = get_string('presentattendance', 'local_paperattendance');
 		
 		$mform->addElement("select", "status", "Asistencia alumno", $status);
-
+		$mform->setDefault("status", $presence->status);
 		
 		// Set action to "edit"
 		$mform->addElement("hidden", "action", "edit");
@@ -53,8 +56,8 @@ class editattendance extends moodleform {
 		$mform->setType("idattendance", PARAM_INT);
 		$mform->addElement("hidden", "courseid", $courseid);
 		$mform->setType("courseid", PARAM_INT);
-		$mform->addElement("hidden", "idpresence", $idpresence);
-		$mform->setType("idpresence", PARAM_INT);
+		$mform->addElement("hidden", "omegaid", $presence->omegaid);
+		$mform->setType("omegaid", PARAM_INT);
 		
 
 		$this->add_action_buttons(true);

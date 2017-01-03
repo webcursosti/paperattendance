@@ -358,7 +358,7 @@ if( $isteacher || is_siteadmin($USER)) {
 					$DB->update_record("paperattendance_presence", $record);
 					
 					if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
-					paperattendance_omegaupdateattendance($idpresence, $record->status, $idattendance);
+					paperattendance_omegaupdateattendance($record->status, $record->omegaid);
 					}
 					
 					$backurl = new moodle_url("/local/paperattendance/history.php", array(
@@ -398,9 +398,9 @@ if( $isteacher || is_siteadmin($USER)) {
 				));
 		
 		$getpdfname = 'SELECT
-				pdf
-				FROM {paperattendance_session} AS ps
-				WHERE ps.id = ?';
+					   pdf
+				       FROM {paperattendance_session} AS ps
+				       WHERE ps.id = ?';
 		
 		$pdfname = $DB->get_record_sql($getpdfname, array($idattendance));
 		
@@ -417,11 +417,11 @@ if( $isteacher || is_siteadmin($USER)) {
 	// Lists all records in the database
 	if ($action == "view"){
 		$getattendances = "SELECT s.id, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, s.pdf
-				FROM {paperattendance_session} AS s
-				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
-				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
-				WHERE s.courseid = ?
-				ORDER BY sm.date DESC";
+						   FROM {paperattendance_session} AS s
+						   INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
+						   INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
+						   WHERE s.courseid = ?
+						   ORDER BY sm.date DESC";
 		
 		$attendances = $DB->get_records_sql($getattendances, array($idcourse));
 		
