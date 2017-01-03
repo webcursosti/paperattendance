@@ -358,7 +358,7 @@ if( $isteacher || is_siteadmin($USER)) {
 					$DB->update_record("paperattendance_presence", $record);
 					
 					if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
-					paperattendance_omegaupdateattendance($idpresence, $record->status, $idattendance);
+					paperattendance_omegaupdateattendance($idpresence, $record->status, $record->omegaid);
 					}
 					
 					$backurl = new moodle_url("/local/paperattendance/history.php", array(
