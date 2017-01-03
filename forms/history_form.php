@@ -45,7 +45,7 @@ class editattendance extends moodleform {
 		$status[0] = get_string('absentattendance', 'local_paperattendance');
 		$status[1] = get_string('presentattendance', 'local_paperattendance');
 		
-		$mform->addElement("select", "status", "Asistencia alumno", $status);
+		$mform->addElement("select", "status",  get_string('attendance', 'local_paperattendance'), $status);
 		$mform->setDefault("status", $presence->status);
 		
 		// Set action to "edit"
