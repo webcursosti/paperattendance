@@ -211,7 +211,6 @@ datetwo.setDate(selectdate);
 datetwo.setMonth(selectmonth);
 datetwo.setFullYear(selectyear);
 
-omegamodulescheck(datetwo);
 comparedates(currentdate, datetwo);
 
 $('#id_sessiondate_day').change(function() {

@@ -923,27 +923,12 @@ function paperattendance_getusername($userid){
 	return $username;
 }
 
-function paperattendance_omegaupdateattendance($presenceid, $update, $sessid){
+function paperattendance_omegaupdateattendance($update, $omegaid){
 	global $CFG, $DB;
 	//CURL UPDATE ATTENDANCE OMEGA
-	$curl = curl_init();
+
 	$url =  $CFG->paperattendance_omegaupdateattendanceurl;
 	$token =  $CFG->paperattendance_omegatoken;
-
-	$sqldatemodule = "SELECT sessmodule.id, FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
-					FROM {paperattendance_sessmodule} AS sessmodule
-					INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
-	$sqldatemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
-	$fecha = $sqldatemodule -> date;
-	$modulo = $sqldatemodule -> time;
-
-	$sqluserid = "SELECT userid
-					FROM {paperattendance_presence}
-					WHERE id = ?";
-	$sqluserid = $DB->get_record_sql($sqluserid, array($presenceid));
-	$userid = $sqluserid -> userid;
-	$username = paperattendance_getusername($userid);
-
 
 	if($update == 1){
 		$update = "true";
@@ -953,13 +938,12 @@ function paperattendance_omegaupdateattendance($presenceid, $update, $sessid){
 	}
 
 	$fields = array (
-			"hora" => $modulo,
-			"fecha" => $fecha,
-			"emailAlumno" => $username,
 			"token" => $token,
+			"asistenciaId" => $omegaid,
 			"asistencia" => $update
 	);
 
+	$curl = curl_init();
 	curl_setopt($curl, CURLOPT_URL, $url);
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
 	curl_setopt($curl, CURLOPT_POST, TRUE);
