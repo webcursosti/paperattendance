@@ -236,7 +236,7 @@ function comparedates(currentdate, datetwo){
 	if (currentdate.getTime() === datetwo.getTime()){
 		$('.nomodulos').remove();
 		showmodules();	
-		omegamodulescheck(datetwo);
+		omegamodulescheck(datetwo, 'today');
 		var count = hidemodules();
 		var currentcount = 0;
 		$('.felement').find('span').each(function( index ) {
@@ -249,7 +249,7 @@ function comparedates(currentdate, datetwo){
 	if (currentdate < datetwo ){
 		$('.nomodulos').remove();
 		showmodules();
-		omegamodulescheck(datetwo);
+		omegamodulescheck(datetwo, 'showall');
 	}
 	if (currentdate > datetwo ){
 		$('.nomodulos').remove();
@@ -286,11 +286,9 @@ function hidemodules(){
 		// now time
 		var now = new Date();
 		now.setMinutes(now.getMinutes() - <?php echo ($CFG->paperattendance_minuteslate); ?>);
-
 		//compare
 		if(compare < now){
 			$(this).hide();
-			$(this).prop( "checked", false);
 			count++;
 		}
 
@@ -299,11 +297,12 @@ function hidemodules(){
 	return count;
 	}
 
-function omegamodulescheck(datetwo){
+function omegamodulescheck(datetwo, when){
 	dayofweek = datetwo.getDay();
 	 $( "form input:checkbox" ).prop( "checked", false);
 	$.ajax({
 	    type: 'POST',
+	    async: false,
 	    url: 'ajax/paperattendance_ajax.php',
 	    data: {
 		      'action' : 'curlgetmoduloshorario',
@@ -311,20 +310,48 @@ function omegamodulescheck(datetwo){
 	    	  'diasemana': dayofweek
 	    	},
 	    success: function (response) {
+
 	    	var data = $.parseJSON(response);  
 	       	$.each(data, function(index, datos) {
 				var horainicio = data[index].horaInicio;
-			    $( "form input:checkbox" ).each(function( index ) {
-			    	var horacompare = $(this).parent().text();
-			    	var split = horainicio.split(':');
-			    	if (split[0]+":"+split[1] == horacompare){
-			    		$(this).prop( "checked", true );
-			    	}
-			    });
+		    	var split = horainicio.split(':');
+		    	horamodulo = split[0]+":"+split[1];
+		    	omegacheckorhide(horamodulo , when);
 	       	});
 	    }  	
 	});
 	}
+
+function omegacheckorhide(module, when){
+
+    $( "form input:checkbox" ).each(function( index ) {
+        
+		var result = $(this).parent().text().split(':');
+		
+		//compare time
+		var compare = new Date();
+		compare.setHours(result[0]);
+		compare.setMinutes(result[1]);
+		compare = new Date(compare);
+
+		// now time
+		var now = new Date();
+		now.setMinutes(now.getMinutes() - <?php echo ($CFG->paperattendance_minuteslate); ?>);
+		//compare
+		
+    	if (module == $(this).parent().text()){
+    		$(this).prop( "checked", true );
+    	}
+
+		if(when != "showall"){
+		if(compare < now){
+			$(this).parent().hide();
+			//$(this).parent().children("form input:checkbox").prop("checked", false);
+			$(this).prop( "checked", false );
+		}
+		}
+    });
+}
 
 });
 </script>
