@@ -979,3 +979,30 @@ function paperattendance_checktoken($token){
 	}
 }
 
+function paperattendance_getcountstudentssynchronizedbysession($sessionid){
+	//Query for the total count of synchronized students
+	global $DB;
+	$query = 'SELECT
+				count(*)
+				FROM {paperattendance_session} AS s
+				INNER JOIN {paperattendance_presence} AS p ON (s.id = p.sessionid AND p.omegasync = ?)
+				WHERE p.sessionid = ?';
+	
+	$attendancescount = $DB->count_records_sql($query, array(1, $sessionid));
+	return $attendancescount;
+	
+}
+
+function paperattendance_getcountstudentsbysession($sessionid){
+	//Query for the total count of students in a session
+	global $DB;
+	$query = 'SELECT
+				count(*)
+				FROM {paperattendance_session} AS s
+				INNER JOIN {paperattendance_presence} AS p ON (s.id = p.sessionid)
+				WHERE p.sessionid = ?';
+
+	$attendancescount = $DB->count_records_sql($query, array($sessionid));
+	return $attendancescount;
+
+}
