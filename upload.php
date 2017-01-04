@@ -43,6 +43,7 @@ if (isguestuser()) {
 }
 $courseid = optional_param('courseid',1, PARAM_INT);
 $category = optional_param('categoryid', 1, PARAM_INT);
+$action = optional_param('action', 'viewform', PARAM_TEXT);
 
 if($courseid > 1){
 	if($course = $DB->get_record("course", array("id" => $courseid))){
@@ -107,22 +108,32 @@ if ($addform->get_data()) {
 	$fs = get_file_storage();
 	if ($files = $fs->get_area_files($context->id, 'local_paperattendance', 'file', '0', 'sortorder', false)) {
 		$filecount = 1;
+		$messages = array();
 		foreach ($files as $file) {
 			$time = strtotime(date("d-m-Y H:s:i"));
 			$filename = "paperattendance_".$courseid."_".$time."_".$filecount.".pdf";
-			echo paperattendance_uploadattendances($file, $path, $filename, $context, $contextsystem);
+			$messages[] = paperattendance_uploadattendances($file, $path, $filename, $context, $contextsystem);
 			$filecount++;
 		}
 	}
+	$action = "viewmessages";
 }
 // If there is no data or is it not cancelled show the header, the tabs and the form.
 echo $OUTPUT->header();
-if($courseid && $courseid != 1){
-	echo $OUTPUT->heading("Subir lista escaneada " . $course->shortname . " " . $course->fullname);
-}else{
-	echo $OUTPUT->heading("Subir lista escaneada ");
+if($action == "viewform"){
+	if($courseid && $courseid != 1){
+		echo $OUTPUT->heading("Subir lista escaneada " . $course->shortname . " " . $course->fullname);
+	}else{
+		echo $OUTPUT->heading("Subir lista escaneada ");
+	}
+	// Display the form.
+	$addform->display();
 }
-// Display the form.
-$addform->display();
+if($action == "viewmessages"){
+	foreach($messages as $message){
+		echo $message;
+	}
+	echo $OUTPUT->single_button($url, get_string("printgoback","local_paperattendance"));
+}
 
 echo $OUTPUT->footer();
