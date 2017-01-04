@@ -47,8 +47,14 @@ class paperattendance_upload_form extends moodleform {
 		
 		//header
 		$mform->addElement('header', 'header', get_string('header', 'local_paperattendance'));
-		//filepicker
-		$mform->addElement('filepicker', 'file', get_string('uploadfilepicker', 'local_paperattendance'), null, array('maxbytes' => $maxbytes, 'accepted_types' =>array('*.pdf')));	
+		//filemanager
+		$mform->addElement('filemanager', 'file', get_string('uploadfilepicker', 'local_paperattendance'), null,
+				array(
+						'subdirs' => 0,
+						'maxbytes' => 0,
+						'maxfiles' => 10,
+						'accepted_types' =>array('*.pdf'))
+				);
 		$mform->setType('file', PARAM_FILE);
 		$mform->addRule('file', get_string('uploadrule', 'local_paperattendance'), 'required', null, 'client');
 		
