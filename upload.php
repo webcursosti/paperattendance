@@ -20,7 +20,8 @@
 * @subpackage paperattendance
 * @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl) 
 * @copyright  2016 Hans Jeria (hansjeria@gmail.com)
-* @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl)  					
+* @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl)  	
+* @copyright  2016 Cristobal Silva (cristobal.isilvap@gmail.com) 				
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 //Pertenece al plugin PaperAttendance
@@ -42,6 +43,7 @@ if (isguestuser()) {
 }
 $courseid = optional_param('courseid',1, PARAM_INT);
 $category = optional_param('categoryid', 1, PARAM_INT);
+$action = optional_param('action', 'viewform', PARAM_TEXT);
 
 if($courseid > 1){
 	if($course = $DB->get_record("course", array("id" => $courseid))){
@@ -99,132 +101,39 @@ if ($addform->get_data()) {
 	$path = $CFG -> dataroot. "/temp/local/paperattendance";
 	if (!file_exists($path . "/unread/")) {
 			mkdir($path . "/unread/", 0777, true);
-	}	
-	// Save file
-	$filename = $addform->get_new_filename('file');
-	$file = $addform->save_file('file', $path."/unread/".$filename, false);
-	$time = strtotime(date("d-m-Y H:s:i"));
-	// Validate that file was correctly uploaded.
-	$attendancepdffile = $path . "/unread/paperattendance_".$courseid."_".$time.".pdf";
-	
-	//first check if there's a readable QR code 
-	$qrtext = paperattendance_get_qr_text($path."/unread/", $filename);
-	if($qrtext == "error"){
-		//delete the unused pdf
-		unlink($path."/unread/".$filename);
-		$courseurl = new moodle_url('/course/view.php', array(
-				'id' => $courseid));
-		redirect($courseurl, get_string('couldntreadqrcode', 'local_paperattendance'), 3);
-		die();
 	}
-	
-	//read pdf and rewrite it 
-	$pdf = new FPDI();
-	// get the page count
-	$pagecount = $pdf->setSourceFile($path."/unread/".$filename);
-	if($pagecount){
-		$idcourseexplode = explode("*",$qrtext);
-		$idcourse = $idcourseexplode[0];
-		
-		$object = new stdClass();
-		$object -> id = $idcourse;
-		$students = paperattendance_get_students_for_printing($object);
-		//now we count the students in course
-		$count = 0;
-		foreach($students as $student) {
-			$count ++;
-		}
-		$students->close();
-		$pages = ceil($count/26);
-		if ($pages != $pagecount){
-			unlink($path."/unread/".$filename);
-			$courseurl = new moodle_url('/course/view.php', array(
-					'id' => $courseid));
-			redirect($courseurl, get_string('missingpages', 'local_paperattendance'), 3);
-			die();
-			
-		}
-		
-		// iterate through all pages
-		for ($pageno = 1; $pageno <= $pagecount; $pageno++) {
-		    // import a page
-		    $templateid = $pdf->importPage($pageno);
-		    // get the size of the imported page
-		    $size = $pdf->getTemplateSize($templateid);
-		
-		    // create a page (landscape or portrait depending on the imported page size)
-		    if ($size['w'] > $size['h']) {
-		        $pdf->AddPage('L', array($size['w'], $size['h']));
-		    } else {
-		        $pdf->AddPage('P', array($size['w'], $size['h']));
-		    }
-		
-		    // use the imported page
-		    $pdf->useTemplate($templateid);
-		}
-		$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
-		
-		$fs = get_file_storage();
-		
-		$file_record = array(
-				'contextid' => $contextsystem->id,
-				'component' => 'local_paperattendance',
-				'filearea' => 'draft',
-				'itemid' => 0,
-				'filepath' => '/',
-				'filename' => "paperattendance_".$courseid."_".$time.".pdf",
-				'timecreated' => time(),
-				'timemodified' => time(),
-				'userid' => $USER->id,
-				'author' => $USER->firstname." ".$USER->lastname,
-				'license' => 'allrightsreserved'
-		);
-		
-		// If the file already exists we delete it
-		if ($fs->file_exists($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$time.".pdf")) {
-			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$time.".pdf");
-			$previousfile->delete();
-		}
-		
-		// Info for the new file
-		$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
-		
-		//rotate pages of the pdf if necessary
-		//paperattendance_rotate($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
-		
-		//read pdf and save session and sessmodules
-		$pdfprocessed = paperattendance_read_pdf_save_session($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf", $qrtext);
-		
-		if($pdfprocessed == "Perfect"){		
-			//delete unused pdf
-			unlink($path."/unread/".$filename);		
-			// Display confirmation page before moving out.
-			redirect($url, get_string('uploadsuccessful', 'local_paperattendance'), 3);
-			//die();
-		}
-		else{			
-			//delete unused pdf
-			unlink($path."/unread/".$filename);		
-			// Display confirmation page before moving out.
-			redirect($url, $pdfprocessed, 3);
+	if ($draftid = file_get_submitted_draft_itemid('file')) {
+		file_save_draft_area_files($draftid, $context->id, 'local_paperattendance', 'file', 0, array('subdirs' => 0, 'maxfiles' => 50));
+	}
+	$fs = get_file_storage();
+	if ($files = $fs->get_area_files($context->id, 'local_paperattendance', 'file', '0', 'sortorder', false)) {
+		$filecount = 1;
+		$messages = array();
+		foreach ($files as $file) {
+			$time = strtotime(date("d-m-Y H:s:i"));
+			$filename = "paperattendance_".$courseid."_".$time."_".$filecount.".pdf";
+			$messages[] = paperattendance_uploadattendances($file, $path, $filename, $context, $contextsystem);
+			$filecount++;
 		}
 	}
-	else{
-		//delete unused pdf
-		unlink($path."/unread/".$filename);
-		
-		print_error(get_string("pdfextensionunrecognized", "local_paperattendance"));
-		die();
-	}
+	$action = "viewmessages";
 }
 // If there is no data or is it not cancelled show the header, the tabs and the form.
 echo $OUTPUT->header();
-if($courseid && $courseid != 1){
-	echo $OUTPUT->heading("Subir lista escaneada " . $course->shortname . " " . $course->fullname);
-}else{
-	echo $OUTPUT->heading("Subir lista escaneada ");
+if($action == "viewform"){
+	if($courseid && $courseid != 1){
+		echo $OUTPUT->heading("Subir lista escaneada " . $course->shortname . " " . $course->fullname);
+	}else{
+		echo $OUTPUT->heading("Subir lista escaneada ");
+	}
+	// Display the form.
+	$addform->display();
 }
-// Display the form.
-$addform->display();
+if($action == "viewmessages"){
+	foreach($messages as $message){
+		echo $message;
+	}
+	echo $OUTPUT->single_button($url, get_string("printgoback","local_paperattendance"));
+}
 
 echo $OUTPUT->footer();
