@@ -996,11 +996,7 @@ function paperattendance_sendMail($teacherid, $date, $course) {
 	$userfrom = core_user::get_noreply_user();
 	$userfrom->maildisplay = true;
 
-	$sql = "SELECT firstname, lastname, email 
-			FROM {user}
-			WHERE id = ?";
-
-	$teacher = $DB->get_record_sql($sql, array($teacherid));
+	$teacher = $DB->get_record("user", array("id"=> $teacherid));
 
 	//message
 	$message = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ", \n";	
