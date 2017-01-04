@@ -137,7 +137,7 @@ if ($hassiteconfig) {
 					get_string('sendmail', 'local_paperattendance'),
 					get_string('sendmailtext', 'local_paperattendance'),
 					1,
-					PARAM_int
+					PARAM_INT
 					)
 			);
 }
