@@ -40,18 +40,19 @@ $courseid = required_param("courseid", PARAM_INT);
 $action = optional_param("action", "add", PARAM_TEXT);
 $category = optional_param('categoryid', 1, PARAM_INT);
 
-if($course = $DB->get_record("course", array("id" => $courseid))){
-	if($category == 1){
-		$category = $course->category;
+if($courseid > 1){
+	if($course = $DB->get_record("course", array("id" => $courseid))){
+		$context = context_coursecat::instance($course->category);
 	}
+}else if($category > 1){
+	$context = context_coursecat::instance($category);
+}else{
+	$context = context_system::instance();
 }
-
-$context = context_system::instance();
-$contextcat = context_coursecat::instance($category);
 
 $isteacher = paperattendance_getteacherfromcourse($courseid, $USER->id);
 
-if(!has_capability("local/paperattendance:printsecre", $contextcat) && !$isteacher && !is_siteadmin($USER)){
+if(!has_capability("local/paperattendance:printsecre", $context) && !$isteacher && !is_siteadmin($USER) && !has_capability("local/paperattendance:print", $contextcat)){
 	print_error(get_string('notallowedprint', 'local_paperattendance'));
 }
 $urlprint = new moodle_url("/local/paperattendance/print.php", array(

@@ -112,6 +112,13 @@ $string['filter_help']="<ul><li>By email: You should enter the student's UAI ema
 $string['alreadyinsertedstudent'] = "Student has already been added.";
 $string['filename'] = "File name: ";
 
+//messages
+$string['dear'] = "Dear Teacher";
+$string['processconfirmationbodysubject'] = "Attendance's list processed correctly";
+$string['processconfirmationbody'] = "Attendance records processing completed";
+$string['datebody'] = "Date:";
+$string['coursebody'] = "Course:";
+
 // Settings
 $string['settings']="Basic Configuration";
 $string['grayscale']="Gray Scale";
@@ -130,6 +137,8 @@ $string['omegaupdateattendance']="Omega's UpdateAttendance Url";
 $string['omegaupdateattendancetext']="Omega's UpdateAttendance Url webapi";
 $string['omegagetmoduloshorarios']="Omega's Get Modulos Horarios Url";
 $string['omegagetmoduloshorariostext']="Omega's Get Modulos Horarios Url webapi";
+$string['sendmail'] = "Send notification to the teacher when processed";
+$string['sendmailtext'] = "1 -> enabled, 0 -> disabled";
 
 
 // Task

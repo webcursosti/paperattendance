@@ -130,4 +130,14 @@ if ($hassiteconfig) {
 					PARAM_TEXT
 					)
 			);
+	//paperattendance send notification mail to the teacher
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_sendmail',
+					get_string('sendmail', 'local_paperattendance'),
+					get_string('sendmailtext', 'local_paperattendance'),
+					1,
+					PARAM_INT
+					)
+			);
 }

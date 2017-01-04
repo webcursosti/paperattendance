@@ -38,12 +38,16 @@ class processpdf extends \core\task\scheduled_task {
 		require_once ($CFG->dirroot . '/local/paperattendance/locallib.php');
 		
 		// Sql that brings the unread pdfs names
-		$sqlunreadpdfs = "SELECT id, 
-				pdf AS name, 
-				courseid
-				FROM {paperattendance_session}
-				WHERE status = ?
-				ORDER BY lastmodified ASC";
+		$sqlunreadpdfs = "SELECT sess.id AS id, 
+				sess.pdf AS name, 
+				sess.courseid AS courseid,
+				sess.teacherid as teacherid,
+				c.shortname AS shortname,
+				FROM_UNIXTIME(sess.lastmodified) AS date
+ 				FROM {paperattendance_session} sess
+				INNER JOIN {course} c on (c.id = sess.courseid)
+				WHERE sess.status = ?
+				ORDER BY sess.lastmodified ASC";
 		// Parameters for the previous query
 		$params = array(PAPERATTENDANCE_STATUS_UNREAD);
 	
@@ -53,6 +57,9 @@ class processpdf extends \core\task\scheduled_task {
 			foreach($resources as $pdf){
 				$process = paperattendance_readpdf($path, $pdf-> name, $pdf->courseid);
 				if($process){
+					if($CFG->paperattendance_sendmail){
+						paperattendance_sendMail($pdf->teacherid, $pdf->date, $pdf->shortname);
+					}
 					$pdf->status = 1;
 					$DB->update_record("paperattendance_session", $pdf);
 				}

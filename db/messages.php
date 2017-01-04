@@ -13,21 +13,18 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-
 /**
+ * 
  *
-*
-* @package    local
-* @subpackage paperattendance
-* @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl) 
-* @copyright  2016 Hans Jeria (hansjeria@gmail.com) 
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
-
+ * @package    local
+ * @subpackage paperattendance
+ * @copyright  2017 Jorge Cabané (jcabane@alumnos.uai.cl)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 defined('MOODLE_INTERNAL') || die();
-$plugin->pluginname = "local_paperattendance";
-$plugin->component = 'local_paperattendance';
-$plugin->version   = '2017010401';
-$plugin->requires = 2015111600;
 
+$messageproviders = array (
+		// Notify teacher that a pdf has been processed
+		'paperattendance_notification' => array (		
+		)
+);

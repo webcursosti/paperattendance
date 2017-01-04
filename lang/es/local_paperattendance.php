@@ -112,6 +112,14 @@ $string['filter_help']="<ul><li>Por correo: Debes ingresar el correo UAI del est
 $string['alreadyinsertedstudent'] = "Alumno ya ingresado.";
 $string['filename'] = "Nombre del archivo: ";
 
+//messages
+$string['dear'] = "Estimado Profesor";
+$string['processconfirmationbodysubject'] = "Lista procesada correctamente";
+$string['processconfirmationbody'] = "Se ha completado el procesamiento de registros de la asistencia por PaperAttendance";
+$string['datebody'] = "De la fecha:";
+$string['coursebody'] = "Del curso:";
+
+
 // Settings
 $string['settings']="Configuración Básica";
 $string['grayscale']="Escala de grises";
@@ -130,7 +138,8 @@ $string['omegaupdateattendance']="Url Omega UpdateAttendance";
 $string['omegaupdateattendancetext']="Url Omega UpdateAttendance webapi";
 $string['omegagetmoduloshorarios']="Url Omega Get Modulos Horarios";
 $string['omegagetmoduloshorariostext']="Url Omega Get Modulos Horarios webapi";
-
+$string['sendmail'] = "Enviar notificaciones al completar procesamiento de pdf";
+$string['sendmailtext'] = "1 -> habilitado, 0 -> deshabilidato";
 
 // Task
 $string['task']="Procesar PDFs";
