@@ -10,7 +10,7 @@ Authors:
 * Hans Jeria (hansjeria@gmail.com)
 * Jorge Cabané (jcabane@alumnos.uai.cl) 
 * Matías Queirolo (mqueirolo@alumnos.uai.cl)
-* @copyright  2016 Cristobal Silva (cristobal.isilvap@gmail.com) 
+* Cristobal Silva (cristobal.isilvap@gmail.com) 
  
 
 Release notes
