@@ -1077,7 +1077,6 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 	
 		if($pdfprocessed == "Perfect"){
 			//delete unused pdf
-			unlink($path."/unread/".$originalfilename);
 			return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".get_string("uploadsuccessful", "local_paperattendance"), "notifysuccess");
 		}
 		else{
