@@ -990,3 +990,104 @@ function paperattendance_getcountstudentsbysession($sessionid){
 	return $attendancescount;
 
 }
+
+function paperattendance_uploadattendances($file, $path, $filename, $context, $contextsystem){
+	global $OUTPUT, $USER;
+	$attendancepdffile = $path ."/unread/".$filename;
+	$originalfilename = $file->get_filename();
+	$file->copy_content_to($attendancepdffile);
+	//first check if there's a readable QR code
+	$qrtext = paperattendance_get_qr_text($path."/unread/", $filename);
+	if($qrtext == "error"){
+		//delete the unused pdf
+		unlink($attendancepdffile);
+		return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".get_string("couldntreadqrcode", "local_paperattendance"));
+	}
+	//read pdf and rewrite it
+	$pdf = new FPDI();
+	// get the page count
+	$pagecount = $pdf->setSourceFile($attendancepdffile);
+	if($pagecount){
+		$idcourseexplode = explode("*",$qrtext);
+		$idcourse = $idcourseexplode[0];
+	
+		$object = new stdClass();
+		$object -> id = $idcourse;
+		$students = paperattendance_get_students_for_printing($object);
+		//now we count the students in course
+		$count = 0;
+		foreach($students as $student) {
+			$count ++;
+		}
+		$students->close();
+		$pages = ceil($count/26);
+		if ($pages != $pagecount){
+			unlink($attendancepdffile);
+			return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".get_string("missingpages", "local_paperattendance"));
+		}
+		// iterate through all pages
+		for ($pageno = 1; $pageno <= $pagecount; $pageno++) {
+			// import a page
+			$templateid = $pdf->importPage($pageno);
+			// get the size of the imported page
+			$size = $pdf->getTemplateSize($templateid);
+	
+			// create a page (landscape or portrait depending on the imported page size)
+			if ($size['w'] > $size['h']) {
+				$pdf->AddPage('L', array($size['w'], $size['h']));
+			} else {
+				$pdf->AddPage('P', array($size['w'], $size['h']));
+			}
+	
+			// use the imported page
+			$pdf->useTemplate($templateid);
+		}
+		$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
+	
+		$fs = get_file_storage();
+	
+		$file_record = array(
+				'contextid' => $contextsystem->id,
+				'component' => 'local_paperattendance',
+				'filearea' => 'draft',
+				'itemid' => 0,
+				'filepath' => '/',
+				'filename' => $filename,
+				'timecreated' => time(),
+				'timemodified' => time(),
+				'userid' => $USER->id,
+				'author' => $USER->firstname." ".$USER->lastname,
+				'license' => 'allrightsreserved'
+		);
+	
+		// If the file already exists we delete it
+		if ($fs->file_exists($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $filename)) {
+			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', $filename);
+			$previousfile->delete();
+		}
+	
+		// Info for the new file
+		$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
+	
+		//rotate pages of the pdf if necessary
+		//paperattendance_rotate($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
+	
+		//read pdf and save session and sessmodules
+		$pdfprocessed = paperattendance_read_pdf_save_session($path."/unread/", $filename, $qrtext);
+	
+		if($pdfprocessed == "Perfect"){
+			//delete unused pdf
+			return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".get_string("uploadsuccessful", "local_paperattendance"), "notifysuccess");
+		}
+		else{
+			//delete unused pdf
+			unlink($attendancepdffile);
+			return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".$pdfprocessed);
+		}
+	}
+	else{
+		//delete unused pdf
+		unlink($attendancepdffile);
+		return $OUTPUT->notification("File name: ".$originalfilename."<br>".get_string("pdfextensionunrecognized", "local_paperattendance"));
+	}
+}
