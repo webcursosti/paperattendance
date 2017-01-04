@@ -137,6 +137,8 @@ $string['omegaupdateattendance']="Omega's UpdateAttendance Url";
 $string['omegaupdateattendancetext']="Omega's UpdateAttendance Url webapi";
 $string['omegagetmoduloshorarios']="Omega's Get Modulos Horarios Url";
 $string['omegagetmoduloshorariostext']="Omega's Get Modulos Horarios Url webapi";
+$string['sendmail'] = "Send notification to the teacher when processed";
+$string['sendmailtext'] = "1 -> enabled, 0 -> disabled";
 
 
 // Task

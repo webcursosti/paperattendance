@@ -138,7 +138,8 @@ $string['omegaupdateattendance']="Url Omega UpdateAttendance";
 $string['omegaupdateattendancetext']="Url Omega UpdateAttendance webapi";
 $string['omegagetmoduloshorarios']="Url Omega Get Modulos Horarios";
 $string['omegagetmoduloshorariostext']="Url Omega Get Modulos Horarios webapi";
-
+$string['sendmail'] = "Enviar notificaciones al completar procesamiento de pdf";
+$string['sendmailtext'] = "1 -> habilitado, 0 -> deshabilidato";
 
 // Task
 $string['task']="Procesar PDFs";

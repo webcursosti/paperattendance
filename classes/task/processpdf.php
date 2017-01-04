@@ -57,7 +57,9 @@ class processpdf extends \core\task\scheduled_task {
 			foreach($resources as $pdf){
 				$process = paperattendance_readpdf($path, $pdf-> name, $pdf->courseid);
 				if($process){
-					paperattendance_sendMail($pdf->teacherid, $pdf->date, $pdf->shortname);
+					if($CFG->paperattendance_sendmail){
+						paperattendance_sendMail($pdf->teacherid, $pdf->date, $pdf->shortname);
+					}
 					$pdf->status = 1;
 					$DB->update_record("paperattendance_session", $pdf);
 				}
