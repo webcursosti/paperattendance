@@ -991,7 +991,6 @@ function paperattendance_getcountstudentsbysession($sessionid){
 
 }
 
-<<<<<<< HEAD
 function paperattendance_sendMail($teacherid, $date, $course) {
 	GLOBAL $USER, $DB;
 	$userfrom = core_user::get_noreply_user();
@@ -1024,7 +1023,8 @@ function paperattendance_sendMail($teacherid, $date, $course) {
 	$eventdata->smallmessage = "";
 	$eventdata->notification = 1; // this is only set to 0 for personal messages between users
 	message_send($eventdata);
-=======
+}
+
 function paperattendance_uploadattendances($file, $path, $filename, $context, $contextsystem){
 	global $OUTPUT, $USER;
 	$attendancepdffile = $path ."/unread/".$filename;
@@ -1124,5 +1124,5 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 		unlink($attendancepdffile);
 		return $OUTPUT->notification("File name: ".$originalfilename."<br>".get_string("pdfextensionunrecognized", "local_paperattendance"));
 	}
->>>>>>> refs/remotes/webcursosuai/master
+
 }
