@@ -47,14 +47,10 @@ $action = optional_param('action', 'viewform', PARAM_TEXT);
 
 if($courseid > 1){
 	if($course = $DB->get_record("course", array("id" => $courseid))){
-		if($category == 1){
-			$category = $course->category;
-			$context = context_coursecat::instance($category);
-		}
-		else{
-			$context = context_coursecat::instance($category);
-		}
+		$context = context_coursecat::instance($course->category);
 	}
+}else if($category > 1){	
+	$context = context_coursecat::instance($category);
 }else{
 	$context = context_system::instance();
 }
