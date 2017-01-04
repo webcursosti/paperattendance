@@ -990,3 +990,37 @@ function paperattendance_getcountstudentsbysession($sessionid){
 	return $attendancescount;
 
 }
+
+function paperattendance_sendMail($teacherid, $date, $course) {
+	GLOBAL $USER, $DB;
+	$userfrom = core_user::get_noreply_user();
+	$userfrom->maildisplay = true;
+
+	$sql = "SELECT firstname, lastname, email 
+			FROM {user}
+			WHERE id = ?";
+
+	$teacher = $DB->get_record_sql($sql, array($teacherid));
+
+	//message
+	$message = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ", \n";	
+	$message .= get_string("processconfirmationbody", "local_paperattendance") . "\n";
+	$message .= get_string("datebody", "local_paperattendance") ." ". $date . "\n";
+	$message .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
+
+	// Format each "\n" into a line break
+	$formattedMessage = nl2br($message);
+
+	$eventdata = new stdClass();
+	$eventdata->component = "local_paperattendance"; // your component name
+	$eventdata->name = "paperattendance_notification"; // this is the message name from messages.php
+	$eventdata->userfrom = $userfrom;
+	$eventdata->userto = $teacher->email;
+	$eventdata->subject = get_string("processconfirmationbodysubject", "local_paperattendance");
+	$eventdata->fullmessage = format_text_email($formattedMessage, FORMAT_HTML);
+	$eventdata->fullmessageformat = FORMAT_HTML;
+	$eventdata->fullmessagehtml = "";
+	$eventdata->smallmessage = "";
+	$eventdata->notification = 1; // this is only set to 0 for personal messages between users
+	message_send($eventdata);
+}

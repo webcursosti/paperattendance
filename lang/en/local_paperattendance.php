@@ -111,6 +111,13 @@ $string['filter'] ="Help to add a student";
 $string['filter_help']="<ul><li>By email: You should enter the student's UAI email. Example: studentname@alumnos.uai.cl</li><li>By ID number: It must be the ID number without point and the check digit. Example: 19123456</li></ul>";
 $string['alreadyinsertedstudent'] = "Student has already been added.";
 
+//messages
+$string['dear'] = "Dear Teacher";
+$string['processconfirmationbodysubject'] = "Attendance's list processed correctly";
+$string['processconfirmationbody'] = "Attendance records processing completed";
+$string['datebody'] = "Date:";
+$string['coursebody'] = "Course:";
+
 // Settings
 $string['settings']="Basic Configuration";
 $string['grayscale']="Gray Scale";

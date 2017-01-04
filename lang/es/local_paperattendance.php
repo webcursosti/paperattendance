@@ -111,6 +111,14 @@ $string['filter'] ="Ayuda para insertar un alumno";
 $string['filter_help']="<ul><li>Por correo: Debes ingresar el correo UAI del estudiante. Ejemplo: alumno@alumnos.uai.cl</li><li>Por rut: No debe contener puntos ni el digito verificador. Ejemplo: 19123456</li></ul>";
 $string['alreadyinsertedstudent'] = "Alumno ya ingresado.";
 
+//messages
+$string['dear'] = "Estimado Profesor";
+$string['processconfirmationbodysubject'] = "Lista procesada correctamente";
+$string['processconfirmationbody'] = "Se ha completado el procesamiento de registros de la asistencia por PaperAttendance";
+$string['datebody'] = "De la fecha:";
+$string['coursebody'] = "Del curso:";
+
+
 // Settings
 $string['settings']="Configuración Básica";
 $string['grayscale']="Escala de grises";
