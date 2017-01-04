@@ -37,9 +37,14 @@ if (isguestuser()) {
 	die();
 }
 $courseid = required_param("courseid", PARAM_INT);
-$action = optional_param("action", "add", PARAM_INT);
+$action = optional_param("action", "add", PARAM_TEXT);
 $category = optional_param('categoryid', 1, PARAM_INT);
 
+if($course = $DB->get_record("course", array("id" => $courseid))){
+	if($category == 1){
+		$category = $course->category;
+	}
+}
 
 $context = context_system::instance();
 $contextcat = context_coursecat::instance($category);
