@@ -112,7 +112,9 @@ $string['filter_help']="<ul><li>Por correo: Debes ingresar el correo UAI del est
 $string['alreadyinsertedstudent'] = "Alumno ya ingresado.";
 $string['filename'] = "Nombre del archivo: ";
 $string['percentage'] = "% Asistencia";
-
+$string['percentagestudent'] = "Porcentaje asistencia";
+$string['totalattendances'] = "Sesiones realizadas";
+$string['tooltippercentage'] = "Porcentaje perteneciente únicamente al método Asistencias en Papel";
 
 //messages
 $string['dear'] = "Estimado Profesor";

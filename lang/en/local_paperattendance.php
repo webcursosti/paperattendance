@@ -112,6 +112,9 @@ $string['filter_help']="<ul><li>By email: You should enter the student's UAI ema
 $string['alreadyinsertedstudent'] = "Student has already been added.";
 $string['filename'] = "File name: ";
 $string['percentage'] = "% Attendance";
+$string['percentagestudent'] = "Attendance Percentage";
+$string['totalattendances'] = "Sessions held";
+$string['tooltippercentage'] = "This percentage belongs only to the PaperAttendance method";
 
 //messages
 $string['dear'] = "Dear Teacher";
