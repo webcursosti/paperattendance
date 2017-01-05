@@ -327,17 +327,19 @@ if( $isteacher || is_siteadmin($USER)) {
 					get_string('hashtag', 'local_paperattendance'),
 					get_string('date', 'local_paperattendance'),
 					get_string('time', 'local_paperattendance'),
+					get_string('percentage', 'local_paperattendance'),
 					get_string('scan', 'local_paperattendance'),
 					get_string('studentsattendance', 'local_paperattendance'),
 					get_string('omegasync', 'local_paperattendance')
 			);
 			$attendancestable->size = array(
-					'9%',
-					'33%',
-					'19%',
-					'16%',
-					'16%',
-					'17%'
+					'10%',
+					'25%',
+					'25%',
+					'10%',
+					'10%',
+					'10%',
+					'10%'
 			);
 				
 			$attendancestable->align = array(
@@ -346,12 +348,22 @@ if( $isteacher || is_siteadmin($USER)) {
 					'left',
 					'center',
 					'center',
+					'center',
 					'center'
 			);
 				
 			//A mere counter for the number of records
 			$counter = 1;
 			foreach ($attendances as $attendance){
+				//Query to get attendance percentage
+				$percentagequery = "SELECT TRUNCATE(COUNT(*)/(SELECT COUNT(*)
+									FROM {paperattendance_presence} AS p
+									INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid)
+									WHERE p.sessionid = ?),1)*100 AS percentage
+									FROM {paperattendance_presence} AS p
+									INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid)
+									WHERE p.sessionid = ? AND p.status = 1";
+				$percentage = $DB->get_record_sql($percentagequery, array($attendance->id, $attendance->id));
 				// Define scan icon and url
 				$scanurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
 						"action" => "scan",
@@ -377,22 +389,6 @@ if( $isteacher || is_siteadmin($USER)) {
 						$studentsattendanceicon_attendance
 						);
 				
-				//Define synchronized or unsynchronized icon and url
-				$urlomegasync = new moodle_url("#");
-				
-				$synchronizedicon = new pix_icon("t/go", get_string('synchronized', 'local_paperattendance'));
-				
-				$synchronizediconaction = $OUTPUT->action_icon(
-						$urlomegasync,
-						$synchronizedicon
-						);
-				
-				$unsynchronizedicon = new pix_icon("i/scheduled", get_string('unsynchronized', 'local_paperattendance'));
-				
-				$unsynchronizediconaction = $OUTPUT->action_icon(
-						$urlomegasync,
-						$unsynchronizedicon
-						);
 				//Convert the unix date to a local date
 				$date= $attendance->date;
 				$dateconverted = paperattendance_convertdate($date);
@@ -402,30 +398,29 @@ if( $isteacher || is_siteadmin($USER)) {
 				//We get the total count of students for this session
 				$studentscount = paperattendance_getcountstudentsbysession($attendance->id);
 				//Check if this session is fully synchronized with omega and create de table
+				//Define synchronized or unsynchronized url
+				$urlomegasync = new moodle_url("#");
 				if ( $synchronizedstudentnscount == $studentscount){
-					
-					$attendancestable->data[] = array(
-							$counter,
-							$dateconverted,
-							$attendance->hour,
-							$scanaction_attendance,
-							$studentsattendanceaction_attendance,
-							$synchronizediconaction
-					);
-					$counter++;
-					
+					$synchronizedicon = new pix_icon("t/go", get_string('synchronized', 'local_paperattendance'));
 				}
-				else {
-					$attendancestable->data[] = array(
-							$counter,
-							$dateconverted,
-							$attendance->hour,
-							$scanaction_attendance,
-							$studentsattendanceaction_attendance,
-							$unsynchronizediconaction
-					);
-					$counter++;
+				else{
+					$synchronizedicon = new pix_icon("i/scheduled", get_string('unsynchronized', 'local_paperattendance'));
 				}
+				$synchronizediconaction = $OUTPUT->action_icon(
+						$urlomegasync,
+						$synchronizedicon
+						);
+					
+				$attendancestable->data[] = array(
+						$counter,
+						$dateconverted,
+						$attendance->hour,
+						$percentage->percentage,
+						$scanaction_attendance,
+						$studentsattendanceaction_attendance,
+						$synchronizediconaction
+				);
+				$counter++;
 			}
 		}
 		$buttonurl = new moodle_url("/course/view.php", array("id" => $idcourse));
