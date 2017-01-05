@@ -593,6 +593,7 @@ else if ($isstudent) {
 	$PAGE->set_title(get_string('historytitle', 'local_paperattendance'));
 	$PAGE->set_heading(get_string('historyheading', 'local_paperattendance'));
 	echo $OUTPUT->header();
+	
 	// Displays all the records and options
 	if ($action == "view"){
 	
@@ -600,7 +601,28 @@ else if ($isstudent) {
 			echo html_writer::nonempty_tag("h4", get_string('nonexistintingrecords', 'local_paperattendance'), array("align" => "left"));
 		}
 		else{
-			echo html_writer::table($attendancestable);
+			
+			//student summary sql
+			$sessions = $DB->count_records("paperattendance_session", array ("courseid" => $course->id));
+			$present = "SELECT COUNT(*) 
+						FROM {paperattendance_presence} AS p
+						INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid)
+						WHERE s.courseid = ? AND p.status = 1";
+			$present = $DB->count_records_sql($present, array($course->id));
+			$absent = $sessions - $present;
+			$percentagestudent = round(($present/$sessions)*100); 
+			
+			//summary
+			echo html_writer::nonempty_tag("h4", $USER->firstname." ".$USER->lastname, array("align" => "left"));
+			$resume = html_writer::nonempty_tag("div", get_string('totalattendances', 'local_paperattendance').": ".$sessions, array("align" => "right"));
+			$resume .= html_writer::nonempty_tag("div", get_string('presentattendance', 'local_paperattendance').": ".$present, array("align" => "right"));
+			$resume .= html_writer::nonempty_tag("div", get_string('absentattendance', 'local_paperattendance').": ".$absent, array("align" => "right"));
+			$resume .= html_writer::nonempty_tag("div", get_string('percentagestudent', 'local_paperattendance')."*: ".$percentagestudent."%", array("align" => "right", "title" => get_string('tooltippercentage', 'local_paperattendance'), "data-placement"=>"left","data-toggle" =>"tooltip"));
+			echo html_writer::nonempty_tag("div", $resume, array("style" => "width:20%"));
+			
+			//table
+			echo html_writer::nonempty_tag("div", html_writer::table($attendancestable), array( "style" => " margin-top: 15px;"));
+			
 		}
 		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($backbuttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left"));
 	}
@@ -612,4 +634,3 @@ else{
 }
 
 echo $OUTPUT->footer();
-
