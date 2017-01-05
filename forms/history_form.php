@@ -24,7 +24,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once (dirname(dirname(dirname(dirname(__FILE__))))."/config.php");
 require_once ($CFG->libdir."/formslib.php");
 
-class editattendance extends moodleform {
+class paperattendance_editattendance_form extends moodleform {
 
 	function definition (){
 		global $DB;
@@ -58,6 +58,8 @@ class editattendance extends moodleform {
 		$mform->setType("courseid", PARAM_INT);
 		$mform->addElement("hidden", "omegaid", $presence->omegaid);
 		$mform->setType("omegaid", PARAM_INT);
+		$mform->addElement("hidden", "idpresence", $idpresence);
+		$mform->setType("idpresence", PARAM_INT);
 		
 
 		$this->add_action_buttons(true);

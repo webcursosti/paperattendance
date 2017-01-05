@@ -111,6 +111,8 @@ $string['filter'] ="Ayuda para insertar un alumno";
 $string['filter_help']="<ul><li>Por correo: Debes ingresar el correo UAI del estudiante. Ejemplo: alumno@alumnos.uai.cl</li><li>Por rut: No debe contener puntos ni el digito verificador. Ejemplo: 19123456</li></ul>";
 $string['alreadyinsertedstudent'] = "Alumno ya ingresado.";
 $string['filename'] = "Nombre del archivo: ";
+$string['percentage'] = "% Asistencia";
+
 
 //messages
 $string['dear'] = "Estimado Profesor";

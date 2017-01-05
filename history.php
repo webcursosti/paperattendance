@@ -106,10 +106,6 @@ if( $isteacher || is_siteadmin($USER)) {
 				INNER JOIN {user} AS u ON (u.id = p.userid)
 				WHERE p.sessionid = ?  ';
 		
-		//$attendances = $DB->get_records_sql($getstudentsattendance, array($idcourse, $idattendance));
-		
-		//Getting attendances per page, initial page = 0.
-		//$attendances = $DB->get_records_sql($getstudentsattendance, $params, $page * $perpage, ($page + 1) * $perpage);
 		$attendances = $DB->get_records_sql($getstudentsattendance, array($idattendance), $page * $perpage, $perpage);
 		
 		$attendancestable = new html_table();
@@ -141,39 +137,35 @@ if( $isteacher || is_siteadmin($USER)) {
 			$counter = $page * $perpage + 1;
 			foreach ($attendances as $attendance){
 				
-				//Define synchronized or unsynchronized icon and url
+				//Define synchronized or unsynchronized icon
 				$urlomegasync = new moodle_url("#");
 				
-				$synchronizedicon = new pix_icon("i/checkpermissions", get_string('synchronized', 'local_paperattendance'));
-				
+				if ($attendance->omegasync){
+					$synchronizedicon = new pix_icon("i/checkpermissions", get_string('synchronized', 'local_paperattendance'));
+				}
+				else{
+					$synchronizedicon = new pix_icon("i/scheduled", get_string('unsynchronized', 'local_paperattendance'));
+				}
 				$synchronizediconaction = $OUTPUT->action_icon(
 						$urlomegasync,
 						$synchronizedicon
 						);
 				
-				$unsynchronizedicon = new pix_icon("i/scheduled", get_string('unsynchronized', 'local_paperattendance'));
-				
-				$unsynchronizediconaction = $OUTPUT->action_icon(
-						$urlomegasync,
-						$unsynchronizedicon
-						);
-				
-				//Define presente or ausente icon and url
+				//Define presente or ausente icon
 				$urlattendance = new moodle_url("#");
-				$presenticon = new pix_icon("i/valid", get_string('presentattendance', 'local_paperattendance'));
-		
-				$presenticonaction = $OUTPUT->action_icon(
-						$urlattendance,
-						$presenticon
-						);
-		
-				$absenticon = new pix_icon("i/invalid", get_string('absentattendance', 'local_paperattendance'));
-		
-				$absenticonaction = $OUTPUT->action_icon(
-						$urlattendance,
-						$absenticon
-						);
 				
+				if($attendance->status){
+					$statusicon = new pix_icon("i/valid", get_string('presentattendance', 'local_paperattendance'));
+				}
+				else{
+					$statusicon = new pix_icon("i/invalid", get_string('absentattendance', 'local_paperattendance'));
+				}
+				
+				$statusiconaction = $OUTPUT->action_icon(
+						$urlattendance,
+						$statusicon
+						);
+							
 				// Define edition icon and url
 				$editurlattendance = new moodle_url("/local/paperattendance/history.php", array(
 						"action" => "edit",
@@ -190,118 +182,27 @@ if( $isteacher || is_siteadmin($USER)) {
 				$name = ($attendance->firstname.' '.$attendance->lastname);
 				
 				//Now we check if the student is present or not
-				if ($attendance->status == 1){
-					//Now we check if the student is synchronized with omega or not	
-					if ($attendance->omegasync == 1){
-						
-						if (is_siteadmin($USER)){
-							$attendancestable->data[] = array(
-									$counter,
-									$name,
-									$attendance->email,
-									$presenticonaction,
-									$editactionasistencia,
-									$synchronizediconaction,
-									$attendance->grayscale
-							);
-						}
-						else {
-							$attendancestable->data[] = array(
-									$counter,
-									$name,
-									$attendance->email,
-									$presenticonaction,
-									$editactionasistencia,
-									$synchronizediconaction
-							);
-						}
-						
-					}
-					else {
-						
-						if (is_siteadmin($USER)){
-							$attendancestable->data[] = array(
-									$counter,
-									$name,
-									$attendance->email,
-									$presenticonaction,
-									$editactionasistencia,
-									$unsynchronizediconaction,
-									$attendance->grayscale
-							);
-							
-						}
-						else {
-							$attendancestable->data[] = array(
-									$counter,
-									$name,
-									$attendance->email,
-									$presenticonaction,
-									$editactionasistencia,
-									$unsynchronizediconaction,
-							);
-							
-						}
-						
-					}
-					
+				if (is_siteadmin($USER)){
+					$attendancestable->data[] = array(
+							$counter,
+							$name,
+							$attendance->email,
+							$statusiconaction,
+							$editactionasistencia,
+							$synchronizediconaction,
+							$attendance->grayscale
+					);
 				}
 				else {
-					
-					if ($attendance->omegasync == 1){
-						
-						if (is_siteadmin($USER)){
-							$attendancestable->data[] = array(
-									$counter,
-									$name,
-									$attendance->email,
-									$absenticonaction,
-									$editactionasistencia,
-									$synchronizediconaction,
-									$attendance->grayscale
-							);
-						}
-						else {
-							$attendancestable->data[] = array(
-									$counter,
-									$name,
-									$attendance->email,
-									$absenticonaction,
-									$editactionasistencia,
-									$synchronizediconaction
-							);
-						}
-						
-					}
-					else {
-						
-						if (is_siteadmin($USER)){
-							$attendancestable->data[] = array(
-									$counter,
-									$name,
-									$attendance->email,
-									$absenticonaction,
-									$editactionasistencia,
-									$unsynchronizediconaction,
-									$attendance->grayscale
-							);
-								
-						}
-						else {
-							$attendancestable->data[] = array(
-									$counter,
-									$name,
-									$attendance->email,
-									$absenticonaction,
-									$editactionasistencia,
-									$unsynchronizediconaction
-							);
-							
-						}
-						
-					}
-						
-				}
+					$attendancestable->data[] = array(
+							$counter,
+							$name,
+							$attendance->email,
+							$statusiconaction,
+							$editactionasistencia,
+							$synchronizediconaction
+					);
+				}					
 				$counter++;
 			}
 		}
@@ -317,44 +218,38 @@ if( $isteacher || is_siteadmin($USER)) {
 	if($action == "edit"){
 		if($idpresence == null){
 			print_error(get_string('nonselectedstudent', 'local_paperattendance'));
-			$canceled = new moodle_url("/local/paperattendance/history.php", array(
+			$cancelled = new moodle_url("/local/paperattendance/history.php", array(
 					"idattendance" => $idattendance,
 					"courseid" => $idcourse
 					));
-			redirect($canceled);
+			redirect($cancelled);
 		}
 		else{
 			
 			if($attendance = $DB->get_record("paperattendance_presence", array("id" => $idpresence)) ){
 			
-				$editform = new editattendance(null, array(
+				$editform = new paperattendance_editattendance_form(null, array(
 						"idattendance" => $idattendance,
 						"courseid" => $idcourse,
 						"idpresence" => $idpresence
 				));
 	
 				if($editform->is_cancelled()){
-					$canceled = new moodle_url("/local/paperattendance/history.php", array(
+					$cancelled = new moodle_url("/local/paperattendance/history.php", array(
 							"action" => "studentsattendance",
 							"idattendance" => $idattendance,
 							"courseid" => $idcourse
 					));
-					redirect($canceled);
+					redirect($cancelled);
 	
 				}
-				else if($editform->get_data()){
+				else if($data = $editform->get_data()){
 	
 					$record = new stdClass();
 					$record->id = $idpresence;
 					$record->lastmodified = time();
-					
-					if ($editform->get_data()->status == 1){
-						$record->status = 1;
-					}
-					else {
-						$record->status = 0;
-					}
-							
+					$record->status = $data->status;
+						
 					$DB->update_record("paperattendance_presence", $record);
 					
 					if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
@@ -432,17 +327,19 @@ if( $isteacher || is_siteadmin($USER)) {
 					get_string('hashtag', 'local_paperattendance'),
 					get_string('date', 'local_paperattendance'),
 					get_string('time', 'local_paperattendance'),
+					get_string('percentage', 'local_paperattendance'),
 					get_string('scan', 'local_paperattendance'),
 					get_string('studentsattendance', 'local_paperattendance'),
 					get_string('omegasync', 'local_paperattendance')
 			);
 			$attendancestable->size = array(
-					'9%',
-					'33%',
-					'19%',
-					'16%',
-					'16%',
-					'17%'
+					'10%',
+					'25%',
+					'25%',
+					'10%',
+					'10%',
+					'10%',
+					'10%'
 			);
 				
 			$attendancestable->align = array(
@@ -451,12 +348,22 @@ if( $isteacher || is_siteadmin($USER)) {
 					'left',
 					'center',
 					'center',
+					'center',
 					'center'
 			);
 				
 			//A mere counter for the number of records
 			$counter = 1;
 			foreach ($attendances as $attendance){
+				//Query to get attendance percentage
+				$percentagequery = "SELECT TRUNCATE(COUNT(*)/(SELECT COUNT(*)
+									FROM {paperattendance_presence} AS p
+									INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid)
+									WHERE p.sessionid = ?),1)*100 AS percentage
+									FROM {paperattendance_presence} AS p
+									INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid)
+									WHERE p.sessionid = ? AND p.status = 1";
+				$percentage = $DB->get_record_sql($percentagequery, array($attendance->id, $attendance->id));
 				// Define scan icon and url
 				$scanurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
 						"action" => "scan",
@@ -482,22 +389,6 @@ if( $isteacher || is_siteadmin($USER)) {
 						$studentsattendanceicon_attendance
 						);
 				
-				//Define synchronized or unsynchronized icon and url
-				$urlomegasync = new moodle_url("#");
-				
-				$synchronizedicon = new pix_icon("t/go", get_string('synchronized', 'local_paperattendance'));
-				
-				$synchronizediconaction = $OUTPUT->action_icon(
-						$urlomegasync,
-						$synchronizedicon
-						);
-				
-				$unsynchronizedicon = new pix_icon("i/scheduled", get_string('unsynchronized', 'local_paperattendance'));
-				
-				$unsynchronizediconaction = $OUTPUT->action_icon(
-						$urlomegasync,
-						$unsynchronizedicon
-						);
 				//Convert the unix date to a local date
 				$date= $attendance->date;
 				$dateconverted = paperattendance_convertdate($date);
@@ -507,30 +398,29 @@ if( $isteacher || is_siteadmin($USER)) {
 				//We get the total count of students for this session
 				$studentscount = paperattendance_getcountstudentsbysession($attendance->id);
 				//Check if this session is fully synchronized with omega and create de table
+				//Define synchronized or unsynchronized url
+				$urlomegasync = new moodle_url("#");
 				if ( $synchronizedstudentnscount == $studentscount){
-					
-					$attendancestable->data[] = array(
-							$counter,
-							$dateconverted,
-							$attendance->hour,
-							$scanaction_attendance,
-							$studentsattendanceaction_attendance,
-							$synchronizediconaction
-					);
-					$counter++;
-					
+					$synchronizedicon = new pix_icon("t/go", get_string('synchronized', 'local_paperattendance'));
 				}
-				else {
-					$attendancestable->data[] = array(
-							$counter,
-							$dateconverted,
-							$attendance->hour,
-							$scanaction_attendance,
-							$studentsattendanceaction_attendance,
-							$unsynchronizediconaction
-					);
-					$counter++;
+				else{
+					$synchronizedicon = new pix_icon("i/scheduled", get_string('unsynchronized', 'local_paperattendance'));
 				}
+				$synchronizediconaction = $OUTPUT->action_icon(
+						$urlomegasync,
+						$synchronizedicon
+						);
+					
+				$attendancestable->data[] = array(
+						$counter,
+						$dateconverted,
+						$attendance->hour,
+						$percentage->percentage,
+						$scanaction_attendance,
+						$studentsattendanceaction_attendance,
+						$synchronizediconaction
+				);
+				$counter++;
 			}
 		}
 		$buttonurl = new moodle_url("/course/view.php", array("id" => $idcourse));
@@ -673,40 +563,25 @@ else if ($isstudent) {
 				
 				$urlattendance = new moodle_url("#");
 				
-				$presenticon = new pix_icon("i/valid", get_string('presentattendance', 'local_paperattendance'));
-				
-				$presenticonaction = $OUTPUT->action_icon(
-						$urlattendance,
-						$presenticon
-						);
-				
-				$absenticon = new pix_icon("i/invalid", get_string('absentattendance', 'local_paperattendance'));
-				
-				$absenticonaction = $OUTPUT->action_icon(
-						$urlattendance,
-						$absenticon
-						);
-				//We check if the student is present or not
 				if ($attendance->status == 1){
-					
-						$attendancestable->data[] = array(
-						$counter,
-						date("d-m-Y", $attendance->date),
-						$attendance->name,
-						$attendance->hour,
-						$presenticonaction
-						);
+					$statusicon = new pix_icon("i/valid", get_string('presentattendance', 'local_paperattendance'));
 				}
-				else {
-					
-						$attendancestable->data[] = array(
-						$counter,
-						date("d-m-Y", $attendance->date),
-						$attendance->name,
-						$attendance->hour,
-						$absenticonaction
-						);
+				else{
+					$statusicon = new pix_icon("i/invalid", get_string('absentattendance', 'local_paperattendance'));
 				}
+				$statusiconaction = $OUTPUT->action_icon(
+						$urlattendance,
+						$statusicon
+						);
+				
+				$attendancestable->data[] = array(
+					$counter,
+					date("d-m-Y", $attendance->date),
+					$attendance->name,
+					$attendance->hour,
+					$statusiconaction
+				);
+						
 				$counter++;
 			}
 		}
