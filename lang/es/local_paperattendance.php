@@ -115,6 +115,17 @@ $string['percentage'] = "% Asistencia";
 $string['percentagestudent'] = "Porcentaje asistencia";
 $string['totalattendances'] = "Sesiones realizadas";
 $string['tooltippercentage'] = "Porcentaje perteneciente únicamente al método Asistencias en Papel";
+$string['reviewattendance'] = "Revisión";
+$string['request'] = "Solicitar";
+$string['comment'] = "Comentario";
+$string['discussiontitle'] = "Discusiones";
+$string['response'] = "Responder";
+$string['module'] = "Modulo";
+$string['studentname'] = "Nombre del alumno";
+$string['discussionhelp'] = "Aquí puede ver las solicitudes de revisión de asistencias de los alumnos.";
+$string['mantainabsent'] = "Mantener ausencia";
+$string['changetopresent'] = "Cambiar a presente";
+$string['result'] = "Resultado";
 
 //messages
 $string['dear'] = "Estimado Profesor";
