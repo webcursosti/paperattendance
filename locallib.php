@@ -518,10 +518,7 @@ function paperattendance_get_orientation($path, $pdf, $page){
 }
 
 function paperattendance_get_qr_text($path, $pdf){
-	//TODO: la pagina donde se utiliza la funcion debe incluir el require_once
 	global $CFG, $DB;
-	require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
-
 
 	$pdfexplode = explode(".",$pdf);
 	$pdfname = $pdfexplode[0];
@@ -530,7 +527,7 @@ function paperattendance_get_qr_text($path, $pdf){
 	//save the pdf page as a png
 	$myurl = $pdf.'[0]';
 	$image = new Imagick($path.$myurl);
-	$image->setResolution(100,100);
+	$image->setResolution(300,300);
 	$image->setImageFormat( 'png' );
 	//*//
 	$image->writeImage( $path.$pdfname.'.png' );
@@ -538,7 +535,7 @@ function paperattendance_get_qr_text($path, $pdf){
 
 	//check if there's a qr on the top right corner
 	$imagick = new Imagick();
-	$imagick->setResolution(100,100);
+	$imagick->setResolution(300,300);
 	//*//
 	$imagick->readImage( $path.$pdfname.'.png' );
 	$imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
@@ -546,7 +543,7 @@ function paperattendance_get_qr_text($path, $pdf){
 	$height = $imagick->getImageHeight();
 	$width = $imagick->getImageWidth();
 
-	$qrtop = $imagick->getImageRegion($width*0.12, $height*0.094, $width*0.720, $height*0.045);
+	$qrtop = $imagick->getImageRegion($width*0.12, $height*0.096, $width*0.716, $height*0.036);
 	$qrtop->writeImage($path."topright".$qrpath);
 
 	unlink($path.$pdfname.'.png');
@@ -554,15 +551,14 @@ function paperattendance_get_qr_text($path, $pdf){
 	// QR
 	$qrcodetop = new QrReader($path."topright".$qrpath);
 	$texttop = $qrcodetop->text(); //return decoded text from QR Code
-	
 	unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/topright".$qrpath);
 	
 	if($texttop == "" || $texttop == " " || empty($texttop)){
 
 		//check if there's a qr on the bottom right corner
-		$qrbottom = $imagick->getImageRegion($width*0.12, $height*0.094, $width*0.710, $height*0.866);
+		$qrbottom = $imagick->getImageRegion($width*0.14, $height*0.098, $width*0.710, $height*0.866);
 		$qrbottom->writeImage($path."bottomright".$qrpath);
-
+		
 		// QR
 		$qrcodebottom = new QrReader($path."bottomright".$qrpath);
 		$textbottom = $qrcodebottom->text(); //return decoded text from QR Code

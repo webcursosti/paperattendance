@@ -34,6 +34,7 @@ require_once ($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/fpdi.php');
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php");
 require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi.php");
+require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
 global $DB, $OUTPUT, $USER;
 // User must be logged in.
 require_login();
