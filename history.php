@@ -30,6 +30,7 @@
 require_once (dirname(dirname(dirname(__FILE__)))."/config.php");
 require_once ($CFG->dirroot."/local/paperattendance/forms/history_form.php");
 require_once ($CFG->dirroot."/local/paperattendance/forms/addstudent_form.php");
+require_once ($CFG->dirroot."/local/paperattendance/forms/reviewattendance_form.php");
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 
 global $DB, $PAGE, $OUTPUT, $USER, $CFG;
@@ -59,11 +60,7 @@ require_login();
 if (isguestuser()){
 	die();
 }
-/*
-if( !has_capability("local/paperattendance:history", $context) ){
-	print_error("ACCESS DENIED");
-}
-*/
+
 //Begins Teacher's View
 $isteacher = paperattendance_getteacherfromcourse($idcourse, $USER->id);
 
@@ -356,10 +353,10 @@ if( $isteacher || is_siteadmin($USER)) {
 			$counter = 1;
 			foreach ($attendances as $attendance){
 				//Query to get attendance percentage
-				$percentagequery = "SELECT TRUNCATE(COUNT(*)/(SELECT COUNT(*)
+				$percentagequery = "SELECT TRUNCATE((COUNT(*)/(SELECT COUNT(*)
 									FROM {paperattendance_presence} AS p
 									INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid)
-									WHERE p.sessionid = ?),1)*100 AS percentage
+									WHERE p.sessionid = ?)*100),1) AS percentage
 									FROM {paperattendance_presence} AS p
 									INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid)
 									WHERE p.sessionid = ? AND p.status = 1";
@@ -536,7 +533,7 @@ else if ($isstudent) {
 	
 	// Lists all records in the database
 	if ($action == "view"){
-		$getstudentattendances = "SELECT s.id, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, p.status, m.name
+		$getstudentattendances = "SELECT s.id AS sessionid, p.id AS presenceid, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, p.status, m.name
 				FROM {paperattendance_session} AS s
 				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
@@ -555,7 +552,8 @@ else if ($isstudent) {
 					get_string('date', 'local_paperattendance'),
 					get_string('module', 'local_paperattendance'),
 					get_string('time', 'local_paperattendance'),
-					get_string('attendance', 'local_paperattendance')
+					get_string('attendance', 'local_paperattendance'),
+					get_string('reviewattendance', 'local_paperattendance')
 			);
 			//A mere counter for the numbers of records
 			$counter = 1;
@@ -563,7 +561,7 @@ else if ($isstudent) {
 				
 				$urlattendance = new moodle_url("#");
 				
-				if ($attendance->status == 1){
+				if ($attendance->status){
 					$statusicon = new pix_icon("i/valid", get_string('presentattendance', 'local_paperattendance'));
 				}
 				else{
@@ -573,13 +571,15 @@ else if ($isstudent) {
 						$urlattendance,
 						$statusicon
 						);
+				$formbuttonurl = new moodle_url("/local/paperattendance/history.php", array("action"=>"requestattendance","idpresence" => $attendance->presenceid,"courseid" => $idcourse));
 				
 				$attendancestable->data[] = array(
 					$counter,
 					date("d-m-Y", $attendance->date),
 					$attendance->name,
 					$attendance->hour,
-					$statusiconaction
+					$statusiconaction,
+					(!$attendance->status ? html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('request', 'local_paperattendance'))) : null)
 				);
 						
 				$counter++;
@@ -588,6 +588,26 @@ else if ($isstudent) {
 	
 		$backbuttonurl = new moodle_url("/course/view.php", array("id" => $idcourse));
 	
+	}
+	if ($action == "requestattendance"){
+		$requestform = new paperattendance_reviewattendance_form(null, array(
+				"courseid" => $idcourse,
+				"presenceid" => $idpresence
+		));
+		$goback = new moodle_url("/local/paperattendance/history.php", array("action"=>"view","courseid" => $idcourse));
+			
+	
+		if($requestform->is_cancelled()){
+			redirect($goback);
+		}
+		else if($data = $requestform->get_data()){
+			$newdiscussion = new stdClass();
+			$newdiscussion->presenceid = $idpresence;
+			$newdiscussion->comment = $data->comment;
+			$newdiscussion->result = 0; //Result equals to 0 means that the discussion is open
+			$insertdiscussion = $DB->insert_record("paperattendance_discussion", $newdiscussion, false);
+			redirect($goback);
+		}
 	}
 	
 	$PAGE->set_title(get_string('historytitle', 'local_paperattendance'));
@@ -625,6 +645,9 @@ else if ($isstudent) {
 			
 		}
 		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($backbuttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left"));
+	}
+	if ($action == "requestattendance"){
+		$requestform->display();
 	}
 	
 }

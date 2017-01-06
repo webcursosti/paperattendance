@@ -115,6 +115,18 @@ $string['percentage'] = "% Attendance";
 $string['percentagestudent'] = "Attendance Percentage";
 $string['totalattendances'] = "Sessions held";
 $string['tooltippercentage'] = "This percentage belongs only to the PaperAttendance method";
+$string['reviewattendance'] = "Review";
+$string['request'] = "Request";
+$string['comment'] = "Comment";
+$string['discussiontitle'] = "Discussions";
+$string['response'] = "Response";
+$string['module'] = "Module";
+$string['studentname'] = "Student name";
+$string['discussionhelp'] = "Here you can see students requests about their attendances.";
+$string['mantainabsent'] = "Maintain absence";
+$string['changetopresent'] = "Change to present";
+$string['result'] = "Result";
+
 
 //messages
 $string['dear'] = "Dear Teacher";
