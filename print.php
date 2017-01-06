@@ -41,8 +41,10 @@ $action = optional_param("action", "add", PARAM_TEXT);
 $category = optional_param('categoryid', 1, PARAM_INT);
 
 if($courseid > 1){
-	if($course = $DB->get_record("course", array("id" => $courseid))  && $course->idnumber != NULL){
-		$context = context_coursecat::instance($course->category);
+	if($course = $DB->get_record("course", array("id" => $courseid)) ){
+		if($course->idnumber != NULL){
+			$context = context_coursecat::instance($course->category);
+		}
 	}
 	else{
 		$context = context_system::instance();
