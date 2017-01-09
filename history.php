@@ -533,6 +533,23 @@ else if ($isstudent) {
 	
 	// Lists all records in the database
 	if ($action == "view"){
+		//icons
+		$urlicon = new moodle_url("#");
+		$synchronizedicon = new pix_icon("i/scheduled", get_string('synchronized', 'local_paperattendance'));
+		$synchronizediconaction = $OUTPUT->action_icon(
+				$urlicon,
+				$synchronizedicon
+				);
+		$validicon = new pix_icon("i/valid", get_string('synchronized', 'local_paperattendance'));
+		$validiconaction = $OUTPUT->action_icon(
+				$urlicon,
+				$validicon
+				);
+		$invalidicon = new pix_icon("i/invalid", get_string('synchronized', 'local_paperattendance'));
+		$invalidiconaction = $OUTPUT->action_icon(
+				$urlicon,
+				$invalidicon
+				);
 		$getstudentattendances = "SELECT s.id AS sessionid, p.id AS presenceid, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, p.status, m.name
 				FROM {paperattendance_session} AS s
 				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
@@ -573,13 +590,18 @@ else if ($isstudent) {
 						);
 				$formbuttonurl = new moodle_url("/local/paperattendance/history.php", array("action"=>"requestattendance","idpresence" => $attendance->presenceid,"courseid" => $idcourse));
 				
+				$discussionquery = "SELECT d.result
+									FROM {paperattendance_discussion} d
+									WHERE d.presenceid = ?";
+				$discussion = $DB->get_record_sql($discussionquery, array($attendance->presenceid));
+				
 				$attendancestable->data[] = array(
 					$counter,
 					date("d-m-Y", $attendance->date),
 					$attendance->name,
 					$attendance->hour,
 					$statusiconaction,
-					(!$attendance->status ? html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('request', 'local_paperattendance'))) : null)
+					(!$attendance->status ? html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('request', 'local_paperattendance'))) : ($discussion->result == 0) ? $synchronizediconaction : (($discussion->result == 1) ? $invalidiconaction : $validiconaction))
 				);
 						
 				$counter++;
