@@ -116,10 +116,10 @@ if( $isteacher || is_siteadmin($USER)) {
 		));
 		
 		if($responseform->is_cancelled()){
-			$cancelled = new moodle_url("/local/paperattendance/discussion.php", array(
+			$goback = new moodle_url("/local/paperattendance/discussion.php", array(
 					"courseid" => $idcourse
 			));
-			redirect($cancelled);
+			redirect($goback);
 		}
 		else if($data = $responseform->get_data()){
 			$response = new stdClass();
@@ -144,7 +144,10 @@ if( $isteacher || is_siteadmin($USER)) {
 					paperattendance_omegaupdateattendance(1, $presence->omegaid);
 				}
 			}
-			
+			$goback = new moodle_url("/local/paperattendance/discussion.php", array(
+					"courseid" => $idcourse
+			));
+			redirect($goback);	
 		}
 	}
 	echo $OUTPUT->header();
