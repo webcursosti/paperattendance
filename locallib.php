@@ -910,33 +910,35 @@ function paperattendance_getusername($userid){
 
 function paperattendance_omegaupdateattendance($update, $omegaid){
 	global $CFG, $DB;
-	//CURL UPDATE ATTENDANCE OMEGA
-
-	$url =  $CFG->paperattendance_omegaupdateattendanceurl;
-	$token =  $CFG->paperattendance_omegatoken;
-
-	if($update == 1){
-		$update = "true";
+	
+	if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
+		//CURL UPDATE ATTENDANCE OMEGA
+	
+		$url =  $CFG->paperattendance_omegaupdateattendanceurl;
+		$token =  $CFG->paperattendance_omegatoken;
+	
+		if($update == 1){
+			$update = "true";
+		}
+		else{
+			$update = "false";
+		}
+	
+		$fields = array (
+				"token" => $token,
+				"asistenciaId" => $omegaid,
+				"asistencia" => $update
+		);
+	
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($curl, CURLOPT_POST, TRUE);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($fields));
+		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+		$result = curl_exec ($curl);
+		curl_close ($curl);
 	}
-	else{
-		$update = "false";
-	}
-
-	$fields = array (
-			"token" => $token,
-			"asistenciaId" => $omegaid,
-			"asistencia" => $update
-	);
-
-	$curl = curl_init();
-	curl_setopt($curl, CURLOPT_URL, $url);
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-	curl_setopt($curl, CURLOPT_POST, TRUE);
-	curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($fields));
-	curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-	$result = curl_exec ($curl);
-	curl_close ($curl);
-
 }
 
 function paperattendance_checktoken($token){
