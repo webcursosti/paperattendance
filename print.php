@@ -98,7 +98,7 @@ if($action == "add"){
 		$modules = $data->modules;
 		//attendance description
 		$description = $data->description;
-		var_dump($description);
+
 		$path = $CFG -> dataroot. "/temp/local/paperattendance/";
 		//list($path, $filename) = paperattendance_create_qr_image($courseid."*".$requestor."*", $path);
 

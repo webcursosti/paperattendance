@@ -160,7 +160,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->SetXY($left, $top);
 
 	// Write course name.
-	$coursetrimmedtext = trim_text($course->fullname." - ".$course->shortname,30);
+	$coursetrimmedtext = trim_text($course->shortname,30);
 	$top += 6;
 	$pdf->SetFont('Helvetica', '', 8);
 	$pdf->SetXY($left, $top);
