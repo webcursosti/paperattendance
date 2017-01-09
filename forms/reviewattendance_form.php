@@ -42,7 +42,7 @@ class paperattendance_reviewattendance_form extends moodleform {
 		$mform->addElement("hidden", "courseid", $idcourse);
 		$mform->setType("courseid", PARAM_INT);
 		$mform->addElement("hidden", "idpresence", $idpresence);
-		$mform->setType("presenceid", PARAM_INT);
+		$mform->setType("idpresence", PARAM_INT);
 		$this->add_action_buttons(true);
 	}
 	public function validation($data, $files){

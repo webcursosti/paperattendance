@@ -843,7 +843,7 @@ function paperattendance_getstudentfromcourse($courseid, $userid){
 function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid){
 	global $DB,$CFG;
 	
-	if(paperattendance_checktoken($CFG->paperattendance_omegatoken){
+	if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		//GET OMEGA COURSE ID FROM WEBCURSOS COURSE ID
 		$omegaid = $DB->get_record("course", array("id" => $courseid));
 		$omegaid = $omegaid -> omegaid;
