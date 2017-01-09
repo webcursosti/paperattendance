@@ -577,7 +577,6 @@ else if ($isstudent) {
 			foreach ($attendances as $attendance){
 				
 				$urlattendance = new moodle_url("#");
-				
 				if ($attendance->status){
 					$statusicon = new pix_icon("i/valid", get_string('presentattendance', 'local_paperattendance'));
 				}
@@ -605,10 +604,10 @@ else if ($isstudent) {
 					//result = 0 -> scheduled icon (Attendance request wasn't solved yet)
 					//result = 1 -> invalid icon (Attendance request wasn't accepted)
 					//result = 2 -> valid icon (Attendance request was accepted)
-					(!$attendance->status ? html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('request', 'local_paperattendance'))) 
-					: ($discussion->result == 0) ? $synchronizediconaction 
+					(($attendance->status == 0) ? html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('request', 'local_paperattendance')))
+					: (($discussion->result == 0) ? $synchronizediconaction 
 					: (($discussion->result == 1) ? $invalidiconaction 
-					: $validiconaction))
+					: $validiconaction)))
 				);
 						
 				$counter++;
