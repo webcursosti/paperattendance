@@ -842,34 +842,20 @@ function paperattendance_getstudentfromcourse($courseid, $userid){
 
 function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid){
 	global $DB,$CFG;
-
-	//GET WEBCURSOS SHORTNAME FROM ID
-	$sqlshortname = "SELECT id, shortname FROM {course}	WHERE id = ?";
-	$shortname = $DB->get_record_sql($sqlshortname, array($courseid));
-	$webcshortname = $shortname -> shortname;
-
-	//GET FECHA Y MODULE FROM SESS ID $fecha, $modulo,
-	$sqldatemodule = "SELECT sessmodule.id, FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
-					FROM {paperattendance_sessmodule} AS sessmodule
-					INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
-	$sqldatemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
-	$fecha = $sqldatemodule -> date;
-	$modulo = $sqldatemodule -> time;
-
-	//GET OMEGA COURSE ID FROM WEBCURSOS SHORTNAME
-	$connection = new mysqli("webcursos-db.uai.cl", "webcursos", "arquitectura.2015", "omega");
-	if (!$connection)
-		throw new \Exception("Imposible conectarse a BBDD local");
-		mysqli_set_charset($connection, "utf8");
-
-		$sql = "SELECT * FROM cursos WHERE shortname = '$webcshortname'";
-		$result = $connection->query($sql);
-		if ($result->num_rows > 0) {
-			$row = $result->fetch_assoc();
-			$omegaid = $row['idnumber'];
-		}
-		mysqli_close($connection);
-
+	
+	if(paperattendance_checktoken($CFG->paperattendance_omegatoken){
+		//GET OMEGA COURSE ID FROM WEBCURSOS COURSE ID
+		$omegaid = $DB->get_record("course", array("id" => $courseid));
+		$omegaid = $omegaid -> omegaid;
+		
+		//GET FECHA & MODULE FROM SESS ID $fecha, $modulo,
+		$sqldatemodule = "SELECT sessmodule.id, FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
+						FROM {paperattendance_sessmodule} AS sessmodule
+						INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
+		$sqldatemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
+		$fecha = $sqldatemodule -> date;
+		$modulo = $sqldatemodule -> time;
+	
 		//CURL CREATE ATTENDANCE OMEGA
 		$curl = curl_init();
 
@@ -902,15 +888,16 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 					
 				// get student id from its username
 				$username = $alumnos[$i]->emailAlumno;
-				$sqlgetstudentid = "SELECT id from {user} WHERE username = ?";
-				$studentid = $DB->get_record_sql($sqlgetstudentid, array($username));
+				$studentid = $DB->get_record("user", array("username" => $username));
 				$studentid = $studentid -> id;
 					
+				$omegasessionid = $alumnos[$i]->asistenciaId;
 				//save student sync
-				$sqlsyncstate = "UPDATE {paperattendance_presence} SET omegasync = ? WHERE sessionid  = ? AND userid = ?";
-				$studentid = $DB->execute($sqlsyncstate, array('1', $sessid, $studentid));
+				$sqlsyncstate = "UPDATE {paperattendance_presence} SET omegasync = ?, omegaid = ? WHERE sessionid  = ? AND userid = ?";
+				$studentid = $DB->execute($sqlsyncstate, array('1', $omegasessionid, $sessid, $studentid));
 			}
 		}
+	}
 }
 
 function paperattendance_getusername($userid){
