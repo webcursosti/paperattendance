@@ -130,7 +130,7 @@ if( $isteacher || is_siteadmin($USER)) {
 			$DB->update_record("paperattendance_discussion", $response);
 			
 			if($data->result==2){
-				$presencequery = "SELECT p.id
+				$presencequery = "SELECT p.id, p.omegaid
 							FROM {paperattendance_discussion} d
 							INNER JOIN {paperattendance_presence} p ON (d.presenceid = p.id)
 							WHERE d.id = ?";
@@ -140,6 +140,9 @@ if( $isteacher || is_siteadmin($USER)) {
 				$attendance->status = 1;
 				$attendance->lastmodified = time();
 				$DB->update_record("paperattendance_presence",$attendance);
+				if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
+					paperattendance_omegaupdateattendance(1, $presence->omegaid);
+				}
 			}
 			
 		}
