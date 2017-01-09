@@ -126,6 +126,7 @@ $string['discussionhelp'] = "Aquí puede ver las solicitudes de revisión de asi
 $string['mantainabsent'] = "Mantener ausencia";
 $string['changetopresent'] = "Cambiar a presente";
 $string['result'] = "Resultado";
+$string['discussionstudenthelp'] = "Aca puedes ver los resultados de tus solicitudes de asistencia.";
 
 //messages
 $string['dear'] = "Estimado Profesor";
