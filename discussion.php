@@ -69,15 +69,21 @@ $backbuttonurl = new moodle_url("/course/view.php", array("id" => $idcourse));
 
 if( $isteacher || is_siteadmin($USER)) {
 	if($action == "view"){
-		$discussionquery = "SELECT d.id, d.comment, p.userid, d.result, CONCAT(u.firstname, ' ', u.lastname) AS name, FROM_UNIXTIME(sm.date,'%a %b %d') AS date, m.name AS module
+		$discussionquery = "SELECT d.id, 
+							d.comment, 
+							p.userid, 
+							d.result, 
+							CONCAT(u.firstname, ' ', u.lastname) AS name, 
+							FROM_UNIXTIME(sm.date,'%a %b %d') AS date, 
+							m.name AS module
 							FROM {paperattendance_discussion} d
 							INNER JOIN {paperattendance_presence} p ON (d.presenceid = p.id)
 							INNER JOIN {paperattendance_session} s ON (p.sessionid = s.id)
 							INNER JOIN {user} u ON (p.userid = u.id)
 							INNER JOIN {paperattendance_sessmodule} sm ON (sm.sessionid = s.id)
 							INNER JOIN {paperattendance_module} m ON (m.id = sm.moduleid)
-							WHERE s.courseid = ? AND d.result = 0";
-		$discussions = $DB->get_records_sql($discussionquery, array($idcourse));
+							WHERE s.courseid = ? AND d.result = ?";
+		$discussions = $DB->get_records_sql($discussionquery, array($idcourse, 0));
 		$discussiontable = new html_table();
 		$discussiontable->head = array(
 				"#",
@@ -119,7 +125,8 @@ if( $isteacher || is_siteadmin($USER)) {
 			$response = new stdClass();
 			$response->id = $iddiscussion;
 			$response->response = $data->response;
-			$response->result = $data->result;	//result equals: 1 is still absence, 2 is changed to present
+			//result equals: 1 is still absence, 2 is changed to present
+			$response->result = $data->result;
 			$DB->update_record("paperattendance_discussion", $response);
 			
 			if($data->result==2){
@@ -173,7 +180,10 @@ if($isstudent){
 				$invalidicon
 				);
 		
-		$discussionquery = "SELECT d.result, d.comment, d.response, FROM_UNIXTIME(sm.date,'%a %b %d') AS date, m.name AS module
+		$discussionquery = "SELECT d.result, 
+							d.comment, d.response, 
+							FROM_UNIXTIME(sm.date,'%a %b %d') AS date, 
+							m.name AS module
 							FROM {paperattendance_discussion} d 
 							INNER JOIN {paperattendance_presence} p ON (d.presenceid = p.id)
 							INNER JOIN {paperattendance_session} s ON (p.sessionid = s.id)
@@ -190,14 +200,17 @@ if($isstudent){
 				get_string('result', 'local_paperattendance'),
 				get_string('response', 'local_paperattendance')
 		);
+		//Counter for the number of results
 		$counter = 1;
-		
 		foreach($discussions as $discussion){
 			$discussiontable->data[] = array(
 					$counter,
 					$discussion->comment,
 					$discussion->date,
 					$discussion->module,
+					//result = 0 -> scheduled icon (Attendance request wasn't solved yet)
+					//result = 1 -> invalid icon (Attendance request wasn't accepted)
+					//result = 2 -> valid icon (Attendance request was accepted)
 					($discussion->result == 0) ? $synchronizediconaction : (($discussion->result == 1) ? $invalidiconaction : $validiconaction), 
 					$discussion->response
 			);
