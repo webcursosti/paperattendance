@@ -186,7 +186,7 @@ if($isstudent){
 				$invalidicon
 				);
 		
-		$discussionquery = "SELECT d.result, 
+		$discussionquery = "SELECT d.id, d.result, 
 							d.comment, d.response, 
 							FROM_UNIXTIME(sm.date,'%a %b %d') AS date, 
 							m.name AS module
@@ -196,7 +196,7 @@ if($isstudent){
 							INNER JOIN {paperattendance_sessmodule} sm ON (sm.sessionid = s.id)
 							INNER JOIN {paperattendance_module} m ON (m.id = sm.moduleid)
 							WHERE p.userid = ? AND s.courseid = ?";
-		$discussions = $DB->get_records_sql($discussionquery, array(($USER->id),$idcourse));
+		$discussions = $DB->get_records_sql($discussionquery, array($USER->id,$idcourse));
 		$discussiontable = new html_table();
 		$discussiontable->head = array(
 				"#",
@@ -204,7 +204,7 @@ if($isstudent){
 				get_string('attdate', 'local_paperattendance'),
 				get_string('module', 'local_paperattendance'),
 				get_string('result', 'local_paperattendance'),
-				get_string('response', 'local_paperattendance')
+				get_string('answer', 'local_paperattendance')
 		);
 		//Counter for the number of results
 		$counter = 1;

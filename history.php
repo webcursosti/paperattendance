@@ -535,17 +535,17 @@ else if ($isstudent) {
 	if ($action == "view"){
 		//icons
 		$urlicon = new moodle_url("#");
-		$synchronizedicon = new pix_icon("i/scheduled", get_string('synchronized', 'local_paperattendance'));
+		$synchronizedicon = new pix_icon("i/scheduled", get_string('pending', 'local_paperattendance'));
 		$synchronizediconaction = $OUTPUT->action_icon(
 				$urlicon,
 				$synchronizedicon
 				);
-		$validicon = new pix_icon("i/valid", get_string('synchronized', 'local_paperattendance'));
+		$validicon = new pix_icon("i/valid", get_string('presentattendance', 'local_paperattendance'));
 		$validiconaction = $OUTPUT->action_icon(
 				$urlicon,
 				$validicon
 				);
-		$invalidicon = new pix_icon("i/invalid", get_string('synchronized', 'local_paperattendance'));
+		$invalidicon = new pix_icon("i/invalid", get_string('absentattendance', 'local_paperattendance'));
 		$invalidiconaction = $OUTPUT->action_icon(
 				$urlicon,
 				$invalidicon
