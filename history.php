@@ -38,7 +38,7 @@ global $DB, $PAGE, $OUTPUT, $USER, $CFG;
 // Possible actions -> view, scan or students attendance . Standard is view mode
 $action = optional_param("action", "view", PARAM_TEXT);
 $idattendance = optional_param("idattendance", null, PARAM_INT);
-$idpresence = optional_param("idpresence", null, PARAM_INT);
+$idpresence = optional_param("presenceid", null, PARAM_INT);
 $idcourse = required_param('courseid', PARAM_INT);
 
 $context = context_course::instance($COURSE->id);
@@ -166,7 +166,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				// Define edition icon and url
 				$editurlattendance = new moodle_url("/local/paperattendance/history.php", array(
 						"action" => "edit",
-						"idpresence" => $attendance->idp,
+						"presenceid" => $attendance->idp,
 						"idattendance" => $idattendance,
 						"courseid" => $idcourse
 				));
@@ -228,7 +228,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				$editform = new paperattendance_editattendance_form(null, array(
 						"idattendance" => $idattendance,
 						"courseid" => $idcourse,
-						"idpresence" => $idpresence
+						"presenceid" => $idpresence
 				));
 	
 				if($editform->is_cancelled()){
@@ -587,7 +587,7 @@ else if ($isstudent) {
 						$urlattendance,
 						$statusicon
 						);
-				$formbuttonurl = new moodle_url("/local/paperattendance/history.php", array("action"=>"requestattendance","idpresence" => $attendance->presenceid,"courseid" => $idcourse));
+				$formbuttonurl = new moodle_url("/local/paperattendance/history.php", array("action"=>"requestattendance","presenceid" => $attendance->presenceid,"courseid" => $idcourse));
 				
 				$discussionquery = "SELECT d.result
 									FROM {paperattendance_discussion} d
