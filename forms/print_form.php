@@ -50,7 +50,13 @@ class paperattendance_print_form extends moodleform {
 			$arrayteachers[$teacher->id] = $teacher->name;
 		}
 		
-		$descriptions = array(get_string('class', 'local_paperattendance'), get_string('assistantship', 'local_paperattendance'), get_string('extraclass', 'local_paperattendance'), get_string('test', 'local_paperattendance'), get_string('quiz', 'local_paperattendance'), get_string('labs', 'local_paperattendance'));
+		$descriptions = array(get_string('class', 'local_paperattendance'), 
+							  get_string('assistantship', 'local_paperattendance'),
+							  get_string('extraclass', 'local_paperattendance'), 
+							  get_string('test', 'local_paperattendance'), 
+							  get_string('quiz', 'local_paperattendance'), 
+						      get_string('exam', 'local_paperattendance'), 
+							  get_string('labs', 'local_paperattendance'));
 		$description = array();
 		foreach ($descriptions as $arraydescriptions){
 			$description[$arraydescriptions] = $arraydescriptions;
@@ -84,7 +90,7 @@ class paperattendance_print_form extends moodleform {
 		$requestor = $data["requestor"];
 		$sessiondate = $data["sessiondate"];
 		$modules = $data["modules"];
-		$description = $data["description"];
+//		$description = $data["description"];
 		
 		
 		if($requestor == "no"){

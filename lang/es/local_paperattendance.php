@@ -127,6 +127,14 @@ $string['mantainabsent'] = "Mantener ausencia";
 $string['changetopresent'] = "Cambiar a presente";
 $string['result'] = "Resultado";
 $string['discussionstudenthelp'] = "Aca puedes ver los resultados de tus solicitudes de asistencia.";
+$string['descriptionselect'] = "Attendance Description";
+$string['class'] = "Curricular Class";
+$string['assistantship'] = "Assistantship";
+$string['extraclass'] = "Extraordinary Class";
+$string['test'] = "Test";
+$string['quiz'] = "Quiz";
+$string['exam'] = "Exam";
+$string['labs'] = "Laboratory";
 
 //messages
 $string['dear'] = "Estimado Profesor";

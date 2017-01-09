@@ -122,7 +122,7 @@ function paperattendance_students_list($contextid, $course){
  * @param unknown $studentinfo
  *            the student info including name and idnumber
  */
-function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $qrstring, $webcursospath, $sessiondate) {
+function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $qrstring, $webcursospath, $sessiondate,$description) {
 	global $CFG;
 	$modulecount = 1;
 	// Pages should be added automatically while the list grows.
@@ -130,7 +130,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->AddPage();
 	$pdf->SetFont('Helvetica', '', 8);
 	// Top QR
-	$qrfilename = paperattendance_create_qr_image($qrstring.$modulecount, $qrpath);
+	$qrfilename = paperattendance_create_qr_image($qrstring.$modulecount."*".$description, $qrpath);
 	$goodcirlepath = $CFG->dirroot . '/local/paperattendance/img/goodcircle.png';
 	$pdf->Image($qrpath."/".$qrfilename, 153, 5, 35);
 	// Botton QR, messege to fill the circle and Webcursos Logo
@@ -578,7 +578,7 @@ function paperattendance_get_qr_text($path, $pdf){
 }
 
 
-function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffile){
+function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffile, $description){
 	global $DB;
 
 	$sessioninsert = new stdClass();
@@ -589,6 +589,7 @@ function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffi
 	$sessioninsert->pdf = $pdffile;
 	$sessioninsert->status = 0;
 	$sessioninsert->lastmodified = time();
+	$sessioninsert->description = $description;
 	$sessionid = $DB->insert_record('paperattendance_session', $sessioninsert);
 	
 	return $sessionid;
