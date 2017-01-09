@@ -126,7 +126,7 @@ $string['discussionhelp'] = "Here you can see students requests about their atte
 $string['mantainabsent'] = "Maintain absence";
 $string['changetopresent'] = "Change to present";
 $string['result'] = "Result";
-
+$string['discussionstudenthelp'] = "Here you can see your attendances request resolutions.";
 
 //messages
 $string['dear'] = "Dear Teacher";
