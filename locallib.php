@@ -653,13 +653,14 @@ function paperattendance_read_pdf_save_session($path, $pdffile, $qrtext){
 		$arraymodules = $qrtextexplode[2];
 		$time = $qrtextexplode[3];
 		$page = $qrtextexplode[4];
+		$description = $qrtextexplode[5];
 
 		$verification = paperattendance_check_session_modules($arraymodules, $courseid, $time);
 		if($verification == "perfect"){
 			$pos = substr_count($arraymodules, ':');
 			if ($pos == 0) {
 				$module = $arraymodules;
-				$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile);
+				$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile, $drescription);
 				$verification = paperattendance_insert_session_module($module, $sessionid, $time);
 				if($verification == true){
 					return "Perfect";
@@ -676,7 +677,7 @@ function paperattendance_read_pdf_save_session($path, $pdffile, $qrtext){
 					//for each module inside $arraymodules, save records.
 					$module = $modulesexplode[$i];
 
-					$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile);
+					$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile, $description);
 					$verification = paperattendance_insert_session_module($module, $sessionid, $time);
 					if($verification == true){
 						return "Perfect";
