@@ -654,9 +654,8 @@ else if ($isstudent) {
 			$sessions = $DB->count_records("paperattendance_session", array ("courseid" => $course->id));
 			$present = "SELECT COUNT(*) 
 						FROM {paperattendance_presence} AS p
-						INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid)
-						WHERE s.courseid = ? AND p.status = 1";
-			$present = $DB->count_records_sql($present, array($course->id));
+						INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid AND p.status = 1 AND s.courseid = ? AND p.userid = ?)";
+			$present = $DB->count_records_sql($present, array($course->id, $USER->id));
 			$absent = $sessions - $present;
 			$percentagestudent = round(($present/$sessions)*100); 
 			

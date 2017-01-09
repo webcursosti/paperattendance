@@ -96,7 +96,9 @@ if($action == "add"){
 		$sessiondate = $data->sessiondate;
 		// array idmodule => {0 = no checked, 1 = checked}
 		$modules = $data->modules;
-
+		//attendance description
+		$description = $data->description;
+		var_dump($description);
 		$path = $CFG -> dataroot. "/temp/local/paperattendance/";
 		//list($path, $filename) = paperattendance_create_qr_image($courseid."*".$requestor."*", $path);
 
@@ -129,7 +131,7 @@ if($action == "add"){
 				$arraymodule = $schedule[0];
 				$stringqr = $courseid."*".$requestor."*".$arraymodule."*".$sessiondate."*";
 				
-				paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $key, $path, $stringqr, $webcursospath, $sessiondate);
+				paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $key, $path, $stringqr, $webcursospath, $sessiondate, $description);
 				
 			}
 		}

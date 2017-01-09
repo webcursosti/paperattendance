@@ -49,9 +49,22 @@ class paperattendance_print_form extends moodleform {
 		foreach ($teachers as $teacher){
 			$arrayteachers[$teacher->id] = $teacher->name;
 		}
+		
+		$descriptions = array(get_string('class', 'local_paperattendance'), 
+							  get_string('assistantship', 'local_paperattendance'),
+							  get_string('extraclass', 'local_paperattendance'), 
+							  get_string('test', 'local_paperattendance'), 
+							  get_string('quiz', 'local_paperattendance'), 
+						      get_string('exam', 'local_paperattendance'), 
+							  get_string('labs', 'local_paperattendance'));
+		$description = array();
+		foreach ($descriptions as $arraydescriptions){
+			$description[$arraydescriptions] = $arraydescriptions;
+		}
+		
 		$mform->addElement("select", "requestor", get_string('requestor', 'local_paperattendance'), $arrayteachers);
 		$mform->addElement("date_selector", "sessiondate", get_string('attdate', 'local_paperattendance'));
-		
+		$mform->addElement("select", "description", get_string('descriptionselect', 'local_paperattendance'), $description);
 		$mform->addElement('html', '<div class="alert alert-info">'.get_string('modulesinfoomega','local_paperattendance').'</div>');
 		
 		$modulesquery = "SELECT * 
@@ -77,6 +90,8 @@ class paperattendance_print_form extends moodleform {
 		$requestor = $data["requestor"];
 		$sessiondate = $data["sessiondate"];
 		$modules = $data["modules"];
+//		$description = $data["description"];
+		
 		
 		if($requestor == "no"){
 			$errors["requestor"] =  get_string('pleaseselectteacher', 'local_paperattendance');

@@ -122,7 +122,7 @@ function paperattendance_students_list($contextid, $course){
  * @param unknown $studentinfo
  *            the student info including name and idnumber
  */
-function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $qrstring, $webcursospath, $sessiondate) {
+function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $qrstring, $webcursospath, $sessiondate,$description) {
 	global $CFG;
 	$modulecount = 1;
 	// Pages should be added automatically while the list grows.
@@ -130,7 +130,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->AddPage();
 	$pdf->SetFont('Helvetica', '', 8);
 	// Top QR
-	$qrfilename = paperattendance_create_qr_image($qrstring.$modulecount, $qrpath);
+	$qrfilename = paperattendance_create_qr_image($qrstring.$modulecount."*".$description, $qrpath);
 	$goodcirlepath = $CFG->dirroot . '/local/paperattendance/img/goodcircle.png';
 	$pdf->Image($qrpath."/".$qrfilename, 153, 5, 35);
 	// Botton QR, messege to fill the circle and Webcursos Logo
@@ -578,7 +578,7 @@ function paperattendance_get_qr_text($path, $pdf){
 }
 
 
-function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffile){
+function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffile, $description){
 	global $DB;
 
 	$sessioninsert = new stdClass();
@@ -589,6 +589,7 @@ function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffi
 	$sessioninsert->pdf = $pdffile;
 	$sessioninsert->status = 0;
 	$sessioninsert->lastmodified = time();
+	$sessioninsert->description = $description;
 	$sessionid = $DB->insert_record('paperattendance_session', $sessioninsert);
 	
 	return $sessionid;
@@ -652,13 +653,14 @@ function paperattendance_read_pdf_save_session($path, $pdffile, $qrtext){
 		$arraymodules = $qrtextexplode[2];
 		$time = $qrtextexplode[3];
 		$page = $qrtextexplode[4];
+		$description = $qrtextexplode[5];
 
 		$verification = paperattendance_check_session_modules($arraymodules, $courseid, $time);
 		if($verification == "perfect"){
 			$pos = substr_count($arraymodules, ':');
 			if ($pos == 0) {
 				$module = $arraymodules;
-				$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile);
+				$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile, $drescription);
 				$verification = paperattendance_insert_session_module($module, $sessionid, $time);
 				if($verification == true){
 					return "Perfect";
@@ -675,7 +677,7 @@ function paperattendance_read_pdf_save_session($path, $pdffile, $qrtext){
 					//for each module inside $arraymodules, save records.
 					$module = $modulesexplode[$i];
 
-					$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile);
+					$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile, $description);
 					$verification = paperattendance_insert_session_module($module, $sessionid, $time);
 					if($verification == true){
 						return "Perfect";
@@ -840,34 +842,20 @@ function paperattendance_getstudentfromcourse($courseid, $userid){
 
 function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid){
 	global $DB,$CFG;
-
-	//GET WEBCURSOS SHORTNAME FROM ID
-	$sqlshortname = "SELECT id, shortname FROM {course}	WHERE id = ?";
-	$shortname = $DB->get_record_sql($sqlshortname, array($courseid));
-	$webcshortname = $shortname -> shortname;
-
-	//GET FECHA Y MODULE FROM SESS ID $fecha, $modulo,
-	$sqldatemodule = "SELECT sessmodule.id, FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
-					FROM {paperattendance_sessmodule} AS sessmodule
-					INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
-	$sqldatemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
-	$fecha = $sqldatemodule -> date;
-	$modulo = $sqldatemodule -> time;
-
-	//GET OMEGA COURSE ID FROM WEBCURSOS SHORTNAME
-	$connection = new mysqli("webcursos-db.uai.cl", "webcursos", "arquitectura.2015", "omega");
-	if (!$connection)
-		throw new \Exception("Imposible conectarse a BBDD local");
-		mysqli_set_charset($connection, "utf8");
-
-		$sql = "SELECT * FROM cursos WHERE shortname = '$webcshortname'";
-		$result = $connection->query($sql);
-		if ($result->num_rows > 0) {
-			$row = $result->fetch_assoc();
-			$omegaid = $row['idnumber'];
-		}
-		mysqli_close($connection);
-
+	
+	if(paperattendance_checktoken($CFG->paperattendance_omegatoken){
+		//GET OMEGA COURSE ID FROM WEBCURSOS COURSE ID
+		$omegaid = $DB->get_record("course", array("id" => $courseid));
+		$omegaid = $omegaid -> omegaid;
+		
+		//GET FECHA & MODULE FROM SESS ID $fecha, $modulo,
+		$sqldatemodule = "SELECT sessmodule.id, FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
+						FROM {paperattendance_sessmodule} AS sessmodule
+						INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
+		$sqldatemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
+		$fecha = $sqldatemodule -> date;
+		$modulo = $sqldatemodule -> time;
+	
 		//CURL CREATE ATTENDANCE OMEGA
 		$curl = curl_init();
 
@@ -900,15 +888,16 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 					
 				// get student id from its username
 				$username = $alumnos[$i]->emailAlumno;
-				$sqlgetstudentid = "SELECT id from {user} WHERE username = ?";
-				$studentid = $DB->get_record_sql($sqlgetstudentid, array($username));
+				$studentid = $DB->get_record("user", array("username" => $username));
 				$studentid = $studentid -> id;
 					
+				$omegasessionid = $alumnos[$i]->asistenciaId;
 				//save student sync
-				$sqlsyncstate = "UPDATE {paperattendance_presence} SET omegasync = ? WHERE sessionid  = ? AND userid = ?";
-				$studentid = $DB->execute($sqlsyncstate, array('1', $sessid, $studentid));
+				$sqlsyncstate = "UPDATE {paperattendance_presence} SET omegasync = ?, omegaid = ? WHERE sessionid  = ? AND userid = ?";
+				$studentid = $DB->execute($sqlsyncstate, array('1', $omegasessionid, $sessid, $studentid));
 			}
 		}
+	}
 }
 
 function paperattendance_getusername($userid){
@@ -921,33 +910,35 @@ function paperattendance_getusername($userid){
 
 function paperattendance_omegaupdateattendance($update, $omegaid){
 	global $CFG, $DB;
-	//CURL UPDATE ATTENDANCE OMEGA
-
-	$url =  $CFG->paperattendance_omegaupdateattendanceurl;
-	$token =  $CFG->paperattendance_omegatoken;
-
-	if($update == 1){
-		$update = "true";
+	
+	if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
+		//CURL UPDATE ATTENDANCE OMEGA
+	
+		$url =  $CFG->paperattendance_omegaupdateattendanceurl;
+		$token =  $CFG->paperattendance_omegatoken;
+	
+		if($update == 1){
+			$update = "true";
+		}
+		else{
+			$update = "false";
+		}
+	
+		$fields = array (
+				"token" => $token,
+				"asistenciaId" => $omegaid,
+				"asistencia" => $update
+		);
+	
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($curl, CURLOPT_POST, TRUE);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($fields));
+		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+		$result = curl_exec ($curl);
+		curl_close ($curl);
 	}
-	else{
-		$update = "false";
-	}
-
-	$fields = array (
-			"token" => $token,
-			"asistenciaId" => $omegaid,
-			"asistencia" => $update
-	);
-
-	$curl = curl_init();
-	curl_setopt($curl, CURLOPT_URL, $url);
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-	curl_setopt($curl, CURLOPT_POST, TRUE);
-	curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($fields));
-	curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-	$result = curl_exec ($curl);
-	curl_close ($curl);
-
 }
 
 function paperattendance_checktoken($token){
