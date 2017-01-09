@@ -120,7 +120,7 @@ $string['request'] = "Solicitar";
 $string['comment'] = "Comentario";
 $string['discussiontitle'] = "Discusiones";
 $string['response'] = "Responder";
-$string['module'] = "Modulo";
+$string['module'] = "Módulo";
 $string['studentname'] = "Nombre del alumno";
 $string['discussionhelp'] = "Aquí puede ver las solicitudes de revisión de asistencias de los alumnos.";
 $string['mantainabsent'] = "Mantener ausencia";
@@ -135,6 +135,8 @@ $string['test'] = "Test";
 $string['quiz'] = "Quiz";
 $string['exam'] = "Exam";
 $string['labs'] = "Laboratory";
+$string['answer'] = "Respuesta";
+$string['pending'] = "Pendiente";
 
 //messages
 $string['dear'] = "Estimado Profesor";
