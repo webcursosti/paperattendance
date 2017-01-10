@@ -32,8 +32,8 @@ class paperattendance_response_form extends moodleform {
 	public function definition(){
 		$mform = $this->_form;
 		$instance = $this->_customdata;
-		$idcourse = $instance["courseid"];
-		$iddiscussion = $instance["discussionid"];
+		$courseid = $instance["courseid"];
+		$discussionid = $instance["discussionid"];
 		$result = [get_string("pleaseselectattendance","local_paperattendance"), get_string("mantainabsent","local_paperattendance"), get_string("changetopresent","local_paperattendance")];
 
 		$mform->addElement("text", "response", get_string("response", "local_paperattendance"));
@@ -41,10 +41,10 @@ class paperattendance_response_form extends moodleform {
 		$mform->addElement("select", "result", get_string("result", "local_paperattendance"), $result);
 		$mform->addElement("hidden", "action", "response");
 		$mform->setType("action", PARAM_TEXT);
-		$mform->addElement("hidden", "courseid", $idcourse);
+		$mform->addElement("hidden", "courseid", $courseid);
 		$mform->setType("courseid", PARAM_INT);
-		$mform->addElement("hidden", "iddiscussion", $iddiscussion);
-		$mform->setType("iddiscussion", PARAM_INT);
+		$mform->addElement("hidden", "discussionid", $discussionid);
+		$mform->setType("discussionid", PARAM_INT);
 		$this->add_action_buttons(true);
 	}
 	public function validation($data, $files){

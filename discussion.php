@@ -32,22 +32,22 @@ require_once ($CFG->dirroot."/local/paperattendance/forms/response_form.php");
 global $DB, $PAGE, $OUTPUT, $USER, $CFG;
 
 $action = optional_param("action", "view", PARAM_TEXT);
-$iddiscussion = optional_param("iddiscussion", null, PARAM_INT);
-$idcourse = required_param('courseid', PARAM_INT);
+$discussionid = optional_param("discussionid", null, PARAM_INT);
+$courseid = required_param('courseid', PARAM_INT);
 
 $context = context_course::instance($COURSE->id);
-$url = new moodle_url("/local/paperattendance/discussion.php", array('courseid' => $idcourse));
+$url = new moodle_url("/local/paperattendance/discussion.php", array('courseid' => $courseid));
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout("standard");
-$course = $DB->get_record("course",array("id" => $idcourse));
+$course = $DB->get_record("course",array("id" => $courseid));
 
 //breadcrumb for navigation
 $PAGE->navbar->ignore_active();
 $PAGE->navbar->add(get_string('courses', 'local_paperattendance'), new moodle_url('/course/index.php'));
-$PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array("id" => $idcourse)));
+$PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array("id" => $courseid)));
 $PAGE->navbar->add(get_string('pluginname', 'local_paperattendance'));
-$PAGE->navbar->add(get_string('discussiontitle', 'local_paperattendance'), new moodle_url("/local/paperattendance/discussion.php", array("courseid" => $idcourse)));
+$PAGE->navbar->add(get_string('discussiontitle', 'local_paperattendance'), new moodle_url("/local/paperattendance/discussion.php", array("courseid" => $courseid)));
 
 
 $contextsystem = context_system::instance();
@@ -62,10 +62,10 @@ if (isguestuser()){
 }
 
 //It is verified if the user is student or teacher
-$isteacher = paperattendance_getteacherfromcourse($idcourse, $USER->id);
-$isstudent = paperattendance_getstudentfromcourse($idcourse, $USER->id);
+$isteacher = paperattendance_getteacherfromcourse($courseid, $USER->id);
+$isstudent = paperattendance_getstudentfromcourse($courseid, $USER->id);
 //url to go back to the course
-$backbuttonurl = new moodle_url("/course/view.php", array("id" => $idcourse));
+$backbuttonurl = new moodle_url("/course/view.php", array("id" => $courseid));
 
 if( $isteacher || is_siteadmin($USER)) {
 	if($action == "view"){
@@ -83,7 +83,7 @@ if( $isteacher || is_siteadmin($USER)) {
 							INNER JOIN {paperattendance_sessmodule} sm ON (sm.sessionid = s.id)
 							INNER JOIN {paperattendance_module} m ON (m.id = sm.moduleid)
 							WHERE s.courseid = ? AND d.result = ?";
-		$discussions = $DB->get_records_sql($discussionquery, array($idcourse, 0));
+		$discussions = $DB->get_records_sql($discussionquery, array($courseid, 0));
 		$discussiontable = new html_table();
 		$discussiontable->head = array(
 				"#",
@@ -96,7 +96,7 @@ if( $isteacher || is_siteadmin($USER)) {
 		$counter = 1;
 		foreach($discussions as $discussion){
 			if($discussion->result == 0){
-				$formbuttonurl = new moodle_url("/local/paperattendance/discussion.php", array("action"=>"response","iddiscussion" => $discussion->id,"courseid" => $idcourse));
+				$formbuttonurl = new moodle_url("/local/paperattendance/discussion.php", array("action"=>"response","discussionid" => $discussion->id,"courseid" => $courseid));
 				$discussiontable->data[] = array(
 						$counter,
 						$discussion->name,
@@ -111,19 +111,19 @@ if( $isteacher || is_siteadmin($USER)) {
 	}
 	if($action == "response"){
 		$responseform = new paperattendance_response_form(null, array(
-				"courseid" => $idcourse,
-				"discussionid" => $iddiscussion
+				"courseid" => $courseid,
+				"discussionid" => $discussionid
 		));
 		
 		if($responseform->is_cancelled()){
 			$goback = new moodle_url("/local/paperattendance/discussion.php", array(
-					"courseid" => $idcourse
+					"courseid" => $courseid
 			));
 			redirect($goback);
 		}
 		else if($data = $responseform->get_data()){
 			$response = new stdClass();
-			$response->id = $iddiscussion;
+			$response->id = $discussionid;
 			$response->response = $data->response;
 			//result equals: 1 is still absence, 2 is changed to present
 			$response->result = $data->result;
@@ -134,7 +134,7 @@ if( $isteacher || is_siteadmin($USER)) {
 							FROM {paperattendance_discussion} d
 							INNER JOIN {paperattendance_presence} p ON (d.presenceid = p.id)
 							WHERE d.id = ?";
-				$presence = $DB->get_record_sql($presencequery, array($iddiscussion));
+				$presence = $DB->get_record_sql($presencequery, array($discussionid));
 				$attendance = new stdClass();
 				$attendance->id = $presence->id;
 				$attendance->status = 1;
@@ -145,7 +145,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				}
 			}
 			$goback = new moodle_url("/local/paperattendance/discussion.php", array(
-					"courseid" => $idcourse
+					"courseid" => $courseid
 			));
 			redirect($goback);	
 		}
@@ -196,7 +196,7 @@ if($isstudent){
 							INNER JOIN {paperattendance_sessmodule} sm ON (sm.sessionid = s.id)
 							INNER JOIN {paperattendance_module} m ON (m.id = sm.moduleid)
 							WHERE p.userid = ? AND s.courseid = ?";
-		$discussions = $DB->get_records_sql($discussionquery, array($USER->id,$idcourse));
+		$discussions = $DB->get_records_sql($discussionquery, array($USER->id,$courseid));
 		$discussiontable = new html_table();
 		$discussiontable->head = array(
 				"#",
