@@ -135,6 +135,8 @@ $string['test'] = "Prueba";
 $string['quiz'] = "Control";
 $string['exam'] = "Examen";
 $string['labs'] = "Laboratorio";
+$string['answer'] = "Answer";
+$string['pending'] = "Pending";
 
 //messages
 $string['dear'] = "Dear Teacher";
