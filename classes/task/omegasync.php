@@ -35,30 +35,32 @@ class processpdf extends \core\task\scheduled_task {
 
 	public function execute() {	
 		global $CFG, $DB;
-		require_once ($CFG->dirroot . '/local/paperattendance/locallib.php');
+		if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
+			require_once ($CFG->dirroot . '/local/paperattendance/locallib.php');
+			
+			// Sql that brings the unread pdfs names
+			$sqlunreadpdfs = "SELECT sess.id AS id, 
+					sess.pdf AS name, 
+					sess.courseid AS courseid,
+					sess.teacherid as teacherid,
+					sess.uploaderid as uploaderid,
+					c.shortname AS shortname,
+					FROM_UNIXTIME(sess.lastmodified) AS date
+	 				FROM {paperattendance_session} AS sess
+					INNER JOIN {course} AS c ON (c.id = sess.courseid AND sess.status = ?)
+					ORDER BY sess.lastmodified ASC";
+			// Parameters for the previous query
+			$params = array(PAPERATTENDANCE_STATUS_PROCESSED);
 		
-		// Sql that brings the unread pdfs names
-		$sqlunreadpdfs = "SELECT sess.id AS id, 
-				sess.pdf AS name, 
-				sess.courseid AS courseid,
-				sess.teacherid as teacherid,
-				sess.uploaderid as uploaderid,
-				c.shortname AS shortname,
-				FROM_UNIXTIME(sess.lastmodified) AS date
- 				FROM {paperattendance_session} AS sess
-				INNER JOIN {course} AS c ON (c.id = sess.courseid AND sess.status = ?)
-				ORDER BY sess.lastmodified ASC";
-		// Parameters for the previous query
-		$params = array(PAPERATTENDANCE_STATUS_PROCESSED);
-	
-		// Read the pdfs if there is any unsynced, with synctask function
-		if($resources = $DB->get_records_sql($sqlunreadpdfs, $params)){
-			$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
-			foreach($resources as $pdf){
-				$process = paperattendance_synctask($path, $pdf-> name, $pdf->courseid);
-				if($process){
-					$pdf->status = 2;
-					$DB->update_record("paperattendance_session", $pdf);
+			// Read the pdfs if there is any unsynced, with synctask function
+			if($resources = $DB->get_records_sql($sqlunreadpdfs, $params)){
+				$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
+				foreach($resources as $pdf){
+					$process = paperattendance_synctask($path, $pdf-> name, $pdf->courseid);
+					if($process){
+						$pdf->status = 2;
+						$DB->update_record("paperattendance_session", $pdf);
+					}
 				}
 			}
 		}
