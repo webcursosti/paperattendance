@@ -988,7 +988,7 @@ function paperattendance_getcountstudentsbysession($sessionid){
 function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploaderid, $date, $course) {
 	GLOBAL $CFG, $USER, $DB;
 	
-	$user = $DB->get_record("user", array("id"=> $uploaderid));
+	$teacher = $DB->get_record("user", array("id"=> $$teacherid));
 
 	//message
 	$messagehtml = "<html>";
