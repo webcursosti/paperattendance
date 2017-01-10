@@ -49,27 +49,17 @@ class processpdf extends \core\task\scheduled_task {
 				INNER JOIN {course} AS c ON (c.id = sess.courseid AND sess.status = ?)
 				ORDER BY sess.lastmodified ASC";
 		// Parameters for the previous query
-		$params = array(PAPERATTENDANCE_STATUS_UNREAD);
+		$params = array(PAPERATTENDANCE_STATUS_PROCESSED);
 	
 		// Read the pdfs if there is any unread, with readpdf function
 		if($resources = $DB->get_records_sql($sqlunreadpdfs, $params)){
 			$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
 			foreach($resources as $pdf){
-				$process = paperattendance_readpdf($path, $pdf-> name, $pdf->courseid);
-				if($process["result"] == "true"){
-					if($CFG->paperattendance_sendmail == 1){
-						paperattendance_sendMail($pdf->id, $pdf->courseid, $pdf->teacherid, $pdf->uploaderid, $pdf->date, $pdf->shortname);
-					}
-					if($process["synced"] == "true"){
-						$pdf->status = 2;
-					}
-					else{
-						$pdf->status = 1;
-					}
-					
+				$process = paperattendance_synctask($path, $pdf-> name, $pdf->courseid);
+				if($process){
+					$pdf->status = 2;
 					$DB->update_record("paperattendance_session", $pdf);
 				}
-
 			}
 		}
 	}

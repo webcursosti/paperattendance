@@ -310,7 +310,9 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 function paperattendance_readpdf($path, $filename, $course){
 	global $DB, $CFG;
 	
-	$return = FALSE;
+	$return = array();
+	$return["result"] = "false";
+	$return["synced"] = "false";
 	mtrace("id curso ".$course);
 	$context = context_course::instance($course);
 	$objcourse = new stdClass();
@@ -342,7 +344,7 @@ function paperattendance_readpdf($path, $filename, $course){
 	$arrayalumnos = array();
 	
 	foreach ($studentlist as $student){
-		$return = TRUE;
+		$return["result"] = "true";
 		
 		// Page size
 		$height = $pdfpages[$numberpage]->getImageHeight();
@@ -400,7 +402,9 @@ function paperattendance_readpdf($path, $filename, $course){
 	}
 	
 	if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
-	paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid);
+		if(paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid)){
+			$return["synced"] = "true";
+		}
 	}
 	
 	return $return;
@@ -880,10 +884,12 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 
 		$alumnos = new stdClass();
 		$alumnos = json_decode($result)->alumnos;
-
+		
+		$return = false;
 		// FOR EACH STUDENT ON THE RESULT, SAVE HIS SYNC WITH OMEGA (true or false)
 		for ($i = 0 ; $i < count($alumnos); $i++){
 			if($alumnos[$i]->resultado == true){
+				$return = true;
 				// el estado es 0 por default, asi que solo update en caso de ser verdadero el resultado
 					
 				// get student id from its username
@@ -898,6 +904,7 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 			}
 		}
 	}
+	return $return;
 }
 
 function paperattendance_getusername($userid){
@@ -1112,4 +1119,99 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 		return $OUTPUT->notification("File name: ".$originalfilename."<br>".get_string("pdfextensionunrecognized", "local_paperattendance"));
 	}
 
+}
+
+function paperattendance_synctask($path, $filename, $course){
+	global $DB, $CFG;
+
+	$return = false;
+
+	$context = context_course::instance($course);
+	$objcourse = new stdClass();
+	$objcourse -> id = $course;
+
+	$studentlist = paperattendance_students_list($context ->id, $objcourse);
+	$sessid = paperattendance_get_sessionid($filename);
+
+	// pre process pdf
+	$pdf = new Imagick($path."/".$filename);
+	$pdftotalpages = (int)$pdf->getNumberImages();
+	$pdfpages = array();
+
+	//$debugpath = $CFG -> dirroot. "/local/paperattendance/test/";
+	for($numpage = 0; $numpage < $pdftotalpages; $numpage++){
+		$page = new Imagick();
+		$page->setResolution( 300, 300);
+		$page->readImage($path."/".$filename."[$numpage]");
+		$page = $page->flattenImages();
+		$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
+		$page->setImageFormat('png');
+		//$page->writeImage($debugpath."pdf_$numpage.pdf");
+		$pdfpages[] = $page;
+	}
+
+	$countstudent = 1;
+	$numberpage = 0;
+	$factor = 0;
+	$arrayalumnos = array();
+
+	foreach ($studentlist as $student){
+		$return["result"] = "true";
+
+		// Page size
+		$height = $pdfpages[$numberpage]->getImageHeight();
+		$width = $pdfpages[$numberpage]->getImageWidth();
+
+		if($numberpage == 0){
+			$attendancecircle = $pdfpages[$numberpage]->getImageRegion(
+					$width * 0.028,
+					$height * 0.018,
+					$width * 0.7556,
+					$height * (0.179 + 0.02640 * $factor)
+					);
+			//$attendancecircle->writeImage($debugpath.'student_'.$countstudent.' * '.$student->name.'.png');
+			//echo "<br> Pagina 1: $numberpage estudiante $countstudent ".$student->name;
+
+		}else{
+			$attendancecircle = $pdfpages[$numberpage]->getImageRegion(
+					$width * 0.028,
+					$height * 0.018,
+					$width * 0.7556,
+					$height * (0.16 + 0.02640 * $factor)
+					);
+			//$attendancecircle->writeImage($debugpath.'student_'.$countstudent.' * '.$student->name.'.png');
+			//echo "<br> Pagina 2: $numberpage estudiante $countstudent ".$student->name;
+		}
+
+		$line = array();
+		$line['emailAlumno'] = paperattendance_getusername($student->id);
+		$line['resultado'] = "true";
+
+		$graychannel = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
+		if($graychannel["mean"] < $CFG->paperattendance_grayscale){
+			$line['asistencia'] = "true";
+		}
+		else{
+			$line['asistencia'] = "false";
+		}
+
+		$arrayalumnos[] = $line;
+
+		// 26 student per each page
+		$numberpage = floor($countstudent/26);
+		$attendancecircle->destroy();
+
+		if($countstudent%26 == 0 && $countstudent != 1){
+			$factor = $factor - 26;
+		}
+
+		$countstudent++;
+		$factor++;
+	}
+
+	if(paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid)){
+		$return = true;
+	}
+
+	return $return;
 }

@@ -43,6 +43,15 @@ $tasks = array(
 			'day' => '*',
 			'dayofweek' => '*',
 			'month' => '*'
+	),
+	array(
+			'classname' => 'local_paperattendance\task\omegasync',
+			'blocking' => 0,
+			'minute' => '1-30',
+			'hour' => '*',
+			'day' => '*',
+			'dayofweek' => '*',
+			'month' => '*'
 	)
 		
 );
