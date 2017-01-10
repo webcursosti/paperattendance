@@ -308,7 +308,7 @@ if( $isteacher || is_siteadmin($USER)) {
 	
 	// Lists all records in the database
 	if ($action == "view"){
-		$getattendances = "SELECT s.id, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, s.pdf
+		$getattendances = "SELECT s.id, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, s.pdf, s.status AS status
 						   FROM {paperattendance_session} AS s
 						   INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 						   INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
@@ -390,14 +390,10 @@ if( $isteacher || is_siteadmin($USER)) {
 				$date= $attendance->date;
 				$dateconverted = paperattendance_convertdate($date);
 				
-				//We get the total count of sync students for this session
-				$synchronizedstudentnscount = paperattendance_getcountstudentssynchronizedbysession($attendance->id);
-				//We get the total count of students for this session
-				$studentscount = paperattendance_getcountstudentsbysession($attendance->id);
-				//Check if this session is fully synchronized with omega and create de table
+				$attendancestatus = $attendance -> status;
 				//Define synchronized or unsynchronized url
 				$urlomegasync = new moodle_url("#");
-				if ( $synchronizedstudentnscount == $studentscount){
+				if ( $attendancestatus == 2){
 					$synchronizedicon = new pix_icon("t/go", get_string('synchronized', 'local_paperattendance'));
 				}
 				else{
