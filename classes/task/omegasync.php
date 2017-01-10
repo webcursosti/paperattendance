@@ -51,7 +51,7 @@ class processpdf extends \core\task\scheduled_task {
 		// Parameters for the previous query
 		$params = array(PAPERATTENDANCE_STATUS_PROCESSED);
 	
-		// Read the pdfs if there is any unread, with readpdf function
+		// Read the pdfs if there is any unsynced, with synctask function
 		if($resources = $DB->get_records_sql($sqlunreadpdfs, $params)){
 			$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
 			foreach($resources as $pdf){
