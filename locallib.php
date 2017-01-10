@@ -978,32 +978,36 @@ function paperattendance_getcountstudentsbysession($sessionid){
 
 }
 
-function paperattendance_sendMail($teacherid, $date, $course) {
-	GLOBAL $USER, $DB;
-	$userfrom = core_user::get_noreply_user();
-	$userfrom->maildisplay = true;
-
-	$teacher = $DB->get_record("user", array("id"=> $teacherid));
+function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploaderid, $date, $course) {
+	GLOBAL $CFG, $USER, $DB;
+	
+	$user = $DB->get_record("user", array("id"=> $uploaderid));
 
 	//message
-	$message = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ", \n";	
-	$message .= get_string("processconfirmationbody", "local_paperattendance") . "\n";
-	$message .= get_string("datebody", "local_paperattendance") ." ". $date . "\n";
-	$message .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
+	$messagehtml = "<html>";
+	$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";	
+	$messagehtml .= "<p>".get_string("processconfirmationbody", "local_paperattendance") . "</p>";
+	$messagehtml .= "<p>".get_string("datebody", "local_paperattendance") ." ". $date . "</p>";
+	$messagehtml .= "<p>".get_string("coursebody", "local_paperattendance") ." ". $course . "</p>";
+	$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/history.php?action=studentsattendance&attendanceid=". $attendanceid ."&courseid=". $courseid ."'>" . get_string('historytitle', 'local_paperattendance') . "</a></p>";
+	$messagehtml .= "</html>";
+	
+	$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
+	$messagetext .= get_string("processconfirmationbody", "local_paperattendance") . "\n";
+	$messagetext .= get_string("datebody", "local_paperattendance") ." ". $date . "\n";
+	$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
 
-	// Format each "\n" into a line break
-	$formattedMessage = nl2br($message);
 
 	$eventdata = new stdClass();
 	$eventdata->component = "local_paperattendance"; // your component name
 	$eventdata->name = "paperattendance_notification"; // this is the message name from messages.php
-	$eventdata->userfrom = $userfrom;
-	$eventdata->userto = $teacher->email;
+	$eventdata->userfrom = $user;
+	$eventdata->userto = $teacherid;
 	$eventdata->subject = get_string("processconfirmationbodysubject", "local_paperattendance");
-	$eventdata->fullmessage = format_text_email($formattedMessage, FORMAT_HTML);
+	$eventdata->fullmessage = $messagetext;
 	$eventdata->fullmessageformat = FORMAT_HTML;
-	$eventdata->fullmessagehtml = "";
-	$eventdata->smallmessage = "";
+	$eventdata->fullmessagehtml = $messagehtml;
+	$eventdata->smallmessage = get_string("processconfirmationbodysubject", "local_paperattendance");
 	$eventdata->notification = 1; // this is only set to 0 for personal messages between users
 	message_send($eventdata);
 }

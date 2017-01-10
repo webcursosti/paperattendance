@@ -42,6 +42,7 @@ class processpdf extends \core\task\scheduled_task {
 				sess.pdf AS name, 
 				sess.courseid AS courseid,
 				sess.teacherid as teacherid,
+				sess.uploaderid as uploaderid,
 				c.shortname AS shortname,
 				FROM_UNIXTIME(sess.lastmodified) AS date
  				FROM {paperattendance_session} AS sess
@@ -57,7 +58,7 @@ class processpdf extends \core\task\scheduled_task {
 				$process = paperattendance_readpdf($path, $pdf-> name, $pdf->courseid);
 				if($process){
 					if($CFG->paperattendance_sendmail == 1){
-						paperattendance_sendMail($pdf->teacherid, $pdf->date, $pdf->shortname);
+						paperattendance_sendMail($pdf->id, $pdf->courseid, $pdf->teacherid, $pdf->uploaderid, $pdf->date, $pdf->shortname);
 					}
 					$pdf->status = 1;
 					$DB->update_record("paperattendance_session", $pdf);

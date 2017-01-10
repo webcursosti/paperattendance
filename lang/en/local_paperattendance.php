@@ -144,6 +144,7 @@ $string['processconfirmationbodysubject'] = "Attendance's list processed correct
 $string['processconfirmationbody'] = "Attendance records processing completed";
 $string['datebody'] = "Date:";
 $string['coursebody'] = "Course:";
+$string['checkyourattendance'] = "Check your ";
 
 // Settings
 $string['settings']="Basic Configuration";
