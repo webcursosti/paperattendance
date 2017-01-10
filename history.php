@@ -37,12 +37,12 @@ global $DB, $PAGE, $OUTPUT, $USER, $CFG;
 
 // Possible actions -> view, scan or students attendance . Standard is view mode
 $action = optional_param("action", "view", PARAM_TEXT);
-$idattendance = optional_param("idattendance", null, PARAM_INT);
-$idpresence = optional_param("presenceid", null, PARAM_INT);
-$idcourse = required_param('courseid', PARAM_INT);
+$attendanceid = optional_param("attendanceid", null, PARAM_INT);
+$presenceid = optional_param("presenceid", null, PARAM_INT);
+$courseid = required_param('courseid', PARAM_INT);
 
 $context = context_course::instance($COURSE->id);
-$url = new moodle_url("/local/paperattendance/history.php", array('courseid' => $idcourse));
+$url = new moodle_url("/local/paperattendance/history.php", array('courseid' => $courseid));
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout("standard");
@@ -54,7 +54,7 @@ $contextsystem = context_system::instance();
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = 26;
 //for navbar
-$course = $DB->get_record("course",array("id" => $idcourse));
+$course = $DB->get_record("course",array("id" => $courseid));
 
 require_login();
 if (isguestuser()){
@@ -62,24 +62,24 @@ if (isguestuser()){
 }
 
 //Begins Teacher's View
-$isteacher = paperattendance_getteacherfromcourse($idcourse, $USER->id);
+$isteacher = paperattendance_getteacherfromcourse($courseid, $USER->id);
 
-$isstudent = paperattendance_getstudentfromcourse($idcourse, $USER->id);
+$isstudent = paperattendance_getstudentfromcourse($courseid, $USER->id);
 
 if( $isteacher || is_siteadmin($USER)) {
 	
 	//breadcrumb for navigation
 	$PAGE->navbar->ignore_active();
 	$PAGE->navbar->add(get_string('courses', 'local_paperattendance'), new moodle_url('/course/index.php'));
-	$PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array("id" => $idcourse)));
+	$PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array("id" => $courseid)));
 	$PAGE->navbar->add(get_string('pluginname', 'local_paperattendance'));
-	$PAGE->navbar->add(get_string('historytitle', 'local_paperattendance'), new moodle_url("/local/paperattendance/history.php", array("courseid" => $idcourse)));
+	$PAGE->navbar->add(get_string('historytitle', 'local_paperattendance'), new moodle_url("/local/paperattendance/history.php", array("courseid" => $courseid)));
 	
 	// action-> Students Attendance
 	if ($action == "studentsattendance"){
 		
 		$PAGE->navbar->add(get_string('studentsattendance', 'local_paperattendance'),
-				new moodle_url("/local/paperattendance/history.php", array("courseid" => $idcourse , "idattendance" => $idattendance, "action" => $action)));
+				new moodle_url("/local/paperattendance/history.php", array("courseid" => $courseid , "attendanceid" => $attendanceid, "action" => $action)));
 		
 		//Query for the total count of attendances
 		$getstudentsattendancecount = 'SELECT
@@ -88,7 +88,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				INNER JOIN {user} AS u ON (u.id = p.userid)
 				WHERE p.sessionid = ? ';
 		
-		$attendancescount = $DB->count_records_sql($getstudentsattendancecount, array($idattendance));
+		$attendancescount = $DB->count_records_sql($getstudentsattendancecount, array($attendanceid));
 		
 		//Query to get the table data of attendances
 		$getstudentsattendance = 'SELECT
@@ -103,7 +103,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				INNER JOIN {user} AS u ON (u.id = p.userid)
 				WHERE p.sessionid = ?  ';
 		
-		$attendances = $DB->get_records_sql($getstudentsattendance, array($idattendance), $page * $perpage, $perpage);
+		$attendances = $DB->get_records_sql($getstudentsattendance, array($attendanceid), $page * $perpage, $perpage);
 		
 		$attendancestable = new html_table();
 		
@@ -167,8 +167,8 @@ if( $isteacher || is_siteadmin($USER)) {
 				$editurlattendance = new moodle_url("/local/paperattendance/history.php", array(
 						"action" => "edit",
 						"presenceid" => $attendance->idp,
-						"idattendance" => $idattendance,
-						"courseid" => $idcourse
+						"attendanceid" => $attendanceid,
+						"courseid" => $courseid
 				));
 				$editiconattendance = new pix_icon("i/edit", get_string('edithistory', 'local_paperattendance'));
 				$editactionasistencia = $OUTPUT->action_icon(
@@ -204,38 +204,38 @@ if( $isteacher || is_siteadmin($USER)) {
 			}
 		}
 		
-		$viewbackbutton = new moodle_url("/local/paperattendance/history.php", array("action" => "view", "courseid" => $idcourse));	
+		$viewbackbutton = new moodle_url("/local/paperattendance/history.php", array("action" => "view", "courseid" => $courseid));	
 		$insertstudenturl = new moodle_url("/local/paperattendance/history.php", array(
 				"action" => "insertstudent",
-				"courseid" => $idcourse,
-				"idattendance" => $idattendance
+				"courseid" => $courseid,
+				"attendanceid" => $attendanceid
 		));
 	}	
 	// Edits an existent record for the students attendance view
 	if($action == "edit"){
-		if($idpresence == null){
+		if($presenceid == null){
 			print_error(get_string('nonselectedstudent', 'local_paperattendance'));
 			$cancelled = new moodle_url("/local/paperattendance/history.php", array(
-					"idattendance" => $idattendance,
-					"courseid" => $idcourse
+					"attendanceid" => $attendanceid,
+					"courseid" => $courseid
 					));
 			redirect($cancelled);
 		}
 		else{
 			
-			if($attendance = $DB->get_record("paperattendance_presence", array("id" => $idpresence)) ){
+			if($attendance = $DB->get_record("paperattendance_presence", array("id" => $presenceid)) ){
 			
 				$editform = new paperattendance_editattendance_form(null, array(
-						"idattendance" => $idattendance,
-						"courseid" => $idcourse,
-						"presenceid" => $idpresence
+						"attendanceid" => $attendanceid,
+						"courseid" => $courseid,
+						"presenceid" => $presenceid
 				));
 	
 				if($editform->is_cancelled()){
 					$cancelled = new moodle_url("/local/paperattendance/history.php", array(
 							"action" => "studentsattendance",
-							"idattendance" => $idattendance,
-							"courseid" => $idcourse
+							"attendanceid" => $attendanceid,
+							"courseid" => $courseid
 					));
 					redirect($cancelled);
 	
@@ -243,20 +243,16 @@ if( $isteacher || is_siteadmin($USER)) {
 				else if($data = $editform->get_data()){
 	
 					$record = new stdClass();
-					$record->id = $idpresence;
+					$record->id = $presenceid;
 					$record->lastmodified = time();
 					$record->status = $data->status;
 						
 					$DB->update_record("paperattendance_presence", $record);
 					
-					if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
-					paperattendance_omegaupdateattendance($record->status, $record->omegaid);
-					}
-					
 					$backurl = new moodle_url("/local/paperattendance/history.php", array(
 							"action" => "studentsattendance",
-							"idattendance" => $idattendance,
-							"courseid" => $idcourse
+							"attendanceid" => $attendanceid,
+							"courseid" => $courseid
 					));
 					redirect($backurl);										
 				}
@@ -265,8 +261,8 @@ if( $isteacher || is_siteadmin($USER)) {
 				print_error(get_string('nonexiststudent', 'local_paperattendance'));
 				$canceled = new moodle_url("/local/paperattendance/history.php", array(
 						"action" => "studentsattendance",
-						"idattendance" => $idattendance,
-						"courseid" => $idcourse
+						"attendanceid" => $attendanceid,
+						"courseid" => $courseid
 				));
 				redirect($canceled);
 			
@@ -279,8 +275,8 @@ if( $isteacher || is_siteadmin($USER)) {
 		
 		$backurl = new moodle_url("/local/paperattendance/history.php", array(
 				"action" => "view",
-				"idattendance" => $idattendance,
-				"courseid" => $idcourse
+				"attendanceid" => $attendanceid,
+				"courseid" => $courseid
 				));
 		
 		$viewbackbutton = html_writer::nonempty_tag(
@@ -294,7 +290,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				       FROM {paperattendance_session} AS ps
 				       WHERE ps.id = ?';
 		
-		$pdfname = $DB->get_record_sql($getpdfname, array($idattendance));
+		$pdfname = $DB->get_record_sql($getpdfname, array($attendanceid));
 		
 		//var_dump($contextsystem->id);
 		//Context id as 1 because the var context->id gets the number 6 , check it later
@@ -315,7 +311,7 @@ if( $isteacher || is_siteadmin($USER)) {
 						   WHERE s.courseid = ?
 						   ORDER BY sm.date DESC";
 		
-		$attendances = $DB->get_records_sql($getattendances, array($idcourse));
+		$attendances = $DB->get_records_sql($getattendances, array($courseid));
 		
 		$attendancestable = new html_table();
 		//we check if we have attendances for the selected course
@@ -364,8 +360,8 @@ if( $isteacher || is_siteadmin($USER)) {
 				// Define scan icon and url
 				$scanurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
 						"action" => "scan",
-						"idattendance" => $attendance->id,
-						"courseid" => $idcourse
+						"attendanceid" => $attendance->id,
+						"courseid" => $courseid
 						
 				));
 				$scanicon_attendance = new pix_icon("e/new_document", get_string('see', 'local_paperattendance'));
@@ -377,8 +373,8 @@ if( $isteacher || is_siteadmin($USER)) {
 				// Define Asistencia alumnos icon and url
 				$studentsattendanceurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
 						"action" => "studentsattendance",
-						"idattendance" => $attendance->id,
-						"courseid" => $idcourse
+						"attendanceid" => $attendance->id,
+						"courseid" => $courseid
 				));
 				$studentsattendanceicon_attendance = new pix_icon("e/fullpage", get_string('seestudents', 'local_paperattendance'));
 				$studentsattendanceaction_attendance = $OUTPUT->action_icon(
@@ -420,20 +416,20 @@ if( $isteacher || is_siteadmin($USER)) {
 				$counter++;
 			}
 		}
-		$buttonurl = new moodle_url("/course/view.php", array("id" => $idcourse));
+		$buttonurl = new moodle_url("/course/view.php", array("id" => $courseid));
 		
 	}	
 	
 	if($action == "insertstudent"){
 		$mform = new paperattendance_addstudent_form(null, array(
-				"idcourse" => $idcourse,
-				"idattendance" => $idattendance
+				"courseid" => $courseid,
+				"attendanceid" => $attendanceid
 		));
 		if($mform->is_cancelled()){
 			$goback = new moodle_url("/local/paperattendance/history.php", array(
 					"action" => "studentsattendance",
-					"idattendance" => $idattendance,
-					"courseid" => $idcourse
+					"attendanceid" => $attendanceid,
+					"courseid" => $courseid
 			));
 			redirect($goback);
 		}
@@ -443,7 +439,7 @@ if( $isteacher || is_siteadmin($USER)) {
 			$status = $data->status;
 			$user = $DB->get_record("user", array($insertby => $filter));
 			$addstudent = new stdClass();
-			$addstudent->sessionid = $idattendance;
+			$addstudent->sessionid = $attendanceid;
 			$addstudent->userid = $user->id;
 			$addstudent->status = $status;
 			$addstudent->lastmodified = time();
@@ -451,8 +447,8 @@ if( $isteacher || is_siteadmin($USER)) {
 			$insertattendance = $DB->insert_record("paperattendance_presence", $addstudent, false);
 			$goback = new moodle_url("/local/paperattendance/history.php", array(
 					"action" => "studentsattendance",
-					"idattendance" => $idattendance,
-					"courseid" => $idcourse
+					"attendanceid" => $attendanceid,
+					"courseid" => $courseid
 			));
 			redirect($goback);
 		}
@@ -475,7 +471,7 @@ if( $isteacher || is_siteadmin($USER)) {
 			echo html_writer::table($attendancestable);
 			//displays de pagination bar
 			echo $OUTPUT->paging_bar($attendancescount, $page, $perpage,
-				 	$CFG->wwwroot . '/local/paperattendance/history.php?action=' . $action . '&idattendance=' . $idattendance . '&courseid=' . $idcourse . '&page=');
+				 	$CFG->wwwroot . '/local/paperattendance/history.php?action=' . $action . '&attendanceid=' . $attendanceid . '&courseid=' . $courseid . '&page=');
 		}	
 		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($viewbackbutton, get_string('back', 'local_paperattendance')), array("align" => "left"));
 		
@@ -527,9 +523,9 @@ else if ($isstudent) {
 	//breadcrumb for navigation
 	$PAGE->navbar->ignore_active();
 	$PAGE->navbar->add(get_string('courses', 'local_paperattendance'), new moodle_url('/course/index.php'));
-	$PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array("id" => $idcourse)));
+	$PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array("id" => $courseid)));
 	$PAGE->navbar->add(get_string('pluginname', 'local_paperattendance'));
-	$PAGE->navbar->add(get_string('historytitle', 'local_paperattendance'), new moodle_url("/local/paperattendance/history.php", array("courseid" => $idcourse)));
+	$PAGE->navbar->add(get_string('historytitle', 'local_paperattendance'), new moodle_url("/local/paperattendance/history.php", array("courseid" => $courseid)));
 	
 	// Lists all records in the database
 	if ($action == "view"){
@@ -559,7 +555,7 @@ else if ($isstudent) {
 				WHERE s.courseid = ? AND u.id = ?
 				ORDER BY sm.date DESC";
 	
-		$attendances = $DB->get_records_sql($getstudentattendances, array($idcourse, $USER->id));
+		$attendances = $DB->get_records_sql($getstudentattendances, array($courseid, $USER->id));
 	
 		$attendancestable = new html_table();
 	
@@ -587,7 +583,7 @@ else if ($isstudent) {
 						$urlattendance,
 						$statusicon
 						);
-				$formbuttonurl = new moodle_url("/local/paperattendance/history.php", array("action"=>"requestattendance","presenceid" => $attendance->presenceid,"courseid" => $idcourse));
+				$formbuttonurl = new moodle_url("/local/paperattendance/history.php", array("action"=>"requestattendance","presenceid" => $attendance->presenceid,"courseid" => $courseid));
 				
 				$discussionquery = "SELECT d.result
 									FROM {paperattendance_discussion} d
@@ -615,15 +611,15 @@ else if ($isstudent) {
 			}
 		}
 	
-		$backbuttonurl = new moodle_url("/course/view.php", array("id" => $idcourse));
+		$backbuttonurl = new moodle_url("/course/view.php", array("id" => $courseid));
 	
 	}
 	if ($action == "requestattendance"){
 		$requestform = new paperattendance_reviewattendance_form(null, array(
-				"courseid" => $idcourse,
-				"presenceid" => $idpresence
+				"courseid" => $courseid,
+				"presenceid" => $presenceid
 		));
-		$goback = new moodle_url("/local/paperattendance/history.php", array("action"=>"view","courseid" => $idcourse));
+		$goback = new moodle_url("/local/paperattendance/history.php", array("action"=>"view","courseid" => $courseid));
 			
 	
 		if($requestform->is_cancelled()){
@@ -631,7 +627,7 @@ else if ($isstudent) {
 		}
 		else if($data = $requestform->get_data()){
 			$newdiscussion = new stdClass();
-			$newdiscussion->presenceid = $idpresence;
+			$newdiscussion->presenceid = $presenceid;
 			$newdiscussion->comment = $data->comment;
 			$newdiscussion->result = 0; //Result equals to 0 means that the discussion is open
 			$insertdiscussion = $DB->insert_record("paperattendance_discussion", $newdiscussion, false);

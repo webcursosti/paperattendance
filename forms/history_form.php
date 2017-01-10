@@ -31,11 +31,11 @@ class paperattendance_editattendance_form extends moodleform {
 
 		$mform = $this->_form;
 		$instance = $this->_customdata;
-		$idattendance = $instance["idattendance"];
+		$attendanceid = $instance["attendanceid"];
 		$courseid = $instance["courseid"];
-		$idpresence = $instance["idpresence"];
+		$presenceid = $instance["presenceid"];
 		
-		$presence = $DB->get_record("paperattendance_presence", array('id'=>$idpresence));
+		$presence = $DB->get_record("paperattendance_presence", array('id'=>$presenceid));
 
 		// Select user input
 		$status = array();
@@ -52,14 +52,14 @@ class paperattendance_editattendance_form extends moodleform {
 		$mform->addElement("hidden", "action", "edit");
 		$mform->setType("action", PARAM_TEXT);
 		//Set the required parameters
-		$mform->addElement("hidden", "idattendance", $idattendance);
-		$mform->setType("idattendance", PARAM_INT);
+		$mform->addElement("hidden", "attendanceid", $attendanceid);
+		$mform->setType("attendanceid", PARAM_INT);
 		$mform->addElement("hidden", "courseid", $courseid);
 		$mform->setType("courseid", PARAM_INT);
 		$mform->addElement("hidden", "omegaid", $presence->omegaid);
 		$mform->setType("omegaid", PARAM_INT);
-		$mform->addElement("hidden", "idpresence", $idpresence);
-		$mform->setType("idpresence", PARAM_INT);
+		$mform->addElement("hidden", "presenceid", $presenceid);
+		$mform->setType("presenceid", PARAM_INT);
 		
 
 		$this->add_action_buttons(true);

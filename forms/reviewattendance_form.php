@@ -32,16 +32,16 @@ class paperattendance_reviewattendance_form extends moodleform {
 	public function definition(){
 		$mform = $this->_form;
 		$instance = $this->_customdata;
-		$idcourse = $instance["courseid"];
-		$idpresence = $instance["presenceid"];
+		$courseid = $instance["courseid"];
+		$presenceid = $instance["presenceid"];
 
 		$mform->addElement("text", "comment", get_string("comment", "local_paperattendance"));
 		$mform->setType("comment", PARAM_TEXT);
 		$mform->addElement("hidden", "action", "requestattendance");
 		$mform->setType("action", PARAM_TEXT);
-		$mform->addElement("hidden", "courseid", $idcourse);
+		$mform->addElement("hidden", "courseid", $courseid);
 		$mform->setType("courseid", PARAM_INT);
-		$mform->addElement("hidden", "presenceid", $idpresence);
+		$mform->addElement("hidden", "presenceid", $presenceid);
 		$mform->setType("presenceid", PARAM_INT);
 		$this->add_action_buttons(true);
 	}
