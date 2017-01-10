@@ -25,6 +25,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $messageproviders = array (
 		// Notify teacher that a pdf has been processed
-		'paperattendance_notification' => array (		
+		'paperattendance_notification' => array (
 		)
 );
