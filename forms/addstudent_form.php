@@ -32,8 +32,8 @@ class paperattendance_addstudent_form extends moodleform {
 	public function definition(){
 		$mform = $this->_form;
 		$instance = $this->_customdata;
-		$idcourse = $instance["idcourse"];
-		$idattendance = $instance["idattendance"];
+		$courseid = $instance["courseid"];
+		$attendanceid = $instance["attendanceid"];
 
 		$insertby = ["email"=> get_string("mail", "local_paperattendance"), "idnumber"=> get_string("idnumber", "local_paperattendance")];
 		$status = [get_string("absentattendance", "local_paperattendance"), get_string("presentattendance", "local_paperattendance")];
@@ -44,10 +44,10 @@ class paperattendance_addstudent_form extends moodleform {
 		$mform->addElement("select", "status", get_string("studentstatus", "local_paperattendance"), $status);
 		$mform->addElement("hidden", "action", "insertstudent");
 		$mform->setType("action", PARAM_TEXT);
-		$mform->addElement("hidden", "courseid", $idcourse);
+		$mform->addElement("hidden", "courseid", $courseid);
 		$mform->setType("courseid", PARAM_INT);
-		$mform->addElement("hidden", "idattendance", $idattendance);
-		$mform->setType("idattendance", PARAM_INT);
+		$mform->addElement("hidden", "attendanceid", $attendanceid);
+		$mform->setType("attendanceid", PARAM_INT);
 		$this->add_action_buttons(true);
 	}
 	public function validation($data, $files){
@@ -55,7 +55,7 @@ class paperattendance_addstudent_form extends moodleform {
 		$errors = array();
 		$insertby = $data["insertby"];
 		$filter = $data["filter"];
-		$sessionid = $data["idattendance"];
+		$sessionid = $data["attendanceid"];
 		if($insertby == "idnumber"){
 			if(!isset($filter) || empty($filter) || $filter == "" || $filter == null){
 				$errors["filter"] = get_string("iderror", "local_paperattendance");
