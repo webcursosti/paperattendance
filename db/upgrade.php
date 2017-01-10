@@ -295,6 +295,45 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		upgrade_plugin_savepoint(true, 2017010601, 'local', 'paperattendance');
 	}
 	
+	if ($oldversion < 2017011001) {
+	
+		// Define table paperattendance_module to be dropped.
+		$table = new xmldb_table('paperattendance_discussion');
+	
+		// Conditionally launch drop table for paperattendance_module.
+		if ($dbman->table_exists($table)) {
+			$dbman->drop_table($table);
+		}
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017011001, 'local', 'paperattendance');
+	}
+	
+	if ($oldversion < 2017011002) {
+	
+		// Define table paperattendance_discussion to be created.
+		$table = new xmldb_table('paperattendance_discussion');
+	
+		// Adding fields to table paperattendance_discussion.
+		$table->add_field('id', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+		$table->add_field('presenceid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+		$table->add_field('comment', XMLDB_TYPE_CHAR, '700', null, XMLDB_NOTNULL, null, null);
+		$table->add_field('result', XMLDB_TYPE_INTEGER, '5', null, null, null, null);
+		$table->add_field('response', XMLDB_TYPE_CHAR, '500', null, null, null, null);
+	
+		// Adding keys to table paperattendance_discussion.
+		$table->add_key('id', XMLDB_KEY_PRIMARY, array('id'));
+		$table->add_key('presenceid', XMLDB_KEY_FOREIGN_UNIQUE, array('presenceid'), 'paperattendance_presence', array('id'));
+	
+		// Conditionally launch create table for paperattendance_discussion.
+		if (!$dbman->table_exists($table)) {
+			$dbman->create_table($table);
+		}
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017011002, 'local', 'paperattendance');
+	}
+	
 	
 	return true;
 }
