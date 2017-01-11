@@ -52,7 +52,7 @@ class paperattendance_upload_form extends moodleform {
 		$mform->addElement('filemanager', 'file', get_string('uploadfilepicker', 'local_paperattendance'), null,
 				array(
 						'subdirs' => 0,
-						'maxbytes' => 0,
+						'maxbytes' => $maxfiles*$maxbytes,
 						'maxfiles' => $maxfiles,
 						'accepted_types' =>array('*.pdf'))
 				);
