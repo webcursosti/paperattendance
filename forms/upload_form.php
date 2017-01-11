@@ -44,6 +44,7 @@ class paperattendance_upload_form extends moodleform {
 		
 		//max file size 8388608 default (in bytes)
 		$maxbytes = $CFG->paperattendance_maxfilesize;
+		$maxfiles = $CFG->paperattendance_maxfiles;
 		
 		//header
 		$mform->addElement('header', 'header', get_string('header', 'local_paperattendance'));
@@ -51,8 +52,8 @@ class paperattendance_upload_form extends moodleform {
 		$mform->addElement('filemanager', 'file', get_string('uploadfilepicker', 'local_paperattendance'), null,
 				array(
 						'subdirs' => 0,
-						'maxbytes' => 0,
-						'maxfiles' => 10,
+						'maxbytes' => $maxfiles*$maxbytes,
+						'maxfiles' => $maxfiles,
 						'accepted_types' =>array('*.pdf'))
 				);
 		$mform->setType('file', PARAM_FILE);

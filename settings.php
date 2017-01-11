@@ -140,4 +140,14 @@ if ($hassiteconfig) {
 					PARAM_INT
 					)
 			);
+	//max amount of files
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_maxfiles',
+					get_string('maxfiles', 'local_paperattendance'),
+					get_string('maxfilestext', 'local_paperattendance'),
+					10,
+					PARAM_INT
+					)
+			);
 }

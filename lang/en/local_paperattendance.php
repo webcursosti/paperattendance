@@ -166,7 +166,8 @@ $string['omegagetmoduloshorarios']="Omega's Get Modulos Horarios Url";
 $string['omegagetmoduloshorariostext']="Omega's Get Modulos Horarios Url webapi";
 $string['sendmail'] = "Send notification to the teacher when processed";
 $string['sendmailtext'] = "1 -> enabled, 0 -> disabled";
-
+$string['maxfiles']="Max number of files";
+$string['maxfilestext']="Max amount of files that can be uploaded";
 
 // Task
 $string['task']="Process PDFs";
