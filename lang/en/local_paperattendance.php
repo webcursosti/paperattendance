@@ -127,14 +127,14 @@ $string['mantainabsent'] = "Maintain absence";
 $string['changetopresent'] = "Change to present";
 $string['result'] = "Result";
 $string['discussionstudenthelp'] = "Here you can see your attendances request resolutions.";
-$string['descriptionselect'] = "Descripción de la Asistencia";
-$string['class'] = "Clase Normal";
-$string['assistantship'] = "Ayudantía";
-$string['extraclass'] = "Clase Extra";
-$string['test'] = "Prueba";
-$string['quiz'] = "Control";
-$string['exam'] = "Examen";
-$string['labs'] = "Laboratorio";
+$string['descriptionselect'] = "Attendance Description";
+$string['class'] = "Curricular Class";
+$string['assistantship'] = "Assistantship";
+$string['extraclass'] = "Extraordinary Class";
+$string['test'] = "Test";
+$string['quiz'] = "Quiz";
+$string['exam'] = "Exam";
+$string['labs'] = "Laboratory";
 $string['answer'] = "Answer";
 $string['pending'] = "Pending";
 
@@ -170,8 +170,9 @@ $string['maxfiles']="Max number of files";
 $string['maxfilestext']="Max amount of files that can be uploaded";
 
 // Task
-$string['task']="Process PDFs";
+$string['taskprocespdf']="Process PDFs";
 $string['taskdelete']="Delete PDFs";
+$string['taskomegasync']="Sync Attendance with Omega";
 
 // Capabilities
 $string["paperattendance:print"] = "Print attendance list";

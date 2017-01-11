@@ -310,7 +310,9 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 function paperattendance_readpdf($path, $filename, $course){
 	global $DB, $CFG;
 	
-	$return = FALSE;
+	$return = array();
+	$return["result"] = "false";
+	$return["synced"] = "false";
 	mtrace("id curso ".$course);
 	$context = context_course::instance($course);
 	$objcourse = new stdClass();
@@ -342,7 +344,7 @@ function paperattendance_readpdf($path, $filename, $course){
 	$arrayalumnos = array();
 	
 	foreach ($studentlist as $student){
-		$return = TRUE;
+		$return["result"] = "true";
 		
 		// Page size
 		$height = $pdfpages[$numberpage]->getImageHeight();
@@ -400,7 +402,9 @@ function paperattendance_readpdf($path, $filename, $course){
 	}
 	
 	if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
-	paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid);
+		if(paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid)){
+			$return["synced"] = "true";
+		}
 	}
 	
 	return $return;
@@ -846,7 +850,7 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 	if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		//GET OMEGA COURSE ID FROM WEBCURSOS COURSE ID
 		$omegaid = $DB->get_record("course", array("id" => $courseid));
-		$omegaid = $omegaid -> omegaid;
+		$omegaid = $omegaid -> idnumber;
 		
 		//GET FECHA & MODULE FROM SESS ID $fecha, $modulo,
 		$sqldatemodule = "SELECT sessmodule.id, FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
@@ -880,10 +884,12 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 
 		$alumnos = new stdClass();
 		$alumnos = json_decode($result)->alumnos;
-
+		
+		$return = false;
 		// FOR EACH STUDENT ON THE RESULT, SAVE HIS SYNC WITH OMEGA (true or false)
 		for ($i = 0 ; $i < count($alumnos); $i++){
 			if($alumnos[$i]->resultado == true){
+				$return = true;
 				// el estado es 0 por default, asi que solo update en caso de ser verdadero el resultado
 					
 				// get student id from its username
@@ -898,13 +904,13 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 			}
 		}
 	}
+	return $return;
 }
 
 function paperattendance_getusername($userid){
 	global $DB;
-	$sql = "SELECT id, username from {user} WHERE id = ?";
-	$username = $DB->get_record_sql($sql, array($userid));
-	$username = $username -> id;
+	$username = $DB->get_record("user", array("id" => $userid));
+	$username = $username -> username;
 	return $username;
 }
 
@@ -981,8 +987,10 @@ function paperattendance_getcountstudentsbysession($sessionid){
 function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploaderid, $date, $course) {
 	GLOBAL $CFG, $USER, $DB;
 	
-	$user = $DB->get_record("user", array("id"=> $uploaderid));
-
+	$teacher = $DB->get_record("user", array("id"=> $teacherid));
+	$userfrom = core_user::get_noreply_user();
+	$userfrom->maildisplay = true;
+	
 	//message
 	$messagehtml = "<html>";
 	$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";	
@@ -997,11 +1005,10 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 	$messagetext .= get_string("datebody", "local_paperattendance") ." ". $date . "\n";
 	$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
 
-
 	$eventdata = new stdClass();
 	$eventdata->component = "local_paperattendance"; // your component name
 	$eventdata->name = "paperattendance_notification"; // this is the message name from messages.php
-	$eventdata->userfrom = $user;
+	$eventdata->userfrom = $userfrom;
 	$eventdata->userto = $teacherid;
 	$eventdata->subject = get_string("processconfirmationbodysubject", "local_paperattendance");
 	$eventdata->fullmessage = $messagetext;
@@ -1112,4 +1119,41 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 		return $OUTPUT->notification("File name: ".$originalfilename."<br>".get_string("pdfextensionunrecognized", "local_paperattendance"));
 	}
 
+}
+
+function paperattendance_synctask($courseid, $sessionid){
+	global $DB, $CFG;
+
+	$return = false;
+
+	// Sql that brings the unsynced students
+	$sqlstudents = "SELECT p.userid AS userid, p.status AS status, s.username AS username
+	 				FROM {paperattendance_presence} AS p
+					INNER JOIN {user} AS s on ( p.userid = s.id AND p.sessionid = ? )";
+	
+	if($resources = $DB->get_records_sql($sqlstudents, array($sessionid)){
+	
+	$arrayalumnos = array();
+
+	foreach ($resources as $student){
+
+		$line = array();
+		$line['emailAlumno'] = $student-> username;
+		$line['resultado'] = "true";
+
+		if($student->status == 1){
+			$line['asistencia'] = "true";
+		}
+		else{
+			$line['asistencia'] = "false";
+		}
+
+		$arrayalumnos[] = $line;
+	}
+
+	if(paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessionid)){
+		$return = true;
+	}
+	}
+	return $return;
 }

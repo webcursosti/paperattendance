@@ -127,14 +127,14 @@ $string['mantainabsent'] = "Mantener ausencia";
 $string['changetopresent'] = "Cambiar a presente";
 $string['result'] = "Resultado";
 $string['discussionstudenthelp'] = "Aca puedes ver los resultados de tus solicitudes de asistencia.";
-$string['descriptionselect'] = "Attendance Description";
-$string['class'] = "Curricular Class";
-$string['assistantship'] = "Assistantship";
-$string['extraclass'] = "Extraordinary Class";
-$string['test'] = "Test";
-$string['quiz'] = "Quiz";
-$string['exam'] = "Exam";
-$string['labs'] = "Laboratory";
+$string['descriptionselect'] = "Descripción de la Asistencia";
+$string['class'] = "Clase Normal";
+$string['assistantship'] = "Ayudantía";
+$string['extraclass'] = "Clase Extra";
+$string['test'] = "Prueba";
+$string['quiz'] = "Control";
+$string['exam'] = "Examen";
+$string['labs'] = "Laboratorio";
 $string['answer'] = "Respuesta";
 $string['pending'] = "Pendiente";
 
@@ -170,8 +170,9 @@ $string['maxfiles']="Cantidad máxima de archivos";
 $string['maxfilestext']="Cantidad máxima de archivos que pueden ser subidos";
 
 // Task
-$string['task']="Procesar PDFs";
+$string['taskprocesspdf']="Procesar PDFs";
 $string['taskdelete']="Borrar PDFs";
+$string['taskomegasync']="Sincronización de la Asistencia con Omega";
 
 // Capabilities
 $string["paperattendance:print"] = "Imprimir lista";

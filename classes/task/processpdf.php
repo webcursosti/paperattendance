@@ -27,10 +27,10 @@
 
 namespace local_paperattendance\task;
 
-class processpdf extends \core\task\scheduled_task {
+class paperattendance_processpdf extends \core\task\scheduled_task {
 	
 	public function get_name() {
-		return get_string('task', 'local_paperattendance');
+		return get_string('taskprocesspdf', 'local_paperattendance');
 	}
 
 	public function execute() {	
@@ -56,13 +56,20 @@ class processpdf extends \core\task\scheduled_task {
 			$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
 			foreach($resources as $pdf){
 				$process = paperattendance_readpdf($path, $pdf-> name, $pdf->courseid);
-				if($process){
+				if($process["result"] == "true"){
 					if($CFG->paperattendance_sendmail == 1){
 						paperattendance_sendMail($pdf->id, $pdf->courseid, $pdf->teacherid, $pdf->uploaderid, $pdf->date, $pdf->shortname);
 					}
-					$pdf->status = 1;
+					if($process["synced"] == "true"){
+						$pdf->status = 2;
+					}
+					else{
+						$pdf->status = 1;
+					}
+					
 					$DB->update_record("paperattendance_session", $pdf);
 				}
+
 			}
 		}
 	}
