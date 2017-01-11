@@ -57,7 +57,7 @@ if($courseid > 1){
 
 $isteacher = paperattendance_getteacherfromcourse($courseid, $USER->id);
 
-if(!has_capability("local/paperattendance:printsecre", $context) && !$isteacher && !is_siteadmin($USER) && !has_capability("local/paperattendance:print", $contextcat)){
+if(!has_capability("local/paperattendance:printsecre", $context) && !$isteacher && !is_siteadmin($USER) && !has_capability("local/paperattendance:print", $context)){
 	print_error(get_string('notallowedprint', 'local_paperattendance'));
 }
 $urlprint = new moodle_url("/local/paperattendance/print.php", array(
