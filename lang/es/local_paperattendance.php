@@ -166,6 +166,8 @@ $string['omegagetmoduloshorarios']="Url Omega Get Modulos Horarios";
 $string['omegagetmoduloshorariostext']="Url Omega Get Modulos Horarios webapi";
 $string['sendmail'] = "Enviar notificaciones al completar procesamiento de pdf";
 $string['sendmailtext'] = "1 -> habilitado, 0 -> deshabilidato";
+$string['maxfiles']="Cantidad máxima de archivos";
+$string['maxfilestext']="Cantidad máxima de archivos que pueden ser subidos";
 
 // Task
 $string['task']="Procesar PDFs";
