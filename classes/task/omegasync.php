@@ -30,7 +30,7 @@ namespace local_paperattendance\task;
 class paperattendance_omegasync extends \core\task\scheduled_task {
 	
 	public function get_name() {
-		return get_string('task', 'local_paperattendance');
+		return get_string('taskomegasync', 'local_paperattendance');
 	}
 
 	public function execute() {	

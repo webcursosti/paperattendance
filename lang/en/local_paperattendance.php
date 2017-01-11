@@ -170,8 +170,9 @@ $string['maxfiles']="Max number of files";
 $string['maxfilestext']="Max amount of files that can be uploaded";
 
 // Task
-$string['task']="Process PDFs";
+$string['taskprocespdf']="Process PDFs";
 $string['taskdelete']="Delete PDFs";
+$string['taskomegasync']="Sync Attendance with Omega";
 
 // Capabilities
 $string["paperattendance:print"] = "Print attendance list";
