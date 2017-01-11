@@ -27,7 +27,7 @@
 
 $tasks = array(
 	array(
-			'classname' => 'local_paperattendance\task\processpdf',
+			'classname' => 'local_paperattendance\task\paperattendance_processpdf',
 			'blocking' => 0,
 			'minute' => '*',
 			'hour' => '6-8',
@@ -36,7 +36,7 @@ $tasks = array(
 			'month' => '*'
 	),
 	array(
-			'classname' => 'local_paperattendance\task\deletepdf',
+			'classname' => 'local_paperattendance\task\paperattendance_deletepdf',
 			'blocking' => 0,
 			'minute' => '*',
 			'hour' => '6-8',
@@ -45,7 +45,7 @@ $tasks = array(
 			'month' => '*'
 	),
 	array(
-			'classname' => 'local_paperattendance\task\omegasync',
+			'classname' => 'local_paperattendance\task\paperattendance_omegasync',
 			'blocking' => 0,
 			'minute' => '1-30',
 			'hour' => '*',

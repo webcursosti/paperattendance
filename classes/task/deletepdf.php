@@ -26,7 +26,7 @@
 
 namespace local_paperattendance\task;
 
-class deletepdf extends \core\task\scheduled_task {
+class paperattendance_deletepdf extends \core\task\scheduled_task {
 	
 	public function get_name() {
 		return get_string('taskdelete', 'local_paperattendance');
