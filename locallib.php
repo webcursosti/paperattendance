@@ -988,8 +988,10 @@ function paperattendance_getcountstudentsbysession($sessionid){
 function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploaderid, $date, $course) {
 	GLOBAL $CFG, $USER, $DB;
 	
-	$teacher = $DB->get_record("user", array("id"=> $$teacherid));
-
+	$teacher = $DB->get_record("user", array("id"=> $teacherid));
+	$userfrom = core_user::get_noreply_user();
+	$userfrom->maildisplay = true;
+	
 	//message
 	$messagehtml = "<html>";
 	$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";	
@@ -1004,11 +1006,10 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 	$messagetext .= get_string("datebody", "local_paperattendance") ." ". $date . "\n";
 	$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
 
-
 	$eventdata = new stdClass();
 	$eventdata->component = "local_paperattendance"; // your component name
 	$eventdata->name = "paperattendance_notification"; // this is the message name from messages.php
-	$eventdata->userfrom = $user;
+	$eventdata->userfrom = $userfrom;
 	$eventdata->userto = $teacherid;
 	$eventdata->subject = get_string("processconfirmationbodysubject", "local_paperattendance");
 	$eventdata->fullmessage = $messagetext;
