@@ -1151,7 +1151,7 @@ function paperattendance_synctask($courseid, $sessionid){
 		$arrayalumnos[] = $line;
 	}
 
-	if(paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid)){
+	if(paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessionid)){
 		$return = true;
 	}
 	}
