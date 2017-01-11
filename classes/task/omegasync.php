@@ -50,7 +50,7 @@ class processpdf extends \core\task\scheduled_task {
 			if($resources = $DB->get_records_sql($sqlunsynced, $params)){
 				$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
 				foreach($resources as $session){
-					if($process = paperattendance_synctask($session->courseid, $session->id);){
+					if($process = paperattendance_synctask($session->courseid, $session->id)){
 						$session->status = 2;
 						$DB->update_record("paperattendance_session", $session);
 					}
