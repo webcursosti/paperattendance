@@ -38,28 +38,22 @@ class processpdf extends \core\task\scheduled_task {
 		if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 			require_once ($CFG->dirroot . '/local/paperattendance/locallib.php');
 			
-			// Sql that brings the unread pdfs names
-			$sqlunreadpdfs = "SELECT sess.id AS id, 
-					sess.pdf AS name, 
-					sess.courseid AS courseid,
-					sess.teacherid as teacherid,
-					sess.uploaderid as uploaderid,
-					c.shortname AS shortname,
-					FROM_UNIXTIME(sess.lastmodified) AS date
+			// Sql that brings the unsynced sessions (with omega)
+			$sqlunsynced = "SELECT sess.id AS id, sess.courseid AS courseid
 	 				FROM {paperattendance_session} AS sess
-					INNER JOIN {course} AS c ON (c.id = sess.courseid AND sess.status = ?)
+					WHERE sess.status = ?
 					ORDER BY sess.lastmodified ASC";
 			// Parameters for the previous query
 			$params = array(PAPERATTENDANCE_STATUS_PROCESSED);
 		
-			// Read the pdfs if there is any unsynced, with synctask function
-			if($resources = $DB->get_records_sql($sqlunreadpdfs, $params)){
+			// syn students with synctask function
+			if($resources = $DB->get_records_sql($sqlunsynced, $params)){
 				$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
-				foreach($resources as $pdf){
-					$process = paperattendance_synctask($path, $pdf-> name, $pdf->courseid);
+				foreach($resources as $session){
+					$process = paperattendance_synctask($session->courseid, $session->id);
 					if($process){
-						$pdf->status = 2;
-						$DB->update_record("paperattendance_session", $pdf);
+						$session->status = 2;
+						$DB->update_record("paperattendance_session", $session);
 					}
 				}
 			}

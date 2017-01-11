@@ -850,7 +850,7 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 	if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		//GET OMEGA COURSE ID FROM WEBCURSOS COURSE ID
 		$omegaid = $DB->get_record("course", array("id" => $courseid));
-		$omegaid = $omegaid -> omegaid;
+		$omegaid = $omegaid -> idnumber;
 		
 		//GET FECHA & MODULE FROM SESS ID $fecha, $modulo,
 		$sqldatemodule = "SELECT sessmodule.id, FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
@@ -909,9 +909,8 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 
 function paperattendance_getusername($userid){
 	global $DB;
-	$sql = "SELECT id, username from {user} WHERE id = ?";
-	$username = $DB->get_record_sql($sql, array($userid));
-	$username = $username -> id;
+	$username = $DB->get_record("user", array("id" => $userid));
+	$username = $username -> username;
 	return $username;
 }
 
@@ -1122,74 +1121,27 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 
 }
 
-function paperattendance_synctask($path, $filename, $course){
+function paperattendance_synctask($courseid, $sessionid){
 	global $DB, $CFG;
 
 	$return = false;
 
-	$context = context_course::instance($course);
-	$objcourse = new stdClass();
-	$objcourse -> id = $course;
-
-	$studentlist = paperattendance_students_list($context ->id, $objcourse);
-	$sessid = paperattendance_get_sessionid($filename);
-
-	// pre process pdf
-	$pdf = new Imagick($path."/".$filename);
-	$pdftotalpages = (int)$pdf->getNumberImages();
-	$pdfpages = array();
-
-	//$debugpath = $CFG -> dirroot. "/local/paperattendance/test/";
-	for($numpage = 0; $numpage < $pdftotalpages; $numpage++){
-		$page = new Imagick();
-		$page->setResolution( 300, 300);
-		$page->readImage($path."/".$filename."[$numpage]");
-		$page = $page->flattenImages();
-		$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
-		$page->setImageFormat('png');
-		//$page->writeImage($debugpath."pdf_$numpage.pdf");
-		$pdfpages[] = $page;
-	}
-
-	$countstudent = 1;
-	$numberpage = 0;
-	$factor = 0;
+	// Sql that brings the unsynced students
+	$sqlstudents = "SELECT p.userid AS userid, p.status AS status, s.username AS username
+	 				FROM {paperattendance_presence} AS p
+					INNER JOIN {user} AS s on ( p.userid = s.id AND p.sessionid = ? )";
+	
+	if($resources = $DB->get_records_sql($sqlstudents, array($sessionid)){
+	
 	$arrayalumnos = array();
 
-	foreach ($studentlist as $student){
-		$return["result"] = "true";
-
-		// Page size
-		$height = $pdfpages[$numberpage]->getImageHeight();
-		$width = $pdfpages[$numberpage]->getImageWidth();
-
-		if($numberpage == 0){
-			$attendancecircle = $pdfpages[$numberpage]->getImageRegion(
-					$width * 0.028,
-					$height * 0.018,
-					$width * 0.7556,
-					$height * (0.179 + 0.02640 * $factor)
-					);
-			//$attendancecircle->writeImage($debugpath.'student_'.$countstudent.' * '.$student->name.'.png');
-			//echo "<br> Pagina 1: $numberpage estudiante $countstudent ".$student->name;
-
-		}else{
-			$attendancecircle = $pdfpages[$numberpage]->getImageRegion(
-					$width * 0.028,
-					$height * 0.018,
-					$width * 0.7556,
-					$height * (0.16 + 0.02640 * $factor)
-					);
-			//$attendancecircle->writeImage($debugpath.'student_'.$countstudent.' * '.$student->name.'.png');
-			//echo "<br> Pagina 2: $numberpage estudiante $countstudent ".$student->name;
-		}
+	foreach ($resources as $student){
 
 		$line = array();
-		$line['emailAlumno'] = paperattendance_getusername($student->id);
+		$line['emailAlumno'] = $student-> username;
 		$line['resultado'] = "true";
 
-		$graychannel = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
-		if($graychannel["mean"] < $CFG->paperattendance_grayscale){
+		if($student->status == 1){
 			$line['asistencia'] = "true";
 		}
 		else{
@@ -1197,22 +1149,11 @@ function paperattendance_synctask($path, $filename, $course){
 		}
 
 		$arrayalumnos[] = $line;
-
-		// 26 student per each page
-		$numberpage = floor($countstudent/26);
-		$attendancecircle->destroy();
-
-		if($countstudent%26 == 0 && $countstudent != 1){
-			$factor = $factor - 26;
-		}
-
-		$countstudent++;
-		$factor++;
 	}
 
 	if(paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid)){
 		$return = true;
 	}
-
+	}
 	return $return;
 }
