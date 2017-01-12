@@ -138,6 +138,7 @@ $string['labs'] = "Laboratory";
 $string['answer'] = "Answer";
 $string['pending'] = "Pending";
 $string['summarytitle'] = "Students summary";
+$string['description'] = "Description";
 
 //messages
 $string['dear'] = "Dear Teacher";
@@ -171,7 +172,7 @@ $string['maxfiles']="Max number of files";
 $string['maxfilestext']="Max amount of files that can be uploaded";
 
 // Task
-$string['taskprocespdf']="Process PDFs";
+$string['taskprocesspdf']="Process PDFs";
 $string['taskdelete']="Delete PDFs";
 $string['taskomegasync']="Sync Attendance with Omega";
 
