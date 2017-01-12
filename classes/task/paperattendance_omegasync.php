@@ -35,8 +35,9 @@ class paperattendance_omegasync extends \core\task\scheduled_task {
 
 	public function execute() {	
 		global $CFG, $DB;
+		
+		require_once ($CFG->dirroot . '/local/paperattendance/locallib.php');
 		if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
-			require_once ($CFG->dirroot . '/local/paperattendance/locallib.php');
 			
 			// Sql that brings the unsynced sessions (with omega)
 			$sqlunsynced = "SELECT sess.id AS id, sess.courseid AS courseid
