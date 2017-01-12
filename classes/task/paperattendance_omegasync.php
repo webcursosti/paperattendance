@@ -75,11 +75,11 @@ class paperattendance_omegasync extends \core\task\scheduled_task {
 				$line['resultado'] = "true";
 				if($presence->status)
 					$line['asistencia'] = "true";
-					else
-						$line['asistencia'] = "false";
-						$arrayalumnos[] = $line;
-						if(paperattendance_checktoken($CFG->paperattendance_omegatoken))
-							paperattendance_omegacreateattendance($presence->courseid, $arrayalumnos, $presence->sessionid);
+				else
+					$line['asistencia'] = "false";
+				$arrayalumnos[] = $line;
+				if(paperattendance_checktoken($CFG->paperattendance_omegatoken))
+					paperattendance_omegacreateattendance($presence->courseid, $arrayalumnos, $presence->sessionid);
 			}
 			
 		}
