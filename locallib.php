@@ -1131,7 +1131,7 @@ function paperattendance_synctask($courseid, $sessionid){
 	 				FROM {paperattendance_presence} AS p
 					INNER JOIN {user} AS s on ( p.userid = s.id AND p.sessionid = ? )";
 	
-	if($resources = $DB->get_records_sql($sqlstudents, array($sessionid)){
+	if($resources = $DB->get_records_sql($sqlstudents, array($sessionid))){
 	
 	$arrayalumnos = array();
 
