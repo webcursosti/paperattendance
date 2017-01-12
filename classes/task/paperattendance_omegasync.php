@@ -56,6 +56,32 @@ class paperattendance_omegasync extends \core\task\scheduled_task {
 					}
 				}
 			}
+			
+			// Sql that brings the unsychronized attendances
+			$sqlunsicronizedpresences = "SELECT u.username,
+									s.id AS sessionid,
+									s.courseid,
+									p.status
+									FROM {paperattendance_session} s
+									INNER JOIN {paperattendance_presence} p ON (p.sessionid = s.id)
+									INNER JOIN {user} u ON (u.id = p.userid)
+									WHERE p.omegasync = ?";
+			$unsyncrhonizedpresences = $DB->get_records_sql($sqlunsicronizedpresences, array(0));
+			
+			foreach($unsyncrhonizedpresences as $presence){
+				$arrayalumnos = array();
+				$line = array();
+				$line["emailAlumno"] = $presence->username;
+				$line['resultado'] = "true";
+				if($presence->status)
+					$line['asistencia'] = "true";
+				else
+					$line['asistencia'] = "false";
+				$arrayalumnos[] = $line;
+				if(paperattendance_checktoken($CFG->paperattendance_omegatoken))
+					paperattendance_omegacreateattendance($presence->courseid, $arrayalumnos, $presence->sessionid);
+			}
+			
 		}
 	}
 }
