@@ -285,12 +285,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				array("align" => "left"
 				));
 		
-		$getpdfname = 'SELECT
-					   pdf
-				       FROM {paperattendance_session} AS ps
-				       WHERE ps.id = ?';
-		
-		$pdfname = $DB->get_record_sql($getpdfname, array($attendanceid));
+		$pdfname = $DB->get_record_sql("paperattendance_session", array("id" => $attendanceid));
 		
 		//var_dump($contextsystem->id);
 		//Context id as 1 because the var context->id gets the number 6 , check it later
@@ -304,7 +299,7 @@ if( $isteacher || is_siteadmin($USER)) {
 	
 	// Lists all records in the database
 	if ($action == "view"){
-		$getattendances = "SELECT s.id, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, s.pdf, s.status AS status
+		$getattendances = "SELECT s.id, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, s.pdf, s.status AS status, s.description AS description
 						   FROM {paperattendance_session} AS s
 						   INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 						   INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
@@ -320,22 +315,25 @@ if( $isteacher || is_siteadmin($USER)) {
 					get_string('hashtag', 'local_paperattendance'),
 					get_string('date', 'local_paperattendance'),
 					get_string('time', 'local_paperattendance'),
+					get_string('description', 'local_paperattendance'),
 					get_string('percentage', 'local_paperattendance'),
 					get_string('scan', 'local_paperattendance'),
 					get_string('studentsattendance', 'local_paperattendance'),
 					get_string('omegasync', 'local_paperattendance')
 			);
 			$attendancestable->size = array(
-					'10%',
+					'5%',
 					'25%',
-					'25%',
+					'20%',
+					'16%',
 					'10%',
-					'10%',
-					'10%',
-					'10%'
+					'8%',
+					'8%',
+					'8%'
 			);
 				
 			$attendancestable->align = array(
+					'left',
 					'left',
 					'left',
 					'left',
@@ -404,6 +402,7 @@ if( $isteacher || is_siteadmin($USER)) {
 						$counter,
 						$dateconverted,
 						$attendance->hour,
+						$attendance->description,
 						$percentage->percentage,
 						$scanaction_attendance,
 						$studentsattendanceaction_attendance,
@@ -542,7 +541,7 @@ else if ($isstudent) {
 				$urlicon,
 				$invalidicon
 				);
-		$getstudentattendances = "SELECT s.id AS sessionid, p.id AS presenceid, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, p.status, m.name
+		$getstudentattendances = "SELECT s.id AS sessionid, p.id AS presenceid, sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, p.status, m.name, s.description AS description
 				FROM {paperattendance_session} AS s
 				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
@@ -561,8 +560,19 @@ else if ($isstudent) {
 					get_string('date', 'local_paperattendance'),
 					get_string('module', 'local_paperattendance'),
 					get_string('time', 'local_paperattendance'),
+					get_string('description', 'local_paperattendance'),
 					get_string('attendance', 'local_paperattendance'),
 					get_string('reviewattendance', 'local_paperattendance')
+			);
+			
+			$attendancestable->size = array(
+					'5%',
+					'20%',
+					'10%',
+					'15%',
+					'22%',
+					'8%',
+					'20%'
 			);
 			//A mere counter for the numbers of records
 			$counter = 1;
@@ -591,6 +601,7 @@ else if ($isstudent) {
 					date("d-m-Y", $attendance->date),
 					$attendance->name,
 					$attendance->hour,
+					$attendance->description,
 					$statusiconaction,
 					//result = 0 -> scheduled icon (Attendance request wasn't solved yet)
 					//result = 1 -> invalid icon (Attendance request wasn't accepted)
