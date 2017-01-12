@@ -122,3 +122,10 @@ if( $isteacher || is_siteadmin($USER)) {
 
 
 }
+
+else if ($isstudent) {
+	$goback = new moodle_url("/course/view.php", array(
+			"id" => $courseid
+	));
+	redirect($goback);
+}
