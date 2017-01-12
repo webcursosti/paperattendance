@@ -137,6 +137,7 @@ $string['exam'] = "Exam";
 $string['labs'] = "Laboratory";
 $string['answer'] = "Answer";
 $string['pending'] = "Pending";
+$string['summarytitle'] = "Students summary";
 
 //messages
 $string['dear'] = "Dear Teacher";

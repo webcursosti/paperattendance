@@ -1157,3 +1157,21 @@ function paperattendance_synctask($courseid, $sessionid){
 	}
 	return $return;
 }
+
+function history_tabs($courseid) {
+	$tabs = array();
+	// Create sync
+	$tabs[] = new tabobject(
+			"attendancelist",
+			new moodle_url("/local/paperattendance/history.php", array("courseid"=>$courseid)),
+			get_string("historytitle", "local_paperattendance")
+			);
+	// Records.
+	$tabs[] = new tabobject(
+			"studentssummary",
+			new moodle_url("/local/paperattendance/summary.php", array("courseid"=>$courseid)),
+			get_string("summarytitle", "local_paperattendance")
+			);
+	return $tabs;
+}
+
