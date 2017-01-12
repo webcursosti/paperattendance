@@ -591,10 +591,7 @@ else if ($isstudent) {
 						);
 				$formbuttonurl = new moodle_url("/local/paperattendance/history.php", array("action"=>"requestattendance","presenceid" => $attendance->presenceid,"courseid" => $courseid));
 				
-				$discussionquery = "SELECT d.result
-									FROM {paperattendance_discussion} d
-									WHERE d.presenceid = ?";
-				$discussion = $DB->get_record_sql($discussionquery, array($attendance->presenceid));
+				$discussion = $DB->get_record("paperattendance_discussion", array("presenceid" => $attendance->presenceid));
 				
 				$attendancestable->data[] = array(
 					$counter,
