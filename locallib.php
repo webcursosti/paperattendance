@@ -664,7 +664,7 @@ function paperattendance_read_pdf_save_session($path, $pdffile, $qrtext){
 			$pos = substr_count($arraymodules, ':');
 			if ($pos == 0) {
 				$module = $arraymodules;
-				$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile, $drescription);
+				$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile, $description);
 				$verification = paperattendance_insert_session_module($module, $sessionid, $time);
 				if($verification == true){
 					return "Perfect";
