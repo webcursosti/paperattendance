@@ -347,6 +347,57 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		// Paperattendance savepoint reached.
 		upgrade_plugin_savepoint(true, 2017011102, 'local', 'paperattendance');
 	}
+	if ($oldversion < 2017011301) {
+	
+		// Define field timecreated to be added to paperattendance_discussion.
+		$table = new xmldb_table('paperattendance_discussion');
+		$field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'response');
+	
+		// Conditionally launch add field timecreated.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017011301, 'local', 'paperattendance');
+	}
+	if ($oldversion < 2017011302) {
+	
+		// Define field timemodified to be added to paperattendance_discussion.
+		$table = new xmldb_table('paperattendance_discussion');
+		$field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'timecreated');
+	
+		// Conditionally launch add field timemodified.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017011302, 'local', 'paperattendance');
+	}
+	if ($oldversion < 2017011303) {
+	
+		// Define table paperattendance_cronlog to be created.
+		$table = new xmldb_table('paperattendance_cronlog');
+	
+		// Adding fields to table paperattendance_cronlog.
+		$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+		$table->add_field('task', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+		$table->add_field('result', XMLDB_TYPE_TEXT, null, null, null, null, null);
+		$table->add_field('executiontime', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
+		$table->add_field('timecreated', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
+	
+		// Adding keys to table paperattendance_cronlog.
+		$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+	
+		// Conditionally launch create table for paperattendance_cronlog.
+		if (!$dbman->table_exists($table)) {
+			$dbman->create_table($table);
+		}
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017011303, 'local', 'paperattendance');
+	}
 	
 	return true;
 }
