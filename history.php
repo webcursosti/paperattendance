@@ -454,7 +454,7 @@ if( $isteacher || is_siteadmin($USER)) {
 	$PAGE->set_heading(get_string('historyheading', 'local_paperattendance'));
 	
 	echo $OUTPUT->header();
-	
+	echo $OUTPUT->tabtree(history_tabs($course->id), "attendancelist");
 	// Displays Students Attendance view
 	if ($action == "studentsattendance"){
 		if (count($attendances) == 0){
