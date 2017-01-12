@@ -285,7 +285,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				array("align" => "left"
 				));
 		
-		$pdfname = $DB->get_record_sql("paperattendance_session", array("id" => $attendanceid));
+		$pdfname = $DB->get_record("paperattendance_session", array("id" => $attendanceid));
 		
 		//var_dump($contextsystem->id);
 		//Context id as 1 because the var context->id gets the number 6 , check it later
