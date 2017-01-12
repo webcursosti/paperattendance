@@ -302,7 +302,8 @@ if( $isteacher || is_siteadmin($USER)) {
 		$getattendances = "SELECT s.id,
 						   sm.date, 
 						   CONCAT( m.initialtime, ' - ', m.endtime) AS hour,
-				 		   s.pdf, s.status AS status,
+				 		   s.pdf,
+						   s.status AS status,
 						   s.description AS description
 						   FROM {paperattendance_session} AS s
 						   INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
