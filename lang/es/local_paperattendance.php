@@ -111,7 +111,6 @@ $string['filter'] ="Ayuda para insertar un alumno";
 $string['filter_help']="<ul><li>Por correo: Debes ingresar el correo UAI del estudiante. Ejemplo: alumno@alumnos.uai.cl</li><li>Por rut: No debe contener puntos ni el digito verificador. Ejemplo: 19123456</li></ul>";
 $string['alreadyinsertedstudent'] = "Alumno ya ingresado.";
 $string['filename'] = "Nombre del archivo: ";
-$string['percentage'] = "% Asistencia";
 $string['percentagestudent'] = "Porcentaje asistencia";
 $string['totalattendances'] = "Sesiones realizadas";
 $string['tooltippercentage'] = "Porcentaje perteneciente únicamente al método Asistencias en Papel";
@@ -170,6 +169,8 @@ $string['sendmail'] = "Enviar notificaciones al completar procesamiento de pdf";
 $string['sendmailtext'] = "1 -> habilitado, 0 -> deshabilidato";
 $string['maxfiles']="Cantidad máxima de archivos";
 $string['maxfilestext']="Cantidad máxima de archivos que pueden ser subidos";
+$string['discusstimelimit']="Limite para discutir una asistencia";
+$string['discusstimelimittext']="Máximo tiempo en días para solicitar la revisión de una asistencia";
 
 // Task
 $string['taskprocesspdf']="Procesar PDFs";
