@@ -74,7 +74,7 @@ if( $isteacher || is_siteadmin($USER)) {
 							p.userid, 
 							d.result, 
 							CONCAT(u.firstname, ' ', u.lastname) AS name, 
-							FROM_UNIXTIME(sm.date,'%a %b %d') AS date, 
+							sm.date AS date, 
 							m.name AS module
 							FROM {paperattendance_discussion} d
 							INNER JOIN {paperattendance_presence} p ON (d.presenceid = p.id)
@@ -101,9 +101,9 @@ if( $isteacher || is_siteadmin($USER)) {
 						$counter,
 						$discussion->name,
 						$discussion->comment,
-						$discussion->date,
+						paperattendance_convertdate($discussion->date),
 						$discussion->module,
-						html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('response', 'local_paperattendance')))
+						html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('response', 'local_paperattendance')), array("style"=>"height:30px"))
 				);
 				$counter++;
 			}
@@ -114,7 +114,21 @@ if( $isteacher || is_siteadmin($USER)) {
 				"courseid" => $courseid,
 				"discussionid" => $discussionid
 		));
-		
+		$sqldiscussion = "SELECT d.comment, 
+							p.userid, 
+							d.result, 
+							CONCAT(u.firstname, ' ', u.lastname) AS name, 
+							sm.date AS date, 
+							m.name AS module
+							FROM {paperattendance_discussion} d
+							INNER JOIN {paperattendance_presence} p ON (d.presenceid = p.id)
+							INNER JOIN {paperattendance_session} s ON (p.sessionid = s.id)
+							INNER JOIN {user} u ON (p.userid = u.id)
+							INNER JOIN {paperattendance_sessmodule} sm ON (sm.sessionid = s.id)
+							INNER JOIN {paperattendance_module} m ON (m.id = sm.moduleid)
+							WHERE d.id = ?";
+		$discussion = $DB->get_record_sql($sqldiscussion, array($discussionid));
+		$discdate = paperattendance_convertdate($discussion->date);
 		if($responseform->is_cancelled()){
 			$goback = new moodle_url("/local/paperattendance/discussion.php", array(
 					"courseid" => $courseid
@@ -161,6 +175,11 @@ if( $isteacher || is_siteadmin($USER)) {
 		}
 	}
 	if($action == "response"){
+		echo html_writer::nonempty_tag("h4", $discussion->name, array("align" => "left"));
+		$resume = html_writer::nonempty_tag("h5", get_string('comment', 'local_paperattendance').": ".$discussion->comment, array("align" => "left"));
+		$resume .= html_writer::nonempty_tag("div", get_string('attdate', 'local_paperattendance').": ".$discdate, array("align" => "left"));
+		$resume .= html_writer::nonempty_tag("div", get_string('module', 'local_paperattendance').": ".$discussion->module, array("align" => "left"));
+		echo html_writer::nonempty_tag("div", $resume, array("style" => "width:30%; margin-bottom:30px"));
 		$responseform->display();
 	}
 	echo html_writer::nonempty_tag("div", $OUTPUT->single_button($backbuttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left"));
@@ -188,7 +207,7 @@ if($isstudent){
 		
 		$discussionquery = "SELECT d.id, d.result, 
 							d.comment, d.response, 
-							FROM_UNIXTIME(sm.date,'%a %b %d') AS date, 
+							sm.date AS date, 
 							m.name AS module
 							FROM {paperattendance_discussion} d 
 							INNER JOIN {paperattendance_presence} p ON (d.presenceid = p.id)
@@ -212,7 +231,7 @@ if($isstudent){
 			$discussiontable->data[] = array(
 					$counter,
 					$discussion->comment,
-					$discussion->date,
+					paperattendance_convertdate($discussion->date),
 					$discussion->module,
 					//result = 0 -> scheduled icon (Attendance request wasn't solved yet)
 					//result = 1 -> invalid icon (Attendance request wasn't accepted)

@@ -156,7 +156,7 @@ if ($hassiteconfig) {
 					'paperattendance_discusstimelimit',
 					get_string('discusstimelimit', 'local_paperattendance'),
 					get_string('discusstimelimittext', 'local_paperattendance'),
-					30,
+					30*6,
 					PARAM_INT
 					)
 			);

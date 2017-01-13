@@ -616,8 +616,8 @@ else if ($isstudent) {
 					//result = 0 -> scheduled icon (Attendance request wasn't solved yet)
 					//result = 1 -> invalid icon (Attendance request wasn't accepted)
 					//result = 2 -> valid icon (Attendance request was accepted)
-					((!$attendance->status && !$discussion && $timelimit>time()) ? html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('request', 'local_paperattendance')))
-					: ((!$attendance->status && !$discussion && $timelimit<time()) ? html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('request', 'local_paperattendance'),'POST',array("disabled"=>"disabled")))
+					((!$attendance->status && !$discussion && $timelimit>time()) ? html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('request', 'local_paperattendance')), array("style"=>"height:30px"))
+					: ((!$attendance->status && !$discussion && $timelimit<time()) ? html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('request', 'local_paperattendance'),'POST',array("disabled"=>"disabled")),array("style"=>"height:30px"))
 					: (($attendance->status && !$discussion) ? null
 					: (($discussion->result == 0) ? $synchronizediconaction
 					: (($discussion->result == 1) ? $invalidiconaction
@@ -638,8 +638,18 @@ else if ($isstudent) {
 				"presenceid" => $presenceid
 		));
 		$goback = new moodle_url("/local/paperattendance/history.php", array("action"=>"view","courseid" => $courseid));
-			
-	
+		
+		$presence = $DB->get_record("paperattendance_presence", array("id"=>$presenceid));
+		$sqlsession = "SELECT sm.date, 
+						m.name, 
+						m.initialtime, 
+						m.endtime, 
+						s.description
+						FROM {paperattendance_module} m
+						INNER JOIN {paperattendance_session} s ON (s.id =?)
+						INNER JOIN {paperattendance_sessmodule} sm ON (sm.sessionid = s.id AND sm.moduleid = m.id)";
+		$session = $DB->get_record_sql($sqlsession, array($presence->sessionid));
+		$sessdate = paperattendance_convertdate($session->date);
 		if($requestform->is_cancelled()){
 			redirect($goback);
 		}
@@ -689,6 +699,11 @@ else if ($isstudent) {
 		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($backbuttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left"));
 	}
 	if ($action == "requestattendance"){
+		echo html_writer::nonempty_tag("h4", $course->fullname." - ".$course->shortname, array("align" => "left"));
+		$resume = html_writer::nonempty_tag("div", get_string('attdate', 'local_paperattendance').": ".$sessdate, array("align" => "left"));
+		$resume .= html_writer::nonempty_tag("div", get_string('time', 'local_paperattendance').": ".$session->initialtime." - ".$session->endtime, array("align" => "left"));
+		$resume .= html_writer::nonempty_tag("div", get_string('descriptionselect', 'local_paperattendance').": ".$session->description, array("align" => "left"));
+		echo html_writer::nonempty_tag("div", $resume, array("style" => "width:30%; margin-bottom:30px"));
 		$requestform->display();
 	}
 	
