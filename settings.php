@@ -150,4 +150,14 @@ if ($hassiteconfig) {
 					PARAM_INT
 					)
 			);
+	//max time to discuss an attendance
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_discusstimelimit',
+					get_string('discusstimelimit', 'local_paperattendance'),
+					get_string('discusstimelimittext', 'local_paperattendance'),
+					30*6,
+					PARAM_INT
+					)
+			);
 }

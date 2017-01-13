@@ -321,7 +321,7 @@ if( $isteacher || is_siteadmin($USER)) {
 					get_string('date', 'local_paperattendance'),
 					get_string('time', 'local_paperattendance'),
 					get_string('description', 'local_paperattendance'),
-					get_string('percentage', 'local_paperattendance'),
+					get_string('percentagestudent', 'local_paperattendance'),
 					get_string('scan', 'local_paperattendance'),
 					get_string('studentsattendance', 'local_paperattendance'),
 					get_string('omegasync', 'local_paperattendance')
@@ -355,7 +355,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				$percentagequery = "SELECT TRUNCATE((COUNT(*)/(SELECT COUNT(*)
 									FROM {paperattendance_presence} AS p
 									INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid)
-									WHERE p.sessionid = ?)*100),1) AS percentage
+									WHERE p.sessionid = ?)*100),0) AS percentage
 									FROM {paperattendance_presence} AS p
 									INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid)
 									WHERE p.sessionid = ? AND p.status = 1";
@@ -414,8 +414,13 @@ if( $isteacher || is_siteadmin($USER)) {
 						$counter,
 						$dateconverted,
 						$attendance->hour,
+<<<<<<< HEAD
 						$attdescription,
 						$percentage->percentage,
+=======
+						$attendance->description,
+						$percentage->percentage."%",
+>>>>>>> refs/remotes/webcursosuai/master
 						$scanaction_attendance,
 						$studentsattendanceaction_attendance,
 						$synchronizediconaction
@@ -511,7 +516,7 @@ if( $isteacher || is_siteadmin($USER)) {
 		else{
 			echo html_writer::table($attendancestable);
 		}
-		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left"));
+		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left","style"=>"margin-top:20px"));
 	}
 	
 	//Displays the insert student form
@@ -558,7 +563,8 @@ else if ($isstudent) {
 				sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, 
 				p.status, 
 				m.name, 
-				s.description AS description
+				s.description AS description,
+				s.lastmodified AS sessdate
 				FROM {paperattendance_session} AS s
 				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
@@ -609,6 +615,8 @@ else if ($isstudent) {
 				$formbuttonurl = new moodle_url("/local/paperattendance/history.php", array("action"=>"requestattendance","presenceid" => $attendance->presenceid,"courseid" => $courseid));
 				
 				$discussion = $DB->get_record("paperattendance_discussion", array("presenceid" => $attendance->presenceid));
+				//convert date from seconds (unix) to days
+				$timelimit = $attendance->sessdate + $CFG->paperattendance_discusstimelimit*86400;
 				
 				if($attendance->description && is_numeric($attendance->description)){
 					$attdescription = paperattendance_returnattendancedescription($attendance->description);
@@ -627,11 +635,12 @@ else if ($isstudent) {
 					//result = 0 -> scheduled icon (Attendance request wasn't solved yet)
 					//result = 1 -> invalid icon (Attendance request wasn't accepted)
 					//result = 2 -> valid icon (Attendance request was accepted)
-					((!$attendance->status && !$discussion) ? html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('request', 'local_paperattendance')))
+					((!$attendance->status && !$discussion && $timelimit>time()) ? html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('request', 'local_paperattendance')), array("style"=>"height:30px"))
+					: ((!$attendance->status && !$discussion && $timelimit<time()) ? html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('request', 'local_paperattendance'),'POST',array("disabled"=>"disabled")),array("style"=>"height:30px"))
 					: (($attendance->status && !$discussion) ? null
 					: (($discussion->result == 0) ? $synchronizediconaction
 					: (($discussion->result == 1) ? $invalidiconaction
-					: $validiconaction))))
+					: $validiconaction)))))
 					);
 						
 						
@@ -648,8 +657,18 @@ else if ($isstudent) {
 				"presenceid" => $presenceid
 		));
 		$goback = new moodle_url("/local/paperattendance/history.php", array("action"=>"view","courseid" => $courseid));
-			
-	
+		
+		$presence = $DB->get_record("paperattendance_presence", array("id"=>$presenceid));
+		$sqlsession = "SELECT sm.date, 
+						m.name, 
+						m.initialtime, 
+						m.endtime, 
+						s.description
+						FROM {paperattendance_module} m
+						INNER JOIN {paperattendance_session} s ON (s.id =?)
+						INNER JOIN {paperattendance_sessmodule} sm ON (sm.sessionid = s.id AND sm.moduleid = m.id)";
+		$session = $DB->get_record_sql($sqlsession, array($presence->sessionid));
+		$sessdate = paperattendance_convertdate($session->date);
 		if($requestform->is_cancelled()){
 			redirect($goback);
 		}
@@ -699,6 +718,11 @@ else if ($isstudent) {
 		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($backbuttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left"));
 	}
 	if ($action == "requestattendance"){
+		echo html_writer::nonempty_tag("h4", $course->fullname." - ".$course->shortname, array("align" => "left"));
+		$resume = html_writer::nonempty_tag("div", get_string('attdate', 'local_paperattendance').": ".$sessdate, array("align" => "left"));
+		$resume .= html_writer::nonempty_tag("div", get_string('time', 'local_paperattendance').": ".$session->initialtime." - ".$session->endtime, array("align" => "left"));
+		$resume .= html_writer::nonempty_tag("div", get_string('descriptionselect', 'local_paperattendance').": ".$session->description, array("align" => "left"));
+		echo html_writer::nonempty_tag("div", $resume, array("style" => "width:30%; margin-bottom:30px"));
 		$requestform->display();
 	}
 	
