@@ -321,7 +321,7 @@ if( $isteacher || is_siteadmin($USER)) {
 					get_string('date', 'local_paperattendance'),
 					get_string('time', 'local_paperattendance'),
 					get_string('description', 'local_paperattendance'),
-					get_string('percentage', 'local_paperattendance'),
+					get_string('percentagestudent', 'local_paperattendance'),
 					get_string('scan', 'local_paperattendance'),
 					get_string('studentsattendance', 'local_paperattendance'),
 					get_string('omegasync', 'local_paperattendance')
@@ -355,7 +355,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				$percentagequery = "SELECT TRUNCATE((COUNT(*)/(SELECT COUNT(*)
 									FROM {paperattendance_presence} AS p
 									INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid)
-									WHERE p.sessionid = ?)*100),1) AS percentage
+									WHERE p.sessionid = ?)*100),0) AS percentage
 									FROM {paperattendance_presence} AS p
 									INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid)
 									WHERE p.sessionid = ? AND p.status = 1";
@@ -408,7 +408,7 @@ if( $isteacher || is_siteadmin($USER)) {
 						$dateconverted,
 						$attendance->hour,
 						$attendance->description,
-						$percentage->percentage,
+						$percentage->percentage."%",
 						$scanaction_attendance,
 						$studentsattendanceaction_attendance,
 						$synchronizediconaction

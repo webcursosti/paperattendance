@@ -99,7 +99,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				$student->lastname." ".$student->firstname,
 				$present,
 				$absent,
-				$percentagestudent
+				$percentagestudent."%"
 		);
 	}
 	$buttonurl = new moodle_url("/course/view.php", array("id" => $courseid));
