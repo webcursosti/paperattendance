@@ -403,11 +403,18 @@ if( $isteacher || is_siteadmin($USER)) {
 						$synchronizedicon
 						);
 					
+				if($attendance->description && is_numeric($attendance->description)){
+					$attdescription = paperattendance_returnattendancedescription($attendance->description);
+				}
+				else{
+					$attdescription = get_string('class', 'local_paperattendance');
+				}
+				
 				$attendancestable->data[] = array(
 						$counter,
 						$dateconverted,
 						$attendance->hour,
-						$attendance->description,
+						$attdescription,
 						$percentage->percentage,
 						$scanaction_attendance,
 						$studentsattendanceaction_attendance,
@@ -603,12 +610,19 @@ else if ($isstudent) {
 				
 				$discussion = $DB->get_record("paperattendance_discussion", array("presenceid" => $attendance->presenceid));
 				
+				if($attendance->description && is_numeric($attendance->description)){
+					$attdescription = paperattendance_returnattendancedescription($attendance->description);
+				}
+				else{
+					$attdescription = get_string('class', 'local_paperattendance');
+				}
+				
 				$attendancestable->data[] = array(
 					$counter,
 					date("d-m-Y", $attendance->date),
 					$attendance->name,
 					$attendance->hour,
-					$attendance->description,
+					$attdescription,
 					$statusiconaction,
 					//result = 0 -> scheduled icon (Attendance request wasn't solved yet)
 					//result = 1 -> invalid icon (Attendance request wasn't accepted)

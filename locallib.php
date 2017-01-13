@@ -1175,3 +1175,15 @@ function history_tabs($courseid) {
 	return $tabs;
 }
 
+function paperattendance_returnattendancedescription($descriptionnumber){
+	$descriptionsarray = array(get_string('class', 'local_paperattendance'),
+			get_string('assistantship', 'local_paperattendance'),
+			get_string('extraclass', 'local_paperattendance'),
+			get_string('test', 'local_paperattendance'),
+			get_string('quiz', 'local_paperattendance'),
+			get_string('exam', 'local_paperattendance'),
+			get_string('labs', 'local_paperattendance'));
+	
+	return $descriptionsarray[$descriptionnumber];
+}
+
