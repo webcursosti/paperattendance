@@ -170,6 +170,8 @@ $string['sendmail'] = "Send notification to the teacher when processed";
 $string['sendmailtext'] = "1 -> enabled, 0 -> disabled";
 $string['maxfiles']="Max number of files";
 $string['maxfilestext']="Max amount of files that can be uploaded";
+$string['discusstimelimit']="Discussion time limit";
+$string['discusstimelimittext']="Maximium time in days to request an attendance discussion";
 
 // Task
 $string['taskprocesspdf']="Process PDFs";

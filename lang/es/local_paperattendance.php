@@ -170,6 +170,8 @@ $string['sendmail'] = "Enviar notificaciones al completar procesamiento de pdf";
 $string['sendmailtext'] = "1 -> habilitado, 0 -> deshabilidato";
 $string['maxfiles']="Cantidad máxima de archivos";
 $string['maxfilestext']="Cantidad máxima de archivos que pueden ser subidos";
+$string['discusstimelimit']="Limite para discutir una asistencia";
+$string['discusstimelimittext']="Máximo tiempo en días para solicitar la revisión de una asistencia";
 
 // Task
 $string['taskprocesspdf']="Procesar PDFs";

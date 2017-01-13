@@ -102,6 +102,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				$percentagestudent
 		);
 	}
+	$buttonurl = new moodle_url("/course/view.php", array("id" => $courseid));
 	$PAGE->set_title(get_string('summarytitle', 'local_paperattendance'));
 	$PAGE->set_heading(get_string('summarytitle', 'local_paperattendance'));
 
@@ -118,6 +119,7 @@ if( $isteacher || is_siteadmin($USER)) {
 	else{
 		echo $OUTPUT->notification(get_string("nonexistintingrecords", "local_paperattendance"));
 	}
+	echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left", "style"=>"margin-top:20px"));
 	echo $OUTPUT->footer();
 
 

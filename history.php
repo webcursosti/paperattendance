@@ -504,7 +504,7 @@ if( $isteacher || is_siteadmin($USER)) {
 		else{
 			echo html_writer::table($attendancestable);
 		}
-		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left"));
+		echo html_writer::nonempty_tag("div", $OUTPUT->single_button($buttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left","style"=>"margin-top:20px"));
 	}
 	
 	//Displays the insert student form
@@ -551,7 +551,8 @@ else if ($isstudent) {
 				sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, 
 				p.status, 
 				m.name, 
-				s.description AS description
+				s.description AS description,
+				s.lastmodified AS sessdate
 				FROM {paperattendance_session} AS s
 				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
@@ -602,6 +603,8 @@ else if ($isstudent) {
 				$formbuttonurl = new moodle_url("/local/paperattendance/history.php", array("action"=>"requestattendance","presenceid" => $attendance->presenceid,"courseid" => $courseid));
 				
 				$discussion = $DB->get_record("paperattendance_discussion", array("presenceid" => $attendance->presenceid));
+				//convert date from seconds (unix) to days
+				$timelimit = $attendance->sessdate + $CFG->paperattendance_discusstimelimit*86400;
 				
 				$attendancestable->data[] = array(
 					$counter,
@@ -613,11 +616,12 @@ else if ($isstudent) {
 					//result = 0 -> scheduled icon (Attendance request wasn't solved yet)
 					//result = 1 -> invalid icon (Attendance request wasn't accepted)
 					//result = 2 -> valid icon (Attendance request was accepted)
-					((!$attendance->status && !$discussion) ? html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('request', 'local_paperattendance')))
+					((!$attendance->status && !$discussion && $timelimit>time()) ? html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('request', 'local_paperattendance')))
+					: ((!$attendance->status && !$discussion && $timelimit<time()) ? html_writer::nonempty_tag("div", $OUTPUT->single_button($formbuttonurl, get_string('request', 'local_paperattendance'),'POST',array("disabled"=>"disabled")))
 					: (($attendance->status && !$discussion) ? null
 					: (($discussion->result == 0) ? $synchronizediconaction
 					: (($discussion->result == 1) ? $invalidiconaction
-					: $validiconaction))))
+					: $validiconaction)))))
 					);
 						
 						
