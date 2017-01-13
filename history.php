@@ -414,13 +414,8 @@ if( $isteacher || is_siteadmin($USER)) {
 						$counter,
 						$dateconverted,
 						$attendance->hour,
-<<<<<<< HEAD
 						$attdescription,
-						$percentage->percentage,
-=======
-						$attendance->description,
 						$percentage->percentage."%",
->>>>>>> refs/remotes/webcursosuai/master
 						$scanaction_attendance,
 						$studentsattendanceaction_attendance,
 						$synchronizediconaction
