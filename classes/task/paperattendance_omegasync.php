@@ -51,10 +51,19 @@ class paperattendance_omegasync extends \core\task\scheduled_task {
 			if($resources = $DB->get_records_sql($sqlunsynced, $params)){
 				$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
 				foreach($resources as $session){
+					$initialtime = time();
+					
+					$session->status = 1; // -> processed but not synced
 					if($process = paperattendance_synctask($session->courseid, $session->id)){
-						$session->status = 2;
+						$session->status = 2; // -> processed and synced
 						$DB->update_record("paperattendance_session", $session);
 					}
+					$finaltime = time();
+					$executiontime = $finaltime - $initialtime;
+					
+					$result = "sessionid: ".$session->id."--syncedstatus: ".$session->status;
+						
+					paperattendance_cronlog('omegasync:bycourse', $result, time(), $executiontime);
 				}
 			}
 			
@@ -70,6 +79,9 @@ class paperattendance_omegasync extends \core\task\scheduled_task {
 			$unsyncrhonizedpresences = $DB->get_records_sql($sqlunsicronizedpresences, array(0));
 			
 			foreach($unsyncrhonizedpresences as $presence){
+				$initialtime = time();
+				$result = "false";
+				
 				$arrayalumnos = array();
 				$line = array();
 				$line["emailAlumno"] = $presence->username;
@@ -79,10 +91,19 @@ class paperattendance_omegasync extends \core\task\scheduled_task {
 				else
 					$line['asistencia'] = "false";
 				$arrayalumnos[] = $line;
-				if(paperattendance_checktoken($CFG->paperattendance_omegatoken))
-					paperattendance_omegacreateattendance($presence->courseid, $arrayalumnos, $presence->sessionid);
+				if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
+					if(paperattendance_omegacreateattendance($presence->courseid, $arrayalumnos, $presence->sessionid)){
+						$result = "true";
+					}
+				}
+				
+				$finaltime = time();
+				$executiontime = $finaltime - $initialtime;
+				
+				$result = "username: ".$presence->username."--sessionid: ".$presence->sessionid."-- resultsynced: ".$result;
+				
+				paperattendance_cronlog('omegasync:bystudent', $result, time(), $executiontime);		
 			}
-			
 		}
 	}
 }
