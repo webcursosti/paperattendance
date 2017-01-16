@@ -857,8 +857,7 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 						FROM {paperattendance_sessmodule} AS sessmodule
 						INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
 		$datemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
-		mtrace("sessid ".$sessid);
-		var_dump($datemodule);
+		
 		$fecha = $datemodule -> sessdate;
 		$modulo = $datemodule -> sesstime;
 	
@@ -886,6 +885,9 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 
 		$alumnos = new stdClass();
 		$alumnos = json_decode($result)->alumnos;
+		
+		var_dump($result);
+		var_dump($alumnos);
 		
 		$return = false;
 		// FOR EACH STUDENT ON THE RESULT, SAVE HIS SYNC WITH OMEGA (true or false)
