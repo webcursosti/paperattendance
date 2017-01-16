@@ -853,12 +853,12 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 		$omegaid = $omegaid -> idnumber;
 		
 		//GET FECHA & MODULE FROM SESS ID $fecha, $modulo,
-		$sqldatemodule = "SELECT sessmodule.id, FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS date, module.initialtime AS time
+		$sqldatemodule = "SELECT sessmodule.id, FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS sessdate, module.initialtime AS sesstime
 						FROM {paperattendance_sessmodule} AS sessmodule
 						INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
 		$sqldatemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
-		$fecha = $sqldatemodule -> date;
-		$modulo = $sqldatemodule -> time;
+		$fecha = $sqldatemodule -> sessdate;
+		$modulo = $sqldatemodule -> sesstime;
 	
 		//CURL CREATE ATTENDANCE OMEGA
 		$curl = curl_init();
