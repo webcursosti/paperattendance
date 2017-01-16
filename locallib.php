@@ -857,8 +857,7 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 						FROM {paperattendance_sessmodule} AS sessmodule
 						INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
 		$datemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
-		mtrace("sessid ".$sessid);
-		var_dump($datemodule);
+		
 		$fecha = $datemodule -> sessdate;
 		$modulo = $datemodule -> sesstime;
 	
