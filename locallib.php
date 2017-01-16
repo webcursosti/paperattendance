@@ -1175,7 +1175,8 @@ function history_tabs($courseid) {
 	return $tabs;
 }
 
-function paperattendance_returnattendancedescription($descriptionnumber){
+function paperattendance_returnattendancedescription($all, $descriptionnumber=null){
+	if(!$all){
 	$descriptionsarray = array(get_string('class', 'local_paperattendance'),
 			get_string('assistantship', 'local_paperattendance'),
 			get_string('extraclass', 'local_paperattendance'),
@@ -1185,5 +1186,18 @@ function paperattendance_returnattendancedescription($descriptionnumber){
 			get_string('labs', 'local_paperattendance'));
 	
 	return $descriptionsarray[$descriptionnumber];
+	}
+	else{
+		$descriptionsarray = array(
+				array('name'=>'class', 'string'=>get_string('class', 'local_paperattendance')),
+				array('name'=>'assistantship', 'string'=>get_string('assistantship', 'local_paperattendance')),
+				array('name'=>'extraclass', 'string'=>get_string('extraclass', 'local_paperattendance')),
+				array('name'=>'test', 'string'=>get_string('test', 'local_paperattendance')),
+				array('name'=>'quiz', 'string'=>get_string('quiz', 'local_paperattendance')),
+				array('name'=>'exam', 'string'=>get_string('exam', 'local_paperattendance')),
+				array('name'=>'labs', 'string'=>get_string('labs', 'local_paperattendance')));
+		
+		return $descriptionsarray;
+	}
 }
 

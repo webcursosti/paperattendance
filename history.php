@@ -404,7 +404,7 @@ if( $isteacher || is_siteadmin($USER)) {
 						);
 					
 				if($attendance->description && is_numeric($attendance->description)){
-					$attdescription = paperattendance_returnattendancedescription($attendance->description);
+					$attdescription = paperattendance_returnattendancedescription(false, $attendance->description);
 				}
 				else{
 					$attdescription = get_string('class', 'local_paperattendance');
@@ -614,7 +614,7 @@ else if ($isstudent) {
 				$timelimit = $attendance->sessdate + $CFG->paperattendance_discusstimelimit*86400;
 				
 				if($attendance->description && is_numeric($attendance->description)){
-					$attdescription = paperattendance_returnattendancedescription($attendance->description);
+					$attdescription = paperattendance_returnattendancedescription(false, $attendance->description);
 				}
 				else{
 					$attdescription = get_string('class', 'local_paperattendance');
