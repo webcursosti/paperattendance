@@ -55,6 +55,8 @@ class paperattendance_processpdf extends \core\task\scheduled_task {
 		if($resources = $DB->get_records_sql($sqlunreadpdfs, $params)){
 			$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
 			foreach($resources as $pdf){
+				$initialtime = time();
+				
 				$process = paperattendance_readpdf($path, $pdf-> name, $pdf->courseid);
 				if($process["result"] == "true"){
 					if($CFG->paperattendance_sendmail == 1){
@@ -68,6 +70,13 @@ class paperattendance_processpdf extends \core\task\scheduled_task {
 					}
 					
 					$DB->update_record("paperattendance_session", $pdf);
+					
+					$finaltime = time();
+					$executiontime = $finaltime - $initialtime;
+				
+					$result = "pdf: ".$pdf-> name."-- result: ".$process["result"]."-- synced: ".$process["synced"];
+						
+					paperattendance_cronlog('processpdf', $result, time(), $executiontime);
 				}
 
 			}

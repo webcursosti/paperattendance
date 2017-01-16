@@ -1187,3 +1187,14 @@ function paperattendance_returnattendancedescription($descriptionnumber){
 	return $descriptionsarray[$descriptionnumber];
 }
 
+function paperattendance_cronlog($task, $result = NULL, $timecreated, $executiontime = NULL){
+	global $DB;
+	$cronlog = new stdClass();
+	$cronlog->task = $task;
+	$cronlog->result = $result;
+	$cronlog->timecreated = $timecreated;
+	$cronlog->executiontime = $executiontime;
+	$DB->insert_record('paperattendance_cronlog', $cronlog);
+	
+}
+
