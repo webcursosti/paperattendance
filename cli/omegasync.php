@@ -91,8 +91,8 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$foundsecond = 0;
 	//SECOND PART
 	// Sql that brings the unsychronized attendances
-	$sqlunsicronizedpresences = "SELECT u.username,
-									s.id AS sessionid,
+	$sqlunsicronizedpresences = "SELECT s.id AS sessionid,
+									u.username,
 									s.courseid,
 									p.status
 									FROM {paperattendance_session} s
