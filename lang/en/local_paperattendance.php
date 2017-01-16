@@ -138,6 +138,13 @@ $string['answer'] = "Answer";
 $string['pending'] = "Pending";
 $string['summarytitle'] = "Students summary";
 $string['description'] = "Description";
+$string['sesstype'] = "Select session types to export";
+$string['allsessions'] = "Select all sessions";
+$string['yes'] = "Yes";
+$string['no'] = "No";
+$string['initdate'] = "Init date";
+$string['enddate'] = "End date";
+$string['selectsesstype'] = "Please select at least one session type.";
 
 //messages
 $string['dear'] = "Dear Teacher";
