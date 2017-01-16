@@ -1133,27 +1133,27 @@ function paperattendance_synctask($courseid, $sessionid){
 	
 	if($resources = $DB->get_records_sql($sqlstudents, array($sessionid))){
 	
-	$arrayalumnos = array();
-
-	foreach ($resources as $student){
-
-		$line = array();
-		$line['emailAlumno'] = $student-> username;
-		$line['resultado'] = "true";
-
-		if($student->status == 1){
-			$line['asistencia'] = "true";
+		$arrayalumnos = array();
+	
+		foreach ($resources as $student){
+	
+			$line = array();
+			$line['emailAlumno'] = $student-> username;
+			$line['resultado'] = "true";
+	
+			if($student->status == 1){
+				$line['asistencia'] = "true";
+			}
+			else{
+				$line['asistencia'] = "false";
+			}
+	
+			$arrayalumnos[] = $line;
 		}
-		else{
-			$line['asistencia'] = "false";
+	
+		if(paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessionid)){
+			$return = true;
 		}
-
-		$arrayalumnos[] = $line;
-	}
-
-	if(paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessionid)){
-		$return = true;
-	}
 	}
 	return $return;
 }
