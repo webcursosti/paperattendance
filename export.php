@@ -70,7 +70,7 @@ if( $isteacher || is_siteadmin($USER)) {
 			
 		}
 		else if($data = $exportform->get_data()){
-			var_dump($data);
+			
 		}
 	}
 	if($action == "viewform"){
