@@ -856,9 +856,9 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 		$sqldatemodule = "SELECT sessmodule.id, FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS sessdate, module.initialtime AS sesstime
 						FROM {paperattendance_sessmodule} AS sessmodule
 						INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
-		$sqldatemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
-		$fecha = $sqldatemodule -> sessdate;
-		$modulo = $sqldatemodule -> sesstime;
+		$datemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
+		$fecha = $datemodule -> sessdate;
+		$modulo = $datemodule -> sesstime;
 	
 		//CURL CREATE ATTENDANCE OMEGA
 		$curl = curl_init();
@@ -1127,7 +1127,7 @@ function paperattendance_synctask($courseid, $sessionid){
 	$return = false;
 
 	// Sql that brings the unsynced students
-	$sqlstudents = "SELECT p.userid AS userid, p.status AS status, s.username AS username
+	$sqlstudents = "SELECT p.id, p.userid AS userid, p.status AS status, s.username AS username
 	 				FROM {paperattendance_presence} AS p
 					INNER JOIN {user} AS s on ( p.userid = s.id AND p.sessionid = ? )";
 	
