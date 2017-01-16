@@ -57,9 +57,12 @@ class paperattendance_print_form extends moodleform {
 							  get_string('quiz', 'local_paperattendance'), 
 						      get_string('exam', 'local_paperattendance'), 
 							  get_string('labs', 'local_paperattendance'));
+		
+		$countdescription = 0;
 		$description = array();
 		foreach ($descriptions as $arraydescriptions){
-			$description[$arraydescriptions] = $arraydescriptions;
+			$description[$countdescription] = $arraydescriptions;
+			$countdescription++;
 		}
 		
 		$mform->addElement("select", "requestor", get_string('requestor', 'local_paperattendance'), $arrayteachers);
