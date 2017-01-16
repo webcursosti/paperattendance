@@ -887,6 +887,9 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 		$alumnos = new stdClass();
 		$alumnos = json_decode($result)->alumnos;
 		
+		var_dump($result);
+		var_dump($alumnos);
+		
 		$return = false;
 		// FOR EACH STUDENT ON THE RESULT, SAVE HIS SYNC WITH OMEGA (true or false)
 		for ($i = 0 ; $i < count($alumnos); $i++){
