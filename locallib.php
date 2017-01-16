@@ -886,9 +886,6 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 		$alumnos = new stdClass();
 		$alumnos = json_decode($result)->alumnos;
 		
-		var_dump($result);
-		var_dump($alumnos);
-		
 		$return = false;
 		// FOR EACH STUDENT ON THE RESULT, SAVE HIS SYNC WITH OMEGA (true or false)
 		for ($i = 0 ; $i < count($alumnos); $i++){
@@ -901,10 +898,14 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 				$studentid = $DB->get_record("user", array("username" => $username));
 				$studentid = $studentid -> id;
 					
+				mtrace("idusuario: ".$studentid." alumnoresult:".$alumnos[$i]->resultado);
 				$omegasessionid = $alumnos[$i]->asistenciaId;
 				//save student sync
 				$sqlsyncstate = "UPDATE {paperattendance_presence} SET omegasync = ?, omegaid = ? WHERE sessionid  = ? AND userid = ?";
 				$studentid = $DB->execute($sqlsyncstate, array('1', $omegasessionid, $sessid, $studentid));
+			}
+			else{
+				mtrace($i."falso");
 			}
 		}
 	}
