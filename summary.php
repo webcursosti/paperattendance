@@ -81,12 +81,14 @@ if( $isteacher || is_siteadmin($USER)) {
 	$students = $DB->get_records_sql($querystudent, array($course->id), $page*$perpage, $perpage);
 	$table = new html_table();
 	$table->head =array(
+			get_string("hashtag", "local_paperattendance"),
 			get_string("studentname", "local_paperattendance"),
 			get_string("presentattendance", "local_paperattendance"),
 			get_string("absentattendance", "local_paperattendance"),
 			get_string("percentagestudent", "local_paperattendance")
 	);
 	$sessions = $DB->count_records("paperattendance_session", array ("courseid" => $course->id));
+	$rowcount = 1;
 	foreach($students as $student){
 		//student summary sql
 		$present = "SELECT COUNT(*)
@@ -96,11 +98,13 @@ if( $isteacher || is_siteadmin($USER)) {
 		$absent = $sessions - $present;
 		$percentagestudent = round(($present/$sessions)*100);
 		$table->data[] = array(
+				$rowcount,
 				$student->lastname." ".$student->firstname,
 				$present,
 				$absent,
 				$percentagestudent."%"
 		);
+		$rowcount++;
 	}
 	$buttonurl = new moodle_url("/course/view.php", array("id" => $courseid));
 	$PAGE->set_title(get_string('summarytitle', 'local_paperattendance'));
