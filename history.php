@@ -101,7 +101,8 @@ if( $isteacher || is_siteadmin($USER)) {
 				p.grayscale
 				FROM {paperattendance_presence} AS p
 				INNER JOIN {user} AS u ON (u.id = p.userid)
-				WHERE p.sessionid = ?  ';
+				WHERE p.sessionid = ?  
+				ORDER BY u.lastname ASC';
 		
 		$attendances = $DB->get_records_sql($getstudentsattendance, array($attendanceid), $page * $perpage, $perpage);
 		
@@ -465,15 +466,28 @@ if( $isteacher || is_siteadmin($USER)) {
 	$PAGE->set_heading(get_string('historyheading', 'local_paperattendance'));
 	
 	echo $OUTPUT->header();
-	echo $OUTPUT->tabtree(history_tabs($course->id), "attendancelist");
+	echo $OUTPUT->tabtree(paperattendance_history_tabs($course->id), "attendancelist");
 	// Displays Students Attendance view
 	if ($action == "studentsattendance"){
 		if (count($attendances) == 0){
 			echo html_writer::nonempty_tag("h4", get_string('nonprocessingattendance', 'local_paperattendance'), array("align" => "left"));
 		}
 		else{
+			
+			$sqlstudents = "SELECT sm.id,
+						   sm.date AS smdate, 
+						   CONCAT( m.initialtime, ' - ', m.endtime) AS hour,
+						   s.description AS description
+						   FROM {paperattendance_module} AS m
+						   INNER JOIN {paperattendance_sessmodule} AS sm ON (sm.moduleid = m.id AND sm.sessionid = ?)";
+			
+			$resources = $DB->get_record_sql($sqlstudents, array($attendanceid));
+				
+			$left = html_writer::nonempty_tag("div", $resources->smdate." ".$resources->hour." ".$resources->description, array("align" => "left"));
+			$right = html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "right"));
 			//displays button to add a student manually
-			echo html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "left"));
+			echo html_writer::nonempty_tag("div", $left.$right);
+			
 			//displays the table
 			echo html_writer::table($attendancestable);
 			//displays de pagination bar
@@ -561,11 +575,10 @@ else if ($isstudent) {
 				s.description AS description,
 				s.lastmodified AS sessdate
 				FROM {paperattendance_session} AS s
-				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
+				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid AND s.courseid = ?)
 				INNER JOIN {paperattendance_presence} AS p ON (s.id = p.sessionid)
-				INNER JOIN {user} AS u ON (u.id = p.userid)
-				WHERE s.courseid = ? AND u.id = ?
+				INNER JOIN {user} AS u ON (u.id = p.userid AND AND u.id = ?)
 				ORDER BY sm.date DESC";
 	
 		$attendances = $DB->get_records_sql($getstudentattendances, array($courseid, $USER->id));

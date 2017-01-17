@@ -43,7 +43,7 @@ class paperattendance_processpdf extends \core\task\scheduled_task {
 				sess.courseid AS courseid,
 				sess.teacherid as teacherid,
 				sess.uploaderid as uploaderid,
-				c.shortname AS shortname,
+				c.fullname AS fullname,
 				FROM_UNIXTIME(sess.lastmodified) AS date
  				FROM {paperattendance_session} AS sess
 				INNER JOIN {course} AS c ON (c.id = sess.courseid AND sess.status = ?)
@@ -60,7 +60,7 @@ class paperattendance_processpdf extends \core\task\scheduled_task {
 				$process = paperattendance_readpdf($path, $pdf-> name, $pdf->courseid);
 				if($process["result"] == "true"){
 					if($CFG->paperattendance_sendmail == 1){
-						paperattendance_sendMail($pdf->id, $pdf->courseid, $pdf->teacherid, $pdf->uploaderid, $pdf->date, $pdf->shortname);
+						paperattendance_sendMail($pdf->id, $pdf->courseid, $pdf->teacherid, $pdf->uploaderid, $pdf->date, $pdf->fullname);
 					}
 					if($process["synced"] == "true"){
 						$pdf->status = 2;

@@ -149,7 +149,7 @@ $string['selectsesstype'] = "Por favor seleccione al menos un tipo se sesión.";
 //messages
 $string['dear'] = "Estimado Profesor";
 $string['processconfirmationbodysubject'] = "Lista procesada correctamente";
-$string['processconfirmationbody'] = "Se ha completado el procesamiento de registros de la asistencia por PaperAttendance";
+$string['processconfirmationbody'] = "Se ha completado el procesamiento de registros de asistencias por PaperAttendance";
 $string['datebody'] = "De la fecha:";
 $string['coursebody'] = "Del curso:";
 $string['checkyourattendance'] = "Revise su ";
