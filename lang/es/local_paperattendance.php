@@ -145,6 +145,9 @@ $string['no'] = "No";
 $string['initdate'] = "Fecha inicial";
 $string['enddate'] = "Fecha final";
 $string['selectsesstype'] = "Por favor seleccione al menos un tipo se sesión.";
+$string['exporttitle'] = "Exportar";
+$string['export'] = "Exportar";
+$string['nodatatoexport'] = "No hay datos para exportar.";
 
 //messages
 $string['dear'] = "Estimado Profesor";

@@ -1177,6 +1177,12 @@ function paperattendance_history_tabs($courseid) {
 			new moodle_url("/local/paperattendance/summary.php", array("courseid"=>$courseid)),
 			get_string("summarytitle", "local_paperattendance")
 			);
+	// Export.
+	$tabs[] = new tabobject(
+			"export",
+			new moodle_url("/local/paperattendance/export.php", array("courseid"=>$courseid)),
+			get_string("exporttitle", "local_paperattendance")
+			);
 	return $tabs;
 }
 
@@ -1216,4 +1222,35 @@ function paperattendance_cronlog($task, $result = NULL, $timecreated, $execution
 	$DB->insert_record('paperattendance_cronlog', $cronlog);
 	
 }
+
+function paperattendance_exporttoexcel($title, $header, $filename, $data){
+	global $CFG;
+	$workbook = new MoodleExcelWorkbook("-");
+	$workbook->send($filename);
+	$attxls = $workbook->add_worksheet("Attendance");
+	$i = 0; //y axis
+	$j = 0;//x axis
+	$titleformat = $workbook->add_format();
+	$titleformat->set_bold(1);
+	$titleformat->set_size(12);
+	$attxls->write($i,$j,$title,$titleformat);
+	$i= 2;
+	$j = 0;
+	foreach($header as $cell){
+		$attxls->write($i, $j, $cell);
+		$j++;
+	}
+	$i=3;
+	$j=0;
+	foreach ($data as $row){
+		foreach($row as $cell){
+			$attxls->write($i, $j,$cell);
+			$i++;
+		}
+		$j++;
+		$i=3;
+	}
+	$workbook->close();
+}
+
 
