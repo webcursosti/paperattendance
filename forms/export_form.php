@@ -36,13 +36,15 @@ class paperattendance_export_form extends moodleform {
 		$types = paperattendance_returnattendancedescription(true);
 		$typesarray = array();
 		$default = array();
+		$typecount = 0;
 		foreach($types as $type){
-			$typesarray[] =& $mform->createElement("checkbox",$type["name"],"", $type["string"]);
-			$default["sesstype[".$type["name"]."]"] = true;
+			$typesarray[] =& $mform->createElement("checkbox",$typecount,"", $type["string"]);
+			$default["sesstype[".$typecount."]"] = true;
+			$typecount++;
 		}
 		$mform->addGroup($typesarray, 'sesstype', get_string('sesstype', 'local_paperattendance'), array('<br />'), true);
 		$mform->setDefaults($default);
-		$mform->addElement("checkbox", "alldates", get_string("allsessions", "local_paperattendance"), get_string("yes","local_paperattendance"));
+		$mform->addElement("advcheckbox", "alldates", get_string("allsessions", "local_paperattendance"), get_string("yes","local_paperattendance"));
 		$mform->setDefault("alldates", true);
 		$mform->addElement('date_selector', 'initdate', get_string("initdate","local_paperattendance"));
 		$mform->disabledIf('initdate', 'alldates', 'checked');
@@ -50,7 +52,7 @@ class paperattendance_export_form extends moodleform {
 		$mform->disabledIf('enddate', 'alldates', 'checked');
 		$mform->addElement("hidden", "courseid", $courseid);
 		$mform->setType("courseid", PARAM_INT);
-		$this->add_action_buttons(true);
+		$this->add_action_buttons(false,get_string("export","local_paperattendance"));
 	}
 	public function validation($data, $files){
 		global $DB;
