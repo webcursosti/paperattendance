@@ -139,8 +139,7 @@ if( $isteacher || is_siteadmin($USER)) {
 			foreach ($sessions as $session){
 				$header[] = date('d-m-Y',$session->date)." ".$session->hour." ".paperattendance_returnattendancedescription(false, $session->description);
 				//get session attendances
-				$getpresences = "SELECT
-							p.id AS idp,
+				$getpresences = "SELECT p.id AS idp,
 							u.id,
 							p.status
 							FROM {paperattendance_presence} AS p
