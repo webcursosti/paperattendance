@@ -107,7 +107,7 @@ if( $isteacher || is_siteadmin($USER)) {
 	$PAGE->set_heading(get_string('summarytitle', 'local_paperattendance'));
 
 	echo $OUTPUT->header();
-	echo $OUTPUT->tabtree(history_tabs($course->id), "studentssummary");
+	echo $OUTPUT->tabtree(paperattendance_history_tabs($course->id), "studentssummary");
 	echo html_writer::nonempty_tag("h5", get_string('totalattendances', 'local_paperattendance').": ".$sessions, array("align" => "left"));
 	if ($nstudents>0){
 		if ($nstudents>30){

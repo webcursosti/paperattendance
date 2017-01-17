@@ -1163,7 +1163,7 @@ function paperattendance_synctask($courseid, $sessionid){
 	return $return;
 }
 
-function history_tabs($courseid) {
+function paperattendance_history_tabs($courseid) {
 	$tabs = array();
 	// Create sync
 	$tabs[] = new tabobject(

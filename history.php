@@ -101,7 +101,8 @@ if( $isteacher || is_siteadmin($USER)) {
 				p.grayscale
 				FROM {paperattendance_presence} AS p
 				INNER JOIN {user} AS u ON (u.id = p.userid)
-				WHERE p.sessionid = ?  ';
+				WHERE p.sessionid = ?  
+				ORDER BY u.lastname ASC';
 		
 		$attendances = $DB->get_records_sql($getstudentsattendance, array($attendanceid), $page * $perpage, $perpage);
 		
@@ -465,7 +466,7 @@ if( $isteacher || is_siteadmin($USER)) {
 	$PAGE->set_heading(get_string('historyheading', 'local_paperattendance'));
 	
 	echo $OUTPUT->header();
-	echo $OUTPUT->tabtree(history_tabs($course->id), "attendancelist");
+	echo $OUTPUT->tabtree(paperattendance_history_tabs($course->id), "attendancelist");
 	// Displays Students Attendance view
 	if ($action == "studentsattendance"){
 		if (count($attendances) == 0){
@@ -561,11 +562,10 @@ else if ($isstudent) {
 				s.description AS description,
 				s.lastmodified AS sessdate
 				FROM {paperattendance_session} AS s
-				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
+				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid AND s.courseid = ?)
 				INNER JOIN {paperattendance_presence} AS p ON (s.id = p.sessionid)
-				INNER JOIN {user} AS u ON (u.id = p.userid)
-				WHERE s.courseid = ? AND u.id = ?
+				INNER JOIN {user} AS u ON (u.id = p.userid AND AND u.id = ?)
 				ORDER BY sm.date DESC";
 	
 		$attendances = $DB->get_records_sql($getstudentattendances, array($courseid, $USER->id));
