@@ -479,6 +479,7 @@ if( $isteacher || is_siteadmin($USER)) {
 						   CONCAT( m.initialtime, ' - ', m.endtime) AS hour,
 						   s.description AS description
 						   FROM {paperattendance_module} AS m
+						   INNER JOIN {paperattendance_session} AS s ON (sm.sessionid = s.id)
 						   INNER JOIN {paperattendance_sessmodule} AS sm ON (sm.moduleid = m.id AND sm.sessionid = ?)";
 			
 			$resources = $DB->get_record_sql($sqlstudents, array($attendanceid));
