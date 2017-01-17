@@ -41,7 +41,9 @@ $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout("standard");
 $course = $DB->get_record("course",array("id" => $courseid));
-
+//Page
+$page = optional_param('page', 0, PARAM_INT);
+$perpage = 26;
 //breadcrumb for navigation
 $PAGE->navbar->ignore_active();
 $PAGE->navbar->add(get_string('courses', 'local_paperattendance'), new moodle_url('/course/index.php'));
@@ -83,7 +85,8 @@ if( $isteacher || is_siteadmin($USER)) {
 							INNER JOIN {paperattendance_sessmodule} sm ON (sm.sessionid = s.id)
 							INNER JOIN {paperattendance_module} m ON (m.id = sm.moduleid)
 							WHERE s.courseid = ? AND d.result = ?";
-		$discussions = $DB->get_records_sql($discussionquery, array($courseid, 0));
+		$ndiscussions = count($DB->get_records_sql($discussionquery, array($courseid, 0)));
+		$discussions = $DB->get_records_sql($discussionquery, array($courseid, 0), $page*$perpage, $perpage);
 		$discussiontable = new html_table();
 		$discussiontable->head = array(
 				"#",
@@ -167,8 +170,12 @@ if( $isteacher || is_siteadmin($USER)) {
 	echo $OUTPUT->header();
 	if($action == "view"){
 		echo html_writer::div(get_string("discussionhelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
-		if(count($discussions) > 0){
+		if ($ndiscussions>0){
+			if ($ndiscussions>30){
+				$ndiscussions = 30;
+			}
 			echo html_writer::table($discussiontable);
+			echo $OUTPUT->paging_bar($ndiscussions, $page, $perpage, $url);
 		}
 		else{
 			echo html_writer::nonempty_tag("h4", get_string('nonexistintingrecords', 'local_paperattendance'), array("align" => "left"));
@@ -215,7 +222,8 @@ if($isstudent){
 							INNER JOIN {paperattendance_sessmodule} sm ON (sm.sessionid = s.id)
 							INNER JOIN {paperattendance_module} m ON (m.id = sm.moduleid)
 							WHERE p.userid = ? AND s.courseid = ?";
-		$discussions = $DB->get_records_sql($discussionquery, array($USER->id,$courseid));
+		$ndiscussions = count($DB->get_records_sql($discussionquery, array($USER->id,$courseid)));
+		$discussions = $DB->get_records_sql($discussionquery, array($USER->id,$courseid), $page*$perpage, $perpage);
 		$discussiontable = new html_table();
 		$discussiontable->head = array(
 				"#",
@@ -244,8 +252,12 @@ if($isstudent){
 		
 		echo $OUTPUT->header();
 		echo html_writer::div(get_string("discussionstudenthelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
-		if(count($discussions) > 0){
+		if ($ndiscussions>0){
+			if ($ndiscussions>30){
+				$ndiscussions = 30;
+			}
 			echo html_writer::table($discussiontable);
+			echo $OUTPUT->paging_bar($ndiscussions, $page, $perpage, $url);
 		}
 		else{
 			echo html_writer::nonempty_tag("h4", get_string('nonexistintingrecords', 'local_paperattendance'), array("align" => "left"));
