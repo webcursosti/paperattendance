@@ -143,8 +143,7 @@ if( $isteacher || is_siteadmin($USER)) {
 							u.id,
 							p.status
 							FROM {paperattendance_presence} AS p
-							INNER JOIN {user} AS u ON (u.id = p.userid)
-							WHERE p.sessionid = ?
+							INNER JOIN {user} AS u ON (u.id = p.userid AND p.sessionid = ?)
 							ORDER BY u.lastname ASC";
 				$presences = $DB->get_records_sql($getpresences, array($session->id));
 				$presences = array_values($presences);
