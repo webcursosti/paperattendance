@@ -475,7 +475,7 @@ if( $isteacher || is_siteadmin($USER)) {
 		else{
 			
 			$sqlstudents = "SELECT sm.id,
-						   FROM_UNIXTIME(sessmodule.date, '%d-%m-%Y') AS smdate, 
+						   FROM_UNIXTIME(sm.date, '%d-%m-%Y') AS smdate, 
 						   CONCAT( m.initialtime, ' - ', m.endtime) AS hour,
 						   s.description AS description
 						   FROM {paperattendance_module} AS m
@@ -491,10 +491,12 @@ if( $isteacher || is_siteadmin($USER)) {
 				$summdescription = get_string('class', 'local_paperattendance');
 			}
 				
-			$left = html_writer::nonempty_tag("h4", $resources->smdate." ".$resources->hour." ".$summdescription, array("align" => "left"));
-			$right = html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "center"));
+			$left = html_writer::nonempty_tag("div", $resources->smdate, array("align" => "left"));
+			$left .= html_writer::nonempty_tag("div", $resources->hour, array("align" => "left"));
+			$left .= html_writer::nonempty_tag("div", $summdescription, array("align" => "left"));
+			$left .= html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "center"));
 			//displays button to add a student manually
-			echo html_writer::nonempty_tag("div", $left.$right);
+			echo html_writer::nonempty_tag("div", $left);
 			
 			//displays the table
 			echo html_writer::table($attendancestable);
