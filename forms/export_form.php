@@ -30,9 +30,14 @@ require_once($CFG->libdir . "/formslib.php");
 
 class paperattendance_export_form extends moodleform {
 	public function definition(){
+		global $DB;
 		$mform = $this->_form;
 		$instance = $this->_customdata;
 		$courseid = $instance["courseid"];
+		$sqlinitdate = "SELECT MIN(sm.date) AS idate
+					FROM {paperattendance_session} s
+					INNER JOIN {paperattendance_sessmodule} sm ON (s.id = sm.sessionid AND s.courseid = ?)";
+		$initdate = $DB->get_record_sql($sqlinitdate, array($courseid));
 		$types = paperattendance_returnattendancedescription(true);
 		$typesarray = array();
 		$default = array();
@@ -44,12 +49,9 @@ class paperattendance_export_form extends moodleform {
 		}
 		$mform->addGroup($typesarray, 'sesstype', get_string('sesstype', 'local_paperattendance'), array('<br />'), true);
 		$mform->setDefaults($default);
-		$mform->addElement("advcheckbox", "alldates", get_string("allsessions", "local_paperattendance"), get_string("yes","local_paperattendance"));
-		$mform->setDefault("alldates", true);
 		$mform->addElement('date_selector', 'initdate', get_string("initdate","local_paperattendance"));
-		$mform->disabledIf('initdate', 'alldates', 'checked');
+		$mform->setDefault('initdate', $initdate->idate);
 		$mform->addElement('date_selector', 'enddate', get_string("enddate","local_paperattendance"));
-		$mform->disabledIf('enddate', 'alldates', 'checked');
 		$mform->addElement("hidden", "courseid", $courseid);
 		$mform->setType("courseid", PARAM_INT);
 		$this->add_action_buttons(false,get_string("export","local_paperattendance"));

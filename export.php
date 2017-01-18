@@ -110,21 +110,8 @@ if( $isteacher || is_siteadmin($USER)) {
 			$data[] = $list->firstnames;
 			$data[] = $list->emails;
 			//Select course sessions
-			if($formdata->alldates){
-				$getsessions = "SELECT s.id,
-								sm.date,
-								CONCAT( m.initialtime, '-', m.endtime) AS hour,
-								s.description AS description
-								FROM {paperattendance_session} AS s
-								INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
-								INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
-								WHERE s.description $sqlin AND s.courseid = ?
-								ORDER BY sm.date ASC";
-				$sessions = $DB->get_records_sql($getsessions, $parametros);
-			}
-			else{
-				$parametros = array_merge($parametros, array($formdata->initdate, $formdata->enddate));
-				$getsessions = "SELECT s.id,
+			$parametros = array_merge($parametros, array($formdata->initdate, $formdata->enddate));
+			$getsessions = "SELECT s.id,
 								sm.date,
 								CONCAT( m.initialtime, '-', m.endtime) AS hour,
 								s.description AS description
@@ -133,31 +120,24 @@ if( $isteacher || is_siteadmin($USER)) {
 								INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
 								WHERE s.description $sqlin AND s.courseid = ? AND sm.date BETWEEN ? AND ?
 								ORDER BY sm.date ASC";
-				$sessions = $DB->get_records_sql($getsessions, $parametros);
-			}
-			//to analize each session
+			$sessions = $DB->get_records_sql($getsessions, $parametros);
+			//sql in for presences of studdents for each session
+			list($sqlin2, $params1) = $DB->get_in_or_equal($list->studentsid);
 			foreach ($sessions as $session){
+				$params2 = array($session->id);
+				$params = array_merge($params2, $params1);
 				$header[] = date('d-m-Y',$session->date)." ".$session->hour." ".paperattendance_returnattendancedescription(false, $session->description);
 				//get session attendances
-				$getpresences = "SELECT p.id AS idp,
-							u.id,
-							p.status
-							FROM {paperattendance_presence} AS p
-							INNER JOIN {user} AS u ON (u.id = p.userid AND p.sessionid = ?)
-							ORDER BY u.lastname ASC";
-				$presences = $DB->get_records_sql($getpresences, array($session->id));
-				$presences = array_values($presences);
+				$getpresences = "SELECT p.id AS idp, u.id, IFNULL(p.status,0) AS status
+								FROM {paperattendance_presence} AS p
+								RIGHT JOIN {user} AS u ON (u.id = p.userid AND p.sessionid = ?)
+								WHERE u.id $sqlin2
+								ORDER BY u.lastname ASC";
+				$presences = $DB->get_records_sql($getpresences, $params);
 				$sess = array();
-				$studentcount = 0;
-				foreach ($list->studentsid as $studentid){
-					if($studentid == $presences[$studentcount]->id){
-						$sess[] = $presences[$studentcount]->status;
-						$studentcount++;
-					}
-					else{
-						$sess[] = 0;
-					}
-				}
+				foreach($presences as $presence){
+					$sess[] = $presence->status;
+				}	
 				$data[] = $sess;
 			}
 			if(count($sessions)==0){
@@ -179,5 +159,4 @@ if( $isteacher || is_siteadmin($USER)) {
 		$exportform->display();
 		echo $OUTPUT->footer();
 	}
-	
 }
