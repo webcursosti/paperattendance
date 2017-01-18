@@ -1245,6 +1245,7 @@ function paperattendance_exporttoexcel($title, $header, $filename, $data){
 		$i=3;
 	}
 	$workbook->close();
+	exit;
 }
 
 
