@@ -313,7 +313,7 @@ function paperattendance_readpdf($path, $filename, $course){
 	$return = array();
 	$return["result"] = "false";
 	$return["synced"] = "false";
-	mtrace("id curso ".$course);
+
 	$context = context_course::instance($course);
 	$objcourse = new stdClass();
 	$objcourse -> id = $course;
@@ -377,12 +377,10 @@ function paperattendance_readpdf($path, $filename, $course){
 		
 		$graychannel = $attendancecircle->getImageChannelMean(Imagick::CHANNEL_GRAY);
 		if($graychannel["mean"] < $CFG->paperattendance_grayscale){
-			mtrace($graychannel["mean"]." <- valor de gris del alumnos ID ".$student->id." de la pagina".$numberpage."\n");
 			paperattendance_save_student_presence($sessid, $student->id, '1', $graychannel["mean"]);
 			$line['asistencia'] = "true";
 		}
 		else{
-			mtrace($graychannel["mean"]." <- valor de gris del alumnos ID ".$student->id." de la pagina".$numberpage."\n");
 			paperattendance_save_student_presence($sessid, $student->id, '0', $graychannel["mean"]);
 			$line['asistencia'] = "false";
 		}
@@ -898,14 +896,10 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 				$studentid = $DB->get_record("user", array("username" => $username));
 				$studentid = $studentid -> id;
 					
-				mtrace("idusuario: ".$studentid." alumnoresult:".$alumnos[$i]->resultado);
 				$omegasessionid = $alumnos[$i]->asistenciaId;
 				//save student sync
 				$sqlsyncstate = "UPDATE {paperattendance_presence} SET omegasync = ?, omegaid = ? WHERE sessionid  = ? AND userid = ?";
 				$studentid = $DB->execute($sqlsyncstate, array('1', $omegasessionid, $sessid, $studentid));
-			}
-			else{
-				mtrace($i."falso");
 			}
 		}
 	}
