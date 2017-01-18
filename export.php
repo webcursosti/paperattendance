@@ -74,8 +74,8 @@ if( $isteacher || is_siteadmin($USER)) {
 			foreach ($formdata->sesstype as $sesstype=>$type){
 				$types[] = $sesstype;
 			}
-			list($selectedtypes, $parametros1) = $DB->get_in_or_equal($types);
-			$parametros = array_merge($parametros1, array($courseid));
+			list($selectedtypes, $paramsesstypes) = $DB->get_in_or_equal($types);
+			$parametros = array_merge($paramsesstypes, array($courseid));
 			//excel parameters
 			$filename = $course->fullname."_attendances_".date('dmYHi');
 			$title = $course->fullname;
@@ -121,9 +121,9 @@ if( $isteacher || is_siteadmin($USER)) {
 								ORDER BY sm.date ASC";
 			$sessions = $DB->get_records_sql($getsessions, $parametros);
 			//sql in for presences of studdents for each session
-			list($studentids, $params1) = $DB->get_in_or_equal($list->studentsid);
+			list($studentids, $paramstudentsid) = $DB->get_in_or_equal($list->studentsid);
 			foreach ($sessions as $session){
-				$params = array_merge(array($session->id), $params1);
+				$params = array_merge(array($session->id), $paramstudentsid);
 				$header[] = date('d-m-Y',$session->date)." ".$session->hour." ".paperattendance_returnattendancedescription(false, $session->description);
 				//get session attendances
 				$getpresences = "SELECT p.id AS idp, u.id, IFNULL(p.status,0) AS status
