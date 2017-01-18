@@ -475,17 +475,24 @@ if( $isteacher || is_siteadmin($USER)) {
 		else{
 			
 			$sqlstudents = "SELECT sm.id,
-						   sm.date AS smdate, 
+						   FROM_UNIXTIME(sessmodule.date, '%d-%m-%Y') AS smdate, 
 						   CONCAT( m.initialtime, ' - ', m.endtime) AS hour,
 						   s.description AS description
 						   FROM {paperattendance_module} AS m
-						   INNER JOIN {paperattendance_session} AS s ON (sm.sessionid = s.id)
-						   INNER JOIN {paperattendance_sessmodule} AS sm ON (sm.moduleid = m.id AND sm.sessionid = ?)";
+						   INNER JOIN {paperattendance_sessmodule} AS sm ON (sm.moduleid = m.id AND sm.sessionid = ?)
+	    				   INNER JOIN {paperattendance_session} AS s ON (sm.sessionid = s.id)";
 			
 			$resources = $DB->get_record_sql($sqlstudents, array($attendanceid));
+			
+			if($resources->description && is_numeric($resources->description)){
+				$summdescription = paperattendance_returnattendancedescription(false, $resources->description);
+			}
+			else{
+				$summdescription = get_string('class', 'local_paperattendance');
+			}
 				
-			$left = html_writer::nonempty_tag("div", $resources->smdate." ".$resources->hour." ".$resources->description, array("align" => "left"));
-			$right = html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "right"));
+			$left = html_writer::nonempty_tag("h4", $resources->smdate." ".$resources->hour." ".$summdescription, array("align" => "left"));
+			$right = html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "center"));
 			//displays button to add a student manually
 			echo html_writer::nonempty_tag("div", $left.$right);
 			
