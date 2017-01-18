@@ -74,9 +74,8 @@ if( $isteacher || is_siteadmin($USER)) {
 			foreach ($formdata->sesstype as $sesstype=>$type){
 				$types[] = $sesstype;
 			}
-			list($sqlin, $parametros1) = $DB->get_in_or_equal($types);
-			$parametros2 = array($courseid);
-			$parametros = array_merge($parametros1, $parametros2);
+			list($selectedtypes, $parametros1) = $DB->get_in_or_equal($types);
+			$parametros = array_merge($parametros1, array($courseid));
 			//excel parameters
 			$filename = $course->fullname."_attendances_".date('dmYHi');
 			$title = $course->fullname;
@@ -118,20 +117,19 @@ if( $isteacher || is_siteadmin($USER)) {
 								FROM {paperattendance_session} AS s
 								INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 								INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
-								WHERE s.description $sqlin AND s.courseid = ? AND sm.date BETWEEN ? AND ?
+								WHERE s.description $selectedtypes AND s.courseid = ? AND sm.date BETWEEN ? AND ?
 								ORDER BY sm.date ASC";
 			$sessions = $DB->get_records_sql($getsessions, $parametros);
 			//sql in for presences of studdents for each session
-			list($sqlin2, $params1) = $DB->get_in_or_equal($list->studentsid);
+			list($studentids, $params1) = $DB->get_in_or_equal($list->studentsid);
 			foreach ($sessions as $session){
-				$params2 = array($session->id);
-				$params = array_merge($params2, $params1);
+				$params = array_merge(array($session->id), $params1);
 				$header[] = date('d-m-Y',$session->date)." ".$session->hour." ".paperattendance_returnattendancedescription(false, $session->description);
 				//get session attendances
 				$getpresences = "SELECT p.id AS idp, u.id, IFNULL(p.status,0) AS status
 								FROM {paperattendance_presence} AS p
 								RIGHT JOIN {user} AS u ON (u.id = p.userid AND p.sessionid = ?)
-								WHERE u.id $sqlin2
+								WHERE u.id $studentids
 								ORDER BY u.lastname ASC";
 				$presences = $DB->get_records_sql($getpresences, $params);
 				$sess = array();
