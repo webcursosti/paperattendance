@@ -82,15 +82,17 @@ if( $isteacher || is_siteadmin($USER)) {
 			$header = array();
 			$data = array();
 			//Select all students from the last list
-			$sqlstudentlist = "SELECT u.id,
-							u.firstname,
-							u.lastname,
+			$sqlstudentlist = "SELECT u.id, 
+							u.firstname, 
+							u.lastname, 
 							u.email
 							FROM {paperattendance_presence} AS p
+							INNER JOIN {paperattendance_session} s ON (s.id = p.sessionid)
+							INNER JOIN {paperattendance_sessmodule} sm ON (sm.sessionid = s.id)
 							INNER JOIN {user} AS u ON (u.id = p.userid)
-							WHERE p.sessionid = (SELECT MAX(s.id) AS id
-						   						FROM {paperattendance_session} AS s
-						   						WHERE s.courseid = ?)
+							WHERE sm.date = (SELECT MAX(sm.date) AS date
+							              FROM {paperattendance_sessmodule} AS sm
+							              INNER JOIN {paperattendance_session} AS s ON (s.id = sm.sessionid AND s.courseid = ?))
 							ORDER BY u.lastname ASC";
 			$studentlist = $DB->get_records_sql($sqlstudentlist, array($courseid));
 			array_push($header,"LastName", "FirstName", "Email");
@@ -126,7 +128,9 @@ if( $isteacher || is_siteadmin($USER)) {
 				$params = array_merge(array($session->id), $paramstudentsid);
 				$header[] = date('d-m-Y',$session->date)." ".$session->hour." ".paperattendance_returnattendancedescription(false, $session->description);
 				//get session attendances
-				$getpresences = "SELECT p.id AS idp, u.id, IFNULL(p.status,0) AS status
+				$getpresences = "SELECT p.id AS idp, 
+								u.id, 
+								IFNULL(p.status,0) AS status
 								FROM {paperattendance_presence} AS p
 								RIGHT JOIN {user} AS u ON (u.id = p.userid AND p.sessionid = ?)
 								WHERE u.id $studentids

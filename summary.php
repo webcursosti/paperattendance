@@ -65,7 +65,10 @@ if( $isteacher || is_siteadmin($USER)) {
 	$PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array("id" => $courseid)));
 	$PAGE->navbar->add(get_string('pluginname', 'local_paperattendance'));
 	$PAGE->navbar->add(get_string('summarytitle', 'local_paperattendance'), new moodle_url("/local/paperattendance/summary.php", array("courseid" => $courseid)));
-
+	
+	$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
+	list($enrolmethod, $paramenrol) = $DB->get_in_or_equal($enrolincludes);
+	$parameters = array_merge(array($course->id), $paramenrol);
 	$querystudent = "SELECT u.id,
 					u.idnumber,
 					u.firstname,
@@ -75,10 +78,11 @@ if( $isteacher || is_siteadmin($USER)) {
 					INNER JOIN {context} c ON (c.contextlevel = 50 AND c.instanceid = e.courseid)
 					INNER JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.roleid = 5 AND ra.userid = ue.userid)
 					INNER JOIN {user} u ON (ue.userid = u.id)
+					WHERE e.enrol $enrolmethod
 					GROUP BY u.id
 					ORDER BY lastname ASC";
-	$nstudents = count($DB->get_records_sql($querystudent, array($course->id)));
-	$students = $DB->get_records_sql($querystudent, array($course->id), $page*$perpage, $perpage);
+	$nstudents = count($DB->get_records_sql($querystudent, $parameters));
+	$students = $DB->get_records_sql($querystudent, $parameters, $page*$perpage, $perpage);
 	$table = new html_table();
 	$table->head =array(
 			get_string("hashtag", "local_paperattendance"),
