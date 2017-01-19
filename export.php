@@ -93,6 +93,7 @@ if( $isteacher || is_siteadmin($USER)) {
 							WHERE sm.date = (SELECT MAX(sm.date) AS date
 							              FROM {paperattendance_sessmodule} AS sm
 							              INNER JOIN {paperattendance_session} AS s ON (s.id = sm.sessionid AND s.courseid = ?))
+							GROUP BY u.id
 							ORDER BY u.lastname ASC";
 			$studentlist = $DB->get_records_sql($sqlstudentlist, array($courseid));
 			array_push($header,"LastName", "FirstName", "Email");
