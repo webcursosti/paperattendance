@@ -86,17 +86,17 @@ if( $isteacher || is_siteadmin($USER)) {
 			list($enrolmethod, $paramenrol) = $DB->get_in_or_equal($enrolincludes);
 			$parameters = array_merge(array($course->id), $paramenrol);
 			$querystudent = "SELECT u.id,
-			u.email,
-			u.firstname,
-			u.lastname
-			FROM {user_enrolments} ue
-			INNER JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = ?)
-			INNER JOIN {context} c ON (c.contextlevel = 50 AND c.instanceid = e.courseid)
-			INNER JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.roleid = 5 AND ra.userid = ue.userid)
-			INNER JOIN {user} u ON (ue.userid = u.id)
-			WHERE e.enrol $enrolmethod
-			GROUP BY u.id
-			ORDER BY lastname ASC";
+							u.email,
+							u.firstname,
+							u.lastname
+							FROM {user_enrolments} ue
+							INNER JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = ?)
+							INNER JOIN {context} c ON (c.contextlevel = 50 AND c.instanceid = e.courseid)
+							INNER JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.roleid = 5 AND ra.userid = ue.userid)
+							INNER JOIN {user} u ON (ue.userid = u.id)
+							WHERE e.enrol $enrolmethod
+							GROUP BY u.id
+							ORDER BY lastname ASC";
 			$studentlist = $DB->get_records_sql($querystudent, $parameters);
 			array_push($header,"LastName", "FirstName", "Email");
 			$list = new stdClass();
