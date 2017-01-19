@@ -96,7 +96,7 @@ if( $isteacher || is_siteadmin($USER)) {
 							INNER JOIN {user} u ON (ue.userid = u.id)
 							WHERE e.enrol $enrolmethod
 							GROUP BY u.id
-							ORDER BY lastname ASC";
+							ORDER BY lastname, firstname, id ASC";
 			$studentlist = $DB->get_records_sql($querystudent, $parameters);
 			array_push($header,"LastName", "FirstName", "Email");
 			$list = new stdClass();
@@ -136,7 +136,7 @@ if( $isteacher || is_siteadmin($USER)) {
 								FROM {paperattendance_presence} AS p
 								RIGHT JOIN {user} AS u ON (u.id = p.userid AND p.sessionid = ?)
 								WHERE u.id $studentids
-								ORDER BY u.lastname ASC";
+								ORDER BY u.lastname, u.firstname, u.id ASC";
 				$presences = $DB->get_records_sql($getpresences, $params);
 				$sess = array();
 				foreach($presences as $presence){
