@@ -82,20 +82,22 @@ if( $isteacher || is_siteadmin($USER)) {
 			$header = array();
 			$data = array();
 			//Select all students from the last list
-			$sqlstudentlist = "SELECT u.id, 
-							u.firstname, 
-							u.lastname, 
-							u.email
-							FROM {paperattendance_presence} AS p
-							INNER JOIN {paperattendance_session} s ON (s.id = p.sessionid)
-							INNER JOIN {paperattendance_sessmodule} sm ON (sm.sessionid = s.id)
-							INNER JOIN {user} AS u ON (u.id = p.userid)
-							WHERE sm.date = (SELECT MAX(sm.date) AS date
-							              FROM {paperattendance_sessmodule} AS sm
-							              INNER JOIN {paperattendance_session} AS s ON (s.id = sm.sessionid AND s.courseid = ?))
+			$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
+			list($enrolmethod, $paramenrol) = $DB->get_in_or_equal($enrolincludes);
+			$parameters = array_merge(array($course->id), $paramenrol);
+			$querystudent = "SELECT u.id,
+							u.email,
+							u.firstname,
+							u.lastname
+							FROM {user_enrolments} ue
+							INNER JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = ?)
+							INNER JOIN {context} c ON (c.contextlevel = 50 AND c.instanceid = e.courseid)
+							INNER JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.roleid = 5 AND ra.userid = ue.userid)
+							INNER JOIN {user} u ON (ue.userid = u.id)
+							WHERE e.enrol $enrolmethod
 							GROUP BY u.id
-							ORDER BY u.lastname ASC";
-			$studentlist = $DB->get_records_sql($sqlstudentlist, array($courseid));
+							ORDER BY lastname ASC";
+			$studentlist = $DB->get_records_sql($querystudent, $parameters);
 			array_push($header,"LastName", "FirstName", "Email");
 			$list = new stdClass();
 			$list->lastnames = array();
