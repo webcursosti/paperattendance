@@ -144,6 +144,7 @@ if( $isteacher || is_siteadmin($USER)) {
 			$response->response = $data->response;
 			//result equals: 1 is still absence, 2 is changed to present
 			$response->result = $data->result;
+			$response->timemodified = time();
 			$DB->update_record("paperattendance_discussion", $response);
 			
 			if($data->result==2){
