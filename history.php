@@ -695,6 +695,7 @@ else if ($isstudent) {
 			$newdiscussion->presenceid = $presenceid;
 			$newdiscussion->comment = $data->comment;
 			$newdiscussion->result = 0; //Result equals to 0 means that the discussion is open
+			$newdiscussion->timecreated = time();
 			$insertdiscussion = $DB->insert_record("paperattendance_discussion", $newdiscussion, false);
 			redirect($goback);
 		}

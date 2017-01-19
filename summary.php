@@ -91,14 +91,21 @@ if( $isteacher || is_siteadmin($USER)) {
 			get_string("absentattendance", "local_paperattendance"),
 			get_string("percentagestudent", "local_paperattendance")
 	);
-	$sessions = $DB->count_records("paperattendance_session", array ("courseid" => $course->id));
+	list($statusprocessed, $paramstatus) = $DB->get_in_or_equal(array(1,2));
+	$params = array_merge(array($course->id), $paramstatus);
+	$sqlsession = "SELECT s.*
+				FROM {paperattendance_session} s
+				WHERE s.courseid = ? AND s.status $statusprocessed";
+	$sessions = count($DB->get_records_sql($sqlsession, $params));
 	$rowcount = 1;
 	foreach($students as $student){
 		//student summary sql
 		$present = "SELECT COUNT(*)
 						FROM {paperattendance_presence} AS p
-						INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid AND p.status = 1 AND s.courseid = ? AND p.userid = ?)";
-		$present = $DB->count_records_sql($present, array($course->id, $student->id));
+						INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid AND p.status = 1  AND s.courseid = ? AND s.status $statusprocessed  AND p.userid = ?)";
+		$paramspresent = array();
+		$paramspresent = array_merge($params, array($student->id));
+		$present = $DB->count_records_sql($present, $paramspresent);
 		$absent = $sessions - $present;
 		$percentagestudent = round(($present/$sessions)*100);
 		$table->data[] = array(
