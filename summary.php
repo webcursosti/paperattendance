@@ -80,7 +80,7 @@ if( $isteacher || is_siteadmin($USER)) {
 					INNER JOIN {user} u ON (ue.userid = u.id)
 					WHERE e.enrol $enrolmethod
 					GROUP BY u.id
-					ORDER BY lastname ASC";
+					ORDER BY lastname, firstname, u.id ASC";
 	$nstudents = count($DB->get_records_sql($querystudent, $parameters));
 	$students = $DB->get_records_sql($querystudent, $parameters, $page*$perpage, $perpage);
 	$table = new html_table();
