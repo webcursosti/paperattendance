@@ -186,6 +186,7 @@ $string['discusstimelimittext']="Maximium time in days to request an attendance 
 $string['taskprocesspdf']="Process PDFs";
 $string['taskdelete']="Delete PDFs";
 $string['taskomegasync']="Sync Attendance with Omega";
+$string['taskpresence']="Save students presence not in list";
 
 // Capabilities
 $string["paperattendance:print"] = "Print attendance list";

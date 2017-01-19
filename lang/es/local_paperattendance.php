@@ -186,6 +186,7 @@ $string['discusstimelimittext']="Máximo tiempo en días para solicitar la revis
 $string['taskprocesspdf']="Procesar PDFs";
 $string['taskdelete']="Borrar PDFs";
 $string['taskomegasync']="Sincronización de la Asistencia con Omega";
+$string['taskpresence']="Presencia a Alumnos no en lista";
 
 // Capabilities
 $string["paperattendance:print"] = "Imprimir lista";

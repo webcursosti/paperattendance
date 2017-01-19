@@ -419,7 +419,7 @@ function paperattendance_get_sessionid($pdffile){
 	return $resultado -> id;
 }
 
-function paperattendance_save_student_presence($sessid, $studentid, $status, $grayscale){
+function paperattendance_save_student_presence($sessid, $studentid, $status, $grayscale = NULL){
 	global $DB;
 	
 	$sessioninsert = new stdClass();
