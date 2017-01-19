@@ -128,8 +128,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				$params = array_merge(array($session->id), $paramstudentsid);
 				$header[] = date('d-m-Y',$session->date)." ".$session->hour." ".paperattendance_returnattendancedescription(false, $session->description);
 				//get session attendances
-				$getpresences = "SELECT p.id AS idp, 
-								u.id, 
+				$getpresences = "SELECT  u.id, 
 								IFNULL(p.status,0) AS status
 								FROM {paperattendance_presence} AS p
 								RIGHT JOIN {user} AS u ON (u.id = p.userid AND p.sessionid = ?)
