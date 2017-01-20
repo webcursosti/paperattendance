@@ -577,20 +577,22 @@ else if ($isstudent) {
 				$urlicon,
 				$invalidicon
 				);
+
 		$getstudentattendances = "SELECT s.id AS sessionid,
 				p.id AS presenceid, 
-				sm.date, CONCAT( m.initialtime, ' - ', m.endtime) AS hour, 
+				sm.date,
+				CONCAT( m.initialtime, ' - ', m.endtime) AS hour, 
 				p.status, 
 				m.name, 
 				s.description AS description,
 				s.lastmodified AS sessdate
 				FROM {paperattendance_session} AS s
-				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
 				INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid AND s.courseid = ?)
+				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
 				INNER JOIN {paperattendance_presence} AS p ON (s.id = p.sessionid)
 				INNER JOIN {user} AS u ON (u.id = p.userid AND AND u.id = ?)
 				ORDER BY sm.date DESC";
-	
+		
 		$attendances = $DB->get_records_sql($getstudentattendances, array($courseid, $USER->id));
 	
 		$attendancestable = new html_table();
@@ -645,7 +647,7 @@ else if ($isstudent) {
 				
 				$attendancestable->data[] = array(
 					$counter,
-					date("d-m-Y", $attendance->date),
+					paperattendance_convertdate($attendance->date),
 					$attendance->name,
 					$attendance->hour,
 					$attdescription,
