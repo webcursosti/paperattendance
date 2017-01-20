@@ -50,7 +50,10 @@ class paperattendance_processpdf extends \core\task\scheduled_task {
 			$lastsessionid = 0;
 		}
 		
-		$sqlsessions = "SELECT id, courseid FROM {paperattendance_session} WHERE id > ?";
+		$sqlsessions = "SELECT id,
+						courseid
+						FROM {paperattendance_session}
+						WHERE id > ?";
 		
 		if($sessionstoverify = $DB->get_records_sql($sqlsessions, array($lastsessionid))){
 			//if there is at least one session, check if there is a student enrolled but not on the list
@@ -63,14 +66,14 @@ class paperattendance_processpdf extends \core\task\scheduled_task {
 				$parameters = array_merge(array($courseid), $paramenrol, array($sessionid));
 				
 				$querystudentsnotinlist = "SELECT u.id
-				FROM {user_enrolments} ue
-				INNER JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = ?)
-				INNER JOIN {context} c ON (c.contextlevel = 50 AND c.instanceid = e.courseid)
-				INNER JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.roleid = 5 AND ra.userid = ue.userid)
-				INNER JOIN {user} u ON (ue.userid = u.id)
-				WHERE e.enrol $enrolmethod AND u.id NOT IN (SELECT userid FROM  {paperattendance_presence} WHERE sessionid = ?)
-				GROUP BY u.id
-				ORDER BY lastname ASC";
+										   FROM {user_enrolments} ue
+										   INNER JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = ?)
+										   INNER JOIN {context} c ON (c.contextlevel = 50 AND c.instanceid = e.courseid)
+										   INNER JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.roleid = 5 AND ra.userid = ue.userid)
+										   INNER JOIN {user} u ON (ue.userid = u.id)
+										   WHERE e.enrol $enrolmethod AND u.id NOT IN (SELECT userid FROM  {paperattendance_presence} WHERE sessionid = ?)
+										   GROUP BY u.id
+										   ORDER BY lastname ASC";
 				
 				if($studentsnotinlist = $DB->get_records_sql($querystudentsnotinlist, $parameters)){
 					foreach ($studentsnotinlist as $student){

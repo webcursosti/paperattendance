@@ -75,7 +75,7 @@ class paperattendance_omegasync extends \core\task\scheduled_task {
 									FROM {paperattendance_session} s
 									INNER JOIN {paperattendance_presence} p ON (p.sessionid = s.id)
 									INNER JOIN {user} u ON (u.id = p.userid)
-									WHERE p.omegasync NOT IN ?";
+									WHERE p.omegasync <> ?";
 			$unsyncrhonizedpresences = $DB->get_records_sql($sqlunsicronizedpresences, array(1));
 			
 			foreach($unsyncrhonizedpresences as $presence){
