@@ -52,6 +52,15 @@ $tasks = array(
 			'day' => '*',
 			'dayofweek' => '*',
 			'month' => '*'
+	),
+	array(
+			'classname' => 'local_paperattendance\task\paperattendance_presence',
+			'blocking' => 0,
+			'minute' => '0',
+			'hour' => '6',
+			'day' => '*',
+			'dayofweek' => '*',
+			'month' => '*'
 	)
 		
 );
