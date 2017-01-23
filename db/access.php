@@ -112,4 +112,5 @@ $capabilities = array(
 						'editingteacher' => CAP_PROHIBIT,
 						'manager' => CAP_ALLOW
 				))
+		
 );
