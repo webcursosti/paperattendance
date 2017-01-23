@@ -35,7 +35,7 @@ require_login();
 $context = context_system::instance();
 $contextsystem = context_system::instance();
 
-if (! has_capability('local/paperattendance:printorders', $context) && ! has_capability('local/paperattendance:printorders', $contextsystem)) {
+if (! has_capability('local/paperattendance:printsearch', $context) && ! has_capability('local/paperattendance:printsearch', $contextsystem)) {
 	print_error(get_string('notallowedprint', 'local_paperattendance'));
 }
 
