@@ -148,6 +148,9 @@ $string['selectsesstype'] = "Por favor seleccione al menos un tipo se sesión.";
 $string['exporttitle'] = "Exportar";
 $string['export'] = "Exportar";
 $string['nodatatoexport'] = "No hay datos para exportar.";
+$string['course']="Curso";
+$string['teacher']="Profesor";
+$string['category']="Categoría";
 
 //messages
 $string['dear'] = "Estimado Profesor";
