@@ -22,26 +22,35 @@
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 //Pertenece al plugin PaperAttendance
-define('NO_DEBUG_DISPLAY', true);
+define('AJAX_SCRIPT', true);
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 
 global $DB;
-header("Content-type: application/json");
 
 $data = required_param('result', PARAM_TEXT);
 $path = required_param('path', PARAM_INT);
 
+require_login();
+
+$context = context_system::instance();
+$contextsystem = context_system::instance();
+
+if (! has_capability('local/paperattendance:printorders', $context) && ! has_capability('local/paperattendance:printorders', $contextsystem)) {
+	print_error(get_string('notallowedprint', 'local_paperattendance'));
+}
+
 $filter = array("%/".$path."%", $data."%", $data."%", $data."%");
-$sqlcourses = "SELECT c.id, c.fullname, cat.name, CONCAT( u.firstname, ' ', u.lastname) as teacher
+$sqlcourses = "SELECT c.id, 
+			c.fullname, 
+			cat.name, 
+			CONCAT( u.firstname, ' ', u.lastname) as teacher
 			FROM {user} AS u
-			 INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
-			 INNER JOIN {context} ct ON (ct.id = ra.contextid)
-			 INNER JOIN {course} c ON (c.id = ct.instanceid)
-			 INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
-			 INNER JOIN {course_categories} as cat ON (cat.id = c.category)
+			INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+			INNER JOIN {context} ct ON (ct.id = ra.contextid)
+			INNER JOIN {course} c ON (c.id = ct.instanceid)
+			INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
+			INNER JOIN {course_categories} as cat ON (cat.id = c.category)
 			WHERE (cat.path like ?) AND (u.firstname like ? OR u.lastname like ? OR c.fullname like ?)";
 $courses = $DB->get_records_sql($sqlcourses, $filter);
 
 echo json_encode($courses);
-
-?>

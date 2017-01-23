@@ -53,9 +53,9 @@ if($courseid > 1){
 
 $contextsystem = context_system::instance();
 
-//if (! has_capability('local/paperattendance:printorders', $context) && ! has_capability('local/paperattendance:printorders', $contextsystem)) {
-	//print_error(get_string('notallowedprint', 'local_paperattendance'));
-//}
+if (! has_capability('local/paperattendance:printorders', $context) && ! has_capability('local/paperattendance:printorders', $contextsystem)) {
+	print_error(get_string('notallowedprint', 'local_paperattendance'));
+}
 // This page url.
 $url = new moodle_url('/local/paperattendance/printorders.php', array(
 		'courseid' => $courseid,
