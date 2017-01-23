@@ -21,7 +21,7 @@
 * @copyright  2017 Cristobal Silva (cristobal.isilvap@gmail.com)
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-//Pertenece al plugin PaperAttendance
+
 //define('AJAX_SCRIPT', true);
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 
@@ -50,7 +50,8 @@ $sqlcourses = "SELECT c.id,
 			INNER JOIN {course} c ON (c.id = ct.instanceid)
 			INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
 			INNER JOIN {course_categories} as cat ON (cat.id = c.category)
-			WHERE (cat.path like ?) AND (u.firstname like ? OR u.lastname like ? OR c.fullname like ?)";
+			WHERE (cat.path like ?) AND (u.firstname like ? OR u.lastname like ? OR c.fullname like ?)
+			GROUP BY c.id";
 $courses = $DB->get_records_sql($sqlcourses, $filter);
 
 echo json_encode($courses);
