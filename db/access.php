@@ -103,7 +103,7 @@ $capabilities = array(
 						'editingteacher' => CAP_ALLOW,
 						'manager' => CAP_ALLOW
 				)),
-		'local/paperattendance:printorders' => array(
+		'local/paperattendance:printsearch' => array(
 				'captype' => 'read',
 				'contextlevel' => CONTEXT_COURSECAT,
 				'archetypes' => array(
