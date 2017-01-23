@@ -81,6 +81,8 @@ if( $isteacher || is_siteadmin($USER)) {
 			$title = $course->fullname;
 			$header = array();
 			$data = array();
+			$descriptions = array();
+			$dates = array();
 			//Select all students from the last list
 			$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
 			list($enrolmethod, $paramenrol) = $DB->get_in_or_equal($enrolincludes);
@@ -129,7 +131,9 @@ if( $isteacher || is_siteadmin($USER)) {
 			list($studentids, $paramstudentsid) = $DB->get_in_or_equal($list->studentsid);
 			foreach ($sessions as $session){
 				$params = array_merge(array($session->id), $paramstudentsid);
-				$header[] = date('d-m-Y',$session->date)." ".$session->hour." ".paperattendance_returnattendancedescription(false, $session->description);
+				$descriptions[] = paperattendance_returnattendancedescription(false, $session->description);
+				$dates[] = date('d-m-Y',$session->date);
+				$header[] = $session->hour;
 				//get session attendances
 				$getpresences = "SELECT  u.id, 
 								IFNULL(p.status,0) AS status
@@ -149,7 +153,7 @@ if( $isteacher || is_siteadmin($USER)) {
 			}
 			else{
 				$nodata = false;
-				paperattendance_exporttoexcel($title, $header, $filename, $data);
+				paperattendance_exporttoexcel($title, $header, $filename, $data, $descriptions, $dates);
 			}
 		}
 	}
