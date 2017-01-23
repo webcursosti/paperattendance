@@ -36,33 +36,35 @@ if (isguestuser()) {
 	die();
 }
 $courseid = optional_param('courseid',1, PARAM_INT);
-$category = optional_param('categoryid', 1, PARAM_INT);
+$categoryid = optional_param('categoryid', 1, PARAM_INT);
 $action = optional_param('action', 'viewform', PARAM_TEXT);
 
 if($courseid > 1){
 	if($course = $DB->get_record("course", array("id" => $courseid))){
 		$context = context_coursecat::instance($course->category);
+		$path = $course->category;
 	}
-}else if($category > 1){
-	$context = context_coursecat::instance($category);
+}else if($categoryid > 1){
+	$context = context_coursecat::instance($categoryid);
+	$path = $categoryid;
 }else{
 	$context = context_system::instance();
 }
 
 $contextsystem = context_system::instance();
 
-if (! has_capability('local/paperattendance:printorders', $context) && ! has_capability('local/paperattendance:printorders', $contextsystem)) {
-	print_error(get_string('notallowedprint', 'local_paperattendance'));
-}
+//if (! has_capability('local/paperattendance:printorders', $context) && ! has_capability('local/paperattendance:printorders', $contextsystem)) {
+	//print_error(get_string('notallowedprint', 'local_paperattendance'));
+//}
 // This page url.
 $url = new moodle_url('/local/paperattendance/printorders.php', array(
 		'courseid' => $courseid,
-		"categoryid" => $category
+		"categoryid" => $categoryid
 ));
 if($courseid && $courseid != 1){
 	$courseurl = new moodle_url('/course/view.php', array(
 			'id' => $courseid,
-			"categoryid" => $category
+			"categoryid" => $categoryid
 	));
 	$PAGE->navbar->add($course->fullname, $courseurl );
 }
@@ -71,7 +73,51 @@ $PAGE->navbar->add(get_string('header', 'local_paperattendance'),$url);
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
+// Require jquery for modal.
+$PAGE->requires->jquery();
+$PAGE->requires->jquery_plugin('ui');
+$PAGE->requires->jquery_plugin('ui-css');
+
+// Creating tables and adding columns header.
+$table = new html_table();
+$table->head = array(get_string('hashtag', 'local_paperattendance'),
+		get_string('course', 'local_paperattendance'),
+		get_string('teacher', 'local_paperattendance'),
+		get_string('category', 'local_paperattendance')
+);
+$table->id = "fbody";
 
 echo $OUTPUT->header();
 
+?>
+<input id="filter" type="text" placeholder="Filter">
+
+<?php
+echo html_writer::table($table);
 echo $OUTPUT->footer();
+
+?>
+<script type="text/javascript">
+	var filter = $('#filter');
+	filter.keyup(function(event){
+		$("#fbody").find("tbody").empty();
+		if(this.value.length >= 3 ){
+		    var data = this.value;
+		    var path = <?php echo $path;?>;
+		    var count = 1;
+		    var delay = 2000;
+		    callAjax(data, path, count);
+		}
+	}).delay(5000);
+	function callAjax(data, path, count) {
+		$.getJSON("ajax/getcourses.php?result="+data+"&path="+path, function(result){
+			$("#fbody").find("tbody").empty();
+	        $.each(result, function(i, field){
+	        	var printicon = "<a href='http://localhost/moodle/local/paperattendance/print.php?courseid="+field['id']+"&categoryid="+path+"'>ir </a>"; 
+	        	$("#fbody").find("tbody").append("<tr><td>"+count+"</td><td>"+field['fullname']+"</td><td>"+field['teacher']+"</td><td>"+field['name']+"</td><td>"+printicon+"</td></tr>");
+				count++;
+	        });
+    	});
+	}
+
+</script>
