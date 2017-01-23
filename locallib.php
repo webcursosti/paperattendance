@@ -1217,7 +1217,7 @@ function paperattendance_cronlog($task, $result = NULL, $timecreated, $execution
 	
 }
 
-function paperattendance_exporttoexcel($title, $header, $filename, $data){
+function paperattendance_exporttoexcel($title, $header, $filename, $data, $descriptions, $dates){
 	global $CFG;
 	$workbook = new MoodleExcelWorkbook("-");
 	$workbook->send($filename);
@@ -1228,13 +1228,25 @@ function paperattendance_exporttoexcel($title, $header, $filename, $data){
 	$titleformat->set_bold(1);
 	$titleformat->set_size(12);
 	$attxls->write($i,$j,$title,$titleformat);
-	$i= 2;
+	$i = 1;
+	$j = 3;
+	foreach ($descriptions as $descr){
+		$attxls->write($i, $j, $descr);
+		$j++;
+	}
+	$i = 2;
+	$j = 3;
+	foreach ($dates as $date){
+		$attxls->write($i, $j, $date);
+		$j++;
+	}
+	$i= 3;
 	$j = 0;
 	foreach($header as $cell){
 		$attxls->write($i, $j, $cell);
 		$j++;
 	}
-	$i=3;
+	$i=4;
 	$j=0;
 	foreach ($data as $row){
 		foreach($row as $cell){
@@ -1242,7 +1254,7 @@ function paperattendance_exporttoexcel($title, $header, $filename, $data){
 			$i++;
 		}
 		$j++;
-		$i=3;
+		$i=4;
 	}
 	$workbook->close();
 	exit;
