@@ -26,7 +26,7 @@
 
 namespace local_paperattendance\task;
 
-class paperattendance_processpdf extends \core\task\scheduled_task {
+class paperattendance_presence extends \core\task\scheduled_task {
 	
 	public function get_name() {
 		return get_string('taskpresence', 'local_paperattendance');
