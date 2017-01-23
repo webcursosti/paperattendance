@@ -190,6 +190,7 @@ $string['taskpresence']="Presencia a Alumnos no en lista";
 
 // Capabilities
 $string["paperattendance:print"] = "Imprimir lista";
+$string["paperattendance:printorders"] = "Ordenes de Impresión";
 $string["paperattendance:printsecre"] = "Imprimir lista";
 $string["paperattendance:upload"] = "Subir listas escaneadas";
 $string["paperattendance:history"] = "Ver historial de asistencias";
