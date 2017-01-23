@@ -87,12 +87,9 @@ $table->head = array(get_string('hashtag', 'local_paperattendance'),
 );
 $table->id = "fbody";
 
+$print = get_string("downloadprint", "local_paperattendance");
 echo $OUTPUT->header();
-
-?>
-<input id="filter" type="text" placeholder="Filter">
-
-<?php
+echo html_writer::empty_tag("input", array( "id"=>"filter", "type"=>"text", "placeholder"=>"filter"));
 echo html_writer::table($table);
 echo $OUTPUT->footer();
 
@@ -104,16 +101,17 @@ echo $OUTPUT->footer();
 		if(this.value.length >= 3 ){
 		    var data = this.value;
 		    var path = <?php echo $path;?>;
-		    var count = 1;
-		    var delay = 2000;
-		    callAjax(data, path, count);
+		    var print = <?php echo json_encode($print);?>;
+		    
+		    callAjax(data, path, print);
 		}
-	}).delay(5000);
-	function callAjax(data, path, count) {
+	});
+	function callAjax(data, path, print) {
+		var count = 1;
 		$.getJSON("ajax/getcourses.php?result="+data+"&path="+path, function(result){
 			$("#fbody").find("tbody").empty();
 	        $.each(result, function(i, field){
-	        	var printicon = "<a href='http://localhost/moodle/local/paperattendance/print.php?courseid="+field['id']+"&categoryid="+path+"'>ir </a>"; 
+	        	var printicon = "<a href='http://localhost/moodle/local/paperattendance/print.php?courseid="+field['id']+"&categoryid="+path+"'>"+print+"</a>"; 
 	        	$("#fbody").find("tbody").append("<tr><td>"+count+"</td><td>"+field['fullname']+"</td><td>"+field['teacher']+"</td><td>"+field['name']+"</td><td>"+printicon+"</td></tr>");
 				count++;
 	        });
