@@ -108,8 +108,7 @@ $coursecount = $page*$perpage+1;
 foreach($courses as $course){
 	$printurl = new moodle_url('/local/paperattendance/print.php', array(
 			'courseid' => $course->id,
-			"categoryid" => $path,
-			"action" => "getcourses"
+			"categoryid" => $path
 	));
 	$table->data[] = array(
 			$coursecount,
