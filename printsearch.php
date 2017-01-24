@@ -40,7 +40,7 @@ $categoryid = optional_param('categoryid', 1, PARAM_INT);
 $action = optional_param('action', 'viewform', PARAM_TEXT);
 //Page
 $page = optional_param('page', 0, PARAM_INT);
-$perpage = 5;
+$perpage = 26;
 
 if($courseid > 1){
 	if($course = $DB->get_record("course", array("id" => $courseid))){
