@@ -151,6 +151,7 @@ $string['nodatatoexport'] = "There aren't any data to export.";
 $string['course']="Course";
 $string['teacher']="Teacher";
 $string['category']="Category";
+$string['searchprinthelp'] = "Type at least 3 characters to search by course or teacher on the input below";
 
 //messages
 $string['dear'] = "Dear Teacher";
@@ -193,7 +194,7 @@ $string['taskpresence']="Save students presence not in list";
 
 // Capabilities
 $string["paperattendance:print"] = "Print attendance list";
-$string["paperattendance:printorders"] = "Print Orders";
+$string["paperattendance:printsearch"] = "Print Search";
 $string["paperattendance:printsecre"] =  "Print attendance list";
 $string["paperattendance:upload"] = "Upload scanned list";
 $string["paperattendance:history"] = "View history attendance";

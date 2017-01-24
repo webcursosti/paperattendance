@@ -151,6 +151,8 @@ $string['nodatatoexport'] = "No hay datos para exportar.";
 $string['course']="Curso";
 $string['teacher']="Profesor";
 $string['category']="Categoría";
+$string['searchprinthelp'] = "Escriba al menos 3 caracteres para buscar por curso o profesor en el cuadro de abajo";
+
 
 //messages
 $string['dear'] = "Estimado Profesor";
@@ -193,7 +195,7 @@ $string['taskpresence']="Presencia a Alumnos no en lista";
 
 // Capabilities
 $string["paperattendance:print"] = "Imprimir lista";
-$string["paperattendance:printorders"] = "Ordenes de Impresión";
+$string["paperattendance:printsearch"] = "Busqueda para impresión";
 $string["paperattendance:printsecre"] = "Imprimir lista";
 $string["paperattendance:upload"] = "Subir listas escaneadas";
 $string["paperattendance:history"] = "Ver historial de asistencias";

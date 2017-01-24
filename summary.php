@@ -72,7 +72,8 @@ if( $isteacher || is_siteadmin($USER)) {
 	$querystudent = "SELECT u.id,
 					u.idnumber,
 					u.firstname,
-					u.lastname
+					u.lastname,
+					u.email
 					FROM {user_enrolments} ue
 					INNER JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = ?)
 					INNER JOIN {context} c ON (c.contextlevel = 50 AND c.instanceid = e.courseid)
@@ -87,9 +88,18 @@ if( $isteacher || is_siteadmin($USER)) {
 	$table->head =array(
 			get_string("hashtag", "local_paperattendance"),
 			get_string("studentname", "local_paperattendance"),
+			get_string("mail", "local_paperattendance"),
 			get_string("presentattendance", "local_paperattendance"),
 			get_string("absentattendance", "local_paperattendance"),
 			get_string("percentagestudent", "local_paperattendance")
+	);
+	$table->size = array(
+			'7%',
+			'23%',
+			'40%',
+			'10%',
+			'10%',
+			'10%'
 	);
 	list($statusprocessed, $paramstatus) = $DB->get_in_or_equal(array(1,2));
 	$params = array_merge(array($course->id), $paramstatus);
@@ -111,6 +121,7 @@ if( $isteacher || is_siteadmin($USER)) {
 		$table->data[] = array(
 				$rowcount,
 				$student->lastname." ".$student->firstname,
+				$student->email,
 				$present,
 				$absent,
 				$percentagestudent."%"
