@@ -24,11 +24,11 @@
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
-//define('AJAX_SCRIPT', true);
+define('AJAX_SCRIPT', true);
 define('NO_DEBUG_DISPLAY', true);
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 
-global $CFG;
+global $CFG, $DB;
 
 require_login();
 if (isguestuser()) {
@@ -38,6 +38,8 @@ if (isguestuser()) {
 $action = required_param('action', PARAM_ALPHA);
 $omegaid = optional_param('omegaid', null, PARAM_TEXT);
 $diasemana = optional_param('diasemana', null, PARAM_TEXT);
+$data = required_param('result', PARAM_TEXT);
+$path = required_param('path', PARAM_INT);
 $token = $CFG->paperattendance_omegatoken;
 $url = $CFG->paperattendance_omegagetmoduloshorariosurl;
 
@@ -60,5 +62,30 @@ switch ($action) {
 		curl_close ($curl);
 
 		echo  $result;
-	break;	
+		break;	
+	case 'getcourses' :
+		$context = context_system::instance();
+		$contextsystem = context_system::instance();
+		
+		if (! has_capability('local/paperattendance:printsearch', $context) && ! has_capability('local/paperattendance:printsearch', $contextsystem)) {
+			print_error(get_string('notallowedprint', 'local_paperattendance'));
+		}
+		
+		$filter = array("%/".$path."%", "%".$data."%", $data."%");
+		$sqlcourses = "SELECT c.id,
+			c.fullname,
+			cat.name,
+			CONCAT( u.firstname, ' ', u.lastname) as teacher
+			FROM {user} AS u
+			INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+			INNER JOIN {context} ct ON (ct.id = ra.contextid)
+			INNER JOIN {course} c ON (c.id = ct.instanceid)
+			INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
+			INNER JOIN {course_categories} as cat ON (cat.id = c.category)
+			WHERE (cat.path like ?) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?)
+			GROUP BY c.id";
+		$courses = $DB->get_records_sql($sqlcourses, $filter);
+		
+		echo json_encode($courses);
+		break;
 }

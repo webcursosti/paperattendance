@@ -151,6 +151,8 @@ $string['nodatatoexport'] = "No hay datos para exportar.";
 $string['course']="Curso";
 $string['teacher']="Profesor";
 $string['category']="Categoría";
+$string['searchprinthelp'] = "Escriba al menos 3 caracteres para buscar por curso o profesor en el cuadro de abajo";
+
 
 //messages
 $string['dear'] = "Estimado Profesor";
