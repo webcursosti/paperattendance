@@ -38,6 +38,9 @@ if (isguestuser()) {
 $courseid = optional_param('courseid',1, PARAM_INT);
 $categoryid = optional_param('categoryid', 1, PARAM_INT);
 $action = optional_param('action', 'viewform', PARAM_TEXT);
+//Page
+$page = optional_param('page', 0, PARAM_INT);
+$perpage = 26;
 
 if($courseid > 1){
 	if($course = $DB->get_record("course", array("id" => $courseid))){
@@ -77,7 +80,8 @@ $PAGE->set_pagelayout('standard');
 $PAGE->requires->jquery();
 $PAGE->requires->jquery_plugin('ui');
 $PAGE->requires->jquery_plugin('ui-css');
-
+//string for print
+$print = get_string("downloadprint", "local_paperattendance");
 // Creating tables and adding columns header.
 $table = new html_table();
 $table->head = array(get_string('hashtag', 'local_paperattendance'),
@@ -86,33 +90,75 @@ $table->head = array(get_string('hashtag', 'local_paperattendance'),
 		get_string('category', 'local_paperattendance')
 );
 $table->id = "fbody";
-
-$print = get_string("downloadprint", "local_paperattendance");
+$sqlcourses = "SELECT c.id,
+			c.fullname,
+			cat.name,
+			CONCAT( u.firstname, ' ', u.lastname) as teacher
+			FROM {role} r
+			INNER JOIN {role_assignments} ra ON (r.id = ra.roleid AND r.id IN ( 3, 4))
+			INNER JOIN {context} ct ON (ct.id = ra.contextid)
+			INNER JOIN {course} c ON (c.id = ct.instanceid)
+			INNER JOIN {course_categories} as cat ON (cat.id = c.category)
+			INNER JOIN {user} u ON (ra.userid = u.id)
+			WHERE (cat.path like ?)
+			GROUP BY c.id";
+$ncourses = count($DB->get_records_sql($sqlcourses, array("%/".$path,"%")));
+$courses = $DB->get_records_sql($sqlcourses, array("%/".$path,"%"),$page*$perpage, $perpage);
+$coursecount = $page*$perpage+1;
+foreach($courses as $course){
+	$printurl = new moodle_url('/local/paperattendance/print.php', array(
+			'courseid' => $course->id,
+			"categoryid" => $path
+	));
+	$table->data[] = array(
+			$coursecount,
+			$course->fullname,
+			$course->teacher,
+			$course->name,
+			html_writer::nonempty_tag("a", $print, array("href"=>$printurl))
+	);
+	$coursecount++;
+}
 echo $OUTPUT->header();
-echo html_writer::empty_tag("input", array( "id"=>"filter", "type"=>"text", "placeholder"=>"filter"));
-echo html_writer::table($table);
+echo html_writer::div(get_string("searchprinthelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
+echo html_writer::empty_tag("input", array( "id"=>"filter", "type"=>"text", "style"=>"width:25%"));
+if ($ncourses>0){
+	if ($ncourses>30){
+		$ncourses = 30;
+	}
+	echo html_writer::table($table);
+	echo $OUTPUT->paging_bar($ncourses, $page, $perpage, $url);
+}
 echo $OUTPUT->footer();
 
 ?>
 <script type="text/javascript">
 	var filter = $('#filter');
+	var $table = $("#fbody").find("tbody");
+	var $paging = $(".paging");
 	filter.keyup(function(event){
-		$("#fbody").find("tbody").empty();
 		if(this.value.length >= 3 ){
+			$table.find("tr").not(".ajaxtr").hide();
+			$paging.hide();
 		    var data = this.value;
 		    var path = <?php echo $path;?>;
 		    var print = <?php echo json_encode($print);?>;
 		    
 		    callAjax(data, path, print);
 		}
+		else{
+			$table.find("tr").not(".ajaxtr").show();
+			$paging.show();
+		}
+		$(".ajaxtr").remove();
 	});
 	function callAjax(data, path, print) {
 		var count = 1;
-		$.getJSON("ajax/getcourses.php?result="+data+"&path="+path, function(result){
-			$("#fbody").find("tbody").empty();
+		$.getJSON("ajax/ajaxquerys.php?result="+data+"&path="+path+"&action=getcourses", function(result){
+			$(".ajaxtr").remove();
 	        $.each(result, function(i, field){
 	        	var printicon = "<a href='http://localhost/moodle/local/paperattendance/print.php?courseid="+field['id']+"&categoryid="+path+"'>"+print+"</a>"; 
-	        	$("#fbody").find("tbody").append("<tr><td>"+count+"</td><td>"+field['fullname']+"</td><td>"+field['teacher']+"</td><td>"+field['name']+"</td><td>"+printicon+"</td></tr>");
+	        	$table.append("<tr class='ajaxtr'><td>"+count+"</td><td>"+field['fullname']+"</td><td>"+field['teacher']+"</td><td>"+field['name']+"</td><td>"+printicon+"</td></tr>");
 				count++;
 	        });
     	});
