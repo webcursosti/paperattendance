@@ -23,7 +23,7 @@
 * @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl) 					
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-
+define('AJAX_SCRIPT', true);
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 
 global $CFG, $DB, $USER;
@@ -80,9 +80,10 @@ switch ($action) {
 		$result = curl_exec ($curl);
 		curl_close ($curl);
 
-		echo  $result;
+		echo  json_encode($result);
 		break;	
 	case 'getcourses' :
+		
 		$context = context_system::instance();
 		$contextsystem = context_system::instance();
 		if (! has_capability('local/paperattendance:printsearch', $context) && ! has_capability('local/paperattendance:printsearch', $contextsystem)) {
