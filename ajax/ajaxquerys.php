@@ -24,11 +24,9 @@
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
-define('AJAX_SCRIPT', true);
-define('NO_DEBUG_DISPLAY', true);
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 
-global $CFG, $DB;
+global $CFG, $DB, $USER;
 
 require_login();
 if (isguestuser()) {
@@ -38,13 +36,34 @@ if (isguestuser()) {
 $action = required_param('action', PARAM_ALPHA);
 $omegaid = optional_param('omegaid', null, PARAM_TEXT);
 $diasemana = optional_param('diasemana', null, PARAM_TEXT);
-$data = required_param('result', PARAM_TEXT);
-$path = required_param('path', PARAM_INT);
-$token = $CFG->paperattendance_omegatoken;
-$url = $CFG->paperattendance_omegagetmoduloshorariosurl;
+$data = optional_param('result', null, PARAM_TEXT);
+$path = optional_param('path', 0, PARAM_INT);
+$courseid = optional_param("courseid", 1, PARAM_INT);
+$category = optional_param('categoryid', 1, PARAM_INT);
 
 switch ($action) {
 	case 'curlgetmoduloshorario' :
+		require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
+		$token = $CFG->paperattendance_omegatoken;
+		$url = $CFG->paperattendance_omegagetmoduloshorariosurl;
+		if($courseid > 1){
+			if($course = $DB->get_record("course", array("id" => $courseid)) ){
+				if($course->idnumber != NULL){
+					$context = context_coursecat::instance($course->category);
+				}
+			}
+			else{
+				$context = context_system::instance();
+			}
+		}else if($category > 1){
+			$context = context_coursecat::instance($category);
+		}else{
+			$context = context_system::instance();
+		}
+		$isteacher = paperattendance_getteacherfromcourse($courseid, $USER->id);
+		if(!has_capability("local/paperattendance:printsecre", $context) && !$isteacher && !is_siteadmin($USER) && !has_capability("local/paperattendance:print", $context)){
+			print_error(get_string('notallowedprint', 'local_paperattendance'));
+		}
 		$curl = curl_init();
 		
 		$fields = array (
@@ -66,7 +85,6 @@ switch ($action) {
 	case 'getcourses' :
 		$context = context_system::instance();
 		$contextsystem = context_system::instance();
-		
 		if (! has_capability('local/paperattendance:printsearch', $context) && ! has_capability('local/paperattendance:printsearch', $contextsystem)) {
 			print_error(get_string('notallowedprint', 'local_paperattendance'));
 		}

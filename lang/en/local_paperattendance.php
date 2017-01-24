@@ -194,7 +194,7 @@ $string['taskpresence']="Save students presence not in list";
 
 // Capabilities
 $string["paperattendance:print"] = "Print attendance list";
-$string["paperattendance:printorders"] = "Print Orders";
+$string["paperattendance:printsearch"] = "Print Search";
 $string["paperattendance:printsecre"] =  "Print attendance list";
 $string["paperattendance:upload"] = "Upload scanned list";
 $string["paperattendance:history"] = "View history attendance";
