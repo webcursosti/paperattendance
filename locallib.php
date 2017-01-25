@@ -154,6 +154,13 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 		$pdf->Image($logofilepath, $left, 15, 50);
 		$left += 55;
 	}
+	
+	// Write the attendance description
+	$pdf->SetFont('Helvetica', '', 12);
+	$pdf->SetXY(20, 31);
+	$descriptionstr = trim_text(paperattendance_returnattendancedescription(false, $description),20);
+	$pdf->Write(1, core_text::strtoupper($descriptionstr));
+	
 	// We position to the right of the logo.
 	$top = 7;
 	$pdf->SetFont('Helvetica', 'B', 12);
@@ -247,6 +254,12 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			$pdf->AddPage();
 			$top = 35;
 			$modulecount++;
+			
+			// Write the attendance description
+			$pdf->SetFont('Helvetica', '', 12);
+			$pdf->SetXY(20, 31);
+			$pdf->Write(1, core_text::strtoupper($descriptionstr));
+				
 			
 			// Logo UAI and Top QR
 			$pdf->Image($logofilepath, 20, 15, 50);
