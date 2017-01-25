@@ -72,7 +72,7 @@ if($courseid && $courseid != 1){
 	$PAGE->navbar->add($course->fullname, $courseurl );
 }
 $PAGE->navbar->add(get_string('printtitle', 'local_paperattendance'));
-$PAGE->navbar->add(get_string('header', 'local_paperattendance'),$url);
+$PAGE->navbar->add(get_string('printtitle', 'local_paperattendance'),$url);
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
