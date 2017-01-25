@@ -78,11 +78,13 @@ if( $isteacher || is_siteadmin($USER)) {
 			$parametros = array_merge($paramsesstypes, array($courseid));
 			//excel parameters
 			$filename = $course->fullname."_attendances_".date('dmYHi');
+			$tabs = array("Attendances", "Summary");
 			$title = $course->fullname;
-			$header = array();
-			$data = array();
-			$descriptions = array();
-			$dates = array();
+			$header = array(array("LastName", "FirstName", "Email"), array("LastName", "FirstName", "Email"));
+			$header[1] = array_merge($header[1], array("Total percentage"));
+			$data = array(array(), array());
+			$descriptions = array(array(), array());
+			$dates = array(array(), array());
 			//Select all students from the last list
 			$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
 			list($enrolmethod, $paramenrol) = $DB->get_in_or_equal($enrolincludes);
@@ -100,7 +102,6 @@ if( $isteacher || is_siteadmin($USER)) {
 							GROUP BY u.id
 							ORDER BY lastname, firstname, id ASC";
 			$studentlist = $DB->get_records_sql($querystudent, $parameters);
-			array_push($header,"LastName", "FirstName", "Email");
 			$list = new stdClass();
 			$list->lastnames = array();
 			$list->firstnames = array();
@@ -112,9 +113,11 @@ if( $isteacher || is_siteadmin($USER)) {
 				$list->firstnames[] = $student->firstname;
 				$list->emails[] = $student->email;
 			}
-			$data[] = $list->lastnames;
-			$data[] = $list->firstnames;
-			$data[] = $list->emails;
+			foreach ($tabs as $i=>$tab){
+				$data[$i][] = $list->lastnames;
+				$data[$i][] = $list->firstnames;
+				$data[$i][] = $list->emails;
+			}
 			//Select course sessions
 			$parametros = array_merge($parametros, array($formdata->initdate, $formdata->enddate));
 			$getsessions = "SELECT s.id,
@@ -131,9 +134,9 @@ if( $isteacher || is_siteadmin($USER)) {
 			list($studentids, $paramstudentsid) = $DB->get_in_or_equal($list->studentsid);
 			foreach ($sessions as $session){
 				$params = array_merge(array($session->id), $paramstudentsid);
-				$descriptions[] = paperattendance_returnattendancedescription(false, $session->description);
-				$dates[] = date('d-m-Y',$session->date);
-				$header[] = $session->hour;
+				$descriptions[0][] = paperattendance_returnattendancedescription(false, $session->description);
+				$dates[0][] = date('d-m-Y',$session->date);
+				$header[0][] = $session->hour;
 				//get session attendances
 				$getpresences = "SELECT  u.id, 
 								IFNULL(p.status,0) AS status
@@ -146,14 +149,26 @@ if( $isteacher || is_siteadmin($USER)) {
 				foreach($presences as $presence){
 					$sess[] = $presence->status;
 				}	
-				$data[] = $sess;
+				$data[0][] = $sess;
 			}
+			list($statusprocessed, $paramstatus) = $DB->get_in_or_equal(array(1,2));
+			$totalpercentage = array();
+			foreach($list->studentsid as $studentid){
+				$paramscountpercentage = array_merge(array($course->id), $paramstatus, array($course->id), $paramstatus, array($studentid));
+				$sqlpercentage ="SELECT ROUND((COUNT(*)/(SELECT COUNT(*)
+													FROM {paperattendance_session} s
+													WHERE s.courseid = ? AND s.status $statusprocessed))*100,0) AS percentage
+								FROM {paperattendance_session} s
+								INNER JOIN {paperattendance_presence} p ON (s.id = p.sessionid AND s.courseid =? AND s.status $statusprocessed AND p.userid= ? AND p.status=1)";
+				$totalpercentage[] = ($DB->get_record_sql($sqlpercentage, $paramscountpercentage)->percentage)."%";
+			}
+			$data[1][] = $totalpercentage;
 			if(count($sessions)==0){
 				$nodata = true;
 			}
 			else{
 				$nodata = false;
-				paperattendance_exporttoexcel($title, $header, $filename, $data, $descriptions, $dates);
+				paperattendance_exporttoexcel($title, $header, $filename, $data, $descriptions, $dates, $tabs);
 			}
 		}
 	}

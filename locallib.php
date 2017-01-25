@@ -1217,44 +1217,49 @@ function paperattendance_cronlog($task, $result = NULL, $timecreated, $execution
 	
 }
 
-function paperattendance_exporttoexcel($title, $header, $filename, $data, $descriptions, $dates){
+function paperattendance_exporttoexcel($title, $header, $filename, $data, $descriptions, $dates, $tabs){
 	global $CFG;
 	$workbook = new MoodleExcelWorkbook("-");
 	$workbook->send($filename);
-	$attxls = $workbook->add_worksheet("Attendance");
-	$i = 0; //y axis
-	$j = 0;//x axis
-	$titleformat = $workbook->add_format();
-	$titleformat->set_bold(1);
-	$titleformat->set_size(12);
-	$attxls->write($i,$j,$title,$titleformat);
-	$i = 1;
-	$j = 3;
-	foreach ($descriptions as $descr){
-		$attxls->write($i, $j, $descr);
-		$j++;
-	}
-	$i = 2;
-	$j = 3;
-	foreach ($dates as $date){
-		$attxls->write($i, $j, $date);
-		$j++;
-	}
-	$i= 3;
-	$j = 0;
-	foreach($header as $cell){
-		$attxls->write($i, $j, $cell);
-		$j++;
-	}
-	$i=4;
-	$j=0;
-	foreach ($data as $row){
-		foreach($row as $cell){
-			$attxls->write($i, $j,$cell);
-			$i++;
+	foreach ($tabs as $index=>$tab){
+		$attxls = $workbook->add_worksheet($tab);
+		$i = 0; //y axis
+		$j = 0;//x axis
+		$titleformat = $workbook->add_format();
+		$titleformat->set_bold(1);
+		$titleformat->set_size(12);
+		$attxls->write($i,$j,$title,$titleformat);
+		$i = 1;
+		$j = 3;
+		$headerformat = $workbook->add_format();
+		$headerformat->set_bold(1);
+		$headerformat->set_size(10);
+		foreach ($descriptions[$index] as $descr){
+			$attxls->write($i, $j, $descr, $headerformat);
+			$j++;
 		}
-		$j++;
+		$i = 2;
+		$j = 3;
+		foreach ($dates[$index] as $date){
+			$attxls->write($i, $j, $date, $headerformat);
+			$j++;
+		}
+		$i= 3;
+		$j = 0;
+		foreach($header[$index] as $cell){
+			$attxls->write($i, $j, $cell, $headerformat);
+			$j++;
+		}
 		$i=4;
+		$j=0;
+		foreach ($data[$index] as $row){
+			foreach($row as $cell){
+				$attxls->write($i, $j,$cell);
+				$i++;
+			}
+			$j++;
+			$i=4;
+		}
 	}
 	$workbook->close();
 	exit;
