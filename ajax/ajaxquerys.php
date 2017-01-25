@@ -83,8 +83,18 @@ switch ($action) {
 		echo  json_encode($result);
 		break;	
 	case 'getcourses' :
+		if($courseid > 1){
+			if($course = $DB->get_record("course", array("id" => $courseid))){
+				$context = context_coursecat::instance($course->category);
+				$path = $course->category;
+			}
+		}else if($categoryid > 1){
+			$context = context_coursecat::instance($categoryid);
+			$path = $categoryid;
+		}else{
+			$context = context_system::instance();
+		}
 		
-		$context = context_system::instance();
 		$contextsystem = context_system::instance();
 		if (! has_capability('local/paperattendance:printsearch', $context) && ! has_capability('local/paperattendance:printsearch', $contextsystem)) {
 			print_error(get_string('notallowedprint', 'local_paperattendance'));

@@ -143,8 +143,9 @@ echo $OUTPUT->footer();
 		    var data = this.value;
 		    var path = <?php echo $path;?>;
 		    var print = <?php echo json_encode($print);?>;
-		    
-		    callAjax(data, path, print);
+		    var courseid = <?php echo $courseid; ?>;
+			var categoryid = <?php echo $categoryid; ?>;
+		    callAjax(data, path, print, courseid, categoryid);
 		}
 		else{
 			$table.find("tr").not(".ajaxtr").show();
@@ -152,9 +153,9 @@ echo $OUTPUT->footer();
 		}
 		$(".ajaxtr").remove();
 	});
-	function callAjax(data, path, print) {
+	function callAjax(data, path, print, courseid, categoryid) {
 		var count = 1;
-		$.getJSON("ajax/ajaxquerys.php?result="+data+"&path="+path+"&action=getcourses", function(result){
+		$.getJSON("ajax/ajaxquerys.php?result="+data+"&path="+path+"&courseid="+courseid+"&category="+categoryid+"&action=getcourses", function(result){
 			$(".ajaxtr").remove();
 	        $.each(result, function(i, field){
 	        	var printicon = "<a href='http://localhost/moodle/local/paperattendance/print.php?courseid="+field['id']+"&categoryid="+path+"'>"+print+"</a>"; 
