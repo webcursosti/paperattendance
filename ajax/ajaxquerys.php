@@ -88,9 +88,9 @@ switch ($action) {
 				$context = context_coursecat::instance($course->category);
 				$path = $course->category;
 			}
-		}else if($categoryid > 1){
-			$context = context_coursecat::instance($categoryid);
-			$path = $categoryid;
+		}else if($category > 1){
+			$context = context_coursecat::instance($category);
+			$path = $category;
 		}else{
 			$context = context_system::instance();
 		}
@@ -108,7 +108,7 @@ switch ($action) {
 			FROM {user} AS u
 			INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
 			INNER JOIN {context} ct ON (ct.id = ra.contextid)
-			INNER JOIN {course} c ON (c.id = ct.instanceid)
+			INNER JOIN {course} c ON (c.id = ct.instanceid AND c.idnumber IS NOT NULL)
 			INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
 			INNER JOIN {course_categories} as cat ON (cat.id = c.category)
 			WHERE (cat.path like ?) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?)
