@@ -107,7 +107,7 @@ if( $isteacher || is_siteadmin($USER)) {
 				FROM {paperattendance_session} s
 				WHERE s.courseid = ? AND s.status $statusprocessed";
 	$sessions = count($DB->get_records_sql($sqlsession, $params));
-	$rowcount = 1;
+	$rowcount = $page*$perpage+1;
 	foreach($students as $student){
 		//student summary sql
 		$present = "SELECT COUNT(*)

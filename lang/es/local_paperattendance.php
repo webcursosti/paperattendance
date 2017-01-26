@@ -153,7 +153,6 @@ $string['teacher']="Profesor";
 $string['category']="Categoría";
 $string['searchprinthelp'] = "Escriba al menos 3 caracteres para buscar por curso o profesor en el cuadro de abajo";
 
-
 //messages
 $string['dear'] = "Estimado Profesor";
 $string['processconfirmationbodysubject'] = "Lista procesada correctamente";
@@ -161,6 +160,14 @@ $string['processconfirmationbody'] = "Se ha completado el procesamiento de regis
 $string['datebody'] = "De la fecha:";
 $string['coursebody'] = "Del curso:";
 $string['checkyourattendance'] = "Revise su ";
+$string['dearstudent'] = "Estimado alumno";
+$string['newdiscussion'] = "Tienes una nueva discusión de asistencia";
+$string['newdiscussionstudent'] = "Acabas de solicitar una revisión de tu asistencia";
+$string['sessiondate'] = "Fecha de la sesión:";
+$string['newdiscussionsubject'] = "Nueva discusión de asistencia";
+$string['newresponsesubject'] = "Nueva resolución de una discusión";
+$string['newresponsestudent'] = "Tu solicitud de revisión de asistencia acaba de ser resuelta";
+$string['newresponse'] = "Acaba de resolver una solicitud de revisión de asistencia";
 
 // Settings
 $string['settings']="Configuración Básica";

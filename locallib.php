@@ -996,33 +996,105 @@ function paperattendance_getcountstudentsbysession($sessionid){
 
 }
 
-function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploaderid, $date, $course) {
+function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploaderid, $date, $course, $case) {
 	GLOBAL $CFG, $USER, $DB;
 	
 	$teacher = $DB->get_record("user", array("id"=> $teacherid));
 	$userfrom = core_user::get_noreply_user();
 	$userfrom->maildisplay = true;
-	
-	//message
-	$messagehtml = "<html>";
-	$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";	
-	$messagehtml .= "<p>".get_string("processconfirmationbody", "local_paperattendance") . "</p>";
-	$messagehtml .= "<p>".get_string("datebody", "local_paperattendance") ." ". $date . "</p>";
-	$messagehtml .= "<p>".get_string("coursebody", "local_paperattendance") ." ". $course . "</p>";
-	$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/history.php?action=studentsattendance&attendanceid=". $attendanceid ."&courseid=". $courseid ."'>" . get_string('historytitle', 'local_paperattendance') . "</a></p>";
-	$messagehtml .= "</html>";
-	
-	$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
-	$messagetext .= get_string("processconfirmationbody", "local_paperattendance") . "\n";
-	$messagetext .= get_string("datebody", "local_paperattendance") ." ". $date . "\n";
-	$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
-
 	$eventdata = new stdClass();
+	switch($case){
+		case "processpdf":
+			//subject
+			$eventdata->subject = get_string("processconfirmationbodysubject", "local_paperattendance");
+			//process pdf message
+			$messagehtml = "<html>";
+			$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";	
+			$messagehtml .= "<p>".get_string("processconfirmationbody", "local_paperattendance") . "</p>";
+			$messagehtml .= "<p>".get_string("datebody", "local_paperattendance") ." ". $date . "</p>";
+			$messagehtml .= "<p>".get_string("coursebody", "local_paperattendance") ." ". $course . "</p>";
+			$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/history.php?action=studentsattendance&attendanceid=". $attendanceid ."&courseid=". $courseid ."'>" . get_string('historytitle', 'local_paperattendance') . "</a></p>";
+			$messagehtml .= "</html>";
+			
+			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
+			$messagetext .= get_string("processconfirmationbody", "local_paperattendance") . "\n";
+			$messagetext .= get_string("datebody", "local_paperattendance") ." ". $date . "\n";
+			$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
+			break;
+		case "newdiscussionteacher":
+			//subject
+			$eventdata->subject = get_string("newdiscussionsubject", "local_paperattendance");
+			//new discussion message
+			$messagehtml = "<html>";
+			$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";
+			$messagehtml .= "<p>".get_string("newdiscussion", "local_paperattendance") . "</p>";
+			$messagehtml .= "<p>".get_string("sessiondate", "local_paperattendance") ." ". $date . "</p>";
+			$messagehtml .= "<p>".get_string("coursebody", "local_paperattendance") ." ". $course . "</p>";
+			$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/discussion.php?action=view&courseid=". $courseid ."'>" . get_string('discussiontitle', 'local_paperattendance') . "</a></p>";
+			$messagehtml .= "</html>";
+				
+			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
+			$messagetext .= get_string("newdiscussion", "local_paperattendance") . "\n";
+			$messagetext .= get_string("sessiondate", "local_paperattendance") ." ". $date . "\n";
+			$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
+			break;
+		case "newdiscussionstudent":
+			//subject
+			$eventdata->subject = get_string("newdiscussionsubject", "local_paperattendance");
+			//new discussion message
+			$messagehtml = "<html>";
+			$messagehtml .= "<p>".get_string("dearstudent", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";
+			$messagehtml .= "<p>".get_string("newdiscussionstudent", "local_paperattendance") . "</p>";
+			$messagehtml .= "<p>".get_string("sessiondate", "local_paperattendance") ." ". $date . "</p>";
+			$messagehtml .= "<p>".get_string("coursebody", "local_paperattendance") ." ". $course . "</p>";
+			$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/discussion.php?action=view&courseid=". $courseid ."'>" . get_string('discussiontitle', 'local_paperattendance') . "</a></p>";
+			$messagehtml .= "</html>";
+		
+			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
+			$messagetext .= get_string("newdiscussionstudent", "local_paperattendance") . "\n";
+			$messagetext .= get_string("sessiondate", "local_paperattendance") ." ". $date . "\n";
+			$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
+			break;
+		case "newresponsestudent":
+			//subject
+			$eventdata->subject = get_string("newresponsesubject", "local_paperattendance");
+			//new discussion message
+			$messagehtml = "<html>";
+			$messagehtml .= "<p>".get_string("dearstudent", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";
+			$messagehtml .= "<p>".get_string("newresponsestudent", "local_paperattendance") . "</p>";
+			$messagehtml .= "<p>".get_string("sessiondate", "local_paperattendance") ." ". $date . "</p>";
+			$messagehtml .= "<p>".get_string("coursebody", "local_paperattendance") ." ". $course . "</p>";
+			$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/discussion.php?action=view&courseid=". $courseid ."'>" . get_string('discussiontitle', 'local_paperattendance') . "</a></p>";
+			$messagehtml .= "</html>";
+		
+			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
+			$messagetext .= get_string("newresponsestudent", "local_paperattendance") . "\n";
+			$messagetext .= get_string("sessiondate", "local_paperattendance") ." ". $date . "\n";
+			$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
+			break;
+		case "newresponseteacher":
+			//subject
+			$eventdata->subject = get_string("newdiscussionsubject", "local_paperattendance");
+			//new discussion message
+			$messagehtml = "<html>";
+			$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";
+			$messagehtml .= "<p>".get_string("newresponse", "local_paperattendance") . "</p>";
+			$messagehtml .= "<p>".get_string("sessiondate", "local_paperattendance") ." ". $date . "</p>";
+			$messagehtml .= "<p>".get_string("coursebody", "local_paperattendance") ." ". $course . "</p>";
+			$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/discussion.php?action=view&courseid=". $courseid ."'>" . get_string('discussiontitle', 'local_paperattendance') . "</a></p>";
+			$messagehtml .= "</html>";
+		
+			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
+			$messagetext .= get_string("newresponse", "local_paperattendance") . "\n";
+			$messagetext .= get_string("sessiondate", "local_paperattendance") ." ". $date . "\n";
+			$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
+			break;
+	}
+	
 	$eventdata->component = "local_paperattendance"; // your component name
 	$eventdata->name = "paperattendance_notification"; // this is the message name from messages.php
 	$eventdata->userfrom = $userfrom;
 	$eventdata->userto = $teacherid;
-	$eventdata->subject = get_string("processconfirmationbodysubject", "local_paperattendance");
 	$eventdata->fullmessage = $messagetext;
 	$eventdata->fullmessageformat = FORMAT_HTML;
 	$eventdata->fullmessagehtml = $messagehtml;
@@ -1230,44 +1302,49 @@ function paperattendance_cronlog($task, $result = NULL, $timecreated, $execution
 	
 }
 
-function paperattendance_exporttoexcel($title, $header, $filename, $data, $descriptions, $dates){
+function paperattendance_exporttoexcel($title, $header, $filename, $data, $descriptions, $dates, $tabs){
 	global $CFG;
 	$workbook = new MoodleExcelWorkbook("-");
 	$workbook->send($filename);
-	$attxls = $workbook->add_worksheet("Attendance");
-	$i = 0; //y axis
-	$j = 0;//x axis
-	$titleformat = $workbook->add_format();
-	$titleformat->set_bold(1);
-	$titleformat->set_size(12);
-	$attxls->write($i,$j,$title,$titleformat);
-	$i = 1;
-	$j = 3;
-	foreach ($descriptions as $descr){
-		$attxls->write($i, $j, $descr);
-		$j++;
-	}
-	$i = 2;
-	$j = 3;
-	foreach ($dates as $date){
-		$attxls->write($i, $j, $date);
-		$j++;
-	}
-	$i= 3;
-	$j = 0;
-	foreach($header as $cell){
-		$attxls->write($i, $j, $cell);
-		$j++;
-	}
-	$i=4;
-	$j=0;
-	foreach ($data as $row){
-		foreach($row as $cell){
-			$attxls->write($i, $j,$cell);
-			$i++;
+	foreach ($tabs as $index=>$tab){
+		$attxls = $workbook->add_worksheet($tab);
+		$i = 0; //y axis
+		$j = 0;//x axis
+		$titleformat = $workbook->add_format();
+		$titleformat->set_bold(1);
+		$titleformat->set_size(12);
+		$attxls->write($i,$j,$title,$titleformat);
+		$i = 1;
+		$j = 3;
+		$headerformat = $workbook->add_format();
+		$headerformat->set_bold(1);
+		$headerformat->set_size(10);
+		foreach ($descriptions[$index] as $descr){
+			$attxls->write($i, $j, $descr, $headerformat);
+			$j++;
 		}
-		$j++;
+		$i = 2;
+		$j = 3;
+		foreach ($dates[$index] as $date){
+			$attxls->write($i, $j, $date, $headerformat);
+			$j++;
+		}
+		$i= 3;
+		$j = 0;
+		foreach($header[$index] as $cell){
+			$attxls->write($i, $j, $cell, $headerformat);
+			$j++;
+		}
 		$i=4;
+		$j=0;
+		foreach ($data[$index] as $row){
+			foreach($row as $cell){
+				$attxls->write($i, $j,$cell);
+				$i++;
+			}
+			$j++;
+			$i=4;
+		}
 	}
 	$workbook->close();
 	exit;
