@@ -39,7 +39,7 @@ $diasemana = optional_param('diasemana', null, PARAM_TEXT);
 $data = optional_param('result', null, PARAM_TEXT);
 $path = optional_param('path', 0, PARAM_INT);
 $courseid = optional_param("courseid", 1, PARAM_INT);
-$category = optional_param('categoryid', 1, PARAM_INT);
+$category = optional_param('category', 1, PARAM_INT);
 
 switch ($action) {
 	case 'curlgetmoduloshorario' :
