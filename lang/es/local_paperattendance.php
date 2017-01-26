@@ -164,6 +164,10 @@ $string['dearstudent'] = "Estimado alumno";
 $string['newdiscussion'] = "Tienes una nueva discusión de asistencia";
 $string['newdiscussionstudent'] = "Acabas de solicitar una revisión de tu asistencia";
 $string['sessiondate'] = "Fecha de la sesión:";
+$string['newdiscussionsubject'] = "Nueva discusión de asistencia";
+$string['newresponsesubject'] = "Nueva resolución de una discusión";
+$string['newresponsestudent'] = "Tu solicitud de revisión de asistencia acaba de ser resuelta";
+$string['newresponse'] = "Acaba de resolver una solicitud de revisión de asistencia";
 
 // Settings
 $string['settings']="Configuración Básica";
