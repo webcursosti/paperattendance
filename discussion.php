@@ -122,7 +122,8 @@ if( $isteacher || is_siteadmin($USER)) {
 							d.result, 
 							CONCAT(u.firstname, ' ', u.lastname) AS name, 
 							sm.date AS date, 
-							m.name AS module
+							m.name AS module,
+							s.teacherid
 							FROM {paperattendance_discussion} d
 							INNER JOIN {paperattendance_presence} p ON (d.presenceid = p.id)
 							INNER JOIN {paperattendance_session} s ON (p.sessionid = s.id)
@@ -146,7 +147,9 @@ if( $isteacher || is_siteadmin($USER)) {
 			$response->result = $data->result;
 			$response->timemodified = time();
 			$DB->update_record("paperattendance_discussion", $response);
-			
+			paperattendance_sendMail(null, $courseid, $discussion->userid, null, $discdate, $course->fullname, "newresponsestudent");
+			paperattendance_sendMail(null, $courseid, $discussion->teacherid, null, $discdate, $course->fullname, "newresponseteacher");
+				
 			if($data->result==2){
 				$presencequery = "SELECT p.id, p.omegaid
 							FROM {paperattendance_discussion} d
