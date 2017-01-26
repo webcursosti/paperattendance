@@ -156,11 +156,11 @@ if( $isteacher || is_siteadmin($USER)) {
 			foreach($list->studentsid as $studentid){
 				$paramscountpercentage = array_merge(array($course->id), $paramstatus, array($course->id), $paramstatus, array($studentid));
 				$sqlpercentage ="SELECT ROUND((COUNT(*)/
-									(SELECT COUNT(*)
-									FROM {paperattendance_session} s
-									WHERE s.courseid = ? AND s.status $statusprocessed))*100,0) AS percentage
-								FROM {paperattendance_session} s
-								INNER JOIN {paperattendance_presence} p ON (s.id = p.sessionid AND s.courseid =? AND s.status $statusprocessed AND p.userid= ? AND p.status=1)";
+					(SELECT COUNT(*)
+					FROM {paperattendance_session} s
+					WHERE s.courseid = ? AND s.status $statusprocessed))*100,0) AS percentage
+					FROM {paperattendance_session} s
+					INNER JOIN {paperattendance_presence} p ON (s.id = p.sessionid AND s.courseid =? AND s.status $statusprocessed AND p.userid= ? AND p.status=1)";
 				$totalpercentage[] = ($DB->get_record_sql($sqlpercentage, $paramscountpercentage)->percentage)."%";
 			}
 			$data[1][] = $totalpercentage;
