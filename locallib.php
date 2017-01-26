@@ -983,27 +983,59 @@ function paperattendance_getcountstudentsbysession($sessionid){
 
 }
 
-function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploaderid, $date, $course) {
+function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploaderid, $date, $course, $case) {
 	GLOBAL $CFG, $USER, $DB;
 	
 	$teacher = $DB->get_record("user", array("id"=> $teacherid));
 	$userfrom = core_user::get_noreply_user();
 	$userfrom->maildisplay = true;
-	
-	//message
-	$messagehtml = "<html>";
-	$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";	
-	$messagehtml .= "<p>".get_string("processconfirmationbody", "local_paperattendance") . "</p>";
-	$messagehtml .= "<p>".get_string("datebody", "local_paperattendance") ." ". $date . "</p>";
-	$messagehtml .= "<p>".get_string("coursebody", "local_paperattendance") ." ". $course . "</p>";
-	$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/history.php?action=studentsattendance&attendanceid=". $attendanceid ."&courseid=". $courseid ."'>" . get_string('historytitle', 'local_paperattendance') . "</a></p>";
-	$messagehtml .= "</html>";
-	
-	$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
-	$messagetext .= get_string("processconfirmationbody", "local_paperattendance") . "\n";
-	$messagetext .= get_string("datebody", "local_paperattendance") ." ". $date . "\n";
-	$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
-
+	switch($case){
+		case "processpdf":
+			//process pdf message
+			$messagehtml = "<html>";
+			$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";	
+			$messagehtml .= "<p>".get_string("processconfirmationbody", "local_paperattendance") . "</p>";
+			$messagehtml .= "<p>".get_string("datebody", "local_paperattendance") ." ". $date . "</p>";
+			$messagehtml .= "<p>".get_string("coursebody", "local_paperattendance") ." ". $course . "</p>";
+			$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/history.php?action=studentsattendance&attendanceid=". $attendanceid ."&courseid=". $courseid ."'>" . get_string('historytitle', 'local_paperattendance') . "</a></p>";
+			$messagehtml .= "</html>";
+			
+			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
+			$messagetext .= get_string("processconfirmationbody", "local_paperattendance") . "\n";
+			$messagetext .= get_string("datebody", "local_paperattendance") ." ". $date . "\n";
+			$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
+			break;
+		case "newdiscussionteacher":
+			//new discussion message
+			$messagehtml = "<html>";
+			$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";
+			$messagehtml .= "<p>".get_string("newdiscussion", "local_paperattendance") . "</p>";
+			$messagehtml .= "<p>".get_string("sessiondate", "local_paperattendance") ." ". $date . "</p>";
+			$messagehtml .= "<p>".get_string("coursebody", "local_paperattendance") ." ". $course . "</p>";
+			$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/discussion.php?action=view&courseid=". $courseid ."'>" . get_string('discussiontitle', 'local_paperattendance') . "</a></p>";
+			$messagehtml .= "</html>";
+				
+			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
+			$messagetext .= get_string("newdiscussion", "local_paperattendance") . "\n";
+			$messagetext .= get_string("sessiondate", "local_paperattendance") ." ". $date . "\n";
+			$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
+			break;
+		case "newdiscussionstudent":
+			//new discussion message
+			$messagehtml = "<html>";
+			$messagehtml .= "<p>".get_string("dearstudent", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";
+			$messagehtml .= "<p>".get_string("newdiscussionstudent", "local_paperattendance") . "</p>";
+			$messagehtml .= "<p>".get_string("sessiondate", "local_paperattendance") ." ". $date . "</p>";
+			$messagehtml .= "<p>".get_string("coursebody", "local_paperattendance") ." ". $course . "</p>";
+			$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/discussion.php?action=view&courseid=". $courseid ."'>" . get_string('discussiontitle', 'local_paperattendance') . "</a></p>";
+			$messagehtml .= "</html>";
+		
+			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
+			$messagetext .= get_string("newdiscussion", "local_paperattendance") . "\n";
+			$messagetext .= get_string("sessiondate", "local_paperattendance") ." ". $date . "\n";
+			$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
+			break;
+	}
 	$eventdata = new stdClass();
 	$eventdata->component = "local_paperattendance"; // your component name
 	$eventdata->name = "paperattendance_notification"; // this is the message name from messages.php

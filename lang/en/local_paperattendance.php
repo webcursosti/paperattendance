@@ -160,6 +160,10 @@ $string['processconfirmationbody'] = "Attendance records processing completed";
 $string['datebody'] = "Date:";
 $string['coursebody'] = "Course:";
 $string['checkyourattendance'] = "Check your ";
+$string['dearstudent'] = "Dear student";
+$string['newdiscussion'] = "You have a new attendance discussion";
+$string['newdiscussionstudent'] = "You just asked for an attendance request";
+$string['sessiondate'] = "Session date:";
 
 // Settings
 $string['settings']="Basic Configuration";

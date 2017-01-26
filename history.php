@@ -699,7 +699,13 @@ else if ($isstudent) {
 			$newdiscussion->result = 0; //Result equals to 0 means that the discussion is open
 			$newdiscussion->timecreated = time();
 			$newdiscussion->timemodified = time();
+			$sqlteacher = "SELECT s.teacherid AS id
+					FROM {paperattendance_session} s
+					INNER JOIN {paperattendance_presence} p ON (p.sessionid = s.id AND p.id=?)";
+			$teacher = $DB->get_record_sql($sqlteacher, array($presence->id));
 			$insertdiscussion = $DB->insert_record("paperattendance_discussion", $newdiscussion, false);
+			paperattendance_sendMail(null, $courseid, $USER->id, null, $sessdate, $course->fullname, "newdiscussionstudent");
+			paperattendance_sendMail(null, $courseid, $teacher->id, null, $sessdate, $course->fullname, "newdiscussionteacher");
 			redirect($goback);
 		}
 	}
