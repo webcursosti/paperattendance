@@ -158,7 +158,7 @@ echo $OUTPUT->footer();
 		$.getJSON("ajax/ajaxquerys.php?result="+data+"&path="+path+"&courseid="+courseid+"&category="+categoryid+"&action=getcourses", function(result){
 			$(".ajaxtr").remove();
 	        $.each(result, function(i, field){
-	        	var printicon = "<a href='http://localhost/moodle/local/paperattendance/print.php?courseid="+field['id']+"&categoryid="+path+"'>"+print+"</a>"; 
+	        	var printicon = "<a href='print.php?courseid="+field['id']+"&categoryid="+path+"'>"+print+"</a>"; 
 	        	$table.append("<tr class='ajaxtr'><td>"+count+"</td><td>"+field['fullname']+"</td><td>"+field['teacher']+"</td><td>"+field['name']+"</td><td>"+printicon+"</td></tr>");
 				count++;
 	        });
