@@ -90,18 +90,18 @@ $table->head = array(get_string('hashtag', 'local_paperattendance'),
 		get_string('category', 'local_paperattendance')
 );
 $table->id = "fbody";
-$sqlcourses = "SELECT c.id,
-			c.fullname,
-			cat.name,
-			CONCAT( u.firstname, ' ', u.lastname) as teacher
-			FROM {role} r
-			INNER JOIN {role_assignments} ra ON (r.id = ra.roleid AND r.id IN ( 3, 4))
-			INNER JOIN {context} ct ON (ct.id = ra.contextid)
-			INNER JOIN {course} c ON (c.id = ct.instanceid)
-			INNER JOIN {course_categories} as cat ON (cat.id = c.category)
-			INNER JOIN {user} u ON (ra.userid = u.id)
-			WHERE (cat.path like ?)
-			GROUP BY c.id";
+$sqlcourses =   "SELECT c.id,
+		c.fullname,
+		cat.name,
+		CONCAT( u.firstname, ' ', u.lastname) as teacher
+		FROM {user} AS u
+		INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+		INNER JOIN {context} ct ON (ct.id = ra.contextid)
+		INNER JOIN {course} c ON (c.id = ct.instanceid AND c.idnumber IS NOT NULL)
+		INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
+		INNER JOIN {course_categories} as cat ON (cat.id = c.category)
+		WHERE cat.path like ?
+		GROUP BY c.id";
 $ncourses = count($DB->get_records_sql($sqlcourses, array("%/".$path,"%")));
 $courses = $DB->get_records_sql($sqlcourses, array("%/".$path,"%"),$page*$perpage, $perpage);
 $coursecount = $page*$perpage+1;
@@ -158,7 +158,7 @@ echo $OUTPUT->footer();
 		$.getJSON("ajax/ajaxquerys.php?result="+data+"&path="+path+"&courseid="+courseid+"&category="+categoryid+"&action=getcourses", function(result){
 			$(".ajaxtr").remove();
 	        $.each(result, function(i, field){
-	        	var printicon = "<a href='http://localhost/moodle/local/paperattendance/print.php?courseid="+field['id']+"&categoryid="+path+"'>"+print+"</a>"; 
+	        	var printicon = "<a href='print.php?courseid="+field['id']+"&categoryid="+path+"'>"+print+"</a>"; 
 	        	$table.append("<tr class='ajaxtr'><td>"+count+"</td><td>"+field['fullname']+"</td><td>"+field['teacher']+"</td><td>"+field['name']+"</td><td>"+printicon+"</td></tr>");
 				count++;
 	        });
