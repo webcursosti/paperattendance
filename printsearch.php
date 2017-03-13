@@ -40,7 +40,7 @@ $categoryid = optional_param('categoryid', 1, PARAM_INT);
 $action = optional_param('action', 'viewform', PARAM_TEXT);
 //Page
 $page = optional_param('page', 0, PARAM_INT);
-$perpage = 26;
+$perpage = 30;
 
 if($courseid > 1){
 	if($course = $DB->get_record("course", array("id" => $courseid))){
@@ -71,11 +71,14 @@ if($courseid && $courseid != 1){
 	));
 	$PAGE->navbar->add($course->fullname, $courseurl );
 }
+
+$pagetitle = get_string('printtitle', 'local_paperattendance');
 $PAGE->navbar->add(get_string('printtitle', 'local_paperattendance'));
 $PAGE->navbar->add(get_string('printtitle', 'local_paperattendance'),$url);
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
+$PAGE->set_title($pagetitle);
 // Require jquery for modal.
 $PAGE->requires->jquery();
 $PAGE->requires->jquery_plugin('ui');
@@ -101,7 +104,9 @@ $sqlcourses =   "SELECT c.id,
 		INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
 		INNER JOIN {course_categories} as cat ON (cat.id = c.category)
 		WHERE cat.path like ? AND c.idnumber > 0
-		GROUP BY c.id";
+		GROUP BY c.id
+		ORDER BY c.fullname";
+		
 $ncourses = count($DB->get_records_sql($sqlcourses, array("%/".$path."%")));
 $courses = $DB->get_records_sql($sqlcourses, array("%/".$path."%"), $page*$perpage,$perpage);
 $coursecount = $page*$perpage+1;
