@@ -123,9 +123,6 @@ echo $OUTPUT->header();
 echo html_writer::div(get_string("searchprinthelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
 echo html_writer::empty_tag("input", array( "id"=>"filter", "type"=>"text", "style"=>"width:25%"));
 if ($ncourses>0){
-	if ($ncourses>30){
-		$ncourses = 30;
-	}
 	echo html_writer::table($table);
 	echo $OUTPUT->paging_bar($ncourses, $page, $perpage, $url);
 }
