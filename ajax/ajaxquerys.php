@@ -112,7 +112,9 @@ switch ($action) {
 			INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
 			INNER JOIN {course_categories} as cat ON (cat.id = c.category)
 			WHERE (cat.path like ? AND c.idnumber > 0 ) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?) 
-			GROUP BY c.id";
+			GROUP BY c.id
+			ORDER BY c.fullname";
+		
 		$courses = $DB->get_records_sql($sqlcourses, $filter);
 		
 		echo json_encode($courses);
