@@ -18,9 +18,9 @@
 *
 * @package    local
 * @subpackage paperattendance
-* @copyright  2016 Jorge CabanÃ© (jcabane@alumnos.uai.cl)
+* @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl)
 * @copyright  2016 Hans Jeria (hansjeria@gmail.com)
-* @copyright  2016 MatÃ­as Queirolo (mqueirolo@alumnos.uai.cl)
+* @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl)
 * @copyright  2016 Cristobal Silva (cristobal.isilvap@gmail.com)
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
