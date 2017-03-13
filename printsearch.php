@@ -18,9 +18,9 @@
 *
 * @package    local
 * @subpackage paperattendance
-* @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl)
+* @copyright  2016 Jorge CabanÃ© (jcabane@alumnos.uai.cl)
 * @copyright  2016 Hans Jeria (hansjeria@gmail.com)
-* @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl)
+* @copyright  2016 MatÃ­as Queirolo (mqueirolo@alumnos.uai.cl)
 * @copyright  2016 Cristobal Silva (cristobal.isilvap@gmail.com)
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
@@ -97,12 +97,12 @@ $sqlcourses =   "SELECT c.id,
 		FROM {user} AS u
 		INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
 		INNER JOIN {context} ct ON (ct.id = ra.contextid)
-		INNER JOIN {course} c ON (c.id = ct.instanceid AND c.idnumber IS NOT NULL)
+		INNER JOIN {course} c ON (c.id = ct.instanceid)
 		INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
 		INNER JOIN {course_categories} as cat ON (cat.id = c.category)
-		WHERE cat.path like ?
+		WHERE cat.path like ? AND c.idnumber > 0
 		GROUP BY c.id";
-$ncourses = count($DB->get_records_sql($sqlcourses, array("%/".$path,"%")));
+$ncourses = count($DB->get_records_sql($sqlcourses, array("%/".$path."%")));
 $courses = $DB->get_records_sql($sqlcourses, array("%/".$path,"%"),$page*$perpage, $perpage);
 $coursecount = $page*$perpage+1;
 foreach($courses as $course){

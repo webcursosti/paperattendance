@@ -108,10 +108,10 @@ switch ($action) {
 			FROM {user} AS u
 			INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
 			INNER JOIN {context} ct ON (ct.id = ra.contextid)
-			INNER JOIN {course} c ON (c.id = ct.instanceid AND c.idnumber IS NOT NULL)
+			INNER JOIN {course} c ON (c.id = ct.instanceid)
 			INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
 			INNER JOIN {course_categories} as cat ON (cat.id = c.category)
-			WHERE (cat.path like ?) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?)
+			WHERE (cat.path like ? AND c.idnumber > 0 ) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?) 
 			GROUP BY c.id";
 		$courses = $DB->get_records_sql($sqlcourses, $filter);
 		
