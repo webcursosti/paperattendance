@@ -102,7 +102,7 @@ $sqlcourses =   "SELECT c.id,
 		INNER JOIN {course_categories} as cat ON (cat.id = c.category)
 		WHERE cat.path like ? AND c.idnumber > 0
 		GROUP BY c.id";
-$ncourses = $DB->count_records_sql($sqlcourses, array("%/".$path."%"));
+$ncourses = count($DB->get_records_sql($sqlcourses, array("%/".$path."%")));
 $courses = $DB->get_records_sql($sqlcourses, array("%/".$path."%"), $page*$perpage, ($page + 1) * $perpage);
 $coursecount = $page*$perpage+1;
 foreach($courses as $course){
