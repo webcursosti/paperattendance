@@ -135,8 +135,6 @@ echo $OUTPUT->footer();
 
 ?>
 <script type="text/javascript">
-
-
 var filter=$("#filter"),$table=$("#fbody").find("tbody"),$paging=$(".paging");filter.keyup(function(a){3<=this.value.length?($table.find("tr").not(".ajaxtr").hide(),$paging.hide(),callAjax(this.value,<?php echo $path;?>,<?php echo json_encode($print);?>,<?php echo $courseid; ?>,<?php echo $categoryid; ?>)):($table.find("tr").not(".ajaxtr").show(),$paging.show());$(".ajaxtr").remove()});
 function callAjax(a,c,e,f,g){var d=1;$.getJSON("ajax/ajaxquerys.php?result="+a+"&path="+c+"&courseid="+f+"&category="+g+"&action=getcourses",function(a){$(".ajaxtr").remove();$.each(a,function(a,b){$table.append("<tr class='ajaxtr'><td>"+d+"</td><td>"+b.fullname+"</td><td>"+b.teacher+"</td><td>"+b.name+"</td><td>"+("<a href='print.php?courseid="+b.id+"&categoryid="+c+"'>"+e+"</a>")+"</td></tr>");d++})})};
 </script>
