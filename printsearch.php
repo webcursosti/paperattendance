@@ -24,7 +24,7 @@
 * @copyright  2016 Cristobal Silva (cristobal.isilvap@gmail.com)
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-//Pertenece al plugin PaperAttendance
+
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 
@@ -81,8 +81,6 @@ $PAGE->set_pagelayout('standard');
 $PAGE->set_title($pagetitle);
 // Require jquery for modal.
 $PAGE->requires->jquery();
-$PAGE->requires->jquery_plugin('ui');
-$PAGE->requires->jquery_plugin('ui-css');
 //string for print
 $print = get_string("downloadprint", "local_paperattendance");
 // Creating tables and adding columns header.
