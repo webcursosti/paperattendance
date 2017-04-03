@@ -344,7 +344,9 @@ function paperattendance_readpdf($path, $filename, $course){
 		$page = new Imagick();
 		$page->setResolution( 300, 300);
 		$page->readImage($path."/".$filename."[$numpage]");
-		$page = $page->flattenImages();
+		//$page = $page->flattenImages(); "deprecated"
+		$page->setImageAlphaChannel(imagick::ALPHACHANNEL_REMOVE);
+		$page->mergeImageLayers(imagick::LAYERMETHOD_FLATTEN);
 		$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
 		$page->setImageFormat('png');
 		//$page->writeImage($debugpath."pdf_$numpage.pdf");
