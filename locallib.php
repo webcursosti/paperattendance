@@ -344,7 +344,9 @@ function paperattendance_readpdf($path, $filename, $course){
 		$page = new Imagick();
 		$page->setResolution( 300, 300);
 		$page->readImage($path."/".$filename."[$numpage]");
-		$page = $page->flattenImages();
+		//$page = $page->flattenImages(); "deprecated"
+		$page->setImageAlphaChannel(imagick::ALPHACHANNEL_REMOVE);
+		$page->mergeImageLayers(imagick::LAYERMETHOD_FLATTEN);
 		$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
 		$page->setImageFormat('png');
 		//$page->writeImage($debugpath."pdf_$numpage.pdf");
@@ -864,7 +866,7 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 		$omegaid = $omegaid -> idnumber;
 		
 		//GET FECHA & MODULE FROM SESS ID $fecha, $modulo,
-		$sqldatemodule = "SELECT sessmodule.id, FROM_UNIXTIME(sessmodule.date, '%Y-%m-%d') AS sessdate, module.initialtime AS sesstime
+		$sqldatemodule = "SELECT sessmodule.id, FROM_UNIXTIME(sessmodule.date,'%Y-%m-%d') AS sessdate, module.initialtime AS sesstime
 						FROM {paperattendance_sessmodule} AS sessmodule
 						INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
 		$datemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
@@ -877,11 +879,11 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 
 		$url =  $CFG->paperattendance_omegacreateattendanceurl;
 		$token =  $CFG->paperattendance_omegatoken;
-
+		mtrace("SESSIONID: " .$datemodule->id. "## Formato de fecha: " . $fecha . " Modulo " . $modulo);
 		$fields = array (
 				"token" => $token,
 				"seccionId" => $omegaid,
-				"fecha" => $fecha,
+				"diaSemana" => $fecha,
 				"modulos" => array( array("hora" => $modulo) ),
 				"alumnos" => $arrayalumnos
 		);
