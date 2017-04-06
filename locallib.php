@@ -1106,7 +1106,7 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 }
 
 function paperattendance_uploadattendances($file, $path, $filename, $context, $contextsystem){
-	global $OUTPUT, $USER;
+	global $DB, $OUTPUT, $USER;
 	$attendancepdffile = $path ."/unread/".$filename;
 	$originalfilename = $file->get_filename();
 	$file->copy_content_to($attendancepdffile);
@@ -1124,15 +1124,13 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 	if($pagecount){
 		$idcourseexplode = explode("*",$qrtext);
 		$idcourse = $idcourseexplode[0];
-	
-		$object = new stdClass();
-		$object -> id = $idcourse;
-		$students = paperattendance_get_students_for_printing($object);
+		
 		//now we count the students in course
-		$count = 0;
-		foreach($students as $student) {
-			$count ++;
-		}
+		$course = $DB->get_record("course", array("id" => $idcourse));
+		$coursecontext = context_coursecat::instance($course->category);
+		$students = paperattendance_students_list($coursecontext->id, $course);
+		
+		$count = count($students);
 		$students->close();
 		$pages = ceil($count/26);
 		if ($pages != $pagecount){

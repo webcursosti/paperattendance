@@ -76,7 +76,7 @@ $PAGE->set_title($pagetitle);
 
 $course = $DB->get_record("course",array("id" => $courseid));
 
-//breadcrumb for navigation
+// Breadcrumb for navigation
 $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array("id" => $courseid)));
 $PAGE->navbar->add(get_string('printtitle', 'local_paperattendance'), new moodle_url("/local/paperattendance/print.php", array("courseid" => $courseid)));
 
@@ -89,14 +89,14 @@ if($action == "add"){
 		redirect($backtocourse);
 	}
 	else if ($data = $addform->get_data()) {
-		// id teacher
+		// Id teacher
 		$requestor = $data->requestor;
 		$requestorinfo = $DB->get_record("user", array("id" => $requestor));
-		// date for session
+		// Date for session
 		$sessiondate = $data->sessiondate;
-		// array idmodule => {0 = no checked, 1 = checked}
+		// Array idmodule => {0 = no checked, 1 = checked}
 		$modules = $data->modules;
-		//attendance description
+		// Attendance description
 		$description = $data->description;
 
 		$path = $CFG -> dataroot. "/temp/local/paperattendance/";
@@ -119,7 +119,7 @@ if($action == "add"){
 		$studentinfo = paperattendance_students_list($context->id, $course);
 
 		// We validate the number of students as we are filtering by enrolment.
-		// type after getting the data.
+		// Type after getting the data.
 		$numberstudents = count($studentinfo);
 		if ($numberstudents == 0) {
 			throw new Exception('No students to print');
