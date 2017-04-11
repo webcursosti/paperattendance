@@ -35,25 +35,41 @@ if (isguestuser()) {
 	print_error(get_string('notallowedprint', 'local_paperattendance'));
 	die();
 }
-$courseid = optional_param('courseid',1, PARAM_INT);
+
 $categoryid = optional_param('categoryid', 1, PARAM_INT);
 $action = optional_param('action', 'viewform', PARAM_TEXT);
 //Page
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = 30;
 
-if($courseid > 1){
-	if($course = $DB->get_record("course", array("id" => $courseid))){
-		$context = context_coursecat::instance($course->category);
-		$path = $course->category;
+if(is_siteadmin()){
+	$category = $DB->get_record('course_categories', array('name'=>'Pregrado'));
+	if($category){
+		$categoryid = $category->id;
+	}else{
+		print_error(get_string('categorynamechange', 'local_paperattendance'));
 	}
-}else if($categoryid > 1){
-	$context = context_coursecat::instance($categoryid);
-	$path = $categoryid;
-}else{
-	$context = context_system::instance();
+}
+else{
+	//Query to get the category of the secretary
+	//It is assumed that one secretary has just one category on her charge
+	$sqlcategory = "SELECT cc.*
+					FROM {course_categories} cc
+					INNER JOIN {role_assignments} ra ON (ra.userid = ?)
+					INNER JOIN {role} r ON (r.id = ra.roleid)
+					INNER JOIN {context} co ON (co.id = ra.contextid)
+					WHERE cc.id = co.instanceid AND r.shortname = ?";
+	$categoryparams = array($USER->id, "secre_pregrado");
+	$category = $DB->get_record_sql($sqlcategory, $categoryparams);
+	if($category){
+		$categoryid = $category->id;
+	}else{
+		print_error(get_string('notallowedprint', 'local_paperattendance'));
+	}
 }
 
+$path = $categoryid;
+$context = context_coursecat::instance($categoryid);
 $contextsystem = context_system::instance();
 
 if (! has_capability('local/paperattendance:printsearch', $context) && ! has_capability('local/paperattendance:printsearch', $contextsystem)) {
@@ -61,16 +77,8 @@ if (! has_capability('local/paperattendance:printsearch', $context) && ! has_cap
 }
 // This page url.
 $url = new moodle_url('/local/paperattendance/printsearch.php', array(
-		'courseid' => $courseid,
 		"categoryid" => $categoryid
 ));
-if($courseid && $courseid != 1){
-	$courseurl = new moodle_url('/course/view.php', array(
-			'id' => $courseid,
-			"categoryid" => $categoryid
-	));
-	$PAGE->navbar->add($course->fullname, $courseurl );
-}
 
 $pagetitle = get_string('printtitle', 'local_paperattendance');
 $PAGE->navbar->add(get_string('printtitle', 'local_paperattendance'));
@@ -143,9 +151,8 @@ echo $OUTPUT->footer();
 		    var data = this.value;
 		    var path = <?php echo $path;?>;
 		    var print = <?php echo json_encode($print);?>;
-		    var courseid = <?php echo $courseid; ?>;
 			var categoryid = <?php echo $categoryid; ?>;
-		    callAjax(data, path, print, courseid, categoryid);
+		    callAjax(data, path, print, categoryid);
 		}
 		else{
 			$table.find("tr").not(".ajaxtr").show();
@@ -153,13 +160,13 @@ echo $OUTPUT->footer();
 		}
 		$(".ajaxtr").remove();
 	});
-	function callAjax(data, path, print, courseid, categoryid) {
+	function callAjax(data, path, print, categoryid) {
 		var count = 1;
-		$.getJSON("ajax/ajaxquerys.php?result="+data+"&path="+path+"&courseid="+courseid+"&category="+categoryid+"&action=getcourses", function(result){
+		$.getJSON("ajax/ajaxquerys.php?result="+data+"&path="+path+"&category="+categoryid+"&action=getcourses", function(result){
 			$(".ajaxtr").remove();
 	        $.each(result, function(i, field){
 	        	var printicon = "<a href='print.php?courseid="+field['id']+"&categoryid="+path+"'>"+print+"</a>"; 
-	        	$table.append("<tr class='ajaxtr'><td>"+count+"</td><td>"+field['fullname']+"</td><td>"+field['teacher']+"</td><td>"+field['name']+"</td><td>"+printicon+"</td><td><i class='icon icon-plus listcart' courseid='"+courseid+"'></i></td></tr>");
+	        	$table.append("<tr class='ajaxtr'><td>"+count+"</td><td>"+field['fullname']+"</td><td>"+field['teacher']+"</td><td>"+field['name']+"</td><td>"+printicon+"</td></tr>");
 				count++;
 	        });
     	});
