@@ -32,7 +32,7 @@ require_once ($CFG->dirroot . "/repository/lib.php");
 require_once ($CFG->libdir . '/pdflib.php');
 require_once ($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/fpdi.php');
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php");
-require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
+//require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi.php");
 require_once ($CFG->dirroot . '/local/paperattendance/phpdecoder/QrReader.php');
 global $DB, $OUTPUT, $USER;
@@ -78,6 +78,7 @@ $PAGE->navbar->add(get_string('header', 'local_paperattendance'),$url);
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
+
 // Add the upload form for the course.
 $addform = new paperattendance_upload_form (null, array(
 		"courseid" => $courseid, 
