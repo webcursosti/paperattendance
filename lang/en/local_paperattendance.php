@@ -152,6 +152,8 @@ $string['course']="Course";
 $string['teacher']="Teacher";
 $string['category']="Category";
 $string['searchprinthelp'] = "Type at least 3 characters to search by course or teacher on the input below";
+$string['notallowedsearch'] ="Not allowed to search courses for printing";
+$string['categorynamechange'] = "Error: Category name should change, please contact a programmer";
 
 //messages
 $string['dear'] = "Dear Teacher";

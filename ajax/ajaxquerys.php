@@ -83,12 +83,7 @@ switch ($action) {
 		echo  json_encode($result);
 		break;	
 	case 'getcourses' :
-		if($courseid > 1){
-			if($course = $DB->get_record("course", array("id" => $courseid))){
-				$context = context_coursecat::instance($course->category);
-				$path = $course->category;
-			}
-		}else if($category > 1){
+		if($category > 1){
 			$context = context_coursecat::instance($category);
 			$path = $category;
 		}else{
