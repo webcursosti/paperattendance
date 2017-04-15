@@ -165,5 +165,10 @@ echo $OUTPUT->footer();
     	});
 	}
 
-
+	$('.listcart').click(function() {
+		var courseidclicked = $(this).attr('courseid');	
+		var course = $(this).parent().parent().find( "td:eq(1)" ).text();
+		var teacher = $(this).parent().parent().find( "td:eq(2)" ).text();
+		$(this).removeClass('icon-plus').addClass('icon-ok');
+	});
 </script>
