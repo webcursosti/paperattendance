@@ -32,15 +32,7 @@ class paperattendance_print_form extends moodleform {
 		$instance = $this->_customdata;		
 		$courseid = $instance["courseid"];
 		
-		$sqlteachers = "SELECT u.id, CONCAT (u.firstname, ' ', u.lastname)AS name
-					FROM {user} u
-					INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
-					INNER JOIN {context} ct ON (ct.id = ra.contextid)
-					INNER JOIN {course} c ON (c.id = ct.instanceid AND c.id = ?)
-					INNER JOIN {role} r ON (r.id = ra.roleid AND r.shortname IN ( ?, ?))";
-
-		
-		$newq = "SELECT u.id, 
+		$teachersquery = "SELECT u.id, 
 				CONCAT (u.firstname, ' ', u.lastname) AS name,
 				GROUP_CONCAT(e.enrol) AS enrol 
 				FROM {user_enrolments} ue
@@ -50,7 +42,7 @@ class paperattendance_print_form extends moodleform {
 				INNER JOIN {user} u ON (ue.userid = u.id)
 				ORDER BY u.lastname";
 		
-		$teachers = $DB->get_records_sql($sqlteachers, array($courseid,'3'));
+		$teachers = $DB->get_records_sql($teachersquery, array($courseid,'3'));
 		
 		$arrayteachers = array();
 		$arrayteachers["no"] = get_string('selectteacher', 'local_paperattendance');
