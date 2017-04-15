@@ -368,9 +368,9 @@ function paperattendance_readpdf($path, $filename, $course){
 		if($numberpage == 0){
 			$attendancecircle = $pdfpages[$numberpage]->getImageRegion(
 					$width * 0.028,
-					$height * 0.018,
-					$width * 0.7556,
-					$height * (0.179 + 0.02640 * $factor)
+					$height * 0.019,
+					$width * 0.773,
+					$height * (0.182 + 0.02640 * $factor)
 			);
 			//$attendancecircle->writeImage($debugpath.'student_'.$countstudent.' * '.$student->name.'.png');
 			//echo "<br> Pagina 1: $numberpage estudiante $countstudent ".$student->name;
@@ -378,9 +378,9 @@ function paperattendance_readpdf($path, $filename, $course){
 		}else{
 			$attendancecircle = $pdfpages[$numberpage]->getImageRegion(
 					$width * 0.028,
-					$height * 0.018,
-					$width * 0.7556,
-					$height * (0.16 + 0.02640 * $factor)
+					$height * 0.0195,
+					$width * 0.771,
+					$height * (0.160 + 0.02640 * $factor)
 			);
 			//$attendancecircle->writeImage($debugpath.'student_'.$countstudent.' * '.$student->name.'.png');	
 			//echo "<br> Pagina 2: $numberpage estudiante $countstudent ".$student->name;
