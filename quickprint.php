@@ -77,14 +77,13 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	//CURL get modulos horario
 	$curl = curl_init();
 	
-// 	$fields = array (
-// 			"diaSemana" => date('w'),
-// 			"seccionId" => $course -> idnumber,
-// 			"token" => $token
-// 	);
+	$fields = array (
+			"diaSemana" => date('w'),
+			"seccionId" => $course -> idnumber,
+			"token" => $token
+	);
 	$url = $CFG->paperattendance_omegagetmoduloshorariosurl;
 	$token = $CFG->paperattendance_omegatoken;
-	$fields = array("diaSemana" => 5, "seccionId"=> 46386, "token" => $token);
 	
 	curl_setopt($curl, CURLOPT_URL, $url);
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
@@ -96,6 +95,11 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	
 	$modules = array();
 	$modules = json_decode($result);
+	
+	if(count($modules) == 0){
+		echo "there's nothing for today";
+		die();
+	}
 	
 	//select teacher from course
 	$teachersquery = "SELECT u.id,
