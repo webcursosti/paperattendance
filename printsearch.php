@@ -132,7 +132,7 @@ foreach($courses as $course){
 			$course->teacher,
 			$course->name,
 			html_writer::nonempty_tag("a", $print, array("href"=>$printurl)),
-			html_writer::nonempty_tag("i", '', array("class"=>"icon icon-plus listcart", "courseid"=>$course->id))
+			html_writer::nonempty_tag("i", ' ', array("class"=>"icon icon-plus listcart", "courseid"=>$course->id))
 	);
 	$coursecount++;
 }
