@@ -209,7 +209,7 @@ jQuery('#exampleModal').modal({
 		    type: 'POST',
 		    url: 'quickprint.php',
 		    data: {
-			      'courseid' : 'curlgetmoduloshorario'
+			      'courseid' : courseid
 		    	},
 		    success: function (response) {
 				$('.quickprintappend').html(response);
