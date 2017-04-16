@@ -208,7 +208,7 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
 	$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
 			"src" => $url,
-			"style" => "height:75vh; width:100%"
+			"style" => "height:100%; width:100%"
 	));
 	echo $viewerpdf;
 	}
