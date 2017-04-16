@@ -68,7 +68,7 @@ else{
 	}
 }
 
-$path = 34;
+$path = $categoryid;
 $context = context_coursecat::instance($categoryid);
 $contextsystem = context_system::instance();
 
@@ -99,7 +99,9 @@ $table = new html_table();
 $table->head = array(get_string('hashtag', 'local_paperattendance'),
 		get_string('course', 'local_paperattendance'),
 		get_string('teacher', 'local_paperattendance'),
-		get_string('category', 'local_paperattendance')
+		get_string('category', 'local_paperattendance'),
+		'custom print',
+		'quick print'
 );
 $table->id = "fbody";
 $sqlcourses =   "SELECT c.id,
