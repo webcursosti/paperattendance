@@ -106,7 +106,7 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 				ORDER BY u.lastname";
 	
 	$teachers = $DB->get_records_sql($teachersquery, array($courseid,'3'));
-	
+	var_dump($teachers);
 	if(count($teachers) == 1){
 		$requestor = $teachers -> id;
 	}
@@ -154,6 +154,8 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		$module = $mod[0].":".$mod[1];
 		$modquery = $DB->get_record("paperattendance_module",array("initialtime" => $module));
 		$moduleid = $modquery -> id;
+		
+		$key = $moduleid."*".$module->horaInicio."*".$module->horaFin;
 		
 		$stringqr = $courseid."*".$requestor."*".$moduleid."*".$sessiondate."*";
 		
