@@ -88,13 +88,103 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$result = curl_exec ($curl);
 	curl_close ($curl);
 	
-	$res = array();
-	$res = json_decode($result);
+	$modules = array();
+	$modules = json_decode($result);
 	
-	foreach($res as $module){
-		$modulequery = $DB->get_record("paperattendance_module",array("horaInicio" => $module->horaInicio));
-		echo $modulequery -> id;
+	//TODO: remove test course id
+	$courseid = 1616;
+	
+	//select teacher from course
+	$teachersquery = "SELECT u.id,
+				CONCAT (u.firstname, ' ', u.lastname) AS name,
+				GROUP_CONCAT(e.enrol) AS enrol
+				FROM {user_enrolments} ue
+				INNER JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = ?)
+				INNER JOIN {context} c ON (c.contextlevel = 50 AND c.instanceid = e.courseid)
+				INNER JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.roleid = ? AND ra.userid = ue.userid)
+				INNER JOIN {user} u ON (ue.userid = u.id)
+				ORDER BY u.lastname";
+	
+	$teachers = $DB->get_records_sql($teachersquery, array($courseid,'3'));
+	$requestor= $teachers[0]['id'];
+	$requestorinfo = $DB->get_record("user", array("id" => $requestor));
+	
+	//session date from today in unix
+	$sessiondate = time();
+	
+	//Curricular class
+	$description = 0;
+	
+	
+	$path = $CFG -> dataroot. "/temp/local/paperattendance/";
+	//list($path, $filename) = paperattendance_create_qr_image($courseid."*".$requestor."*", $path);
+	
+	$uailogopath = $CFG->dirroot . '/local/paperattendance/img/uai.jpeg';
+	$webcursospath = $CFG->dirroot . '/local/paperattendance/img/webcursos.jpg';
+	$timepdf = time();
+	$attendancepdffile = $path . "/print/paperattendance_".$courseid."_".$timepdf.".pdf";
+	
+	if (!file_exists($path . "/print/")) {
+		mkdir($path . "/print/", 0777, true);
 	}
+	
+	$pdf = new PDF();
+	$pdf->setPrintHeader(false);
+	$pdf->setPrintFooter(false);
+	
+	// Get student for the list
+	$studentinfo = paperattendance_students_list($context->id, $course);
+	
+	// We validate the number of students as we are filtering by enrolment.
+	// Type after getting the data.
+	$numberstudents = count($studentinfo);
+	if ($numberstudents == 0) {
+		throw new Exception('No students to print');
+	}
+	// Contruction string for QR encode
+	foreach ($modules as $module){
+		$mod = explode(":", $module);
+		$module = $mod[0].":".$mod[1];
+		$modquery = $DB->get_record("paperattendance_module",array("initialtime" => $module));
+		$moduleid = $modquery -> id;
+		
+		$stringqr = $courseid."*".$requestor."*".$moduleid."*".$sessiondate."*";
+		
+		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $key, $path, $stringqr, $webcursospath, $sessiondate, $description);
+		
+	}
+	
+	// Created new pdf
+	$pdf->Output($attendancepdffile, "F");
+	
+	$fs = get_file_storage();
+	$file_record = array(
+			'contextid' => $context->id,
+			'component' => 'local_paperattendance',
+			'filearea' => 'draft',
+			'itemid' => 0,
+			'filepath' => '/',
+			'filename' => "paperattendance_".$courseid."_".$timepdf.".pdf",
+			'timecreated' => time(),
+			'timemodified' => time(),
+			'userid' => $USER->id,
+			'author' => $USER->firstname." ".$USER->lastname,
+			'license' => 'allrightsreserved'
+	);
+	
+	// If the file already exists we delete it
+	if ($fs->file_exists($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
+		$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
+		$previousfile->delete();
+	}
+	// Info for the new file
+	$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
+	
+	$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
+	$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
+			"src" => $url,
+			"style" => "height:75vh; width:60vw"
+	));
 	
 	}
 
