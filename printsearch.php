@@ -206,16 +206,16 @@ jQuery('#exampleModal').modal({
 				count++;
 	        });
     	});
+		function listcard (courseid){
+alert("asd");
+			$(this).removeClass('icon-plus').addClass('icon-ok');
 
+			jQuery.noConflict(); 
+			jQuery('#exampleModal').modal('show'); 
+		
+		}
 
 	}
 
-	function listcard (courseid){
 
-		$(this).removeClass('icon-plus').addClass('icon-ok');
-
-		jQuery.noConflict(); 
-		jQuery('#exampleModal').modal('show'); 
-	
-	}
 </script>
