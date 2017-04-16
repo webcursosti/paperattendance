@@ -203,6 +203,6 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 			"src" => $url,
 			"style" => "height:75vh; width:60vw"
 	));
-	
+	echo $viewerpdf;
 	}
 
