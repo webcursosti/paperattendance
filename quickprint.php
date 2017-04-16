@@ -88,13 +88,13 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$result = curl_exec ($curl);
 	curl_close ($curl);
 	
-	echo "2<br>";
 	$res = array();
 	$res = json_decode($result);
-
+	
 	foreach($res as $module){
-		echo $module->horaInicio;
-		echo "<br>";
+		$modulequery = $DB->get_record("paperattendance_module",array("horaInicio" => $module->horaInicio));
+		echo $modulequery -> id;
 	}
-}
+	
+	}
 
