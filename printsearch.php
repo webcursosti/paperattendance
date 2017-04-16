@@ -208,7 +208,7 @@ jQuery('#exampleModal').modal({
 	        });
     	});
 
-		$( ".listcart" ).live( "click", function() {
+		$( document ).on( "click", ".listcart", function() {
 			$(this).removeClass('icon-plus').addClass('icon-ok');
 
 			jQuery.noConflict(); 
