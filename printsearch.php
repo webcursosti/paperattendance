@@ -197,14 +197,6 @@ jQuery('#exampleModal').modal({
 		$(".ajaxtr").remove();
 	});
 	function callAjax(data, path, print, categoryid) {
-
-		$( ".listcart" ).click(function() {
-			$(this).removeClass('icon-plus').addClass('icon-ok');
-
-			jQuery.noConflict(); 
-			jQuery('#exampleModal').modal('show'); 
-		
-			});
 		
 		var count = 1;
 		$.getJSON("ajax/ajaxquerys.php?result="+data+"&path="+path+"&category="+categoryid+"&action=getcourses", function(result){
@@ -216,6 +208,13 @@ jQuery('#exampleModal').modal({
 	        });
     	});
 
+		$( ".listcart" ).live( "click", function() {
+			$(this).removeClass('icon-plus').addClass('icon-ok');
+
+			jQuery.noConflict(); 
+			jQuery('#exampleModal').modal('show'); 
+		
+			});
 
 	}
 
