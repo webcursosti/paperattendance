@@ -168,7 +168,7 @@ echo $OUTPUT->footer();
   </div>
 </div>
 <script>
-$('#exampleModal').modal({
+jQuery('#exampleModal').modal({
 	  keyboard: true
 })
 </script>
@@ -210,6 +210,6 @@ $('#exampleModal').modal({
 		var teacher = $(this).parent().parent().find( "td:eq(2)" ).text();
 		$(this).removeClass('icon-plus').addClass('icon-ok');
 
-		$('#exampleModal').modal('show');
+		jQuery('#exampleModal').modal('show');
 	});
 </script>
