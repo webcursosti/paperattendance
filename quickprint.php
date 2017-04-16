@@ -104,7 +104,17 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	
 	$teachers = $DB->get_records_sql($teachersquery, array($courseid,'3'));
 
-	$requestor= $teachers[0] -> id;
+	$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
+	
+	foreach ($teachers as $teacher){
+		
+		$enrolment = explode(",", $teacher->enrol);
+		// Verifies that the teacher is enrolled through a valid enrolment and that we haven't added him yet.
+		if (count(array_intersect($enrolment, $enrolincludes)) == 0 || isset($arrayteachers[$teacher->id])) {
+			continue;
+		}
+		$requestor = $teacher->id;
+	}
 
 	$requestorinfo = $DB->get_record("user", array("id" => $requestor));
 	
