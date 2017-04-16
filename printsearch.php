@@ -223,4 +223,7 @@ jQuery('#exampleModal').modal({
 	
 		});
 
+	$( document ).on( "click", ".modal-backdrop", function() {
+		jQuery('#exampleModal').modal('hide'); 
+	});
 </script>
