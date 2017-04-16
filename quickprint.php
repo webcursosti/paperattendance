@@ -88,6 +88,10 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$result = curl_exec ($curl);
 	curl_close ($curl);
 	
-	echo  json_encode($result);
+	$modules = $result;
+	foreach($modules as $module){
+		echo $module['horaInicio'];
+		echo "<br>";
+	}
 }
 
