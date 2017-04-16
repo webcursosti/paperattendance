@@ -204,7 +204,7 @@ jQuery('#exampleModal').modal({
 		$(this).removeClass('icon-plus').addClass('icon-ok');
 		var courseid = $(this).attr('courseid');
 		jQuery.noConflict(); 
-		$('.quickprintappend').html('<img src="img/loading.gif">');
+		$('.quickprintappend').html('<center><img src="img/loading.gif"></center>');
 
 		$.ajax({
 		    type: 'POST',
