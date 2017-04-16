@@ -86,6 +86,8 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 			"token" => $token
 	);
 	
+	//$fields = array("diaSemana" => 5, "seccionId"=> 46386, "token" => $token);
+	
 	curl_setopt($curl, CURLOPT_URL, $url);
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
 	curl_setopt($curl, CURLOPT_POST, TRUE);

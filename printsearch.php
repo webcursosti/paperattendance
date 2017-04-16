@@ -140,6 +140,38 @@ if ($ncourses>0){
 echo $OUTPUT->footer();
 
 ?>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">New message</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="recipient-name" class="control-label">Recipient:</label>
+            <input type="text" class="form-control" id="recipient-name">
+          </div>
+          <div class="form-group">
+            <label for="message-text" class="control-label">Message:</label>
+            <textarea class="form-control" id="message-text"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Send message</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$('#exampleModal').modal({
+	  keyboard: true
+})
+</script>
 <script type="text/javascript">
 	var filter = $('#filter');
 	var $table = $("#fbody").find("tbody");
@@ -166,7 +198,7 @@ echo $OUTPUT->footer();
 			$(".ajaxtr").remove();
 	        $.each(result, function(i, field){
 	        	var printicon = "<a href='print.php?courseid="+field['id']+"&categoryid="+path+"'>"+print+"</a>"; 
-	        	$table.append("<tr class='ajaxtr'><td>"+count+"</td><td>"+field['fullname']+"</td><td>"+field['teacher']+"</td><td>"+field['name']+"</td><td>"+printicon+"</td></tr>");
+	        	$table.append("<tr class='ajaxtr'><td>"+count+"</td><td>"+field['fullname']+"</td><td>"+field['teacher']+"</td><td>"+field['name']+"</td><td>"+printicon+"</td><td><i class='icon icon-plus listcart' courseid='"+field['id']+"'></i></td></tr>");
 				count++;
 	        });
     	});
@@ -177,5 +209,7 @@ echo $OUTPUT->footer();
 		var course = $(this).parent().parent().find( "td:eq(1)" ).text();
 		var teacher = $(this).parent().parent().find( "td:eq(2)" ).text();
 		$(this).removeClass('icon-plus').addClass('icon-ok');
+
+		$('#exampleModal').modal('show');
 	});
 </script>
