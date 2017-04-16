@@ -202,20 +202,20 @@ jQuery('#exampleModal').modal({
 			$(".ajaxtr").remove();
 	        $.each(result, function(i, field){
 	        	var printicon = "<a href='print.php?courseid="+field['id']+"&categoryid="+path+"'>"+print+"</a>"; 
-	        	$table.append("<tr class='ajaxtr'><td>"+count+"</td><td>"+field['fullname']+"</td><td>"+field['teacher']+"</td><td>"+field['name']+"</td><td>"+printicon+"</td><td><i class='icon icon-plus listcart' courseid='"+field['id']+"'></i></td></tr>");
+	        	$table.append("<tr class='ajaxtr'><td>"+count+"</td><td>"+field['fullname']+"</td><td>"+field['teacher']+"</td><td>"+field['name']+"</td><td>"+printicon+"</td><td><i class='icon icon-plus listcart' onclick='listcart("+field['id']+");' courseid='"+field['id']+"'></i></td></tr>");
 				count++;
 	        });
     	});
 
-		$('.listcart').click(function() {
-			
-			var courseidclicked = $(this).attr('courseid');	
-			var course = $(this).parent().parent().find( "td:eq(1)" ).text();
-			var teacher = $(this).parent().parent().find( "td:eq(2)" ).text();
-			$(this).removeClass('icon-plus').addClass('icon-ok');
 
-			jQuery.noConflict(); 
-			jQuery('#exampleModal').modal('show'); 
-		});
+	}
+
+	function listcard (courseid){
+
+		$(this).removeClass('icon-plus').addClass('icon-ok');
+
+		jQuery.noConflict(); 
+		jQuery('#exampleModal').modal('show'); 
+	
 	}
 </script>
