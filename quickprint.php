@@ -35,7 +35,7 @@ if (isguestuser()) {
 	die();
 }
 
-$courseid = required_param("courseid", PARAM_INT);
+$courseid = optional_param("courseid", 1616, PARAM_INT);
 $action = optional_param("action", "add", PARAM_TEXT);
 $category = optional_param('categoryid', 1, PARAM_INT);
 
@@ -91,9 +91,6 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$modules = array();
 	$modules = json_decode($result);
 	
-	//TODO: remove test course id
-	$courseid = 1616;
-	
 	//select teacher from course
 	$teachersquery = "SELECT u.id,
 				CONCAT (u.firstname, ' ', u.lastname) AS name,
@@ -106,13 +103,8 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 				ORDER BY u.lastname";
 	
 	$teachers = $DB->get_records_sql($teachersquery, array($courseid,'3'));
-	var_dump($teachers);
-	if(count($teachers) == 1){
-		$requestor = $teachers -> id;
-	}
-	else{
-		$requestor= $teachers[0] -> id;
-	}
+
+	$requestor= $teachers[0] -> id;
 
 	$requestorinfo = $DB->get_record("user", array("id" => $requestor));
 	
@@ -121,7 +113,6 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	
 	//Curricular class
 	$description = 0;
-	
 	
 	$path = $CFG -> dataroot. "/temp/local/paperattendance/";
 	//list($path, $filename) = paperattendance_create_qr_image($courseid."*".$requestor."*", $path);
