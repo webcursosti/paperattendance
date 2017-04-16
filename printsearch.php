@@ -89,6 +89,9 @@ $PAGE->set_pagelayout('standard');
 $PAGE->set_title($pagetitle);
 // Require jquery for modal.
 $PAGE->requires->jquery();
+$PAGE->requires->jquery_plugin ( 'ui' );
+$PAGE->requires->jquery_plugin ( 'ui-css' );
+$PAGE->requires->js( new moodle_url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js') );
 //string for print
 $print = get_string("downloadprint", "local_paperattendance");
 // Creating tables and adding columns header.
