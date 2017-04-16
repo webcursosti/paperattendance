@@ -106,7 +106,14 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 				ORDER BY u.lastname";
 	
 	$teachers = $DB->get_records_sql($teachersquery, array($courseid,'3'));
-	$requestor= $teachers[0]['id'];
+	
+	if(count($teachers) == 1){
+		$requestor = $teachers -> id;
+	}
+	else{
+		$requestor= $teachers[0] -> id;
+	}
+
 	$requestorinfo = $DB->get_record("user", array("id" => $requestor));
 	
 	//session date from today in unix
@@ -143,7 +150,7 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	}
 	// Contruction string for QR encode
 	foreach ($modules as $module){
-		$mod = explode(":", $module);
+		$mod = explode(":", $module->horaInicio);
 		$module = $mod[0].":".$mod[1];
 		$modquery = $DB->get_record("paperattendance_module",array("initialtime" => $module));
 		$moduleid = $modquery -> id;
