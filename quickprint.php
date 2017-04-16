@@ -57,7 +57,10 @@ if($courseid > 1){
 if(!has_capability("local/paperattendance:printsecre", $context) && !$isteacher && !is_siteadmin($USER) && !has_capability("local/paperattendance:print", $context)){
 	print_error(get_string('notallowedprint', 'local_paperattendance'));
 }
-
+$urlprint = new moodle_url("/local/paperattendance/quickprint.php", array(
+		"courseid" => $courseid,
+		"categoryid" => $category
+));
 // Page navigation and URL settings.
 $pagetitle = get_string('printtitle', 'local_paperattendance');
 $PAGE->set_context($context);
