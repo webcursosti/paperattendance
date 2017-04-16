@@ -206,7 +206,7 @@ jQuery('#exampleModal').modal({
 				count++;
 	        });
     	});
-		function listcard (courseid){
+		function listcart (courseid){
 alert("asd");
 			$(this).removeClass('icon-plus').addClass('icon-ok');
 
