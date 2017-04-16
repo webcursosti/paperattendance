@@ -91,7 +91,7 @@ $PAGE->set_title($pagetitle);
 $PAGE->requires->jquery();
 $PAGE->requires->jquery_plugin ( 'ui' );
 $PAGE->requires->jquery_plugin ( 'ui-css' );
-$PAGE->requires->js( new moodle_url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js') );
+$PAGE->requires->js( new moodle_url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js') );
 //string for print
 $print = get_string("downloadprint", "local_paperattendance");
 // Creating tables and adding columns header.
@@ -205,14 +205,14 @@ jQuery('#exampleModal').modal({
 				count++;
 	        });
     	});
+
+		$('.listcart').click(function() {
+			var courseidclicked = $(this).attr('courseid');	
+			var course = $(this).parent().parent().find( "td:eq(1)" ).text();
+			var teacher = $(this).parent().parent().find( "td:eq(2)" ).text();
+			$(this).removeClass('icon-plus').addClass('icon-ok');
+
+			jQuery('#exampleModal').modal('toggle');
+		});
 	}
-
-	$('.listcart').click(function() {
-		var courseidclicked = $(this).attr('courseid');	
-		var course = $(this).parent().parent().find( "td:eq(1)" ).text();
-		var teacher = $(this).parent().parent().find( "td:eq(2)" ).text();
-		$(this).removeClass('icon-plus').addClass('icon-ok');
-
-		jQuery('#exampleModal').modal('show');
-	});
 </script>
