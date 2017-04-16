@@ -172,7 +172,8 @@ echo $OUTPUT->footer();
 </div>
 <script>
 jQuery('#exampleModal').modal({
-	  keyboard: true
+	  keyboard: true,
+	  show: false
 })
 </script>
 <script type="text/javascript">
@@ -207,12 +208,14 @@ jQuery('#exampleModal').modal({
     	});
 
 		$('.listcart').click(function() {
+			
 			var courseidclicked = $(this).attr('courseid');	
 			var course = $(this).parent().parent().find( "td:eq(1)" ).text();
 			var teacher = $(this).parent().parent().find( "td:eq(2)" ).text();
 			$(this).removeClass('icon-plus').addClass('icon-ok');
 
-			jQuery('#exampleModal').modal('toggle');
+			jQuery.noConflict(); 
+			$('#exampleModal').modal('toggle');
 		});
 	}
 </script>
