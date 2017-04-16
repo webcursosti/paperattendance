@@ -197,24 +197,22 @@ jQuery('#exampleModal').modal({
 		$(".ajaxtr").remove();
 	});
 	function callAjax(data, path, print, categoryid) {
+
+		$( ".listcart" ).click(function() {
+			$(this).removeClass('icon-plus').addClass('icon-ok');
+
+			jQuery.noConflict(); 
+			jQuery('#exampleModal').modal('show'); 
+		
+			});
+		
 		var count = 1;
 		$.getJSON("ajax/ajaxquerys.php?result="+data+"&path="+path+"&category="+categoryid+"&action=getcourses", function(result){
 			$(".ajaxtr").remove();
 	        $.each(result, function(i, field){
 	        	var printicon = "<a href='print.php?courseid="+field['id']+"&categoryid="+path+"'>"+print+"</a>"; 
 	        	$table.append("<tr class='ajaxtr'><td>"+count+"</td><td>"+field['fullname']+"</td><td>"+field['teacher']+"</td><td>"+field['name']+"</td><td>"+printicon+"</td><td class='listcart'><i class='icon icon-plus listcart' courseid='"+field['id']+"'></i></td></tr>");
-				count++;
-
-				$( ".listcart" ).click(function() {
-					alert("asd");
-					$(this).removeClass('icon-plus').addClass('icon-ok');
-
-					jQuery.noConflict(); 
-					jQuery('#exampleModal').modal('show'); 
-				
-					});
-			
-							
+				count++;	
 	        });
     	});
 
