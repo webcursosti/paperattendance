@@ -196,7 +196,7 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	// Info for the new file
 	$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
 	
-	echo $OUTPUT->header();
+//	echo $OUTPUT->header();
 	
 	$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
 	$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
