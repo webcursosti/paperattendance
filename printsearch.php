@@ -215,7 +215,7 @@ jQuery('#exampleModal').modal({
 			$(this).removeClass('icon-plus').addClass('icon-ok');
 
 			jQuery.noConflict(); 
-			$('#exampleModal').modal('toggle');
+			jQuery('#exampleModal').modal('show'); 
 		});
 	}
 </script>
