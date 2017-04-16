@@ -129,7 +129,8 @@ foreach($courses as $course){
 			$course->fullname,
 			$course->teacher,
 			$course->name,
-			html_writer::nonempty_tag("a", $print, array("href"=>$printurl))
+			html_writer::nonempty_tag("a", $print, array("href"=>$printurl)),
+			html_writer::nonempty_tag("i", $print, array("class"=>"icon icon-plus listcart", "courseid"=>$course->id))
 	);
 	$coursecount++;
 }
@@ -197,28 +198,26 @@ jQuery('#exampleModal').modal({
 				count++;	
 	        });
     	});
-
-		$( document ).on( "click", ".listcart", function() {
-			$(this).removeClass('icon-plus').addClass('icon-ok');
-			var courseid = $(this).attr('courseid');
-			jQuery.noConflict(); 
-
-			$.ajax({
-			    type: 'POST',
-			    url: 'quickprint.php',
-			    data: {
-				      'courseid' : 'curlgetmoduloshorario'
-			    	},
-			    success: function (response) {
-					$('.quickprintappend').html(response);
-			    }  	
-			});
-			
-			jQuery('#exampleModal').modal('show'); 
-		
-			});
-
 	}
 
+	$( document ).on( "click", ".listcart", function() {
+		$(this).removeClass('icon-plus').addClass('icon-ok');
+		var courseid = $(this).attr('courseid');
+		jQuery.noConflict(); 
+
+		$.ajax({
+		    type: 'POST',
+		    url: 'quickprint.php',
+		    data: {
+			      'courseid' : 'curlgetmoduloshorario'
+		    	},
+		    success: function (response) {
+				$('.quickprintappend').html(response);
+		    }  	
+		});
+		
+		jQuery('#exampleModal').modal('show'); 
+	
+		});
 
 </script>
