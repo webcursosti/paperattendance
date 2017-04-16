@@ -77,6 +77,7 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 // 			"token" => $token
 // 	);
 	$url = $CFG->paperattendance_omegagetmoduloshorariosurl;
+	$token = $CFG->paperattendance_omegatoken;
 	$fields = array("diaSemana" => 1, "seccionId"=> 45924, "token" => $token);
 	
 	curl_setopt($curl, CURLOPT_URL, $url);
