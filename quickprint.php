@@ -150,6 +150,7 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		throw new Exception('No students to print');
 	}
 	// Contruction string for QR encode
+	var_dump($modules);
 	foreach ($modules as $module){
 		$mod = explode(":", $module->horaInicio);
 		$module = $mod[0].":".$mod[1];
