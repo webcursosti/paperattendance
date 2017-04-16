@@ -64,6 +64,9 @@ $PAGE->set_context($context);
 $PAGE->requires->jquery();
 $PAGE->requires->jquery_plugin ( 'ui' );
 $PAGE->requires->jquery_plugin ( 'ui-css' );
+$PAGE->set_url($urlprint);
+$PAGE->set_pagelayout('standard');
+$PAGE->set_title($pagetitle);
 
 $course = $DB->get_record("course",array("id" => $courseid));
 
