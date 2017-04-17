@@ -138,7 +138,9 @@ foreach($courses as $course){
 }
 echo $OUTPUT->header();
 echo html_writer::div(get_string("searchprinthelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
-echo html_writer::empty_tag("input", array( "id"=>"filter", "type"=>"text", "style"=>"width:25%"));
+$inputfilter = html_writer::empty_tag("input", array( "id"=>"filter", "type"=>"text", "style"=>"width:25%"));
+$cart = html_writer::empty_tag("i", array("class"=>"icon icon-print"));
+echo  html_writer::div($inputfilter.$cart);
 if ($ncourses>0){
 	echo html_writer::table($table);
 	echo $OUTPUT->paging_bar($ncourses, $page, $perpage, $url);
