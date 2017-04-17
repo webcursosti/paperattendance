@@ -212,4 +212,13 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	));
 	echo $viewerpdf;
 	}
+	
+	?>
+	
+	<script>
+	$( document ).on( "click", ".printbutton", function() {
+		var w = window.open('<?php echo $url ;?>');
+		w.print();
+	});
+	</script>
 

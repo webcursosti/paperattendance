@@ -68,7 +68,7 @@ else{
 	}
 }
 
-$path = $categoryid;
+$path = 34;
 $context = context_coursecat::instance($categoryid);
 $contextsystem = context_system::instance();
 
@@ -158,6 +158,7 @@ echo $OUTPUT->footer();
 
       </div>
       <div class="modal-footer">
+      	<button type="button" class="btn btn-info printbutton" data-dismiss="modal">Imprimir</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
