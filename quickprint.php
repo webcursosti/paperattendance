@@ -80,13 +80,13 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$url = $CFG->paperattendance_omegagetmoduloshorariosurl;
 	$token = $CFG->paperattendance_omegatoken;
 	
-// 	$fields = array (
-// 			"diaSemana" => date('w'),
-// 			"seccionId" => $course -> idnumber,
-// 			"token" => $token
-// 	);
+	$fields = array (
+			"diaSemana" => date('w'),
+			"seccionId" => $course -> idnumber,
+			"token" => $token
+	);
 	
-	$fields = array("diaSemana" => 5, "seccionId"=> 46386, "token" => $token);
+//	$fields = array("diaSemana" => 5, "seccionId"=> 46386, "token" => $token);
 	
 	curl_setopt($curl, CURLOPT_URL, $url);
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
