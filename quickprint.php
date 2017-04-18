@@ -206,7 +206,8 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 //	echo $OUTPUT->header();
 	
 	$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'draft', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
-	$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
+	$viewerpdf = html_writer::nonempty_tag("iframe", " ", array(
+			"id" => "pdf-iframe",
 			"src" => $url,
 			"style" => "height:100%; width:100%"
 	));
@@ -217,8 +218,7 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	
 	<script>
 	$( document ).on( "click", ".printbutton", function() {
-		var w = $('.quickprintappend');
-		w.print();
+	    document.getElementById('pdf-iframe').contentWindow.print();	
 	});	
 	</script>
 
