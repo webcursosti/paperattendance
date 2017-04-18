@@ -68,7 +68,7 @@ else{
 	}
 }
 
-$path = $categoryid;
+$path = 34;
 $context = context_coursecat::instance($categoryid);
 $contextsystem = context_system::instance();
 
