@@ -239,6 +239,7 @@ jQuery('#exampleModal').modal({
 				else{
 					$('.printbutton').removeAttr("disabled");
 				}
+		    }
 		});
 		
 		jQuery('#exampleModal').modal('show'); 
