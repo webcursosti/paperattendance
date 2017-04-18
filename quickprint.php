@@ -217,8 +217,8 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	
 	<script>
 	$( document ).on( "click", ".printbutton", function() {
-		var w = window.open('<?php echo $url ;?>');
+		var w = $('.quickprintappend');
 		w.print();
-	});
+	});	
 	</script>
 
