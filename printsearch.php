@@ -43,12 +43,24 @@ $page = optional_param('page', 0, PARAM_INT);
 $perpage = 30;
 
 if(is_siteadmin()){
-	$category = $DB->get_record('course_categories', array('name'=>'Pregrado'));
-	if($category){
-		$categoryid = $category->id;
-	}else{
-		print_error(get_string('categorynamechange', 'local_paperattendance'));
-	}
+	$sqlcourses = "SELECT c.id,
+				c.fullname,
+				cat.name,
+				CONCAT( u.firstname, ' ', u.lastname) as teacher
+				FROM {user} AS u
+				INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+				INNER JOIN {context} ct ON (ct.id = ra.contextid)
+				INNER JOIN {course} c ON (c.id = ct.instanceid)
+				INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
+				INNER JOIN {course_categories} as cat ON (cat.id = c.category)
+				WHERE c.timecreated > ? AND c.idnumber > 0
+				GROUP BY c.id
+				ORDER BY c.fullname";
+	$year = strtotime("1 January".(date('Y')));
+	$ncourses = count($DB->get_records_sql($sqlcourses, array($year)));
+	$courses = $DB->get_records_sql($sqlcourses, array($year), $page*$perpage,$perpage);
+	$path = 1;
+	$categoryid = 1;
 }
 else{
 	//Query to get the category of the secretary
@@ -59,22 +71,40 @@ else{
 					INNER JOIN {role} r ON (r.id = ra.roleid)
 					INNER JOIN {context} co ON (co.id = ra.contextid)
 					WHERE cc.id = co.instanceid AND r.shortname = ?";
-	$categoryparams = array($USER->id, "secre_pregrado");
+	$categoryparams = array($USER->id, "secrepaper");
 	$category = $DB->get_record_sql($sqlcategory, $categoryparams);
 	if($category){
 		$categoryid = $category->id;
 	}else{
 		print_error(get_string('notallowedprint', 'local_paperattendance'));
 	}
+	
+	$path = $categoryid;
+	$sqlcourses =   "SELECT c.id,
+		c.fullname,
+		cat.name,
+		CONCAT( u.firstname, ' ', u.lastname) as teacher
+		FROM {user} AS u
+		INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+		INNER JOIN {context} ct ON (ct.id = ra.contextid)
+		INNER JOIN {course} c ON (c.id = ct.instanceid)
+		INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
+		INNER JOIN {course_categories} as cat ON (cat.id = c.category)
+		WHERE cat.path like ? AND c.idnumber > 0
+		GROUP BY c.id
+		ORDER BY c.fullname";
+	
+	$ncourses = count($DB->get_records_sql($sqlcourses, array("%/".$path."%")));
+	$courses = $DB->get_records_sql($sqlcourses, array("%/".$path."%"), $page*$perpage,$perpage);
 }
 
-$path = $categoryid;
 $context = context_coursecat::instance($categoryid);
 $contextsystem = context_system::instance();
 
 if (! has_capability('local/paperattendance:printsearch', $context) && ! has_capability('local/paperattendance:printsearch', $contextsystem)) {
 	print_error(get_string('notallowedprint', 'local_paperattendance'));
 }
+
 // This page url.
 $url = new moodle_url('/local/paperattendance/printsearch.php', array(
 		"categoryid" => $categoryid
@@ -104,27 +134,11 @@ $table->head = array(get_string('hashtag', 'local_paperattendance'),
 		'quick print'
 );
 $table->id = "fbody";
-$sqlcourses =   "SELECT c.id,
-		c.fullname,
-		cat.name,
-		CONCAT( u.firstname, ' ', u.lastname) as teacher
-		FROM {user} AS u
-		INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
-		INNER JOIN {context} ct ON (ct.id = ra.contextid)
-		INNER JOIN {course} c ON (c.id = ct.instanceid)
-		INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
-		INNER JOIN {course_categories} as cat ON (cat.id = c.category)
-		WHERE cat.path like ? AND c.idnumber > 0
-		GROUP BY c.id
-		ORDER BY c.fullname";
-		
-$ncourses = count($DB->get_records_sql($sqlcourses, array("%/".$path."%")));
-$courses = $DB->get_records_sql($sqlcourses, array("%/".$path."%"), $page*$perpage,$perpage);
+
 $coursecount = $page*$perpage+1;
 foreach($courses as $course){
 	$printurl = new moodle_url('/local/paperattendance/print.php', array(
-			'courseid' => $course->id,
-			"categoryid" => $path
+			'courseid' => $course->id
 	));
 	$table->data[] = array(
 			$coursecount,
