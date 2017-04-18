@@ -233,7 +233,12 @@ jQuery('#exampleModal').modal({
 		    	},
 		    success: function (response) {
 				$('.quickprintappend').html(response);
-		    }  	
+				if(response == "There's nothing to print for today"){
+					$('.printbutton').attr("disabled", true);
+		    	}  	
+				else{
+					$('.printbutton').removeAttr("disabled");
+				}
 		});
 		
 		jQuery('#exampleModal').modal('show'); 
