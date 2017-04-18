@@ -43,7 +43,6 @@ $page = optional_param('page', 0, PARAM_INT);
 $perpage = 30;
 
 if(is_siteadmin()){
-	$isadmin = 1;
 	$sqlcourses = "SELECT c.id,
 				c.fullname,
 				cat.name,
@@ -64,7 +63,6 @@ if(is_siteadmin()){
 	$categoryid = 1;
 }
 else{
-	$isadmin = 0;
 	//Query to get the category of the secretary
 	//It is assumed that one secretary has just one category on her charge
 	$sqlcategory = "SELECT cc.*
@@ -198,10 +196,9 @@ jQuery('#exampleModal').modal({
 			$paging.hide();
 		    var data = this.value;
 		    var path = <?php echo $path;?>;
-		    var isadmin = <?php echo json_encode($isadmin);?>;
 		    var print = <?php echo json_encode($print);?>;
 			var categoryid = <?php echo $categoryid; ?>;
-		    callAjax(data, path, print, categoryid, isadmin);
+		    callAjax(data, path, print, categoryid);
 		}
 		else{
 			$table.find("tr").not(".ajaxtr").show();
@@ -209,10 +206,10 @@ jQuery('#exampleModal').modal({
 		}
 		$(".ajaxtr").remove();
 	});
-	function callAjax(data, path, print, categoryid, isadmin) {
+	function callAjax(data, path, print, categoryid) {
 		
 		var count = 1;
-		$.getJSON("ajax/ajaxquerys.php?result="+data+"&path="+path+"&category="+categoryid+"&isadmin="+isadmin+"&action=getcourses", function(result){
+		$.getJSON("ajax/ajaxquerys.php?result="+data+"&path="+path+"&category="+categoryid+"&action=getcourses", function(result){
 			$(".ajaxtr").remove();
 	        $.each(result, function(i, field){
 	        	var printicon = "<a href='print.php?courseid="+field['id']+"&categoryid="+path+"'>"+print+"</a>"; 

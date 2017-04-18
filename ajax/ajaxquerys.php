@@ -40,7 +40,6 @@ $data = optional_param('result', null, PARAM_TEXT);
 $path = optional_param('path', 0, PARAM_INT);
 $courseid = optional_param("courseid", 1, PARAM_INT);
 $category = optional_param('category', 1, PARAM_INT);
-$isadmin = optional_param('isadmin', 0, PARAM_INT);
 
 switch ($action) {
 	case 'curlgetmoduloshorario' :
@@ -95,7 +94,7 @@ switch ($action) {
 		if (! has_capability('local/paperattendance:printsearch', $context) && ! has_capability('local/paperattendance:printsearch', $contextsystem)) {
 			print_error(get_string('notallowedprint', 'local_paperattendance'));
 		}
-		if($isadmin){
+		if(is_siteadmin()){
 			$year = strtotime("1 January".(date('Y')));
 			$filter = array($year, "%".$data."%", $data."%");
 			$sqlcourses = "SELECT c.id,
