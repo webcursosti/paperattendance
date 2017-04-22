@@ -140,9 +140,12 @@ foreach($courses as $course){
 	$printurl = new moodle_url('/local/paperattendance/print.php', array(
 			'courseid' => $course->id
 	));
+	$historyurl = new moodle_url('/local/paperattendance/history.php', array(
+			'courseid' => $course->id
+	));
 	$table->data[] = array(
 			$coursecount,
-			$course->fullname,
+			html_writer::nonempty_tag("a", $course->fullname, array("href"=>$historyurl)),
 			$course->teacher,
 			$course->name,
 			html_writer::nonempty_tag("a", $print, array("href"=>$printurl)),
