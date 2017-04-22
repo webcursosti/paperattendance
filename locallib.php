@@ -566,12 +566,12 @@ function paperattendance_get_qr_text($path, $pdf){
 	$qrtop = $imagick->getImageRegion($width*0.12, $height*0.096, $width*0.716, $height*0.036);
 	$qrtop->writeImage($path."topright".$qrpath);
 
-	unlink($path.$pdfname.'.png');
+	//unlink($path.$pdfname.'.png');
 	
 	// QR
 	$qrcodetop = new QrReader($path."topright".$qrpath);
 	$texttop = $qrcodetop->text(); //return decoded text from QR Code
-	unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/topright".$qrpath);
+	//unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/topright".$qrpath);
 	
 	if($texttop == "" || $texttop == " " || empty($texttop)){
 
@@ -583,7 +583,7 @@ function paperattendance_get_qr_text($path, $pdf){
 		$qrcodebottom = new QrReader($path."bottomright".$qrpath);
 		$textbottom = $qrcodebottom->text(); //return decoded text from QR Code
 		$imagick->clear();
-		unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/bottomright".$qrpath);
+		//unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/bottomright".$qrpath);
 		if($textbottom == "" || $textbottom == " " || empty($textbottom)){
 			return "error";
 		}
