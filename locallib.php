@@ -550,7 +550,12 @@ function paperattendance_get_qr_text($path, $pdf){
 	$imagick->setResolution(300,300);
 	$imagick->readImage($path.$myurl);
 	// hay que probar si es mas util hacerle el flatten aqui arriba o abajo de reduceNoiseImage()
-	$imagick->flattenImages();
+	if(PHP_MAJOR_VERSION < 7){
+		$imagick->flattenImages();
+	}else{
+		$imagick->setImageAlphaChannel(imagick::ALPHACHANNEL_REMOVE);
+		$imagick->mergeImageLayers(imagick::LAYERMETHOD_FLATTEN);
+	}
 	$imagick->despeckleImage();
 	$imagick->reduceNoiseImage(0);
 	$imagick->trimImage(20);
