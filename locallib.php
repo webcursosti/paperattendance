@@ -554,7 +554,7 @@ function paperattendance_get_qr_text($path, $pdf){
 		$imagick->flattenImages();
 	}else{
 		$imagick->setImageBackgroundColor('white');
-		$imagick->setImageAlphaChannel(Imagick::ALPHACHANNEL_REMOVE);
+		$imagick->setImageAlphaChannel(11);
 		$imagick->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
 	}
 	$imagick->despeckleImage();
