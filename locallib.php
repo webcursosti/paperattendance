@@ -577,7 +577,7 @@ function paperattendance_get_qr_text($path, $pdf){
 //	$qrtop->writeImage($path."topright".$qrpath);
 	
 	// QR
-	$qrcodetop = new QrReader($qrtop);
+	$qrcodetop = new QrReader($qrtop, QrReader::SOURCE_TYPE_RESOURCE);
 	$texttop = $qrcodetop->text(); //return decoded text from QR Code
 //	unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/topright".$qrpath);
 	
@@ -589,7 +589,7 @@ function paperattendance_get_qr_text($path, $pdf){
 //		$qrbottom->writeImage($path."bottomright".$qrpath);
 		
 		// QR
-		$qrcodebottom = new QrReader($qrbottom);
+		$qrcodebottom = new QrReader($qrbottom, QrReader::SOURCE_TYPE_RESOURCE);
 		$textbottom = $qrcodebottom->text(); //return decoded text from QR Code
 		$imagick->clear();
 //		unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/bottomright".$qrpath);
