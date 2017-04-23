@@ -546,27 +546,21 @@ function paperattendance_get_qr_text($path, $pdf){
 
 	//save the pdf page as a png
 	$myurl = $pdf.'[0]';
-	$image = new Imagick($path.$myurl);
-	$image->setResolution(300,300);
-	$image->setImageFormat( 'png' );
-	//*//
-	$image->writeImage( $path.$pdfname.'.png' );
-	$image->clear();
-
-	//check if there's a qr on the top right corner
 	$imagick = new Imagick();
 	$imagick->setResolution(300,300);
-	//*//
-	$imagick->readImage( $path.$pdfname.'.png' );
+	$imagick->readImage($path.$myurl);
+	$imagick->flattenImages();
+	$imagick->trimImage(2);
+	$imagick->setImageFormat( 'png' );
 	$imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
+	$imagick->normalizeImage($channel  = Imagick::CHANNEL_ALL );
+	$imagick->sharpenimage(0, 1, $channel);
 
 	$height = $imagick->getImageHeight();
 	$width = $imagick->getImageWidth();
 
-	$qrtop = $imagick->getImageRegion($width*0.12, $height*0.096, $width*0.716, $height*0.036);
+	$qrtop = $imagick->getImageRegion($width*0.15, $height*0.125, $width*0.715, $height*0.015);
 	$qrtop->writeImage($path."topright".$qrpath);
-
-	unlink($path.$pdfname.'.png');
 	
 	// QR
 	$qrcodetop = new QrReader($path."topright".$qrpath);
