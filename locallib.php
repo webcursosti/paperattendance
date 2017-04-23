@@ -558,8 +558,9 @@ function paperattendance_get_qr_text($path, $pdf){
 		$imagick->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
 	}
 	$imagick->despeckleImage();
-	
+	$imagick->deskewImage(0.5);
 	$imagick->trimImage(20);
+	$imagick->enhanceImage();
 	$imagick->setImageFormat( 'png' );
 	$imagick->setImageType( Imagick::IMGTYPE_GRAYSCALE );
 	$imagick->normalizeImage($channel  = Imagick::CHANNEL_ALL );
