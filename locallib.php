@@ -544,11 +544,12 @@ function paperattendance_get_qr_text($path, $pdf){
 	$pdfname = $pdfexplode[0];
 	$qrpath = $pdfname.'qr.png';
 
-	//save the pdf page as a png
+	//Cleans up the pdf
 	$myurl = $pdf.'[0]';
 	$imagick = new Imagick();
 	$imagick->setResolution(300,300);
 	$imagick->readImage($path.$myurl);
+	// hay que probar si es mas util hacerle el flatten aqui arriba o abajo de reduceNoiseImage()
 	$imagick->flattenImages();
 	$imagick->despeckleImage();
 	$imagick->reduceNoiseImage(0);
@@ -558,6 +559,9 @@ function paperattendance_get_qr_text($path, $pdf){
 	$imagick->normalizeImage($channel  = Imagick::CHANNEL_ALL );
 	$imagick->sharpenimage(0, 1, $channel);
 
+	//esta es solamente para debuggiar, despues hay que borrarla por que no sirve
+	$imagick->writeImage( $path.$pdfname.'.png' );
+	
 	$height = $imagick->getImageHeight();
 	$width = $imagick->getImageWidth();
 
