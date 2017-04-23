@@ -553,14 +553,15 @@ function paperattendance_get_qr_text($path, $pdf){
 	if(PHP_MAJOR_VERSION < 7){
 		$imagick->flattenImages();
 	}else{
-		$imagick->setImageAlphaChannel(imagick::ALPHACHANNEL_REMOVE);
-		$imagick->mergeImageLayers(imagick::LAYERMETHOD_FLATTEN);
+		$imagick->setImageBackgroundColor('white');
+		$imagick->setImageAlphaChannel(Imagick::ALPHACHANNEL_REMOVE);
+		$imagick->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
 	}
 	$imagick->despeckleImage();
 	$imagick->reduceNoiseImage(0);
 	$imagick->trimImage(20);
 	$imagick->setImageFormat( 'png' );
-	$imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
+	$imagick->setImageType( Imagick::IMGTYPE_GRAYSCALE );
 	$imagick->normalizeImage($channel  = Imagick::CHANNEL_ALL );
 	$imagick->sharpenimage(0, 1, $channel);
 
