@@ -557,14 +557,14 @@ function paperattendance_get_qr_text($path, $pdf){
 		$imagick->setImageAlphaChannel(11);
 		$imagick->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
 	}
-	$imagick->despeckleImage();
+//	$imagick->despeckleImage();
 	$imagick->deskewImage(0.5);
-	$imagick->trimImage(20);
-	$imagick->enhanceImage();
+	$imagick->trimImage(2);
+//	$imagick->enhanceImage();
 	$imagick->setImageFormat( 'png' );
 	$imagick->setImageType( Imagick::IMGTYPE_GRAYSCALE );
-	$imagick->normalizeImage($channel  = Imagick::CHANNEL_ALL );
-	$imagick->sharpenimage(0, 1, $channel);
+//	$imagick->normalizeImage($channel  = Imagick::CHANNEL_ALL );
+//	$imagick->sharpenimage(0, 1, $channel);
 
 	$height = $imagick->getImageHeight();
 	$width = $imagick->getImageWidth();
@@ -573,24 +573,26 @@ function paperattendance_get_qr_text($path, $pdf){
 	$imagick->writeImage( $path.$pdfname.'.png' );
 
 	$qrtop = $imagick->getImageRegion($width*0.15, $height*0.125, $width*0.715, $height*0.015);
-	$qrtop->writeImage($path."topright".$qrpath);
+	$qrtop->trimImage(2);
+//	$qrtop->writeImage($path."topright".$qrpath);
 	
 	// QR
-	$qrcodetop = new QrReader($path."topright".$qrpath);
+	$qrcodetop = new QrReader($qrtop);
 	$texttop = $qrcodetop->text(); //return decoded text from QR Code
-	unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/topright".$qrpath);
+//	unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/topright".$qrpath);
 	
 	if($texttop == "" || $texttop == " " || empty($texttop)){
 
 		//check if there's a qr on the bottom right corner
 		$qrbottom = $imagick->getImageRegion($width*0.14, $height*0.098, $width*0.710, $height*0.866);
-		$qrbottom->writeImage($path."bottomright".$qrpath);
+		$qrbottom->trimImage(2);
+//		$qrbottom->writeImage($path."bottomright".$qrpath);
 		
 		// QR
-		$qrcodebottom = new QrReader($path."bottomright".$qrpath);
+		$qrcodebottom = new QrReader($qrbottom);
 		$textbottom = $qrcodebottom->text(); //return decoded text from QR Code
 		$imagick->clear();
-		unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/bottomright".$qrpath);
+//		unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/bottomright".$qrpath);
 		if($textbottom == "" || $textbottom == " " || empty($textbottom)){
 			return "error";
 		}
