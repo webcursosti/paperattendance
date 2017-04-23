@@ -558,19 +558,23 @@ function paperattendance_get_qr_text($path, $pdf){
 		$imagick->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
 	}
 	$imagick->despeckleImage();
-	$imagick->reduceNoiseImage(0);
+    $imagick->statisticImage(
+        Imagick::STATISTIC_MEDIAN,
+        5,
+        5,
+        Imagick::CHANNEL_DEFAULT
+    );
 	$imagick->trimImage(20);
 	$imagick->setImageFormat( 'png' );
 	$imagick->setImageType( Imagick::IMGTYPE_GRAYSCALE );
 	$imagick->normalizeImage($channel  = Imagick::CHANNEL_ALL );
 	$imagick->sharpenimage(0, 1, $channel);
 
-	//esta es solamente para debuggiar, despues hay que borrarla por que no sirve
-	$imagick->writeImage( $path.$pdfname.'.png' );
-	
 	$height = $imagick->getImageHeight();
 	$width = $imagick->getImageWidth();
-
+	
+	//esta es solamente para debuggiar, despues hay que borrarla por que no sirve
+	$imagick->writeImage( $path.$pdfname.'.png' );
 
 	$qrtop = $imagick->getImageRegion($width*0.15, $height*0.125, $width*0.715, $height*0.015);
 	$qrtop->writeImage($path."topright".$qrpath);
