@@ -1128,9 +1128,11 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 		return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".get_string("couldntreadqrcode", "local_paperattendance"));
 	}
 	//read pdf and rewrite it
-	$pdf = new FPDI();
+	$imagick = new Imagick();
+	$imagick->setResolution(300,300);
+	$imagick->readImage($attendancepdffile);
 	// get the page count
-	$pagecount = $pdf->setSourceFile($attendancepdffile);
+	$pagecount = $imagick->getNumberImages();
 	if($pagecount){
 		$idcourseexplode = explode("*",$qrtext);
 		$idcourse = $idcourseexplode[0];
@@ -1147,25 +1149,10 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 			unlink($attendancepdffile);
 			return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".get_string("missingpages", "local_paperattendance"));
 		}
-		// iterate through all pages
-		for ($pageno = 1; $pageno <= $pagecount; $pageno++) {
-			// import a page
-			$templateid = $pdf->importPage($pageno);
-			// get the size of the imported page
-			$size = $pdf->getTemplateSize($templateid);
-	
-			// create a page (landscape or portrait depending on the imported page size)
-			if ($size['w'] > $size['h']) {
-				$pdf->AddPage('L', array($size['w'], $size['h']));
-			} else {
-				$pdf->AddPage('P', array($size['w'], $size['h']));
-			}
-	
-			// use the imported page
-			$pdf->useTemplate($templateid);
-		}
-		$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
-	
+
+		$imagick->writeImage( $attendancepdffile );
+		$imagick->clear();
+		
 		$fs = get_file_storage();
 	
 		$file_record = array(
