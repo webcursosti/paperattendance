@@ -572,13 +572,14 @@ function paperattendance_get_qr_text($path, $pdf){
 	
 	$recortey = ($height - 2112)/2;
 	$recortex = ($width- 1272)/2;
-	$imagick->writeImage( $path.'originalmihail.png' );
+	$hashtime = time();
+	$imagick->writeImage( $path.'originalmihail'.$hashtime.'.png' );
 	$imagick->getImageRegion(1272, 2112, $recortex, $recortey);
 	
-	$imagick->writeImage( $path.'cropmihail.png' );
+	$imagick->writeImage( $path.'cropmihail'.$hashtime.'.png' );
 	$imagick->trimImage(2);
 	//esta es solamente para debuggiar, despues hay que borrarla por que no sirve
-	$imagick->writeImage( $path.'trimmihail.png' );
+	$imagick->writeImage( $path.'trimmihail'.$hashtime.'.png' );
 	return "error";
 	$qrtop = $imagick->getImageRegion($width*0.15, $height*0.125, $width*0.715, $height*0.015);
 	$qrtop->trimImage(2);
