@@ -548,7 +548,7 @@ function paperattendance_get_qr_text($path, $pdf){
 	//Cleans up the pdf
 	$myurl = $pdf.'[0]';
 	$imagick = new Imagick();
-//	$imagick->setResolution(300,300);
+	$imagick->setResolution(100,100);
 	$imagick->readImage($path.$myurl);
 	// hay que probar si es mas util hacerle el flatten aqui arriba o abajo de reduceNoiseImage()
 	if(PHP_MAJOR_VERSION < 7){
