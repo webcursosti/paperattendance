@@ -574,7 +574,7 @@ function paperattendance_get_qr_text($path, $pdf){
 	$recortex = ($width- 1272)/2;
 	$hashtime = time();
 	$imagick->writeImage( $path.'originalmihail'.$hashtime.'.png' );
-	$crop = $imagick->cropImage(1272, 2112, $recortex, $recortey);
+	$crop = $imagick->getImageRegion(1272, 2112, $recortex, $recortey);
 	
 	$crop->writeImage( $path.'cropmihail'.$hashtime.'.png' );
 	$crop->trimImage(2);
