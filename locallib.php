@@ -573,7 +573,7 @@ function paperattendance_get_qr_text($path, $pdf){
 	$recortey = ($height - 2112)/2;
 	$recortex = ($width- 1272)/2;
 	$imagick->writeImage( $path.'originalmihail.png' );
-	$imagick->cropImage(1272, 2112, $recortex, $recortey);
+	$imagick->getImageRegion(1272, 2112, $recortex, $recortey);
 	
 	$imagick->writeImage( $path.'cropmihail.png' );
 	$imagick->trimImage(2);
