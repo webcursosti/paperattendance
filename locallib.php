@@ -58,6 +58,7 @@ function paperattendance_get_students_for_printing($course) {
 			u.idnumber, 
 			u.firstname, 
 			u.lastname, 
+			u.email,
 			GROUP_CONCAT(e.enrol) AS enrol
 			FROM {user_enrolments} ue
 			INNER JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = ?)
@@ -82,8 +83,8 @@ function paperattendance_students_list($contextid, $course){
 	global $CFG;
 	//TODO: Add enrolments for omega, Remember change "manual".
 	$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
-	$filedir = $CFG->dataroot . "/temp/emarking/$contextid";
-	$userimgdir = $filedir . "/u";
+//	$filedir = $CFG->dataroot . "/temp/emarking/$contextid";
+//	$userimgdir = $filedir . "/u";
 	$students = paperattendance_get_students_for_printing($course);
 	
 	$studentinfo = array();
