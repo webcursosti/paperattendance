@@ -560,7 +560,7 @@ function paperattendance_get_qr_text($path, $pdf){
 	}
 //	$imagick->despeckleImage();
 	$imagick->deskewImage(0.5);
-	$imagick->trimImage(2);
+//	$imagick->trimImage(2);
 //	$imagick->enhanceImage();
 	$imagick->setImageFormat( 'png' );
 	$imagick->setImageType( Imagick::IMGTYPE_GRAYSCALE );
@@ -574,7 +574,7 @@ function paperattendance_get_qr_text($path, $pdf){
 	$recortex = ($width- 1272)/2;
 	
 	$imagick->cropImage(1272, 2112, $recortex, $recortey);
-	
+	$imagick->trimImage(2);
 	//esta es solamente para debuggiar, despues hay que borrarla por que no sirve
 	$imagick->writeImage( $path.'mihail.png' );
 	return "error";
