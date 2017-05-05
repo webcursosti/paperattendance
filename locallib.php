@@ -332,7 +332,7 @@ function paperattendance_drawcircles($pdf){
 	$top = 10;
 	$left = 10;
 	$width = $w - 20;
-	$height = $h - 65;
+	$height = $h - 20;
 	
 	$style = array(
 			'width' => 0.25,
