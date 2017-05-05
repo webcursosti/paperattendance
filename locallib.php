@@ -1223,7 +1223,6 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 		$students = paperattendance_students_list($coursecontext->id, $course);
 		
 		$count = count($students);
-		$students->close();
 		$pages = ceil($count/26);
 		if ($pages != $pagecount){
 			unlink($attendancepdffile);
