@@ -46,6 +46,7 @@ $contextsystem = context_system::instance();
 
 //for navbar
 $course = $DB->get_record("course",array("id" => $courseid));
+$categorycontext = context_coursecat::instance($course->category);
 $nodata = false;
 
 require_login();
@@ -58,7 +59,7 @@ $isteacher = paperattendance_getteacherfromcourse($courseid, $USER->id);
 
 $isstudent = paperattendance_getstudentfromcourse($courseid, $USER->id);
 
-if( $isteacher || is_siteadmin($USER)) {
+if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:printsecre', $categorycontext)) {
 	//breadcrumb for navigation
 	$PAGE->navbar->ignore_active();
 	$PAGE->navbar->add(get_string('courses', 'local_paperattendance'), new moodle_url('/course/index.php'));

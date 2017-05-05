@@ -49,12 +49,12 @@ $PAGE->set_pagelayout("standard");
 
 $contextsystem = context_system::instance();
 
-
 //Page
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = 26;
 //for navbar
 $course = $DB->get_record("course",array("id" => $courseid));
+$categorycontext = context_coursecat::instance($course->category);
 
 require_login();
 if (isguestuser()){
@@ -66,7 +66,7 @@ $isteacher = paperattendance_getteacherfromcourse($courseid, $USER->id);
 
 $isstudent = paperattendance_getstudentfromcourse($courseid, $USER->id);
 
-if( $isteacher || is_siteadmin($USER)) {
+if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:printsecre', $categorycontext)) {
 	
 	//breadcrumb for navigation
 	$PAGE->navbar->ignore_active();
@@ -249,6 +249,35 @@ if( $isteacher || is_siteadmin($USER)) {
 					$record->status = $data->status;
 						
 					$DB->update_record("paperattendance_presence", $record);
+					
+					$modifieduserid = $attendance -> userid;
+					$omegaid = $attendance -> omegaid;
+					
+					$curl = curl_init();
+					
+					$url =  $CFG->paperattendance_omegaupdateattendanceurl;
+					$token =  $CFG->paperattendance_omegatoken;
+
+					if($data->status == 1){
+						$status = "true";
+					}
+					else{
+						$status = "false";
+					}
+					
+					$fields = array (
+							"token" => $token,
+							"asistenciaId" => $omegaid,
+							"asistencia" => $status
+					);
+					
+					curl_setopt($curl, CURLOPT_URL, $url);
+					curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+					curl_setopt($curl, CURLOPT_POST, TRUE);
+					curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($fields));
+					curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+					$result = curl_exec ($curl);
+					curl_close ($curl);
 					
 					$backurl = new moodle_url("/local/paperattendance/history.php", array(
 							"action" => "studentsattendance",

@@ -58,6 +58,7 @@ function paperattendance_get_students_for_printing($course) {
 			u.idnumber, 
 			u.firstname, 
 			u.lastname, 
+			u.email,
 			GROUP_CONCAT(e.enrol) AS enrol
 			FROM {user_enrolments} ue
 			INNER JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = ?)
@@ -82,8 +83,8 @@ function paperattendance_students_list($contextid, $course){
 	global $CFG;
 	//TODO: Add enrolments for omega, Remember change "manual".
 	$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
-	$filedir = $CFG->dataroot . "/temp/emarking/$contextid";
-	$userimgdir = $filedir . "/u";
+//	$filedir = $CFG->dataroot . "/temp/emarking/$contextid";
+//	$userimgdir = $filedir . "/u";
 	$students = paperattendance_get_students_for_printing($course);
 	
 	$studentinfo = array();
@@ -217,6 +218,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$top += 8;
 	
 	$circlepath = $CFG->dirroot . '/local/paperattendance/img/circle.png';
+	paperattendance_drawcircles($pdf);
 	
 	// Write each student.
 	$current = 1;
@@ -252,6 +254,8 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 		
 		if($current%26 == 0 && $current != 0 && count($studentinfo) > $current){
 			$pdf->AddPage();
+			paperattendance_drawcircles($pdf);
+			
 			$top = 35;
 			$modulecount++;
 			
@@ -320,6 +324,73 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->line(20, $top, (20+8+25+20+90+20), $top);
 }
 
+function paperattendance_drawcircles($pdf){
+	
+	$w = $pdf -> GetPageWidth();
+	$h = $pdf -> GetPageHeight();
+	
+	$top = 10;
+	$left = 10;
+	$width = $w - 20;
+	$height = $h - 20;
+	
+	$style = array(
+			'width' => 0.25,
+			'cap' => 'butt',
+			'join' => 'miter',
+			'dash' => 0,
+			'color' => array(
+					0,
+					0,
+					0
+			)
+	);
+	
+	$pdf->Circle($left, $top, 9, 0, 360, 'F', $style, array(
+			0,
+			0,
+			0
+	));
+	$pdf->Circle($left, $top, 4, 0, 360, 'F', $style, array(
+			255,
+			255,
+			255
+	));
+	
+	$pdf->Circle($left + $width, $top, 9, 0, 360, 'F', $style, array(
+			0,
+			0,
+			0
+	));
+	$pdf->Circle($left + $width, $top, 4, 0, 360, 'F', $style, array(
+			255,
+			255,
+			255
+	));
+	
+	$pdf->Circle($left, $top + $height, 9, 0, 360, 'F', $style, array(
+			0,
+			0,
+			0
+	));
+	$pdf->Circle($left, $top + $height, 4, 0, 360, 'F', $style, array(
+			255,
+			255,
+			255
+	));
+	
+	$pdf->Circle($left + $width, $top + $height, 9, 0, 360, 'F', $style, array(
+			0,
+			0,
+			0
+	));
+	$pdf->Circle($left + $width, $top + $height, 4, 0, 360, 'F', $style, array(
+			255,
+			255,
+			255
+	));
+}
+
 function paperattendance_readpdf($path, $filename, $course){
 	global $DB, $CFG;
 	
@@ -371,9 +442,9 @@ function paperattendance_readpdf($path, $filename, $course){
 		if($numberpage == 0){
 			$attendancecircle = $pdfpages[$numberpage]->getImageRegion(
 					$width * 0.028,
-					$height * 0.018,
-					$width * 0.7556,
-					$height * (0.179 + 0.02640 * $factor)
+					$height * 0.019,
+					$width * 0.773,
+					$height * (0.182 + 0.02640 * $factor)
 			);
 			//$attendancecircle->writeImage($debugpath.'student_'.$countstudent.' * '.$student->name.'.png');
 			//echo "<br> Pagina 1: $numberpage estudiante $countstudent ".$student->name;
@@ -381,9 +452,9 @@ function paperattendance_readpdf($path, $filename, $course){
 		}else{
 			$attendancecircle = $pdfpages[$numberpage]->getImageRegion(
 					$width * 0.028,
-					$height * 0.018,
-					$width * 0.7556,
-					$height * (0.16 + 0.02640 * $factor)
+					$height * 0.0195,
+					$width * 0.771,
+					$height * (0.160 + 0.02640 * $factor)
 			);
 			//$attendancecircle->writeImage($debugpath.'student_'.$countstudent.' * '.$student->name.'.png');	
 			//echo "<br> Pagina 2: $numberpage estudiante $countstudent ".$student->name;
@@ -544,46 +615,63 @@ function paperattendance_get_qr_text($path, $pdf){
 	$pdfname = $pdfexplode[0];
 	$qrpath = $pdfname.'qr.png';
 
-	//save the pdf page as a png
+	//Cleans up the pdf
 	$myurl = $pdf.'[0]';
-	$image = new Imagick($path.$myurl);
-	$image->setResolution(300,300);
-	$image->setImageFormat( 'png' );
-	//*//
-	$image->writeImage( $path.$pdfname.'.png' );
-	$image->clear();
-
-	//check if there's a qr on the top right corner
 	$imagick = new Imagick();
-	$imagick->setResolution(300,300);
-	//*//
-	$imagick->readImage( $path.$pdfname.'.png' );
-	$imagick->setImageType( imagick::IMGTYPE_GRAYSCALE );
+	$imagick->setResolution(100,100);
+	$imagick->readImage($path.$myurl);
+	// hay que probar si es mas util hacerle el flatten aqui arriba o abajo de reduceNoiseImage()
+	/*if(PHP_MAJOR_VERSION < 7){
+		$imagick->flattenImages();
+	}else{
+		$imagick->setImageBackgroundColor('white');
+		$imagick->setImageAlphaChannel(11);
+		$imagick->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
+	}*/
+//	$imagick->despeckleImage();
+	//$imagick->deskewImage(0.5);
+//	$imagick->trimImage(2);
+//	$imagick->enhanceImage();
+	$imagick->setImageFormat( 'png' );
+	$imagick->setImageType( Imagick::IMGTYPE_GRAYSCALE );
+//	$imagick->normalizeImage($channel  = Imagick::CHANNEL_ALL );
+//	$imagick->sharpenimage(0, 1, $channel);
 
 	$height = $imagick->getImageHeight();
 	$width = $imagick->getImageWidth();
-
-	$qrtop = $imagick->getImageRegion($width*0.12, $height*0.096, $width*0.716, $height*0.036);
+	
+	//$recortey = ($height - 2112)/2;
+	//$recortex = ($width- 1272)/2;
+	//$hashtime = time();
+	//$imagick->writeImage( $path.'originalmihail'.$hashtime.'.png' );
+	//$crop = $imagick->getImageRegion(1272, 2112, $recortex, $recortey);
+	
+	//$crop->writeImage( $path.'cropmihail'.$hashtime.'.png' );
+	//$crop->trimImage(2);
+	//esta es solamente para debuggiar, despues hay que borrarla por que no sirve
+	//$crop->writeImage( $path.'trimmihail'.$hashtime.'.png' );
+	//return "error";
+	$qrtop = $imagick->getImageRegion(300, 300, $width*0.6, 0);
+	//$qrtop->trimImage(2);
 	$qrtop->writeImage($path."topright".$qrpath);
-
-	unlink($path.$pdfname.'.png');
 	
 	// QR
-	$qrcodetop = new QrReader($path."topright".$qrpath);
+	$qrcodetop = new QrReader($qrtop, QrReader::SOURCE_TYPE_RESOURCE);
 	$texttop = $qrcodetop->text(); //return decoded text from QR Code
-	unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/topright".$qrpath);
+//	unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/topright".$qrpath);
 	
 	if($texttop == "" || $texttop == " " || empty($texttop)){
 
 		//check if there's a qr on the bottom right corner
 		$qrbottom = $imagick->getImageRegion($width*0.14, $height*0.098, $width*0.710, $height*0.866);
-		$qrbottom->writeImage($path."bottomright".$qrpath);
+		$qrbottom->trimImage(2);
+//		$qrbottom->writeImage($path."bottomright".$qrpath);
 		
 		// QR
-		$qrcodebottom = new QrReader($path."bottomright".$qrpath);
+		$qrcodebottom = new QrReader($qrbottom, QrReader::SOURCE_TYPE_RESOURCE);
 		$textbottom = $qrcodebottom->text(); //return decoded text from QR Code
 		$imagick->clear();
-		unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/bottomright".$qrpath);
+//		unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/bottomright".$qrpath);
 		if($textbottom == "" || $textbottom == " " || empty($textbottom)){
 			return "error";
 		}
@@ -1121,9 +1209,11 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 		return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".get_string("couldntreadqrcode", "local_paperattendance"));
 	}
 	//read pdf and rewrite it
-	$pdf = new FPDI();
+	$imagick = new Imagick();
+	$imagick->setResolution(300,300);
+	$imagick->readImage($attendancepdffile);
 	// get the page count
-	$pagecount = $pdf->setSourceFile($attendancepdffile);
+	$pagecount = $imagick->getNumberImages();
 	if($pagecount){
 		$idcourseexplode = explode("*",$qrtext);
 		$idcourse = $idcourseexplode[0];
@@ -1140,25 +1230,10 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 			unlink($attendancepdffile);
 			return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".get_string("missingpages", "local_paperattendance"));
 		}
-		// iterate through all pages
-		for ($pageno = 1; $pageno <= $pagecount; $pageno++) {
-			// import a page
-			$templateid = $pdf->importPage($pageno);
-			// get the size of the imported page
-			$size = $pdf->getTemplateSize($templateid);
-	
-			// create a page (landscape or portrait depending on the imported page size)
-			if ($size['w'] > $size['h']) {
-				$pdf->AddPage('L', array($size['w'], $size['h']));
-			} else {
-				$pdf->AddPage('P', array($size['w'], $size['h']));
-			}
-	
-			// use the imported page
-			$pdf->useTemplate($templateid);
-		}
-		$pdf->Output($attendancepdffile, "F"); // Se genera el nuevo pdf.
-	
+
+		$imagick->writeImage( $attendancepdffile );
+		$imagick->clear();
+		
 		$fs = get_file_storage();
 	
 		$file_record = array(

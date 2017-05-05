@@ -83,12 +83,7 @@ switch ($action) {
 		echo  json_encode($result);
 		break;	
 	case 'getcourses' :
-		if($courseid > 1){
-			if($course = $DB->get_record("course", array("id" => $courseid))){
-				$context = context_coursecat::instance($course->category);
-				$path = $course->category;
-			}
-		}else if($category > 1){
+		if($category > 1){
 			$context = context_coursecat::instance($category);
 			$path = $category;
 		}else{
@@ -99,9 +94,10 @@ switch ($action) {
 		if (! has_capability('local/paperattendance:printsearch', $context) && ! has_capability('local/paperattendance:printsearch', $contextsystem)) {
 			print_error(get_string('notallowedprint', 'local_paperattendance'));
 		}
-		
-		$filter = array("%/".$path."%", "%".$data."%", $data."%");
-		$sqlcourses = "SELECT c.id,
+		if(is_siteadmin()){
+			$year = strtotime("1 January".(date('Y')));
+			$filter = array($year, "%".$data."%", $data."%");
+			$sqlcourses = "SELECT c.id,
 			c.fullname,
 			cat.name,
 			CONCAT( u.firstname, ' ', u.lastname) as teacher
@@ -111,10 +107,25 @@ switch ($action) {
 			INNER JOIN {course} c ON (c.id = ct.instanceid)
 			INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
 			INNER JOIN {course_categories} as cat ON (cat.id = c.category)
-			WHERE (cat.path like ? AND c.idnumber > 0 ) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?) 
+			WHERE (c.timecreated > ? AND c.idnumber > 0 ) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?)
 			GROUP BY c.id
 			ORDER BY c.fullname";
-		
+		}else{
+			$filter = array("%/".$path."%", "%".$data."%", $data."%");
+			$sqlcourses = "SELECT c.id,
+				c.fullname,
+				cat.name,
+				CONCAT( u.firstname, ' ', u.lastname) as teacher
+				FROM {user} AS u
+				INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+				INNER JOIN {context} ct ON (ct.id = ra.contextid)
+				INNER JOIN {course} c ON (c.id = ct.instanceid)
+				INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
+				INNER JOIN {course_categories} as cat ON (cat.id = c.category)
+				WHERE (cat.path like ? AND c.idnumber > 0 ) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?) 
+				GROUP BY c.id
+				ORDER BY c.fullname";
+		}
 		$courses = $DB->get_records_sql($sqlcourses, $filter);
 		
 		echo json_encode($courses);

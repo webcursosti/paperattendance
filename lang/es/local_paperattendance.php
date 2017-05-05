@@ -152,6 +152,8 @@ $string['course']="Curso";
 $string['teacher']="Profesor";
 $string['category']="Categoría";
 $string['searchprinthelp'] = "Escriba al menos 3 caracteres para buscar por curso o profesor en el cuadro de abajo";
+$string['notallowedsearch'] ="No tiene permitido buscar cursos para imprimir";
+$string['categorynamechange'] = "Error: El nombre de la categoría pudo haber cambiado, por favor contactarse con un programador";
 
 //messages
 $string['dear'] = "Estimado Profesor";
