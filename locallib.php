@@ -329,10 +329,10 @@ function paperattendance_drawcircles($pdf){
 	$w = $pdf -> GetPageWidth();
 	$h = $pdf -> GetPageHeight();
 	
-	$top = 50;
+	$top = 10;
 	$left = 10;
 	$width = $w - 20;
-	$height = $h - 20;
+	$height = $h - 65;
 	
 	$style = array(
 			'width' => 0.25,
