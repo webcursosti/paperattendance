@@ -218,6 +218,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$top += 8;
 	
 	$circlepath = $CFG->dirroot . '/local/paperattendance/img/circle.png';
+	paperattendance_drawcircles($pdf);
 	
 	// Write each student.
 	$current = 1;
@@ -253,6 +254,8 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 		
 		if($current%26 == 0 && $current != 0 && count($studentinfo) > $current){
 			$pdf->AddPage();
+			paperattendance_drawcircles($pdf);
+			
 			$top = 35;
 			$modulecount++;
 			
@@ -319,6 +322,73 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 		$current++;
 	}
 	$pdf->line(20, $top, (20+8+25+20+90+20), $top);
+}
+
+function paperattendance_drawcircles($pdf){
+	
+	$w = $pdf -> GetPageWidth();
+	$h = $pdf -> GetPageHeight();
+	
+	$top = 50;
+	$left = 10;
+	$width = $w - 20;
+	$height = $h - 65;
+	
+	$style = array(
+			'width' => 0.25,
+			'cap' => 'butt',
+			'join' => 'miter',
+			'dash' => 0,
+			'color' => array(
+					0,
+					0,
+					0
+			)
+	);
+	
+	$pdf->Circle($left, $top, 9, 0, 360, 'F', $style, array(
+			0,
+			0,
+			0
+	));
+	$pdf->Circle($left, $top, 4, 0, 360, 'F', $style, array(
+			255,
+			255,
+			255
+	));
+	
+	$pdf->Circle($left + $width, $top, 9, 0, 360, 'F', $style, array(
+			0,
+			0,
+			0
+	));
+	$pdf->Circle($left + $width, $top, 4, 0, 360, 'F', $style, array(
+			255,
+			255,
+			255
+	));
+	
+	$pdf->Circle($left, $top + $height, 9, 0, 360, 'F', $style, array(
+			0,
+			0,
+			0
+	));
+	$pdf->Circle($left, $top + $height, 4, 0, 360, 'F', $style, array(
+			255,
+			255,
+			255
+	));
+	
+	$pdf->Circle($left + $width, $top + $height, 9, 0, 360, 'F', $style, array(
+			0,
+			0,
+			0
+	));
+	$pdf->Circle($left + $width, $top + $height, 4, 0, 360, 'F', $style, array(
+			255,
+			255,
+			255
+	));
 }
 
 function paperattendance_readpdf($path, $filename, $course){
