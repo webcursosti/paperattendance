@@ -418,7 +418,8 @@ function paperattendance_readpdf($path, $filename, $course){
 		if(PHP_MAJOR_VERSION < 7){
 			$page = $page->flattenImages(); 
 		}else{
-			$page->setImageAlphaChannel(imagick::ALPHACHANNEL_REMOVE);
+			$page->setImageBackgroundColor('white');
+			$page->setImageAlphaChannel(11);
 			$page->mergeImageLayers(imagick::LAYERMETHOD_FLATTEN);
 		}
 		$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
