@@ -621,15 +621,15 @@ function paperattendance_get_qr_text($path, $pdf){
 	$imagick->setResolution(100,100);
 	$imagick->readImage($path.$myurl);
 	// hay que probar si es mas util hacerle el flatten aqui arriba o abajo de reduceNoiseImage()
-	if(PHP_MAJOR_VERSION < 7){
+	/*if(PHP_MAJOR_VERSION < 7){
 		$imagick->flattenImages();
 	}else{
 		$imagick->setImageBackgroundColor('white');
 		$imagick->setImageAlphaChannel(11);
 		$imagick->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
-	}
+	}*/
 //	$imagick->despeckleImage();
-	$imagick->deskewImage(0.5);
+	//$imagick->deskewImage(0.5);
 //	$imagick->trimImage(2);
 //	$imagick->enhanceImage();
 	$imagick->setImageFormat( 'png' );
@@ -640,20 +640,20 @@ function paperattendance_get_qr_text($path, $pdf){
 	$height = $imagick->getImageHeight();
 	$width = $imagick->getImageWidth();
 	
-	$recortey = ($height - 2112)/2;
-	$recortex = ($width- 1272)/2;
-	$hashtime = time();
-	$imagick->writeImage( $path.'originalmihail'.$hashtime.'.png' );
-	$crop = $imagick->getImageRegion(1272, 2112, $recortex, $recortey);
+	//$recortey = ($height - 2112)/2;
+	//$recortex = ($width- 1272)/2;
+	//$hashtime = time();
+	//$imagick->writeImage( $path.'originalmihail'.$hashtime.'.png' );
+	//$crop = $imagick->getImageRegion(1272, 2112, $recortex, $recortey);
 	
-	$crop->writeImage( $path.'cropmihail'.$hashtime.'.png' );
-	$crop->trimImage(2);
+	//$crop->writeImage( $path.'cropmihail'.$hashtime.'.png' );
+	//$crop->trimImage(2);
 	//esta es solamente para debuggiar, despues hay que borrarla por que no sirve
-	$crop->writeImage( $path.'trimmihail'.$hashtime.'.png' );
-	return "error";
-	$qrtop = $imagick->getImageRegion($width*0.15, $height*0.125, $width*0.715, $height*0.015);
-	$qrtop->trimImage(2);
-//	$qrtop->writeImage($path."topright".$qrpath);
+	//$crop->writeImage( $path.'trimmihail'.$hashtime.'.png' );
+	//return "error";
+	$qrtop = $imagick->getImageRegion(300, 300, $width*0.6, 0);
+	//$qrtop->trimImage(2);
+	$qrtop->writeImage($path."topright".$qrpath);
 	
 	// QR
 	$qrcodetop = new QrReader($qrtop, QrReader::SOURCE_TYPE_RESOURCE);
