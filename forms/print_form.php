@@ -32,17 +32,20 @@ class paperattendance_print_form extends moodleform {
 		$instance = $this->_customdata;		
 		$courseid = $instance["courseid"];
 		
-		$teachersquery = "SELECT u.id, 
-				CONCAT (u.firstname, ' ', u.lastname) AS name,
-				GROUP_CONCAT(e.enrol) AS enrol 
-				FROM {user_enrolments} ue
-				INNER JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = ?)
-				INNER JOIN {context} c ON (c.contextlevel = 50 AND c.instanceid = e.courseid)
-				INNER JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.roleid = ? AND ra.userid = ue.userid)
-				INNER JOIN {user} u ON (ue.userid = u.id)
-				ORDER BY u.lastname";
+		$teachersquery= "SELECT u.id, 
+		CONCAT( u.firstname, ' ', u.lastname) as name,
+		GROUP_CONCAT(e.enrol) AS enrol
+		FROM {user} AS u
+		INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+		INNER JOIN {context} ct ON (ct.id = ra.contextid)
+		INNER JOIN {course} c ON (c.id = ct.instanceid AND c.id = ?)
+		INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
+		INNER JOIN {course_categories} as cat ON (cat.id = c.category)
+		INNER JOIN {user_enrolments} ue on (ue.userid = u.id)
+		INNER JOIN {enrol} e ON (e.id = ue.enrolid)
+		ORDER BY u.lastname";
 		
-		$teachers = $DB->get_records_sql($teachersquery, array($courseid,'3'));
+		$teachers = $DB->get_records_sql($teachersquery, array($courseid));
 		
 		$arrayteachers = array();
 		$arrayteachers["no"] = get_string('selectteacher', 'local_paperattendance');
