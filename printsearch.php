@@ -225,7 +225,7 @@ jQuery('#exampleModal').modal({
 	$( document ).on( "click", ".listcart", function() {
 		$(this).removeClass('icon-plus').addClass('icon-ok');
 		var courseid = $(this).attr('courseid');
-		jQuery.noConflict(); 
+
 		$('.quickprintappend').html('<center><img src="img/loading.gif"></center>');
 
 		$.ajax({
