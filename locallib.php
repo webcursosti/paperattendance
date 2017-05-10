@@ -1455,13 +1455,19 @@ function paperattendance_runcsvproccessing($path, $filename){
 	else { throw new Exception('Error on formScanner command'); }
 	
 	//TODO: esto deberia ser sacar el csv recien creado, pero asi por mientras
-		foreach(glob("{$path}/*.csv") as $file)
-		{
-			$qrinfo = paperattendance_read_csv($file, $path, $file->get_filename(), $filename);
-			
-		}
+	foreach(glob("{$path}/*.csv") as $file)
+	{
+		$qrinfo = paperattendance_read_csv($file, $path, $file->get_filename(), $filename);
 		
-		return $qrinfo;
+	}
+	
+	//delete all jpgs
+	foreach(glob("{$path}/*.jpg") as $file)
+	{
+		unlink($file);	
+	}
+	
+	return $qrinfo;
 }
 
 function paperattendance_savepdf($file, $path, $filename, $context, $contextsystem){
