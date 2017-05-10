@@ -32,15 +32,15 @@ class paperattendance_print_form extends moodleform {
 		$instance = $this->_customdata;		
 		$courseid = $instance["courseid"];
 		
-		$teachersquery = "SELECT u.id,
-						 CONCAT(u.firstname, ' ', u.lastname) AS name,
-						 e.enrol AS enrol
-						 FROM {course} c 
-						 LEFT JOIN {context} cx ON (c.id = cx.instanceid AND c.id = ? AND cx.contextlevel = '50') 
-						 LEFT JOIN {role_assignments} ra ON (cx.id = ra.contextid AND ra.roleid = '3') 
-						 LEFT JOIN {user} u ON (ra.userid = u.id) 
-						 LEFT JOIN {user_enrolments} ue on (ue.userid = u.id)
-						 LEFT JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'database') ";
+		$teachersquery = "SELECT u.id, c.id, CONCAT(u.firstname, ' ', u.lastname) AS name
+							FROM {user} u
+							INNER JOIN {user_enrolments} ue ON (ue.userid = u.id)
+							INNER JOIN {enrol} e ON (e.id = ue.enrolid)
+							INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+							INNER JOIN {context} ct ON (ct.id = ra.contextid)
+							INNER JOIN {course} c ON (c.id = ct.instanceid AND e.courseid = c.id)
+							INNER JOIN {role} r ON (r.id = ra.roleid)
+							WHERE r.id = 3 AND c.id = ? AND e.enrol = 'database'";
 		
 		$teachers = $DB->get_records_sql($teachersquery, array($courseid));
 		
