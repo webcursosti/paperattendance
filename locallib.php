@@ -1478,7 +1478,7 @@ function paperattendance_read_csv($path, $csvname){
 				$arrayalumnos = array();
 				$init = ($page-1)*26+1;
 				$end = $page*26;
-				$count = 1; //start at one because $data[0] is the filename
+				$count = 0; //start at one because $data[0] is the filename
 				foreach ($studentlist as $student){
 					if($count>=$init && $count<=$end){
 						$line = array();
