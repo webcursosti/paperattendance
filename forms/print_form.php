@@ -32,7 +32,10 @@ class paperattendance_print_form extends moodleform {
 		$instance = $this->_customdata;		
 		$courseid = $instance["courseid"];
 		
-		$teachersquery = "SELECT u.id, c.id, CONCAT(u.firstname, ' ', u.lastname) AS name
+		$teachersquery = "SELECT u.id, 
+							c.id,
+							e.enrol,
+							CONCAT(u.firstname, ' ', u.lastname) AS name
 							FROM {user} u
 							INNER JOIN {user_enrolments} ue ON (ue.userid = u.id)
 							INNER JOIN {enrol} e ON (e.id = ue.enrolid)
