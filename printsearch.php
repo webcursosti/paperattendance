@@ -164,7 +164,7 @@ if ($ncourses>0){
 }
 
 
-$modal = '<div class="modal fade bs-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: none;"">
+$modal = '<div class="modal fade bs-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: none;">
 			  <div class="modal-dialog modal-lg" role="document">
 			    	<div class="modal-content">
 			    		<div class="modal-header">
