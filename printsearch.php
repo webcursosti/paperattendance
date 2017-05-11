@@ -192,6 +192,9 @@ jQuery('#exampleModal').modal({
 	  keyboard: true,
 	  show: false
 })
+$( document ).ready(function() {
+    $('#filter').focus();
+});
 </script>
 <script type="text/javascript">
 	var filter = $('#filter');
