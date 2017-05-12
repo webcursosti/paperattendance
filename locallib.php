@@ -174,20 +174,19 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->SetXY($left, $top);
 	$pdf->Write(1, core_text::strtoupper(get_string('course') . ': ' . $coursetrimmedtext));
 	
-	$teachersquery = "SELECT u.id,
-							c.id,
-							e.enrol,
-							CONCAT(u.firstname, ' ', u.lastname) AS name
-							FROM {user} u
-							INNER JOIN {user_enrolments} ue ON (ue.userid = u.id)
-							INNER JOIN {enrol} e ON (e.id = ue.enrolid)
-							INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
-							INNER JOIN {context} ct ON (ct.id = ra.contextid)
-							INNER JOIN {course} c ON (c.id = ct.instanceid AND e.courseid = c.id)
-							INNER JOIN {role} r ON (r.id = ra.roleid)
-							WHERE r.id = 3 AND c.id = ? AND e.enrol = 'database'
-							GROUP BY u.id";
-	
+	$teachersquery = "SELECT u.id, 
+					e.enrol,
+					CONCAT(u.firstname, ' ', u.lastname) AS name
+					FROM {user} u
+					INNER JOIN {user_enrolments} ue ON (ue.userid = u.id)
+					INNER JOIN {enrol} e ON (e.id = ue.enrolid)
+					INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+					INNER JOIN {context} ct ON (ct.id = ra.contextid)
+					INNER JOIN {course} c ON (c.id = ct.instanceid AND e.courseid = c.id)
+					INNER JOIN {role} r ON (r.id = ra.roleid)
+					WHERE ct.contextlevel = '50' AND r.id = 3 AND c.id = ? AND e.enrol = 'database'
+					GROUP BY u.id";
+
 	$teachers = $DB->get_records_sql($teachersquery, array($course->id));
 	
 	$teachersnames = array();
