@@ -44,7 +44,7 @@ class paperattendance_print_form extends moodleform {
 							INNER JOIN {course} c ON (c.id = ct.instanceid AND e.courseid = c.id)
 							INNER JOIN {role} r ON (r.id = ra.roleid)
 							WHERE r.id = 3 AND c.id = ? AND e.enrol = 'database'
-							GRUOP BY u.id";
+							GROUP BY u.id";
 		
 		$teachers = $DB->get_records_sql($teachersquery, array($courseid));
 		
