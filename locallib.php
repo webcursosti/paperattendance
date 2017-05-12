@@ -123,8 +123,8 @@ function paperattendance_students_list($contextid, $course){
  * @param unknown $studentinfo
  *            the student info including name and idnumber
  */
-function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $qrstring, $webcursospath, $sessiondate,$description) {
-	global $CFG;
+function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $qrstring, $webcursospath, $sessiondate, $description) {
+	global $DB, $CFG;
 	$modulecount = 1;
 	// Pages should be added automatically while the list grows.
 	$pdf->SetAutoPageBreak(false);
@@ -174,10 +174,25 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->SetXY($left, $top);
 	$pdf->Write(1, core_text::strtoupper(get_string('course') . ': ' . $coursetrimmedtext));
 	
-	$teachers = get_enrolled_users(context_course::instance($course->id), 'mod/emarking:supervisegrading');
+	$teachersquery = "SELECT u.id,
+							c.id,
+							e.enrol,
+							CONCAT(u.firstname, ' ', u.lastname) AS name
+							FROM {user} u
+							INNER JOIN {user_enrolments} ue ON (ue.userid = u.id)
+							INNER JOIN {enrol} e ON (e.id = ue.enrolid)
+							INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+							INNER JOIN {context} ct ON (ct.id = ra.contextid)
+							INNER JOIN {course} c ON (c.id = ct.instanceid AND e.courseid = c.id)
+							INNER JOIN {role} r ON (r.id = ra.roleid)
+							WHERE r.id IN (3,4) AND c.id = ? AND e.enrol = 'database'
+							GRUOP BY u.id";
+	
+	$teachers = $DB->get_records_sql($teachersquery, array($course->id));
+	
 	$teachersnames = array();
 	foreach($teachers as $teacher) {
-		$teachersnames[] = $teacher->firstname . ' ' . $teacher->lastname;
+		$teachersnames[] = $teacher->name;
 	}
 	$teacherstring = implode(',', $teachersnames);
 	$schedule = explode("*", $modules);
