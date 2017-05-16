@@ -3,14 +3,14 @@
     <crop bottom="0" left="0" right="0" top="0"/>
     <rotation angle="0.0"/>
     <corners type="ROUND">
+        <corner position="TOP_LEFT">
+            <point x="117.0" y="117.0"/>
+        </corner>
         <corner position="BOTTOM_RIGHT">
             <point x="2361.0" y="3389.0"/>
         </corner>
         <corner position="TOP_RIGHT">
             <point x="2361.0" y="117.0"/>
-        </corner>
-        <corner position="TOP_LEFT">
-            <point x="117.0" y="117.0"/>
         </corner>
         <corner position="BOTTOM_LEFT">
             <point x="117.0" y="3389.0"/>
@@ -20,14 +20,14 @@
         <group name="QR">
             <area name="Barcode/QRCode001" type="BARCODE">
                 <corners>
+                    <corner position="TOP_LEFT">
+                        <point x="1854.0" y="106.0"/>
+                    </corner>
                     <corner position="BOTTOM_RIGHT">
                         <point x="2180.0" y="432.0"/>
                     </corner>
                     <corner position="TOP_RIGHT">
                         <point x="2180.0" y="106.0"/>
-                    </corner>
-                    <corner position="TOP_LEFT">
-                        <point x="1854.0" y="106.0"/>
                     </corner>
                     <corner position="BOTTOM_LEFT">
                         <point x="1854.0" y="432.0"/>
