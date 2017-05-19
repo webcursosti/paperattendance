@@ -80,19 +80,22 @@ else{
 	}
 	
 	$path = $categoryid;
-	$sqlcourses =   "SELECT c.id,
+	
+	$sqlcourses= "SELECT c.id,
 		c.fullname,
 		cat.name,
 		CONCAT( u.firstname, ' ', u.lastname) as teacher
-		FROM {user} AS u
+		FROM {user} u
+		INNER JOIN {user_enrolments} ue ON (ue.userid = u.id)
+		INNER JOIN {enrol} e ON (e.id = ue.enrolid)
 		INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
 		INNER JOIN {context} ct ON (ct.id = ra.contextid)
-		INNER JOIN {course} c ON (c.id = ct.instanceid)
-		INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
+		INNER JOIN {course} c ON (c.id = ct.instanceid AND e.courseid = c.id)
 		INNER JOIN {course_categories} as cat ON (cat.id = c.category)
-		WHERE cat.path like ? AND c.idnumber > 0
-		GROUP BY c.id
-		ORDER BY c.fullname";
+		INNER JOIN {role} r ON (r.id = ra.roleid)
+		WHERE ct.contextlevel = '50' AND r.id = 3 AND e.enrol = 'database'
+		AND cat.path like ? AND c.idnumber > 0
+		GROUP BY u.id";
 	
 	$ncourses = count($DB->get_records_sql($sqlcourses, array("%/".$path."%")));
 	$courses = $DB->get_records_sql($sqlcourses, array("%/".$path."%"), $page*$perpage,$perpage);
