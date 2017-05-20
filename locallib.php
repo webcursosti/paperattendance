@@ -1460,7 +1460,7 @@ function paperattendance_runcsvproccessing($path, $filename){
 	
 	//TODO: cambiar el installation path.
 	$command = 'java -jar ' . $CFG->dirroot . '/Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar ' 
-				.$CFG->dirroot. '/home/mpozarski/poteito/second.xtmpl ' .$path;
+				.$CFG->dirroot. '/home/mpozarski/poteito/second.xtmpl ' .$path. ' > output.txt';
 				
 	$lastline = exec($command, $output, $return_var);
 	if($return_var != 0) {
