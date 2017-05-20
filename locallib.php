@@ -1458,9 +1458,12 @@ function paperattendance_runcsvproccessing($path, $filename){
 	$pdf->clear();
 	$page->clear();
 	
+../../../home/mpozarski/
+
+	$pathbeginning = $CFG -> dataroot. "../../../";
+	
 	//TODO: cambiar el installation path.
-	$command = 'java -jar ' . $CFG->dirroot . '/Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar ' 
-				.$CFG->dirroot. '/home/mpozarski/poteito/second.xtmpl ' .$path. ' > output.txt';
+	$command = 'java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /home/mpozarski/poteito/second.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/';
 				
 	$lastline = exec($command, $output, $return_var);
 	if($return_var != 0) {
@@ -1471,7 +1474,7 @@ function paperattendance_runcsvproccessing($path, $filename){
 	//TODO: esto deberia ser sacar el csv recien creado, pero asi por mientras
 	foreach(glob("{$path}/*.csv") as $file)
 	{
-		$qrinfo = paperattendance_read_csv($file, $path, $file->getFilename(), $filename);
+		$qrinfo = paperattendance_read_csv($file, $path, $file->get_filename(), $filename);
 		
 	}
 	
