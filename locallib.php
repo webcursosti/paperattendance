@@ -1458,10 +1458,6 @@ function paperattendance_runcsvproccessing($path, $filename){
 	$pdf->clear();
 	$page->clear();
 	
-../../../home/mpozarski/
-
-	$pathbeginning = $CFG -> dataroot. "../../../";
-	
 	//TODO: cambiar el installation path.
 	$command = 'java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /home/mpozarski/poteito/second.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/';
 				
