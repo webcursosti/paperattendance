@@ -1504,7 +1504,7 @@ function paperattendance_savepdf($file, $path, $filename, $context, $contextsyst
 		$pagecount = $pdf->setSourceFile($attendancepdffile);
 		if($pagecount){
 			
-			$qrinfo = paperattendance_runcsvproccessing($path, $filename);
+			$qrinfo = paperattendance_runcsvproccessing($path."/unread", $filename);
 			$idcourse = $qrinfo[0];
 			
 			// iterate through all pages
