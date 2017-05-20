@@ -1471,7 +1471,7 @@ function paperattendance_runcsvproccessing($path, $filename){
 	//TODO: esto deberia ser sacar el csv recien creado, pero asi por mientras
 	foreach(glob("{$path}/*.csv") as $file)
 	{
-		$qrinfo = paperattendance_read_csv($file, $path, $file->get_filename(), $filename);
+		$qrinfo = paperattendance_read_csv($file, $path, $file->getFilename(), $filename);
 		
 	}
 	
