@@ -1464,9 +1464,9 @@ function paperattendance_runcsvproccessing($path, $filename){
 		if(PHP_MAJOR_VERSION < 7){
 			$page = $page->flattenImages();
 		}else{
-			$page = $page->setImageBackgroundColor('white');
-			$page = $page->setImageAlphaChannel(11);
-			$page = $page->mergeImageLayers(imagick::LAYERMETHOD_FLATTEN);
+			$page->setImageBackgroundColor('white');
+			$page->setImageAlphaChannel(11);
+			$page->mergeImageLayers(imagick::LAYERMETHOD_FLATTEN);
 		}
 		$page->writeImage($path."/pdfimage_".$numpage.".jpg");
 	}
