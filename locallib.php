@@ -1457,7 +1457,7 @@ function paperattendance_runcsvproccessing($path, $filename){
 	for($numpage = 0; $numpage < $pdftotalpages; $numpage++){
 		mtrace("encontré una página de un pdf, voy en la nº: ".$numpage);
 		$page = new Imagick();
-		$page->setResolution( 300, 300);
+		$page->setResolution( 100, 100);
 		$page->readImage($path."/".$filename."[$numpage]");
 		$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
 		$page->setImageFormat('jpg');
