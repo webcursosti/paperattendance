@@ -1373,6 +1373,7 @@ function paperattendance_read_csv($file, $path, $csvname, $pdffilename){
 	if (($handle = fopen($path."/".$csvname, "r")) !== FALSE) {
 		while (($data = fgetcsv($handle, 50, ";")) !== FALSE) {
 			if($row > 0){
+				mtrace("abrí el csv, estoy procesando");
 				$qrcode = $data[27];
 
 				$qrinfo = explode("*",$qrcode);
@@ -1383,6 +1384,8 @@ function paperattendance_read_csv($file, $path, $csvname, $pdffilename){
 				$page = $qrinfo[4];
 				$description = $qrinfo[5];
 
+				mtrace("leí el código qr de una linea en el csv y es: " .$qrinfo);
+				
 				$context = context_course::instance($course);
 				$objcourse = new stdClass();
 				$objcourse -> id = $course;
@@ -1432,7 +1435,12 @@ function paperattendance_read_csv($file, $path, $csvname, $pdffilename){
 		fclose($handle);
 	}
 	unlink($file);
-	return $qrinfo;
+	if($qrinfo){
+		return true;
+	}
+	else{
+		return false;
+	}
 }
 
 function paperattendance_runcsvproccessing($path, $filename){
@@ -1447,6 +1455,7 @@ function paperattendance_runcsvproccessing($path, $filename){
 	
 	//$debugpath = $CFG -> dirroot. "/local/paperattendance/test/";
 	for($numpage = 0; $numpage < $pdftotalpages; $numpage++){
+		mtrace("encontré una página de un pdf, voy en la nº: ".$numpage);
 		$page = new Imagick();
 		$page->setResolution( 300, 300);
 		$page->readImage($path."/".$filename."[$numpage]");
@@ -1458,10 +1467,12 @@ function paperattendance_runcsvproccessing($path, $filename){
 	$pdf->clear();
 	$page->clear();
 	
+	mtrace("terminé de convertir los pdfs a jpg");
 	//TODO: cambiar el installation path.
 	$command = 'java -jar '.$CFG->dirroot .'/Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar '.$CFG->dirroot .'/home/mpozarski/poteito/second.xtmpl '.$CFG->dirroot .'/Datos/data/moodledata/temp/local/paperattendance/unread/';
-				
+	
 	$lastline = exec($command, $output, $return_var);
+	mtrace("corrí el command de formscanner");
 	if($return_var != 0) {
 		$errormsg = $lastline;
 	}
@@ -1470,6 +1481,8 @@ function paperattendance_runcsvproccessing($path, $filename){
 	//TODO: esto deberia ser sacar el csv recien creado, pero asi por mientras
 	foreach(glob("{$path}/*.csv") as $file)
 	{
+		mtrace("encontré un csv dentro de la carpeta!! - osea el command funcionó");
+		mtrace("nombre del csv creado: ".$file->get_filename()." si no aparece nada aca esa wea esta mal");
 		$qrinfo = paperattendance_read_csv($file, $path, $file->get_filename(), $filename);
 		
 	}
@@ -1480,7 +1493,7 @@ function paperattendance_runcsvproccessing($path, $filename){
 		unlink($file);	
 	}
 	
-	return $qrinfo;
+	return true;
 }
 
 function paperattendance_savepdf($file, $path, $filename, $context, $contextsystem){
