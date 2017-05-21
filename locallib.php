@@ -1461,11 +1461,15 @@ function paperattendance_runcsvproccessing($path, $filename){
 		$page->readImage($path."/".$filename."[$numpage]");
 		$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
 		$page->setImageFormat('jpg');
-		if(PHP_MAJOR_VERSION < 7){
-			$page = $page->flattenImages();
-		}else{
-			$page->setImageBackgroundColor('white');
+		if ($page->getImageAlphaChannel()) {
+			
+			// Remove alpha channel
 			$page->setImageAlphaChannel(11);
+			
+			// Set image background color
+			$page->setImageBackgroundColor('white');
+			
+			// Merge layers
 			$page->mergeImageLayers(imagick::LAYERMETHOD_FLATTEN);
 		}
 		$page->writeImage($path."/pdfimage_".$numpage.".jpg");
