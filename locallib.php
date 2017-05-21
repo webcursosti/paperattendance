@@ -1333,7 +1333,7 @@ function paperattendance_read_csv($file, $path, $csvname, $pdffilename){
 	if (($handle = fopen($path."/".$csvname, "r")) !== FALSE) {
 		while (($data = fgetcsv($handle, 50, ";")) !== FALSE) {
 			if($row > 0){
-				echo "abrí el csv, estoy procesando";
+				mtrace( "abrí el csv, estoy procesando" );
 				$qrcode = $data[27];
 
 				$qrinfo = explode("*",$qrcode);
@@ -1344,7 +1344,7 @@ function paperattendance_read_csv($file, $path, $csvname, $pdffilename){
 				$page = $qrinfo[4];
 				$description = $qrinfo[5];
 
-				echo "leí el código qr de una linea en el csv y es: " .$qrinfo;
+				mtrace( "leí el código qr de una linea en el csv y es: " .$qrinfo );
 				
 				$context = context_course::instance($course);
 				$objcourse = new stdClass();
@@ -1405,48 +1405,38 @@ function paperattendance_read_csv($file, $path, $csvname, $pdffilename){
 
 function paperattendance_runcsvproccessing($path, $filename){
 	global $CFG;
-// convertir el pdf en jpgs 
-// correr el command para formScanner .jar
-// correr la funcion paperattendance_read_csv ¿¿ nombre del output csv anterior y path?
-
+	
 	// convert pdf to jpg
 	$pdf = new Imagick($path."/".$filename);
-	$pdftotalpages = (int)$pdf->getNumberImages();
+
+	$pdf->setImageBackgroundColor('white');
+	$pdf->setResolution( 300, 300);
+	$pdf->setImageCompressionQuality(100);
+	$pdf->setImageFormat('jpg');
 	
-	//$debugpath = $CFG -> dirroot. "/local/paperattendance/test/";
-	for($numpage = 0; $numpage < $pdftotalpages; $numpage++){
-		echo "encontré una página de un pdf, voy en la nº: ".$numpage;
-		$page = new Imagick();
-		$page->setResolution( 300, 300);
-		$page->readImage($path."/".$filename."[$numpage]");
-		$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
-		$page->setImageFormat('jpg');
-		if ($page->getImageAlphaChannel()) {
-			
-			// Remove alpha channel
-			$page->setImageAlphaChannel(11);
-			
-			// Set image background color
-			$page->setImageBackgroundColor('white');
-			
-			// Merge layers
-			$page->mergeImageLayers(imagick::LAYERMETHOD_FLATTEN);
-		}
-		$page->writeImage($path."/pdfimage_".$numpage.".jpg");
+	if ($pdf->getImageAlphaChannel()) {
+		
+		// Remove alpha channel
+		$pdf->setImageAlphaChannel(11);
+		
+		// Set image background color
+		$pdf->setImageBackgroundColor('white');
+		
+		// Merge layers
+		$pdf->mergeImageLayers(imagick::LAYERMETHOD_FLATTEN);
 	}
 	
+	$pdf->writeImage($path."/".$filename.".jpg", false);
 	$pdf->clear();
-	$page->clear();
 	
-	echo "terminé de convertir los pdfs a jpg";
+	mtrace( "terminé de convertir los pdfs a jpg" );
 	//TODO: cambiar el installation path.
 	$command = 'java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /home/mpozarski/poteito/template.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/';
-	echo "el comando es: ".$command;
+	mtrace( "el comando es: ".$command );
 	
 	$lastline = exec($command, $output, $return_var);
-	echo "corrí el command de formscanner";
-	echo "<br>";
-	echo $lastline;
+	mtrace( "corrí el command de formscanner" );
+
 	if($return_var != 0) {
 		$errormsg = $lastline;
 	}
@@ -1455,8 +1445,8 @@ function paperattendance_runcsvproccessing($path, $filename){
 	//TODO: esto deberia ser sacar el csv recien creado, pero asi por mientras
 	foreach(glob("{$path}/*.csv") as $file)
 	{
-		echo "encontré un csv dentro de la carpeta!! - osea el command funcionó";
-		echo "nombre del csv creado: ".$file->get_filename()." si no aparece nada aca esa wea esta mal";
+		mtrace( "encontré un csv dentro de la carpeta!! - osea el command funcionó" );
+		mtrace( "nombre del csv creado: ".$file->get_filename()." si no aparece nada aca esa wea esta mal" );
 		$qrinfo = paperattendance_read_csv($file, $path, $file->get_filename(), $filename);
 		
 	}
