@@ -357,7 +357,7 @@ function paperattendance_drawcircles($pdf){
 	$pdf -> Rect($left + $width, $top, 2, 10, 'F', $borderstyle, $fillcolor);
 	$pdf -> Rect($left + $width, $top, -8, 2, 'F', $borderstyle, $fillcolor);
 	
-	$pdf -> Rect($left, $top + $height, 2, -9, 'F', $borderstyle, $fillcolor);
+	$pdf -> Rect($left, $top + $height, 2, -8, 'F', $borderstyle, $fillcolor);
 	$pdf -> Rect($left, $top + $height, 10, 2, 'F', $borderstyle, $fillcolor);
 	
 	$pdf -> Rect($left + $width, $top + $height, 2, -8, 'F', $borderstyle, $fillcolor);
