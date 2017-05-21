@@ -1440,7 +1440,7 @@ function paperattendance_runcsvproccessing($path, $filename){
 	
 	echo "terminé de convertir los pdfs a jpg";
 	//TODO: cambiar el installation path.
-	$command = 'java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /home/mpozarski/poteito/second.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/';
+	$command = 'java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /home/mpozarski/poteito/template.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/';
 	echo "el comando es: ".$command;
 	
 	$lastline = exec($command, $output, $return_var);
