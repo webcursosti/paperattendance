@@ -360,49 +360,12 @@ function paperattendance_drawcircles($pdf){
 			)
 	);
 	
-	$pdf->Circle($left, $top, 9, 0, 360, 'F', $style, array(
-			0,
-			0,
-			0
-	));
-	$pdf->Circle($left, $top, 4, 0, 360, 'F', $style, array(
-			255,
-			255,
-			255
-	));
+	$fillcolor = array(0,0,0);
+	$borderstyle = array("all" => "style");
 	
-	$pdf->Circle($left + $width, $top, 9, 0, 360, 'F', $style, array(
-			0,
-			0,
-			0
-	));
-	$pdf->Circle($left + $width, $top, 4, 0, 360, 'F', $style, array(
-			255,
-			255,
-			255
-	));
+	$pdf -> Rect($left, $top, 2, 9, 'F', $borderstyle, $fillcolor);
 	
-	$pdf->Circle($left, $top + $height, 9, 0, 360, 'F', $style, array(
-			0,
-			0,
-			0
-	));
-	$pdf->Circle($left, $top + $height, 4, 0, 360, 'F', $style, array(
-			255,
-			255,
-			255
-	));
 	
-	$pdf->Circle($left + $width, $top + $height, 9, 0, 360, 'F', $style, array(
-			0,
-			0,
-			0
-	));
-	$pdf->Circle($left + $width, $top + $height, 4, 0, 360, 'F', $style, array(
-			255,
-			255,
-			255
-	));
 }
 
 function paperattendance_readpdf($path, $filename, $course){
