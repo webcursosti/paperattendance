@@ -1461,7 +1461,7 @@ function paperattendance_runcsvproccessing($path, $filename){
 		$page->readImage($path."/".$filename."[$numpage]");
 		$page->setImageType( imagick::IMGTYPE_GRAYSCALE );
 		$page->setImageFormat('jpg');
-		$page->writeImage($path."/pdfimage_".$numpage."jpg");
+		$page->writeImage($path."/pdfimage_".$numpage.".jpg");
 	}
 	
 	$pdf->clear();
