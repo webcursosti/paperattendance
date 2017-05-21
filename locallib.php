@@ -1485,6 +1485,8 @@ function paperattendance_runcsvproccessing($path, $filename){
 	
 	$lastline = exec($command, $output, $return_var);
 	echo "corrí el command de formscanner";
+	echo "<br>";
+	echo $lastline;
 	if($return_var != 0) {
 		$errormsg = $lastline;
 	}
