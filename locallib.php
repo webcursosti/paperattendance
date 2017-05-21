@@ -345,8 +345,8 @@ function paperattendance_drawcircles($pdf){
 	
 	$top = 5;
 	$left = 5;
-	$width = $w - 5;
-	$height = $h - 5;
+	$width = $w - 10;
+	$height = $h - 10;
 	
 	$fillcolor = array(0,0,0);
 	$borderstyle = array("all" => "style");
