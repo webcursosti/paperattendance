@@ -1411,13 +1411,15 @@ function paperattendance_runcsvproccessing($path, $filename){
 	global $CFG;
 	
 	// convert pdf to jpg
-	$pdf = new Imagick($path."/".$filename);
+	$pdf = new Imagick();
 
 	$pdf->setImageBackgroundColor('white');
 	$pdf->setResolution( 300, 300);
+	$pdf->readImage($path."/".$filename);
+	$pdf->setImageFormat('jpeg');
+	$pdf->setImageCompression(imagick::COMPRESSION_JPEG);
 	$pdf->setImageCompressionQuality(100);
-	$pdf->setImageFormat('jpg');
-	
+
 	if ($pdf->getImageAlphaChannel()) {
 		
 		// Remove alpha channel
