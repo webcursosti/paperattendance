@@ -1431,15 +1431,19 @@ function paperattendance_runcsvproccessing($path, $filename){
 		$pdf->mergeImageLayers(imagick::LAYERMETHOD_FLATTEN);
 	}
 	
+	if (!file_exists($path."/jpgs")) {
+		mkdir($path, 0777, true);
+	}
+	
 	$pdfname = explode(".",$filename);
 	$pdfname = $pdfname[0];
 	
-	$pdf->writeImages($path."/".$pdfname.".jpg", false);
+	$pdf->writeImages($path."/jpgs/".$pdfname.".jpg", false);
 	$pdf->clear();
 	
 	mtrace( "terminé de convertir los pdfs a jpg" );
 	//TODO: cambiar el installation path.
-	$command = 'java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /home/mpozarski/poteito/template.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/';
+	$command = 'java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /home/mpozarski/poteito/template.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/jpgs/';
 	mtrace( "el comando es: ".$command );
 	
     $lastline = exec($command, $output, $return_var);
@@ -1454,16 +1458,16 @@ function paperattendance_runcsvproccessing($path, $filename){
 	mtrace($lastline);
 	
 	//TODO: esto deberia ser sacar el csv recien creado, pero asi por mientras
-	foreach(glob("{$path}/*.csv") as $file)
+	foreach(glob("{$path}/jpgs/*.csv") as $file)
 	{
 		mtrace( "encontré un csv dentro de la carpeta!! - osea el command funcionó" );
 		mtrace( "nombre del csv creado: ".$file->get_filename()." si no aparece nada aca esa wea esta mal" );
-		$qrinfo = paperattendance_read_csv($file, $path, $file->get_filename(), $filename);
+		$qrinfo = paperattendance_read_csv($file, $path."/jpgs", $file->get_filename(), $filename);
 		
 	}
 	
 	//delete all jpgs
-	foreach(glob("{$path}/*.jpg") as $file)
+	foreach(glob("{$path}/jpgs/*.jpg") as $file)
 	{
 		//unlink($file);	
 	}
