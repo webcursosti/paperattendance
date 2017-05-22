@@ -1329,12 +1329,12 @@ function paperattendance_exporttoexcel($title, $header, $filename, $data, $descr
 	exit;
 }
 
-function paperattendance_read_csv($file, $path, $csvname, $pdffilename){
+function paperattendance_read_csv($file, $path, $pdffilename){
 	global $DB, $CFG, $USER;
 
 	$omegafailures = array();
 	$row = 0;
-	if (($handle = fopen($path."/".$csvname, "r")) !== FALSE) {
+	if (($handle = fopen($file, "r")) !== FALSE) {
 		while (($data = fgetcsv($handle, 50, ";")) !== FALSE) {
 			if($row > 0){
 				mtrace( "abrí el csv, estoy procesando" );
@@ -1462,7 +1462,7 @@ function paperattendance_runcsvproccessing($path, $filename){
 	{
 		mtrace( "encontré un csv dentro de la carpeta!! - osea el command funcionó" );
 		mtrace( "nombre del csv creado: ".$file->get_filename()." si no aparece nada aca esa wea esta mal" );
-		$qrinfo = paperattendance_read_csv($file, $path."/jpgs", $file->get_filename(), $filename);
+		$qrinfo = paperattendance_read_csv($file, $path."/jpgs", $filename);
 		
 	}
 	
