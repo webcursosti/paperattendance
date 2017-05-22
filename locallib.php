@@ -1432,7 +1432,7 @@ function paperattendance_runcsvproccessing($path, $filename){
 	}
 	
 	if (!file_exists($path."/jpgs")) {
-		mkdir($path, 0777, true);
+		mkdir($path."/jpgs", 0777, true);
 	}
 	
 	$pdfname = explode(".",$filename);
