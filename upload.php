@@ -43,17 +43,30 @@ if (isguestuser()) {
     die();
 }
 $courseid = optional_param('courseid',1, PARAM_INT);
-$category = optional_param('categoryid', 1, PARAM_INT);
+$categoryid = optional_param('categoryid', 1, PARAM_INT);
 $action = optional_param('action', 'viewform', PARAM_TEXT);
 
 if($courseid > 1){
 	if($course = $DB->get_record("course", array("id" => $courseid))){
 		$context = context_coursecat::instance($course->category);
 	}
-}else if($category > 1){	
-	$context = context_coursecat::instance($category);
+}else if($categoryid > 1){	
+	$context = context_coursecat::instance($categoryid);
 }else{
-	$context = context_system::instance();
+	$sqlcategory = "SELECT cc.*
+					FROM {course_categories} cc
+					INNER JOIN {role_assignments} ra ON (ra.userid = ?)
+					INNER JOIN {role} r ON (r.id = ra.roleid)
+					INNER JOIN {context} co ON (co.id = ra.contextid)
+					WHERE cc.id = co.instanceid AND r.shortname = ?";
+	$categoryparams = array($USER->id, "secrepaper");
+	$category = $DB->get_record_sql($sqlcategory, $categoryparams);
+	if($category){
+		$categoryid = $category->id;
+	}else{
+		print_error(get_string('notallowedupload', 'local_paperattendance'));
+	}
+	$context = context_coursecat::instance($categoryid);
 }
 
 $contextsystem = context_system::instance();
@@ -64,12 +77,12 @@ if (! has_capability('local/paperattendance:upload', $context) && ! has_capabili
 // This page url.
 $url = new moodle_url('/local/paperattendance/upload.php', array(
     'courseid' => $courseid,
-	"categoryid" => $category
+	"categoryid" => $categoryid
 ));
 if($courseid && $courseid != 1){
 	$courseurl = new moodle_url('/course/view.php', array(
 			'id' => $courseid,
-			"categoryid" => $category		
+			"categoryid" => $categoryid	
 	));
 	$PAGE->navbar->add($course->fullname, $courseurl );
 }
@@ -82,7 +95,7 @@ $PAGE->set_pagelayout('standard');
 // Add the upload form for the course.
 $addform = new paperattendance_upload_form (null, array(
 		"courseid" => $courseid, 
-		"categoryid" => $category
+		"categoryid" => $categoryid
 ));
 // If the form is cancelled, refresh the instante.
 if ($addform->is_cancelled()) {
