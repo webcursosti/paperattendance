@@ -1426,7 +1426,7 @@ function paperattendance_runcsvproccessing($path, $filename){
 		$pdf->mergeImageLayers(imagick::LAYERMETHOD_FLATTEN);
 	}
 	
-	$pdf->writeImage($path."/".$filename.".jpg", false);
+	$pdf->writeImages($path."/".$filename.".jpg", false);
 	$pdf->clear();
 	
 	mtrace( "terminé de convertir los pdfs a jpg" );
