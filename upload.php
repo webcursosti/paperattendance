@@ -53,20 +53,25 @@ if($courseid > 1){
 }else if($categoryid > 1){	
 	$context = context_coursecat::instance($categoryid);
 }else{
-	$sqlcategory = "SELECT cc.*
-					FROM {course_categories} cc
-					INNER JOIN {role_assignments} ra ON (ra.userid = ?)
-					INNER JOIN {role} r ON (r.id = ra.roleid)
-					INNER JOIN {context} co ON (co.id = ra.contextid)
-					WHERE cc.id = co.instanceid AND r.shortname = ?";
-	$categoryparams = array($USER->id, "secrepaper");
-	$category = $DB->get_record_sql($sqlcategory, $categoryparams);
-	if($category){
-		$categoryid = $category->id;
-	}else{
-		print_error(get_string('notallowedupload', 'local_paperattendance'));
+	if(is_siteadmin()){
+		$context = context_system::instance();
 	}
-	$context = context_coursecat::instance($categoryid);
+	else{
+		$sqlcategory = "SELECT cc.*
+						FROM {course_categories} cc
+						INNER JOIN {role_assignments} ra ON (ra.userid = ?)
+						INNER JOIN {role} r ON (r.id = ra.roleid)
+						INNER JOIN {context} co ON (co.id = ra.contextid)
+						WHERE cc.id = co.instanceid AND r.shortname = ?";
+		$categoryparams = array($USER->id, "secrepaper");
+		$category = $DB->get_record_sql($sqlcategory, $categoryparams);
+		if($category){
+			$categoryid = $category->id;
+		}else{
+			print_error(get_string('notallowedupload', 'local_paperattendance'));
+		}
+		$context = context_coursecat::instance($categoryid);
+	}
 }
 
 $contextsystem = context_system::instance();
