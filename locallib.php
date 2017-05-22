@@ -1435,13 +1435,16 @@ function paperattendance_runcsvproccessing($path, $filename){
 	
 	mtrace( "terminé de convertir los pdfs a jpg" );
 	//TODO: cambiar el installation path.
-	$command = 'java -jar '.$CFG->dataroot.'/../../formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar '.$CFG->dataroot.'/../../../home/mpozarski/poteito/template.xtmpl '.$CFG->dataroot.'/temp/local/paperattendance/unread/';
+	$command = 'java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /home/mpozarski/poteito/template.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/';
 	mtrace( "el comando es: ".$command );
 	
-	$lastline = shell_exec($command);
+    $lastline = exec($command, $output, $return_var);
+    if($return_var != 0) {
+    	$errormsg = $lastline;
+    }
 	mtrace( "corrí el command de formscanner" );
 	
-	var_dump($lastline);
+	mtrace($lastline);
 	
 	//TODO: esto deberia ser sacar el csv recien creado, pero asi por mientras
 	foreach(glob("{$path}/*.csv") as $file)
