@@ -1115,6 +1115,10 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 			return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".get_string("missingpages", "local_paperattendance"));
 		}
 		// iterate through all pages
+		
+		$pdf->setPrintHeader(false);
+		$pdf->setPrintFooter(false);
+		
 		for ($pageno = 1; $pageno <= $pagecount; $pageno++) {
 			// import a page
 			$templateid = $pdf->importPage($pageno);
