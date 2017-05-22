@@ -76,11 +76,11 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, $params)){
 	foreach($resources as $pdf){
 		$found++;
 		$process = paperattendance_runcsvproccessing($path, $pdf-> name);
-		if($process){
-			$read++;
-			$pdf->status = 1;
-			$DB->update_record("paperattendance_session", $pdf);
-		}
+// 		if($process){
+// 			$read++;
+// 			$pdf->status = 1;
+// 			$DB->update_record("paperattendance_session", $pdf);
+// 		}
 	}
 	
 	echo $found." PDF found. \n";
