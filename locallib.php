@@ -1443,6 +1443,9 @@ function paperattendance_runcsvproccessing($path, $filename){
     	$errormsg = $lastline;
     }
 	mtrace( "corrí el command de formscanner" );
+	var_dump($lastline);
+	var_dump($output);
+	var_dump($return_var);
 	
 	mtrace($lastline);
 	
