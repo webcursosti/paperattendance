@@ -1435,7 +1435,7 @@ function paperattendance_runcsvproccessing($path, $filename){
 	
 	mtrace( "terminé de convertir los pdfs a jpg" );
 	//TODO: cambiar el installation path.
-	$command = 'java -jar '.$CFG->dataroot.'../../../Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar '.$CFG->dataroot.'../../../home/mpozarski/poteito/template.xtmpl '.$CFG->dataroot.'/temp/local/paperattendance/unread/';
+	$command = 'java -jar '.$CFG->dataroot.'/../../formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar '.$CFG->dataroot.'/../../../home/mpozarski/poteito/template.xtmpl '.$CFG->dataroot.'/temp/local/paperattendance/unread/';
 	mtrace( "el comando es: ".$command );
 	
 	$lastline = shell_exec($command);
@@ -1482,7 +1482,6 @@ function paperattendance_savepdf($file, $path, $filename, $context, $contextsyst
 		if($pagecount){
 			
 			$qrinfo = paperattendance_runcsvproccessing($path."/unread", $filename);
-			$idcourse = $qrinfo[0];
 			
 			// iterate through all pages
 			for ($pageno = 1; $pageno <= $pagecount; $pageno++) {
