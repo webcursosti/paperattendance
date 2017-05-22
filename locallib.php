@@ -1413,7 +1413,6 @@ function paperattendance_runcsvproccessing($path, $filename){
 	// convert pdf to jpg
 	$pdf = new Imagick();
 
-	$pdf->setImageBackgroundColor('white');
 	$pdf->setResolution( 300, 300);
 	$pdf->readImage($path."/".$filename);
 	$pdf->setImageFormat('jpeg');
