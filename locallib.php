@@ -631,11 +631,12 @@ function paperattendance_check_session_modules($arraymodules, $courseid, $time){
 			WHERE sessmodule.moduleid $sqlin AND sess.courseid = ?  AND sessmodule.date = ? ";
 	
 	$resultado = $DB->get_records_sql ($sessionquery, $parametros );
+	var_dump($resultado);
 	if(count($resultado) == 0){
 		return "perfect";
 	}
 	else{
-		return "repited";
+		return ;
 	}
 }
 
@@ -1363,7 +1364,7 @@ function paperattendance_read_csv($file, $path, $pdffilename){
 				$objcourse = new stdClass();
 				$objcourse -> id = $course;
 				$studentlist = paperattendance_students_list($context->id, $objcourse);
-				var_dump($studentlist);
+				//var_dump($studentlist);
 				
 				$sessdoesntexist = paperattendance_check_session_modules($module, $course, $time);
 				mtrace("checkeo de la sesion: ".$sessdoesntexist);
