@@ -1339,10 +1339,68 @@ function paperattendance_read_csv($file, $path, $pdffilename){
   		{
 			$data = fgetcsv($handle, 1000, ";");
 			$numero = count($data);
-			mtrace( $numero."  datos en la línea ".$fila);
+			mtrace( $numero." datoss en la línea ".$fila);
 			print_r($data);
+			
+			if($fila> 1 && $numero > 26){
+				$qrcode = $data[27];
+				
+				$qrinfo = explode("*",$qrcode);
+				var_dump($qrinfo);
+				$course = $qrinfo[0];
+				$requestorid = $qrinfo[1];
+				$module = $qrinfo[2];
+				$time = $qrinfo[3];
+				$page = $qrinfo[4];
+				$description = $qrinfo[5];
+				
+				mtrace( "leí el código qr de una linea en el csv y es: " .$qrinfo );
+				
+				$context = context_course::instance($course);
+				$objcourse = new stdClass();
+				$objcourse -> id = $course;
+				$studentlist = paperattendance_students_list($context->id, $objcourse);
+				
+				$sessdoesntexist = paperattendance_check_session_modules($module, $course, $time);
+				if( $sessdoesntexist == "perfect"){
+					$sessid = paperattendance_insert_session($course, $requestorid, $USER-> id, $pdffilename, $description);
+					paperattendance_insert_session_module($module, $sessid, $time);
+					foreach ($studentlist as $student){
+						paperattendance_save_student_presence($sessid, $student->id, '0', NULL); //save all students as absents at first
+					}
+				}
+				else{
+					$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
+				}
+				
+				$arrayalumnos = array();
+				$init = ($page-1)*26+1;
+				$end = $page*26;
+				$count = 1; //start at one because init starts at one
+				foreach ($studentlist as $student){
+					if($count>=$init && $count<=$end){
+						$line = array();
+						$line['emailAlumno'] = paperattendance_getusername($student->id);
+						$line['resultado'] = "true";
+						$line['asistencia'] = "false";
+				
+						if($data[$count] == 'A'){
+							paperattendance_save_student_presence($sessid, $student->id, '1', NULL);
+							$line['asistencia'] = "true";
+						}
+				
+						$arrayalumnos[] = $line;
+					}
+					$count++;
+				}
+				if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
+					if(!paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid)){
+						$omegafailures[] = $sessid;
+					}
+				}
+	  		}
+			
 			$fila++;
-
 		}
 		fclose($handle);
 	}
