@@ -630,13 +630,13 @@ function paperattendance_check_session_modules($arraymodules, $courseid, $time){
 			INNER JOIN {paperattendance_sessmodule} AS sessmodule ON (sessmodule.sessionid = sess.id)
 			WHERE sessmodule.moduleid $sqlin AND sess.courseid = ?  AND sessmodule.date = ? ";
 	
-	$resultado = $DB->get_record_sql ($sessionquery, $parametros );
+	$resultado = $DB->get_records_sql ($sessionquery, $parametros );
 	var_dump($resultado);
 	if(count($resultado) == 0){
 		return "perfect";
 	}
 	else{
-		return $resultado->papersessionid;
+		return $resultado[0]->papersessionid;
 	}
 }
 
