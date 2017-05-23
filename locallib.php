@@ -631,11 +631,11 @@ function paperattendance_check_session_modules($arraymodules, $courseid, $time){
 			WHERE sessmodule.moduleid $sqlin AND sess.courseid = ?  AND sessmodule.date = ? ";
 	
 	$resultado = $DB->get_records_sql ($sessionquery, $parametros );
-	var_dump($resultado);
 	if(count($resultado) == 0){
 		return "perfect";
 	}
 	else{
+		$resultado = reset($resultado);
 		return $resultado[0]->papersessionid;
 	}
 }
