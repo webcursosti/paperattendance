@@ -1461,7 +1461,6 @@ function paperattendance_runcsvproccessing($path, $filename){
 	foreach(glob("{$path}/jpgs/*.csv") as $file)
 	{
 		mtrace( "encontré un csv dentro de la carpeta!! - osea el command funcionó" );
-		mtrace( "nombre del csv creado: ".$file->get_filename()." si no aparece nada aca esa wea esta mal" );
 		$qrinfo = paperattendance_read_csv($file, $path."/jpgs", $filename);
 		
 	}
