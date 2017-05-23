@@ -897,6 +897,7 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 					
 				// get student id from its username
 				$username = $alumnos[$i]->emailAlumno;
+				var_dump($username);
 				$studentid = $DB->get_record("user", array("username" => $username));
 				$studentid = $studentid -> id;
 					
