@@ -624,19 +624,19 @@ function paperattendance_check_session_modules($arraymodules, $courseid, $time){
 	$parametros2 = array($courseid, $time);
 	$parametros = array_merge($parametros1,$parametros2);
 	
-	$sessionquery = "SELECT sess.id AS sessionid,
+	$sessionquery = "SELECT sess.id AS papersessionid,
 			sessmodule.id
 			FROM {paperattendance_session} AS sess
 			INNER JOIN {paperattendance_sessmodule} AS sessmodule ON (sessmodule.sessionid = sess.id)
 			WHERE sessmodule.moduleid $sqlin AND sess.courseid = ?  AND sessmodule.date = ? ";
 	
-	$resultado = $DB->get_record_sql ($sessionquery, $parametros );
+	$resultado = $DB->get_records_sql ($sessionquery, $parametros );
 	var_dump($resultado);
 	if(count($resultado) == 0){
 		return "perfect";
 	}
 	else{
-		return $resultado -> sessionid;
+		return $resultado->papersessionid;
 	}
 }
 
