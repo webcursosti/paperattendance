@@ -576,6 +576,8 @@ function paperattendance_get_qr_text($path, $pdf){
 function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffile, $description){
 	global $DB;
 
+	
+	mtrace("courseid: ".$courseid. " requestorid: ".$requestorid. " userid: ".$userid." pdffile: ".$pdffile. " description: ".$description);
 	$sessioninsert = new stdClass();
 	$sessioninsert->id = "NULL";
 	$sessioninsert->courseid = $courseid;
@@ -585,9 +587,12 @@ function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffi
 	$sessioninsert->status = 0;
 	$sessioninsert->lastmodified = time();
 	$sessioninsert->description = $description;
-	$sessionid = $DB->insert_record('paperattendance_session', $sessioninsert);
-	
+	if($sessionid = $DB->insert_record('paperattendance_session', $sessioninsert)){
+		var_dump($sessionid);
 	return $sessionid;
+	}else{
+		mtrace("sessionid fail");
+	}
 }
 
 
@@ -1360,8 +1365,10 @@ function paperattendance_read_csv($file, $path, $pdffilename){
 				$studentlist = paperattendance_students_list($context->id, $objcourse);
 				
 				$sessdoesntexist = paperattendance_check_session_modules($module, $course, $time);
+				
 				if( $sessdoesntexist == "perfect"){
 					$sessid = paperattendance_insert_session($course, $requestorid, $USER-> id, $pdffilename, $description);
+					mtrace("la session id es : ".$sessid);
 					paperattendance_insert_session_module($module, $sessid, $time);
 					foreach ($studentlist as $student){
 						paperattendance_save_student_presence($sessid, $student->id, '0', NULL); //save all students as absents at first
