@@ -636,7 +636,7 @@ function paperattendance_check_session_modules($arraymodules, $courseid, $time){
 	}
 	else{
 		if( is_array($resultado) ){
-			$resultado = reset($resultado);
+			$resultado = array_values($resultado);
 			return $resultado[0]->papersessionid;
 		}
 		else{
