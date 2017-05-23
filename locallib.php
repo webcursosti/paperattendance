@@ -1335,11 +1335,15 @@ function paperattendance_read_csv($file, $path, $pdffilename){
 	$omegafailures = array();
 	$row = 0;
 	if (($handle = fopen($file, "r")) !== FALSE) {
-		while (($data = fgetcsv($handle, 50, ";")) !== FALSE) {
+		while(! feof($handle))
+  		{
+			$data = fgetcsv($handle, 100, ";");
 			if($row > 0){
 				
 				var_dump($data);
-				mtrace( "abrí el csv, estoy procesando" );
+				mtrace( "abrí el csv, estoy procesando un linea ".$row  );
+				$num = count($data);
+				mtrace("cantidad de datos dentro de la linea = ". $num); 
 				$qrcode = $data[27];
 
 				$qrinfo = explode("*",$qrcode);
