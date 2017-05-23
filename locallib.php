@@ -1337,10 +1337,13 @@ function paperattendance_read_csv($file, $path, $pdffilename){
 	if (($handle = fopen($file, "r")) !== FALSE) {
 		while (($data = fgetcsv($handle, 50, ";")) !== FALSE) {
 			if($row > 0){
+				
+				var_dump($data);
 				mtrace( "abrí el csv, estoy procesando" );
 				$qrcode = $data[27];
 
 				$qrinfo = explode("*",$qrcode);
+				var_dump($qrinfo);
 				$course = $qrinfo[0];
 				$requestorid = $qrinfo[1];
 				$module = $qrinfo[2];
