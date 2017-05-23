@@ -1405,6 +1405,9 @@ function paperattendance_read_csv($file, $path, $pdffilename){
 							paperattendance_save_student_presence($sessid, $student->id, '1', NULL);
 							$line['asistencia'] = "true";
 						}
+						else{
+							paperattendance_save_student_presence($sessid, $student->id, '0', NULL);
+						}
 				
 						$arrayalumnos[] = $line;
 					}
