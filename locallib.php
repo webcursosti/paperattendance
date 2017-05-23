@@ -1344,14 +1344,14 @@ function paperattendance_read_csv($file, $path, $pdffilename){
   		{
 			$data = fgetcsv($handle, 1000, ";");
 			$numero = count($data);
-			mtrace( $numero." datoss en la línea ".$fila);
-			print_r($data);
+			//mtrace( $numero." datoss en la línea ".$fila);
+			//print_r($data);
 			
 			if($fila> 1 && $numero > 26){
 				$qrcode = $data[27];
 				
 				$qrinfo = explode("*",$qrcode);
-				var_dump($qrinfo);
+				//var_dump($qrinfo);
 				$course = $qrinfo[0];
 				$requestorid = $qrinfo[1];
 				$module = $qrinfo[2];
@@ -1363,10 +1363,13 @@ function paperattendance_read_csv($file, $path, $pdffilename){
 				$objcourse = new stdClass();
 				$objcourse -> id = $course;
 				$studentlist = paperattendance_students_list($context->id, $objcourse);
+				var_dump($studentlist);
 				
 				$sessdoesntexist = paperattendance_check_session_modules($module, $course, $time);
+				mtrace("checkeo de la sesion: ".$sessdoesntexist);
 				
 				if( $sessdoesntexist == "perfect"){
+					mtrace("no existe");
 					$sessid = paperattendance_insert_session($course, $requestorid, $USER-> id, $pdffilename, $description);
 					mtrace("la session id es : ".$sessid);
 					paperattendance_insert_session_module($module, $sessid, $time);
@@ -1375,6 +1378,7 @@ function paperattendance_read_csv($file, $path, $pdffilename){
 					}
 				}
 				else{
+					mtrace("ya eexiste");
 					$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
 				}
 				
