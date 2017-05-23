@@ -848,7 +848,7 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 						FROM {paperattendance_sessmodule} AS sessmodule
 						INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
 		$datemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
-		
+		var_dump($datemodule);
 		$fecha = $datemodule -> sessdate;
 		$modulo = $datemodule -> sesstime;
 	
@@ -1353,9 +1353,7 @@ function paperattendance_read_csv($file, $path, $pdffilename){
 				$time = $qrinfo[3];
 				$page = $qrinfo[4];
 				$description = $qrinfo[5];
-				
-				mtrace( "leí el código qr de una linea en el csv y es: " .$qrinfo );
-				
+					
 				$context = context_course::instance($course);
 				$objcourse = new stdClass();
 				$objcourse -> id = $course;
