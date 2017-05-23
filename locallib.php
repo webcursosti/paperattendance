@@ -588,7 +588,7 @@ function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffi
 	$sessioninsert->lastmodified = time();
 	$sessioninsert->description = $description;
 	if($sessionid = $DB->insert_record('paperattendance_session', $sessioninsert)){
-		var_dump($sessionid);
+		//var_dump($sessionid);
 	return $sessionid;
 	}else{
 		mtrace("sessionid fail");
@@ -859,7 +859,7 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 						FROM {paperattendance_sessmodule} AS sessmodule
 						INNER JOIN {paperattendance_module} AS module ON (sessmodule.moduleid = module.id AND sessmodule.sessionid = ?)";
 		$datemodule = $DB->get_record_sql($sqldatemodule, array($sessid));
-		var_dump($datemodule);
+		//var_dump($datemodule);
 		$fecha = $datemodule -> sessdate;
 		$modulo = $datemodule -> sesstime;
 	
@@ -1477,9 +1477,9 @@ function paperattendance_runcsvproccessing($path, $filename){
     	$errormsg = $lastline;
     }
 	mtrace( "corrí el command de formscanner" );
-	var_dump($lastline);
-	var_dump($output);
-	var_dump($return_var);
+	//var_dump($lastline);
+	//var_dump($output);
+	//var_dump($return_var);
 	
 	mtrace($lastline);
 	
