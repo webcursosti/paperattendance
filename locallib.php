@@ -1352,14 +1352,14 @@ function paperattendance_read_csv($file, $path, $pdffilename){
   		{
 			$data = fgetcsv($handle, 1000, ";");
 			$numero = count($data);
-			//mtrace( $numero." datoss en la línea ".$fila);
-			//print_r($data);
+			mtrace( $numero." datoss en la línea ".$fila);
+			print_r($data);
 			
 			if($fila> 1 && $numero > 26){
 				$qrcode = $data[27];
 				
 				$qrinfo = explode("*",$qrcode);
-				//var_dump($qrinfo);
+				var_dump($qrinfo);
 				$course = $qrinfo[0];
 				$requestorid = $qrinfo[1];
 				$module = $qrinfo[2];
