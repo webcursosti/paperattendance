@@ -1181,17 +1181,15 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 		//paperattendance_rotate($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
 	
 		//read pdf and save session and sessmodules
-		$pdfprocessed = paperattendance_read_pdf_save_session($path."/unread/", $filename, $qrtext);
+//		$pdfprocessed = paperattendance_read_pdf_save_session($path."/unread/", $filename, $qrtext);
+		$savepdfquery = new stdClass();
+		$savepdfquery->filename= $filename;
+		$savepdfquery->lastmodified = time();
+		$DB->insert_record('paperattendance_unprocessed_pdfs', $savepdfquery);
+		
 	
-		if($pdfprocessed == "Perfect"){
-			//delete unused pdf
-			return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".get_string("uploadsuccessful", "local_paperattendance"), "notifysuccess");
-		}
-		else{
-			//delete unused pdf
-			unlink($attendancepdffile);
-			return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".$pdfprocessed);
-		}
+		return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".get_string("uploadsuccessful", "local_paperattendance"), "notifysuccess");
+
 	}
 	else{
 		//delete unused pdf
@@ -1384,8 +1382,11 @@ function paperattendance_read_csv($file, $path, $pdffilename){
 				mtrace("checkeo de la sesion: ".$sessdoesntexist);
 				
 				if( $sessdoesntexist == "perfect"){
+					//TODO: leer el pdf y guardarlo en unread con otro nombre
+					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, true);
+					
 					mtrace("no existe");
-					$sessid = paperattendance_insert_session($course, $requestorid, $USER-> id, $pdffilename, $description);
+					$sessid = paperattendance_insert_session($course, $requestorid, $USER-> id, $newpdf, $description);
 					mtrace("la session id es : ".$sessid);
 					paperattendance_insert_session_module($module, $sessid, $time);
 // 					foreach ($studentlist as $student){
@@ -1393,6 +1394,12 @@ function paperattendance_read_csv($file, $path, $pdffilename){
 // 					}
 				}
 				else{
+					//TODO: leer el pdf que ya existe de esta sesion y guardarle adentro la nueva pagina leida y ordenarlo por paginas asc
+					$jpgfilenamecsv = $data[0];
+					$oldpdfpagenumber= explode("-",$jpgfilenamecsv);
+					$oldpdfpagenumber = $oldpdfpagenumber[1];
+					mtrace("el numero de pagina correspondiente a este pdf es: ".$oldpdfpagenumber);
+					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, false, $oldpdfpagenumber);
 					mtrace("ya eexiste");
 					$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
 				}
@@ -1440,6 +1447,75 @@ function paperattendance_read_csv($file, $path, $pdffilename){
 	}
 }
 
+
+function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = false, $oldpdfpagenumber = false){
+	if($isitnew){
+		global $DB, $CFG, $USER;
+		
+		$contextsystem = context_system::instance();
+		//if it is new then create a new pdf from the path and filename
+		$pdf = new Imagick();
+		$pdf->readImage($path."/".$pdffilename);
+		$pdf->setImageFormat("pdf");
+		
+		$pdfname = explode(".",$pdffilename);
+		$pdfname = $pdfname[0];
+		$hash = time() + rand();
+		$newpdfname = $pdfname."_".$hash;
+		$pdf->writeImage($path."/".$newpdfname.".pdf");
+		$pdf->clear();
+		
+		$fs = get_file_storage();
+		
+		$file_record = array(
+				'contextid' => $contextsystem->id,
+				'component' => 'local_paperattendance',
+				'filearea' => 'draft',
+				'itemid' => 0,
+				'filepath' => '/',
+				'filename' => $newpdfname.".pdf",
+				'timecreated' => time(),
+				'timemodified' => time(),
+				'userid' => $USER->id,
+				'author' => $USER->firstname." ".$USER->lastname,
+				'license' => 'allrightsreserved'
+		);
+		
+		// If the file already exists we delete it
+		if ($fs->file_exists($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $newpdfname.".pdf")) {
+			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', $newpdfname.".pdf");
+			$previousfile->delete();
+		}
+		
+		// Info for the new file
+		$fileinfo = $fs->create_file_from_pathname($file_record, $path."/".$newpdfname.".pdf");
+		
+	}
+	else{
+		//NOT NEW then add a page to the pdffilename on path
+		// TODOOOOO:: FALTA VER COMO MIERDA METERLE EL OLDPDFPAGENUMBER y el oldpdffilename
+		$sqlunreadpdfs = "SELECT  id, filename AS name, MIN(lastmodified)
+		FROM {paperattendance_unprocessed_pdfs}
+		";
+		
+		$resultado = $DB->get_record_sql($query, array());
+		
+		$oldpdffilename = $resultado -> name;
+		var_dump($resultado);
+		$combined = new Imagick();
+		$combined->readImage($path."/".$pdffilename);
+		$pdf = new Imagick();
+		$pdf->readImage($path."/".$oldpdffilename."[".$oldpdfpagenumber."]");
+		$combined->addImage( $pdf);
+		$pdf->clear();
+		$combined->setImageFormat("pdf");
+		$combined->writeImages($path."/".$oldpdffilename, true);
+		$combined->clear();
+		
+	}
+	
+}
+
 function paperattendance_runcsvproccessing($path, $filename){
 	global $CFG;
 	
@@ -1475,7 +1551,7 @@ function paperattendance_runcsvproccessing($path, $filename){
 	$pdf->clear();
 	
 	mtrace( "terminé de convertir los pdfs a jpg" );
-	//TODO: cambiar el installation path.
+	//TODO: cambiar el installation path. para que funcione en produccion
 	$command = 'java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /home/mpozarski/poteito/template.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/jpgs/';
 	mtrace( "el comando es: ".$command );
 	
@@ -1490,11 +1566,10 @@ function paperattendance_runcsvproccessing($path, $filename){
 	
 	mtrace($lastline);
 	
-	//TODO: esto deberia ser sacar el csv recien creado, pero asi por mientras
 	foreach(glob("{$path}/jpgs/*.csv") as $file)
 	{
 		mtrace( "encontré un csv dentro de la carpeta!! - osea el command funcionó" );
-		$qrinfo = paperattendance_read_csv($file, $path."/jpgs", $filename);
+		$qrinfo = paperattendance_read_csv($file, $path, $filename);
 		
 	}
 	

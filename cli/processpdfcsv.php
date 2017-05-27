@@ -62,24 +62,22 @@ $read = 0;
 $found = 0;
 
 // Sql that brings the unread pdfs names
-$sqlunreadpdfs = "SELECT  id, pdf AS name, courseid
-	FROM {paperattendance_session}
-	WHERE status = ?
+$sqlunreadpdfs = "SELECT  id, filename AS name
+	FROM {paperattendance_unprocessed_pdfs}
 	ORDER BY lastmodified ASC";
 
-// Parameters for the previous query
-$params = array(PAPERATTENDANCE_STATUS_UNREAD);
-
 // Read the pdfs if there is any unread, with readpdf function
-if($resources = $DB->get_records_sql($sqlunreadpdfs, $params)){
+if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
 	$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
 	foreach($resources as $pdf){
 		$found++;
 		$process = paperattendance_runcsvproccessing($path, $pdf-> name);
  		if($process){
  			$read++;
- 			$pdf->status = 1;
- 			$DB->update_record("paperattendance_session", $pdf);
+//  			$pdf->status = 1;
+//  			$DB->update_record("paperattendance_session", $pdf);
+ 			$DB->delete_records("paperattendance_unprocessed_pdfs", array('id'=> $pdf-> id)); 
+ 			//TODO: unlink al pdf
  		}
 	}
 	
