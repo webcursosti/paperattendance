@@ -401,7 +401,7 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 	if ($oldversion < 2017052701) {
 	
 		// Define table paperattendance_unprocesspdf to be created.
-		$table = new xmldb_table('paperattendance_unprocesspdf');
+		$table = new xmldb_table('paperattendance_unprocessed_pdfs');
 	
 		// Adding fields to table paperattendance_unprocesspdf.
 		$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
