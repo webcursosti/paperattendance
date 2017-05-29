@@ -89,7 +89,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="paperattendance_unprocessed_pdfs" COMMENT="Default comment for the table, please edit me">
+    <TABLE NAME="paperattendance_unprocessed" COMMENT="Default comment for the table, please edit me">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="filename" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
