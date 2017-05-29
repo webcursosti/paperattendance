@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/paperattendance/db" VERSION="20170527" COMMENT="XMLDB file for Moodle local/paperattendance"
+<XMLDB PATH="local/paperattendance/db" VERSION="20170529" COMMENT="XMLDB file for Moodle local/paperattendance"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -89,7 +89,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="paperattendance_unprocessed_pdfs" COMMENT="Default comment for the table, please edit me">
+    <TABLE NAME="paperattendance_unprocessed" COMMENT="Default comment for the table, please edit me">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="filename" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
