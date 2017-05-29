@@ -62,7 +62,7 @@ $read = 0;
 $found = 0;
 
 // Sql that brings the unread pdfs names
-$sqlunreadpdfs = "SELECT  id, filename AS name
+$sqlunreadpdfs = "SELECT  id, filename AS name, uploaderid AS userid
 	FROM {paperattendance_unprocessed}
 	ORDER BY lastmodified ASC";
 
@@ -71,7 +71,8 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
 	$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
 	foreach($resources as $pdf){
 		$found++;
-		$process = paperattendance_runcsvproccessing($path, $pdf-> name);
+		$uploaderobj = $DB->get_record("user", array("id" => $pdf-> userid));
+		$process = paperattendance_runcsvproccessing($path, $pdf-> name, $uploaderobj);
  		if($process){
  			$read++;
 //  			$pdf->status = 1;

@@ -1342,7 +1342,7 @@ function paperattendance_exporttoexcel($title, $header, $filename, $data, $descr
 	exit;
 }
 
-function paperattendance_read_csv($file, $path, $pdffilename){
+function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	global $DB, $CFG, $USER;
 
 	$omegafailures = array();
@@ -1383,7 +1383,7 @@ function paperattendance_read_csv($file, $path, $pdffilename){
 				
 				if( $sessdoesntexist == "perfect"){
 					//TODO: leer el pdf y guardarlo en unread con otro nombre
-					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, true);
+					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, true, false, $uploaderobj);
 					
 					mtrace("no existe");
 					$sessid = paperattendance_insert_session($course, $requestorid, $USER-> id, $newpdf, $description);
@@ -1399,7 +1399,7 @@ function paperattendance_read_csv($file, $path, $pdffilename){
 					$oldpdfpagenumber= explode("-",$jpgfilenamecsv);
 					$oldpdfpagenumber = $oldpdfpagenumber[1];
 					mtrace("el numero de pagina correspondiente a este pdf es: ".$oldpdfpagenumber);
-					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, false, $oldpdfpagenumber);
+					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, false, $oldpdfpagenumber, $uploaderobj);
 					mtrace("ya eexiste");
 					$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
 				}
@@ -1448,7 +1448,7 @@ function paperattendance_read_csv($file, $path, $pdffilename){
 }
 
 
-function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = false, $oldpdfpagenumber = false){
+function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = false, $oldpdfpagenumber = false, $uploaderobj){
 	if($isitnew){
 		global $DB, $CFG, $USER;
 		
@@ -1476,8 +1476,8 @@ function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = fal
 				'filename' => $newpdfname.".pdf",
 				'timecreated' => time(),
 				'timemodified' => time(),
-				'userid' => $USER->id,
-				'author' => $USER->firstname." ".$USER->lastname,
+				'userid' => $uploaderobj->id,
+				'author' => $uploaderobj->firstname." ".$uploaderobj->lastname,
 				'license' => 'allrightsreserved'
 		);
 		
@@ -1516,7 +1516,7 @@ function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = fal
 	
 }
 
-function paperattendance_runcsvproccessing($path, $filename){
+function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	global $CFG;
 	
 	// convert pdf to jpg
@@ -1569,7 +1569,7 @@ function paperattendance_runcsvproccessing($path, $filename){
 	foreach(glob("{$path}/jpgs/*.csv") as $file)
 	{
 		mtrace( "encontré un csv dentro de la carpeta!! - osea el command funcionó" );
-		$qrinfo = paperattendance_read_csv($file, $path, $filename);
+		$qrinfo = paperattendance_read_csv($file, $path, $filename, $uploaderobj);
 		
 	}
 	
