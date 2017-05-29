@@ -1185,7 +1185,7 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 		$savepdfquery = new stdClass();
 		$savepdfquery->filename= $filename;
 		$savepdfquery->lastmodified = time();
-		$DB->insert_record('paperattendance_unprocessed_pdfs', $savepdfquery);
+		$DB->insert_record('paperattendance_unprocessed', $savepdfquery);
 		
 	
 		return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".get_string("uploadsuccessful", "local_paperattendance"), "notifysuccess");
@@ -1495,7 +1495,7 @@ function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = fal
 		//NOT NEW then add a page to the pdffilename on path
 		// TODOOOOO:: FALTA VER COMO MIERDA METERLE EL OLDPDFPAGENUMBER y el oldpdffilename
 		$sqlunreadpdfs = "SELECT  id, filename AS name, MIN(lastmodified)
-		FROM {paperattendance_unprocessed_pdfs}
+		FROM {paperattendance_unprocessed}
 		";
 		
 		$resultado = $DB->get_record_sql($query, array());

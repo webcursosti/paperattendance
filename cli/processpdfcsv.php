@@ -63,7 +63,7 @@ $found = 0;
 
 // Sql that brings the unread pdfs names
 $sqlunreadpdfs = "SELECT  id, filename AS name
-	FROM {paperattendance_unprocessed_pdfs}
+	FROM {paperattendance_unprocessed}
 	ORDER BY lastmodified ASC";
 
 // Read the pdfs if there is any unread, with readpdf function
@@ -76,7 +76,7 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
  			$read++;
 //  			$pdf->status = 1;
 //  			$DB->update_record("paperattendance_session", $pdf);
- 			$DB->delete_records("paperattendance_unprocessed_pdfs", array('id'=> $pdf-> id)); 
+ 			$DB->delete_records("paperattendance_unprocessed", array('id'=> $pdf-> id)); 
  			//TODO: unlink al pdf
  		}
 	}
