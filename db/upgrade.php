@@ -419,7 +419,20 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		// Paperattendance savepoint reached.
 		upgrade_plugin_savepoint(true, 2017052701, 'local', 'paperattendance');
 	}
+	if ($oldversion < 2017053101) {
+		
+		// Define field uploaderid to be added to paperattendance_unprocessed.
+		$table = new xmldb_table('paperattendance_unprocessed');
+		$field = new xmldb_field('uploaderid', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'lastmodified');
 	
+		// Conditionally launch add field uploaderid.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017053101, 'local', 'paperattendance');
+	}
 	
 	return true;
 }
