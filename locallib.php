@@ -1390,6 +1390,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					$sessid = paperattendance_insert_session($course, $requestorid, $uploaderobj->id, $newpdf, $description);
 					mtrace("la session id es : ".$sessid);
 					paperattendance_insert_session_module($module, $sessid, $time);
+					
 // 					foreach ($studentlist as $student){
 // 						paperattendance_save_student_presence($sessid, $student->id, '0', NULL); //save all students as absents at first
 // 					}
@@ -1441,6 +1442,10 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	}
 	unlink($file);
 	if($qrinfo){
+		$update = new stdClass();
+		$update->id = $sessid;
+		$update->status = 1;
+		$DB->update_record("paperattendance_session", $update);
 		return true;
 	}
 	else{
@@ -1570,7 +1575,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	foreach(glob("{$path}/jpgs/*.csv") as $file)
 	{
 		mtrace( "encontré un csv dentro de la carpeta!! - osea el command funcionó" );
-		$qrinfo = paperattendance_read_csv($file, $path, $filename, $uploaderobj);
+		$processed = paperattendance_read_csv($file, $path, $filename, $uploaderobj);
 		
 	}
 	
@@ -1579,6 +1584,10 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	{
 		unlink($file);	
 	}
-	
-	return true;
+	if($processed){
+		return true;
+	}
+	else{
+		return false;
+	}
 }

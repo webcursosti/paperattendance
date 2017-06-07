@@ -78,10 +78,11 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
 		$process = paperattendance_runcsvproccessing($path, $pdf-> name, $uploaderobj);
  		if($process){
  			$read++;
-//  			$pdf->status = 1;
-//  			$DB->update_record("paperattendance_session", $pdf);
  			$DB->delete_records("paperattendance_unprocessed", array('id'=> $pdf-> id)); 
  			//TODO: unlink al pdf grande y viejo y ya no utilizado
+ 		}
+ 		else{
+ 			mtrace("problem reading the csv or with the pdf");
  		}
 	}
 	
