@@ -1353,8 +1353,8 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
   		{
 			$data = fgetcsv($handle, 1000, ";");
 			$numero = count($data);
-			mtrace( $numero." datoss en la línea ".$fila);
-			print_r($data);
+			//mtrace( $numero." datoss en la línea ".$fila);
+			//print_r($data);
 			
 			if($fila> 1 && $numero > 26){
 				$qrcodebottom = $data[27];
@@ -1365,7 +1365,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					$qrcode = $qrcodebottom;
 				}
 				$qrinfo = explode("*",$qrcode);
-				var_dump($qrinfo);
+				//var_dump($qrinfo);
 				$course = $qrinfo[0];
 				$requestorid = $qrinfo[1];
 				$module = $qrinfo[2];
@@ -1384,10 +1384,10 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				
 				if( $sessdoesntexist == "perfect"){
 					//TODO: leer el pdf y guardarlo en unread con otro nombre
-					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, true, false, $uploaderobj);
+					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, true, false, $uploaderobj, false);
 					
 					mtrace("no existe");
-					$sessid = paperattendance_insert_session($course, $requestorid, $USER-> id, $newpdf, $description);
+					$sessid = paperattendance_insert_session($course, $requestorid, $uploaderobj->id, $newpdf, $description);
 					mtrace("la session id es : ".$sessid);
 					paperattendance_insert_session_module($module, $sessid, $time);
 // 					foreach ($studentlist as $student){
@@ -1400,8 +1400,8 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					$oldpdfpagenumber= explode("-",$jpgfilenamecsv);
 					$oldpdfpagenumber = $oldpdfpagenumber[1];
 					mtrace("el numero de pagina correspondiente a este pdf es: ".$oldpdfpagenumber);
-					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, false, $oldpdfpagenumber, $uploaderobj);
-					mtrace("ya eexiste");
+					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, false, $oldpdfpagenumber, $uploaderobj, $sessdoesntexist);
+					mtrace("ya eexiste, el resulstado de guardar la nueva hoja al pdf fue: ".$newpdf);
 					$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
 				}
 				
@@ -1449,7 +1449,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 }
 
 
-function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = false, $oldpdfpagenumber = false, $uploaderobj){
+function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = false, $oldpdfpagenumber = false, $uploaderobj, $sessionid = false){
 	if($isitnew){
 		global $DB, $CFG, $USER;
 		
@@ -1490,28 +1490,28 @@ function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = fal
 		
 		// Info for the new file
 		$fileinfo = $fs->create_file_from_pathname($file_record, $path."/".$newpdfname.".pdf");
+		var_dump($fileinfo);
+		return $newpdfname.".pdf";
 		
 	}
 	else{
 		//NOT NEW then add a page to the pdffilename on path
-		// TODOOOOO:: FALTA VER COMO MIERDA METERLE EL OLDPDFPAGENUMBER y el oldpdffilename
-		$sqlunreadpdfs = "SELECT  id, filename AS name, MIN(lastmodified)
-		FROM {paperattendance_unprocessed}
-		";
 		
-		$resultado = $DB->get_record_sql($query, array());
-		
-		$oldpdffilename = $resultado -> name;
+		$resultado = $DB->get_record("paperattendance_session", array("id" => $sessionid));
+				
+		$oldpdffilename = $resultado -> pdf;
 		var_dump($resultado);
 		$combined = new Imagick();
-		$combined->readImage($path."/".$pdffilename);
+		$combined->readImage($path."/".$oldpdffilename);
 		$pdf = new Imagick();
-		$pdf->readImage($path."/".$oldpdffilename."[".$oldpdfpagenumber."]");
-		$combined->addImage( $pdf);
-		$pdf->clear();
+		$pdf->readImage($path."/".$pdffilename."[".$oldpdfpagenumber."]");
+		$combined->addImage($pdf);
 		$combined->setImageFormat("pdf");
 		$combined->writeImages($path."/".$oldpdffilename, true);
+		$pdf->clear();
 		$combined->clear();
+		
+		return true;
 		
 	}
 	

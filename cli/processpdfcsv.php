@@ -20,13 +20,15 @@
 *
 * @package    local
 * @subpackage paperattendance
-* @copyright  2016 Hans Jeria (hansjeria@gmail.coml) 					
+* @copyright  2017 Jorge Cabané (jcabane@alumnos.uai.cl) 					
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
 define('CLI_SCRIPT', true);
 require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
+require_once ($CFG->dirroot . "/repository/lib.php");
+require_once ($CFG->libdir . '/pdflib.php');
 require_once ($CFG->libdir . '/clilib.php'); 
 
 global $DB;
@@ -68,19 +70,18 @@ $sqlunreadpdfs = "SELECT  id, filename AS name, uploaderid AS userid
 
 // Read the pdfs if there is any unread, with readpdf function
 if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
-	var_dump($resources);
 	$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
+	
 	foreach($resources as $pdf){
 		$found++;
 		$uploaderobj = $DB->get_record("user", array("id" => $pdf-> userid));
-		var_dump($uploaderobj);
 		$process = paperattendance_runcsvproccessing($path, $pdf-> name, $uploaderobj);
  		if($process){
  			$read++;
 //  			$pdf->status = 1;
 //  			$DB->update_record("paperattendance_session", $pdf);
  			$DB->delete_records("paperattendance_unprocessed", array('id'=> $pdf-> id)); 
- 			//TODO: unlink al pdf
+ 			//TODO: unlink al pdf grande y viejo y ya no utilizado
  		}
 	}
 	
