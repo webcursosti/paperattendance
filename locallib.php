@@ -1185,6 +1185,7 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 		$savepdfquery = new stdClass();
 		$savepdfquery->filename= $filename;
 		$savepdfquery->lastmodified = time();
+		$savepdfquery->uploaderid = $USER->id;
 		$DB->insert_record('paperattendance_unprocessed', $savepdfquery);
 		
 	
