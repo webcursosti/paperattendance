@@ -1458,10 +1458,21 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	}
 }
 
+function paperattendance_number_of_pages($path, $pdffilename){
+	$document = new Imagick($path."/".$pdffilename);
+	$num = $document->getNumberImages();
+	$document->clear();
+	return $num;
+}
 
 function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = false, $oldpdfpagenumber = false, $uploaderobj, $sessionid = false){
 	if($isitnew){
 		global $DB, $CFG, $USER;
+		
+		$num = paperattendance_number_of_pages($path, $pdffilename);
+		if($num == 1){
+			return $pdffilename;
+		}
 		
 		$contextsystem = context_system::instance();
 		//if it is new then create a new pdf from the path and filename
