@@ -1385,7 +1385,6 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				$numpages = paperattendance_number_of_pages($path, $pdffilename);
 				if($numpages == 1){
 					$realpagenum = false;
-					return $pdffilename;
 				}
 				else{
 					$jpgfilenamecsv = $data[0];
