@@ -1382,6 +1382,12 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				$sessdoesntexist = paperattendance_check_session_modules($module, $course, $time);
 				mtrace("checkeo de la sesion: ".$sessdoesntexist);
 				
+				$num = paperattendance_number_of_pages($path, $pdffilename);
+				if($num == 1){
+					$realpagenum = false;
+					return $pdffilename;
+				}
+				else{
 				$jpgfilenamecsv = $data[0];
 				mtrace("el nombre del jpg recien sacado es: ". $jpgfilenamecsv);
 				$oldpdfpagenumber= explode("-",$jpgfilenamecsv);
@@ -1390,10 +1396,11 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				$realpagenum = explode(".", $oldpdfpagenumber);
 				$realpagenum = $oldpdfpagenumber[0];
 				mtrace("el numero de pagina correspondiente a este pdf es: ".$realpagenum);
+				}
 				
 				if( $sessdoesntexist == "perfect"){
 					//TODO: leer el pdf y guardarlo en unread con otro nombre
-					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, true, $realpagenum, $uploaderobj, false);
+					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, true, $realpagenum, $uploaderobj, false, $numpages);
 					
 					mtrace("no existe");
 					$sessid = paperattendance_insert_session($course, $requestorid, $uploaderobj->id, $newpdf, $description);
@@ -1406,7 +1413,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				}
 				else{
 					//TODO: leer el pdf que ya existe de esta sesion y guardarle adentro la nueva pagina leida y ordenarlo por paginas asc
-					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, false, $realpagenum, $uploaderobj, $sessdoesntexist);
+					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, false, $realpagenum, $uploaderobj, $sessdoesntexist, $numpages);
 					mtrace("ya eexiste, el resulstado de guardar la nueva hoja al pdf fue: ".$newpdf);
 					$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
 				}
@@ -1465,12 +1472,11 @@ function paperattendance_number_of_pages($path, $pdffilename){
 	return $num;
 }
 
-function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = false, $oldpdfpagenumber = false, $uploaderobj, $sessionid = false){
+function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = false, $oldpdfpagenumber = false, $uploaderobj, $sessionid = false, $numpages){
 	if($isitnew){
 		global $DB, $CFG, $USER;
 		
-		$num = paperattendance_number_of_pages($path, $pdffilename);
-		if($num == 1){
+		if($numpages == 1){
 			return $pdffilename;
 		}
 		
