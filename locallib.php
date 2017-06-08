@@ -1383,15 +1383,17 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				mtrace("checkeo de la sesion: ".$sessdoesntexist);
 				
 				$jpgfilenamecsv = $data[0];
+				mtrace("el nombre del jpg recien sacado es: ". $jpgfilenamecsv);
 				$oldpdfpagenumber= explode("-",$jpgfilenamecsv);
 				$oldpdfpagenumber = $oldpdfpagenumber[1];
-				$oldpdfpagenumber = explode(".", $oldpdfpagenumber);
-				$oldpdfpagenumber = $oldpdfpagenumber[0];
-				mtrace("el numero de pagina correspondiente a este pdf es: ".$oldpdfpagenumber);
+				mtrace("el explode es: ".$oldpdfpagenumber);
+				$realpagenum = explode(".", $oldpdfpagenumber);
+				$realpagenum = $oldpdfpagenumber[0];
+				mtrace("el numero de pagina correspondiente a este pdf es: ".$realpagenum);
 				
 				if( $sessdoesntexist == "perfect"){
 					//TODO: leer el pdf y guardarlo en unread con otro nombre
-					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, true, $oldpdfpagenumber, $uploaderobj, false);
+					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, true, $realpagenum, $uploaderobj, false);
 					
 					mtrace("no existe");
 					$sessid = paperattendance_insert_session($course, $requestorid, $uploaderobj->id, $newpdf, $description);
@@ -1404,7 +1406,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				}
 				else{
 					//TODO: leer el pdf que ya existe de esta sesion y guardarle adentro la nueva pagina leida y ordenarlo por paginas asc
-					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, false, $oldpdfpagenumber, $uploaderobj, $sessdoesntexist);
+					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, false, $realpagenum, $uploaderobj, $sessdoesntexist);
 					mtrace("ya eexiste, el resulstado de guardar la nueva hoja al pdf fue: ".$newpdf);
 					$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
 				}
@@ -1443,7 +1445,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 		}
 		fclose($handle);
 	}
-	unlink($file);
+//	unlink($file);
 	if($qrinfo){
 		$update = new stdClass();
 		$update->id = $sessid;
@@ -1569,25 +1571,25 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	$pdf->writeImages($path."/jpgs/".$pdfname.".jpg", false);
 	$pdf->clear();
 	
-	mtrace( "terminé de convertir los pdfs a jpg" );
+//	mtrace( "terminé de convertir los pdfs a jpg" );
 	//TODO: cambiar el installation path. para que funcione en produccion
 	$command = 'java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /home/mpozarski/poteito/template.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/jpgs/';
-	mtrace( "el comando es: ".$command );
+//	mtrace( "el comando es: ".$command );
 	
     $lastline = exec($command, $output, $return_var);
     if($return_var != 0) {
     	$errormsg = $lastline;
     }
-	mtrace( "corrí el command de formscanner" );
+//	mtrace( "corrí el command de formscanner" );
 	//var_dump($lastline);
 	//var_dump($output);
 	//var_dump($return_var);
 	
-	mtrace($lastline);
+//	mtrace($lastline);
 	
 	foreach(glob("{$path}/jpgs/*.csv") as $file)
 	{
-		mtrace( "encontré un csv dentro de la carpeta!! - osea el command funcionó" );
+//		mtrace( "encontré un csv dentro de la carpeta!! - osea el command funcionó" );
 		$processed = paperattendance_read_csv($file, $path, $filename, $uploaderobj);
 		
 	}
