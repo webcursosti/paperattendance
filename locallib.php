@@ -1382,20 +1382,20 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				$sessdoesntexist = paperattendance_check_session_modules($module, $course, $time);
 				mtrace("checkeo de la sesion: ".$sessdoesntexist);
 				
-				$num = paperattendance_number_of_pages($path, $pdffilename);
-				if($num == 1){
+				$numpages = paperattendance_number_of_pages($path, $pdffilename);
+				if($numpages == 1){
 					$realpagenum = false;
 					return $pdffilename;
 				}
 				else{
-				$jpgfilenamecsv = $data[0];
-				mtrace("el nombre del jpg recien sacado es: ". $jpgfilenamecsv);
-				$oldpdfpagenumber= explode("-",$jpgfilenamecsv);
-				$oldpdfpagenumber = $oldpdfpagenumber[1];
-				mtrace("el explode es: ".$oldpdfpagenumber);
-				$realpagenum = explode(".", $oldpdfpagenumber);
-				$realpagenum = $oldpdfpagenumber[0];
-				mtrace("el numero de pagina correspondiente a este pdf es: ".$realpagenum);
+					$jpgfilenamecsv = $data[0];
+					mtrace("el nombre del jpg recien sacado es: ". $jpgfilenamecsv);
+					$oldpdfpagenumber= explode("-",$jpgfilenamecsv);
+					$oldpdfpagenumber = $oldpdfpagenumber[1];
+					mtrace("el explode es: ".$oldpdfpagenumber);
+					$realpagenum = explode(".", $oldpdfpagenumber);
+					$realpagenum = $oldpdfpagenumber[0];
+					mtrace("el numero de pagina correspondiente a este pdf es: ".$realpagenum);
 				}
 				
 				if( $sessdoesntexist == "perfect"){
