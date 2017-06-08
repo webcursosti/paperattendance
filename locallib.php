@@ -1382,9 +1382,16 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				$sessdoesntexist = paperattendance_check_session_modules($module, $course, $time);
 				mtrace("checkeo de la sesion: ".$sessdoesntexist);
 				
+				$jpgfilenamecsv = $data[0];
+				$oldpdfpagenumber= explode("-",$jpgfilenamecsv);
+				$oldpdfpagenumber = $oldpdfpagenumber[1];
+				$oldpdfpagenumber = explode(".", $oldpdfpagenumber);
+				$oldpdfpagenumber = $oldpdfpagenumber[0];
+				mtrace("el numero de pagina correspondiente a este pdf es: ".$oldpdfpagenumber);
+				
 				if( $sessdoesntexist == "perfect"){
 					//TODO: leer el pdf y guardarlo en unread con otro nombre
-					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, true, false, $uploaderobj, false);
+					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, true, $oldpdfpagenumber, $uploaderobj, false);
 					
 					mtrace("no existe");
 					$sessid = paperattendance_insert_session($course, $requestorid, $uploaderobj->id, $newpdf, $description);
@@ -1397,10 +1404,6 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				}
 				else{
 					//TODO: leer el pdf que ya existe de esta sesion y guardarle adentro la nueva pagina leida y ordenarlo por paginas asc
-					$jpgfilenamecsv = $data[0];
-					$oldpdfpagenumber= explode("-",$jpgfilenamecsv);
-					$oldpdfpagenumber = $oldpdfpagenumber[1];
-					mtrace("el numero de pagina correspondiente a este pdf es: ".$oldpdfpagenumber);
 					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, false, $oldpdfpagenumber, $uploaderobj, $sessdoesntexist);
 					mtrace("ya eexiste, el resulstado de guardar la nueva hoja al pdf fue: ".$newpdf);
 					$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
@@ -1461,8 +1464,11 @@ function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = fal
 		$contextsystem = context_system::instance();
 		//if it is new then create a new pdf from the path and filename
 		$pdf = new Imagick();
-		$pdf->readImage($path."/".$pdffilename);
+		$pdf->setResolution( 300, 300);
+		$pdf->readImage($path."/".$pdffilename."[".$oldpdfpagenumber."]");
 		$pdf->setImageFormat("pdf");
+		$pdf->setImageCompression(imagick::COMPRESSION_GROUP4);
+		$pdf->setImageCompressionQuality(100);
 		
 		$pdfname = explode(".",$pdffilename);
 		$pdfname = $pdfname[0];
@@ -1495,7 +1501,6 @@ function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = fal
 		
 		// Info for the new file
 		$fileinfo = $fs->create_file_from_pathname($file_record, $path."/".$newpdfname.".pdf");
-		var_dump($fileinfo);
 		return $newpdfname.".pdf";
 		
 	}
@@ -1503,13 +1508,21 @@ function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = fal
 		//NOT NEW then add a page to the pdffilename on path
 		
 		$resultado = $DB->get_record("paperattendance_session", array("id" => $sessionid));
-				
+		
 		$oldpdffilename = $resultado -> pdf;
 		var_dump($resultado);
 		$combined = new Imagick();
+		$combined->setResolution( 300, 300);
 		$combined->readImage($path."/".$oldpdffilename);
+		$combined->setImageFormat("pdf");
+		$combined->setImageCompression(imagick::COMPRESSION_GROUP4);
+		$combined->setImageCompressionQuality(100);
 		$pdf = new Imagick();
+		$pdf->setResolution( 300, 300);
 		$pdf->readImage($path."/".$pdffilename."[".$oldpdfpagenumber."]");
+		$pdf->setImageFormat("pdf");
+		$pdf->setImageCompression(imagick::COMPRESSION_GROUP4);
+		$pdf->setImageCompressionQuality(100);
 		$combined->addImage($pdf);
 		$combined->setImageFormat("pdf");
 		$combined->writeImages($path."/".$oldpdffilename, true);
