@@ -31,7 +31,12 @@ require_once (dirname(dirname(dirname(__FILE__)))."/config.php");
 require_once ($CFG->dirroot."/local/paperattendance/forms/history_form.php");
 require_once ($CFG->dirroot."/local/paperattendance/forms/addstudent_form.php");
 require_once ($CFG->dirroot."/local/paperattendance/forms/reviewattendance_form.php");
-require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
+require_once ($CFG->dirroot . '/local/paperattendance/locallib.php');
+require_once ($CFG->dirroot . "/repository/lib.php");
+require_once ($CFG->libdir . '/pdflib.php');
+require_once ($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/fpdi.php');
+require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php");
+require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi.php");
 
 global $DB, $PAGE, $OUTPUT, $USER, $CFG;
 
@@ -320,11 +325,38 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		//var_dump($contextsystem->id);
 		//Context id as 1 because the var context->id gets the number 6 , check it later
 		$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $pdfname->pdf);
-	
-		$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
-				"src" => $url,
-				"style" => "height:75vh; width:60vw"
-		));
+		
+		//query para obtener todas las paginas del pdf 
+		//mergear hojas
+		
+		$getpagesofpdf = "SELECT * FROM paperattendance_sessionpages 
+						   WHERE sessionid = ?";
+		
+		$resultpagespdf = $DB->get_records_sql($getpagesofpdf, array($attendanceid));
+		
+		
+		$pdf = new FPDI();
+		
+		foreach ($resultpagespdf as $page){
+
+		$pdfpage = new FPDI();
+		
+		$pdfpage->setSourceFile($url);
+		$currentpage = $pdfpage->importPage($page, '/MediaBox');
+
+		$pdf->addPage();
+		// place the imported page of the document:
+		$pdf->useTemplate($currentpage);
+		
+		}
+
+		$viewerpdf= html_writer::nonempty_tag(
+				"div",
+				$pdf->Output(),
+				array(
+						"src" => $url,
+						"style" => "height:75vh; width:60vw"
+				));
 	}
 	
 	// Lists all records in the database

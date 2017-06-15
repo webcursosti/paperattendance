@@ -1384,7 +1384,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				
 				$numpages = paperattendance_number_of_pages($path, $pdffilename);
 				if($numpages == 1){
-					$realpagenum = false;
+					$realpagenum = 0;
 				}
 				else{
 					$jpgfilenamecsv = $data[0];
@@ -1398,23 +1398,17 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				}
 				
 				if( $sessdoesntexist == "perfect"){
-					//TODO: leer el pdf y guardarlo en unread con otro nombre
-					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, true, $realpagenum, $uploaderobj, false, $numpages);
-					
 					mtrace("no existe");
-					$sessid = paperattendance_insert_session($course, $requestorid, $uploaderobj->id, $newpdf, $description);
+					$sessid = paperattendance_insert_session($course, $requestorid, $uploaderobj->id, $pdffilename, $description);
 					mtrace("la session id es : ".$sessid);
 					paperattendance_insert_session_module($module, $sessid, $time);
+					save_current_pdf_page_to_session($realpagenum, $sessid);
 					
-// 					foreach ($studentlist as $student){
-// 						paperattendance_save_student_presence($sessid, $student->id, '0', NULL); //save all students as absents at first
-// 					}
 				}
 				else{
-					//TODO: leer el pdf que ya existe de esta sesion y guardarle adentro la nueva pagina leida y ordenarlo por paginas asc
-					$newpdf = paperattendance_save_and_rename_pdf($path, $pdffilename, false, $realpagenum, $uploaderobj, $sessdoesntexist, $numpages);
-					mtrace("ya eexiste, el resulstado de guardar la nueva hoja al pdf fue: ".$newpdf);
+					mtrace("session ya eexiste");
 					$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
+					save_current_pdf_page_to_session($realpagenum, $sessid);
 				}
 				
 				$arrayalumnos = array();
@@ -1451,7 +1445,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 		}
 		fclose($handle);
 	}
-//	unlink($file);
+	unlink($file);
 	if($qrinfo){
 		$update = new stdClass();
 		$update->id = $sessid;
@@ -1464,93 +1458,20 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	}
 }
 
+function save_current_pdf_page_to_session($pagenum, $sessid){
+	global $DB;
+	
+	$pagesession = new stdClass();
+	$pagesession->sessionid = $sessid;
+	$pagesession->pagenum = $pagenum;
+	$DB->insert_record('paperattendance_sessionpages', $pagesession, false);
+}
+
 function paperattendance_number_of_pages($path, $pdffilename){
 	$document = new Imagick($path."/".$pdffilename);
 	$num = $document->getNumberImages();
 	$document->clear();
 	return $num;
-}
-
-function paperattendance_save_and_rename_pdf($path, $pdffilename, $isitnew = false, $oldpdfpagenumber = false, $uploaderobj, $sessionid = false, $numpages){
-	if($isitnew){
-		global $DB, $CFG, $USER;
-		
-		if($numpages == 1){
-			return $pdffilename;
-		}
-		
-		$contextsystem = context_system::instance();
-		//if it is new then create a new pdf from the path and filename
-		$pdf = new Imagick();
-		$pdf->setResolution( 300, 300);
-		$pdf->readImage($path."/".$pdffilename."[".$oldpdfpagenumber."]");
-		$pdf->setImageFormat("pdf");
-		$pdf->setImageCompression(imagick::COMPRESSION_GROUP4);
-		$pdf->setImageCompressionQuality(100);
-		
-		$pdfname = explode(".",$pdffilename);
-		$pdfname = $pdfname[0];
-		$hash = time() + rand();
-		$newpdfname = $pdfname."_".$hash;
-		$pdf->writeImage($path."/".$newpdfname.".pdf");
-		$pdf->clear();
-		
-		$fs = get_file_storage();
-		
-		$file_record = array(
-				'contextid' => $contextsystem->id,
-				'component' => 'local_paperattendance',
-				'filearea' => 'draft',
-				'itemid' => 0,
-				'filepath' => '/',
-				'filename' => $newpdfname.".pdf",
-				'timecreated' => time(),
-				'timemodified' => time(),
-				'userid' => $uploaderobj->id,
-				'author' => $uploaderobj->firstname." ".$uploaderobj->lastname,
-				'license' => 'allrightsreserved'
-		);
-		
-		// If the file already exists we delete it
-		if ($fs->file_exists($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $newpdfname.".pdf")) {
-			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'draft', 0, '/', $newpdfname.".pdf");
-			$previousfile->delete();
-		}
-		
-		// Info for the new file
-		$fileinfo = $fs->create_file_from_pathname($file_record, $path."/".$newpdfname.".pdf");
-		return $newpdfname.".pdf";
-		
-	}
-	else{
-		//NOT NEW then add a page to the pdffilename on path
-		
-		$resultado = $DB->get_record("paperattendance_session", array("id" => $sessionid));
-		
-		$oldpdffilename = $resultado -> pdf;
-		var_dump($resultado);
-		$combined = new Imagick();
-		$combined->setResolution( 300, 300);
-		$combined->readImage($path."/".$oldpdffilename);
-		$combined->setImageFormat("pdf");
-		$combined->setImageCompression(imagick::COMPRESSION_GROUP4);
-		$combined->setImageCompressionQuality(100);
-		$pdf = new Imagick();
-		$pdf->setResolution( 300, 300);
-		$pdf->readImage($path."/".$pdffilename."[".$oldpdfpagenumber."]");
-		$pdf->setImageFormat("pdf");
-		$pdf->setImageCompression(imagick::COMPRESSION_GROUP4);
-		$pdf->setImageCompressionQuality(100);
-		$combined->addImage($pdf);
-		$combined->setImageFormat("pdf");
-		$combined->writeImages($path."/".$oldpdffilename, true);
-		$pdf->clear();
-		$combined->clear();
-		
-		return true;
-		
-	}
-	
 }
 
 function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
