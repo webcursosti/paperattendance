@@ -326,7 +326,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		//var_dump($contextsystem->id);
 		//Context id as 1 because the var context->id gets the number 6 , check it later
 		$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $pdfname->pdf);
-		
+		$path = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdf;
 		//query para obtener todas las paginas del pdf 
 		//mergear hojas
 		
@@ -342,7 +342,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 
 		$pdfpage = new FPDI();
 		
-		$pdfpage->setSourceFile($url);
+		$pdfpage->setSourceFile($path);
 		$currentpage = $pdfpage->importPage($page, '/MediaBox');
 
 		$pdf->addPage();
@@ -355,7 +355,6 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				"div",
 				$pdf->Output(),
 				array(
-						"src" => $url,
 						"style" => "height:75vh; width:60vw"
 				));
 	}
