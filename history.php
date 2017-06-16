@@ -340,12 +340,11 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		
 		foreach ($resultpagespdf as $page){
 
-		$pdfpage = new FPDI();
-		
-		$pdfpage->setSourceFile($path);
-		$currentpage = $pdfpage->importPage($page, '/MediaBox');
-
 		$pdf->addPage();
+		
+		$pdf->setSourceFile($path);
+		$currentpage = $pdf->importPage($page, '/MediaBox');
+
 		// place the imported page of the document:
 		$pdf->useTemplate($currentpage);
 		
