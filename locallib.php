@@ -1355,6 +1355,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 			$numero = count($data);
 			//mtrace( $numero." datoss en la línea ".$fila);
 			//print_r($data);
+			$stop = false;
 			
 			if($fila> 1 && $numero > 26){
 				$qrcodebottom = $data[27];
@@ -1362,8 +1363,15 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				if(strpos($qrcodetop, '*') !== false) {
 					$qrcode = $qrcodetop;
 				} else {
-					$qrcode = $qrcodebottom;
+					if(strpos($qrcodebottom, '*') !== false) {
+						$qrcode = $qrcodebottom;
+					}
+					else{
+						$stop = true;
+					}
 				}
+				
+				if($stop){
 				$qrinfo = explode("*",$qrcode);
 				//var_dump($qrinfo);
 				$course = $qrinfo[0];
@@ -1440,7 +1448,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					}
 				}
 	  		}
-			
+			}
 			$fila++;
 		}
 		fclose($handle);
