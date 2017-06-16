@@ -1447,6 +1447,12 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						$omegafailures[] = $sessid;
 					}
 				}
+				
+			$update = new stdClass();
+			$update->id = $sessid;
+			$update->status = 1;
+			$DB->update_record("paperattendance_session", $update);
+			
 	  		}
 	  		else{
 	  			//send email or something to let know this page had problems
@@ -1457,16 +1463,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 		fclose($handle);
 	}
 	unlink($file);
-	if($qrinfo){
-		$update = new stdClass();
-		$update->id = $sessid;
-		$update->status = 1;
-		$DB->update_record("paperattendance_session", $update);
-		return true;
-	}
-	else{
-		return false;
-	}
+	return true;
 }
 
 function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid){
