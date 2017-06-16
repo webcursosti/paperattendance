@@ -330,7 +330,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		//query para obtener todas las paginas del pdf 
 		//mergear hojas
 		
-		$getpagesofpdf = "SELECT * FROM paperattendance_sessionpages 
+		$getpagesofpdf = "SELECT * FROM {paperattendance_sessionpages} 
 						   WHERE sessionid = ?";
 		
 		$resultpagespdf = $DB->get_records_sql($getpagesofpdf, array($attendanceid));
