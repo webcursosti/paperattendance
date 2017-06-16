@@ -1448,6 +1448,9 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					}
 				}
 	  		}
+	  		else{
+	  			//send email or something to let know this page had problems
+	  		}
 			}
 			$fila++;
 		}
