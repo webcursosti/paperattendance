@@ -28,7 +28,7 @@
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 
-global $DB, $OUTPUT, $USER;
+global $DB, $OUTPUT, $USER, $PAGE;
 // User must be logged in.
 require_login();
 if (isguestuser()) {
@@ -46,6 +46,7 @@ if(is_siteadmin()){
 	$sqlcourses = "SELECT c.id,
 				c.fullname,
 				cat.name,
+				u.id as teacherid,
 				CONCAT( u.firstname, ' ', u.lastname) as teacher
 				FROM {user} AS u
 				INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
@@ -78,12 +79,13 @@ else{
 	}else{
 		print_error(get_string('notallowedprint', 'local_paperattendance'));
 	}
-	
+
 	$path = $categoryid;
-	
+
 	$sqlcourses= "SELECT c.id,
 		c.fullname,
 		cat.name,
+		u.id as teacherid,
 		CONCAT( u.firstname, ' ', u.lastname) as teacher
 		FROM {user} u
 		INNER JOIN {user_enrolments} ue ON (ue.userid = u.id)
@@ -96,7 +98,7 @@ else{
 		WHERE ct.contextlevel = '50' AND r.id = 3 AND e.enrol = 'database'
 		AND cat.path like ? AND c.idnumber > 0
 		GROUP BY u.id";
-	
+
 	$ncourses = count($DB->get_records_sql($sqlcourses, array("%/".$path."%")));
 	$courses = $DB->get_records_sql($sqlcourses, array("%/".$path."%"), $page*$perpage,$perpage);
 }
@@ -133,8 +135,8 @@ $table->head = array(get_string('hashtag', 'local_paperattendance'),
 		get_string('course', 'local_paperattendance'),
 		get_string('teacher', 'local_paperattendance'),
 		get_string('category', 'local_paperattendance'),
-		'custom print',
-		'quick print'
+		'Custom print',
+		'Quick print'
 );
 $table->id = "fbody";
 
@@ -149,33 +151,37 @@ foreach($courses as $course){
 	$table->data[] = array(
 			$coursecount,
 			html_writer::nonempty_tag("a", $course->fullname, array("href"=>$historyurl)),
-			$course->teacher,
+			html_writer::nonempty_tag("span", $course->teacher, array("teacherid"=>$course->teacherid, "class"=>"teacher")),
 			$course->name,
 			html_writer::nonempty_tag("a", $print, array("href"=>$printurl)),
-			html_writer::nonempty_tag("i", ' ', array("class"=>"icon icon-plus listcart", "courseid"=>$course->id))
+			html_writer::nonempty_tag("i", ' ', array("class"=>"icon icon-plus listcart", "clicked"=>0, "courseid"=>$course->id))
 	);
 	$coursecount++;
 }
 echo $OUTPUT->header();
 echo html_writer::div(get_string("searchprinthelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
-$filterinput = html_writer::empty_tag("input", array( "id"=>"filter", "type"=>"text", "style"=>"width:25%"));
-echo html_writer::div($filterinput, "topbarmenu");
+$filterinput = html_writer::empty_tag("input", array( "id"=>"filter", "type"=>"text", "style"=>"float:left; width:25%"));
+$cartbutton = html_writer::nonempty_tag("button", "Lists cart",  array( "id"=>"cartbutton", "style"=>"float:right; margin-right:6%"));
+echo html_writer::div($filterinput.$cartbutton, "topbarmenu");
 
 if ($ncourses>0){
 	echo html_writer::table($table);
 	echo $OUTPUT->paging_bar($ncourses, $page, $perpage, $url);
 }
 
+$carttable = new html_table();
+$carttable->head = array("Session",	"Description","Date","Module","Requestor","Remove");
+$carttable->id = "carttable";
 
-$modal = '<div class="modal fade bs-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: none; width:90%; margin-left:-45%">
+$formmodal = '<div class="modal fade bs-example-modal-lg" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" style="display: none; width:90%; margin-left:-45%">
 			  <div class="modal-dialog modal-lg" role="document">
 			    	<div class="modal-content">
 			    		<div class="modal-header">
 			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			        		<h4 class="modal-title" id="exampleModalLabel">Quick Print</h4>
+			        		<h4 class="modal-title" id="formModalLabel">Lists cart</h4>
 			      		</div>
 		      		<div class="modal-body quickprintappend" style="height:70vh">
-			
+						'.html_writer::table($carttable).'
 		      		</div>
 		      		<div class="modal-footer">
     	       	    	<button type="button" class="btn btn-info printbutton" data-dismiss="modal">Imprimir</button>
@@ -185,24 +191,62 @@ $modal = '<div class="modal fade bs-example-modal-lg" id="exampleModal" tabindex
 	  		</div>
 		</div>';
 
-echo html_writer::div($modal, "modaldiv");
+$pdfmodal = '<div class="modal fade bs-example-modal-lg" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="pdfModalLabel" style="display: none;">
+			  <div class="modal-dialog modal-lg" role="document">
+			    	<div class="modal-content">
+			    		<div class="modal-header">
+			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        		<h4 class="modal-title" id="pdfModalLabel">Lists pdf</h4>
+			      		</div>
+		      		<div class="modal-body pdflists" style="height:70vh">
+		      		</div>
+	      		</div>
+	  		</div>
+		</div>';
+
+echo html_writer::div($formmodal, "modaldiv");
+echo html_writer::div($pdfmodal, "modaldiv");
 
 echo $OUTPUT->footer();
 
+//modules
+$modulesquery = "SELECT *
+				FROM {paperattendance_module}
+				ORDER BY initialtime ASC";
+$modules = $DB->get_records_sql($modulesquery);
+$modulesselect = "<select class='selectpicker' multiple><option value='no'>Seleccionar modulo</option>";
+foreach ($modules as $module){
+	$modulesselect .= "<option value='".$module->id."*".$module->initialtime."*".$module->endtime."'>".$module->initialtime."</option>";
+}
+$modulesselect .= "</select>";
 ?>
 <script>
-jQuery('#exampleModal').modal({
+jQuery('#formModal').modal({
 	  keyboard: true,
 	  show: false
 })
 $( document ).ready(function() {
     $('#filter').focus();
+    $('#carttable tbody tr').remove();
 });
 </script>
 <script type="text/javascript">
 	var filter = $('#filter');
 	var $table = $("#fbody").find("tbody");
 	var $paging = $(".paging");
+	var lists = [];
+	//Today as default date (this is for the date inputs and to get defaultmodules)
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+    var yyyy = today.getFullYear();
+    var day = today.getDay();
+    if(dd<10)
+        dd='0'+dd;
+    if(mm<10)
+        mm='0'+mm;
+    today = yyyy+'-'+mm+'-'+dd;
+    //When secretary writes on the filter input
 	filter.keyup(function(event){
 		if(this.value.length >= 3 ){
 			$table.find("tr").not(".ajaxtr").hide();
@@ -219,48 +263,209 @@ $( document ).ready(function() {
 		}
 		$(".ajaxtr").remove();
 	});
-	function callAjax(data, path, print, categoryid) {
-		
-		var count = 1;
-		$.getJSON("ajax/ajaxquerys.php?result="+data+"&path="+path+"&category="+categoryid+"&action=getcourses", function(result){
-			$(".ajaxtr").remove();
-	        $.each(result, function(i, field){
-	        	var printicon = "<a href='print.php?courseid="+field['id']+"&categoryid="+path+"'>"+print+"</a>"; 
-	        	var history = "<a href='history.php?courseid="+field['id']+"'>"+field['fullname']+"</a>"; 
-	        	$table.append("<tr class='ajaxtr'><td>"+count+"</td><td>"+history+"</td><td>"+field['teacher']+"</td><td>"+field['name']+"</td><td>"+printicon+"</td><td><i class='icon icon-plus listcart' courseid='"+field['id']+"'></i></td></tr>");
-				count++;	
-	        });
-    	});
-	}
-
+	//When a plus icon is clicked, that course should be added to 'lists' array
 	$( document ).on( "click", ".listcart", function() {
 		$(this).removeClass('icon-plus').addClass('icon-ok');
 		var courseid = $(this).attr('courseid');
-
-		$('.quickprintappend').html('<center><img src="img/loading.gif"></center>');
-
+		var that = $(this);
+		if(that.attr('clicked') == 0){
+		    //Get data to print
+			$.ajax({
+			    type: 'GET',
+			    url: 'ajax/ajaxquerys.php',
+			    data: {
+				      'action' : 'cartlist',
+				      'courseid' : courseid,
+				      'teacherid' : that.closest("tr").find(".teacher").attr("teacherid"),
+				      'diasemana' : day
+			    	},
+			    success: function (response) {
+				    var arr = response;
+				    //Pre selected modules
+				    var modulesselect = <?php echo json_encode($modulesselect);?>;	 
+				    var selectedmodules = [];   
+					jQuery('#carttable').append("<tr class='cart-tr' courseid="+courseid+"><td>"+arr['course']+"</td><td>"+arr['description']+"</td><td><input class='datepicker' type='date' size='10' value='"+today+"' courseid='"+courseid+"'></td><td>"+modulesselect+"</td><td>"+arr['requestor']+"</td><td><i class='icon icon-remove' courseid='"+courseid+"'></i></td></tr>");
+					if(!arr["modules"]){
+						jQuery('.cart-tr[courseid='+courseid+']').find('.selectpicker option[value="no"]').attr("selected", "selected");
+					}
+					else{
+						jQuery('.cart-tr[courseid='+courseid+']').find('.selectpicker option').each(function (i){
+							for(j=0;j<arr["modules"].length;j++)
+								if(arr["modules"][j]["horaInicio"] == $(this).text()+":00"){
+									$(this).attr("selected", "selected");
+									var obj = {};
+									obj[$(this).val()] = 1;
+									selectedmodules.push(obj);
+								}
+						});
+					}
+					lists.push({"courseid":courseid, "requestorid": arr["requestorid"], "date": today, "modules": selectedmodules, "description": arr["description"]});
+					that.attr('clicked', 1);
+					enableprintbutton();
+			    }
+			});
+		}
+	});
+	//When the background is clicked, the modal must hide
+	$( document ).on( "click", ".modal-backdrop", function() {
+		jQuery('#formModal').modal('hide');
+	});
+	//When this button is clicked, the modal must show the courses to print
+	$( document ).on( "click", "#cartbutton", function() {
+		jQuery('#formModal').modal('show'); 
+	});
+	//When a datepicker change, modules should change and lists array should be updated with de new data
+	$( document ).on( "change", ".datepicker", function() {
+		var cid = $(this).attr("courseid");
+		var parts = $(this).val().split('-');
+	    var year = parseInt(parts[0], 10);
+	    var month = parseInt(parts[1], 10) - 1; // NB: month is zero-based!
+	    var day = parseInt(parts[2], 10);
+	    var date = new Date(year, month, day);
+	    omegamodulescheck(date,cid);
+	    updatelistsdate($(this).val(), cid);
+	});
+	//When a modules select change, lists array should be updated, if each list has at least one module, then the print button is enable
+	$( document ).on( "change", ".selectpicker", function() {
+		var cid = $(this).closest("tr").attr("courseid");
+		var mods = new Array();
+		$("option:selected", this).each(function(i){
+			mods.push($(this).val());
+		});
+		updatelistsmodules(mods, cid);
+		enableprintbutton();
+	});
+	//If some remove icon is clicked, it should be deleted that list from the lists array 
+	$( document ).on( "click", ".icon-remove", function() {
+		var tr = $(this).closest("tr");
+		var cid = tr.attr("courseid");
+		tr.remove();
+		jQuery(".listcart[courseid="+cid+"]").removeClass('icon-ok').addClass('icon-plus');
+		jQuery(".listcart[courseid="+cid+"]").attr("clicked", 0);
+		lists = jQuery.grep(lists, function(e){
+			return e.courseid != cid;
+		});
+		enableprintbutton();
+	});
+	//If print button is clicked, then the pdf with all lists is generated
+	$( document ).on( "click", ".printbutton", function() {
+		$('.pdflists').html('<center><img src="img/loading.gif"></center>');
 		$.ajax({
 		    type: 'POST',
-		    url: 'quickprint.php',
+		    url: 'cartprint.php',
 		    data: {
-			      'courseid' : courseid
+			      'lists' : lists
 		    	},
 		    success: function (response) {
-				$('.quickprintappend').html(response);
-				if(response == "There's nothing to print for today"){
-					$('.printbutton').attr("disabled", true);
-		    	}  	
-				else{
-					$('.printbutton').removeAttr("disabled");
-				}
+				$('.pdflists').html(response);
+				jQuery('#pdfModal').modal('show'); 
 		    }
 		});
-		
-		jQuery('#exampleModal').modal('show'); 
-	
-		});
-
-	$( document ).on( "click", ".modal-backdrop", function() {
-		jQuery('#exampleModal').modal('hide');
 	});
+	//This function is called to filter the table
+	function callAjax(data, path, print, categoryid) {
+		var count = 1;
+		$.ajax({
+		    type: 'GET',
+		    url: 'ajax/ajaxquerys.php',
+		    data: {
+			      'action' : 'getcourses',
+			      'result' : data,
+			      'path' : path,
+			      'category' : categoryid
+		    	},
+		    success: function (response) {
+		    	$(".ajaxtr").remove();
+		        $.each(response, function(i, field){
+			        var num = "<td>"+count+"</td>";
+			        var his = "<td><a href='history.php?courseid="+field['id']+"'>"+field['fullname']+"</a></td>"; 
+			        var teacher = "<td><span class='teacher' teacherid='"+field['teacherid']+"'>"+field['teacher']+"</span></td>";
+			        var category = "<td>"+field['name']+"</td>";
+		        	var printicon = "<td><a href='print.php?courseid="+field['id']+"&categoryid="+path+"'>"+print+"</a></td>";
+		        	var carticon = "<td><i class='icon icon-plus listcart' clicked='0' courseid='"+field['id']+"'></i></td>"; 
+		        	$table.append("<tr class='ajaxtr'>"+num+his+teacher+category+printicon+carticon+"</tr>");
+					count++;	
+		        });
+		    }
+		});
+	}
+	//This function is to check modules from omega
+	function omegamodulescheck(datetwo, courseid){
+		dayofweek = datetwo.getDay();
+		var modulesoptions = jQuery('.cart-tr[courseid='+courseid+']').find('.selectpicker option');
+		modulesoptions.prop( "selected", false);
+		$.ajax({
+		    type: 'POST',
+		    url: 'ajax/ajaxquerys.php',
+		    data: {
+			      'action' : 'cartlist',
+			      'courseid' : courseid,	
+		    	  'diasemana': dayofweek
+		    	},
+		    success: function (response) {
+		    	var arr = response;
+		    	if(arr["modules"] == false){
+		    		jQuery('.cart-tr[courseid='+courseid+']').find('.selectpicker option[value="no"]').prop("selected", true);
+		    		updatelistsmodules(null, courseid);
+		    		enableprintbutton();
+			    }
+		    	else{
+			    	var mods = new Array();
+			    	modulesoptions.each(function (i){
+						for(j=0;j<arr["modules"].length;j++){
+							if(arr["modules"][j]["horaInicio"] == $(this).text()+":00"){
+								$(this).prop("selected", true);
+								mods.push($(this).val());
+							}
+						}
+					});
+			    	enableprintbutton();
+			    	updatelistsmodules(mods, courseid);
+		    	}
+		    }  	
+		});
+	}
+    //This function is to update the lists array with some new selected module
+	function updatelistsmodules(values, courseid){
+		if(values == null){
+			for(i=0; i<lists.length; i++){
+				if(lists[i].courseid == courseid){
+					lists[i].modules = new Array();
+				}
+			}
+		}
+		else{
+			for(i=0; i<lists.length; i++){
+				if(lists[i].courseid == courseid){
+					lists[i].modules = new Array();
+					for(j=0; j<values.length; j++){
+						var mod = {};
+						mod[values[j]] = 1;
+						lists[i].modules.push(mod);
+					}
+				}
+			}
+		}
+	}
+    //This function is to update the lists array with some new selected date
+	function updatelistsdate(value, courseid){
+		for(i=0; i<lists.length; i++){
+			if(lists[i].courseid == courseid){
+				lists[i].date = value;
+			}
+		}
+	}
+	//This function is to enable the print button when every list has at least one module selected
+	function enableprintbutton(){
+		var count=0;
+		$(".selectpicker option:selected").each(function(i){
+			if($(this).val() == "no")
+				count++;
+		});
+		if(count == 0)
+			$(".printbutton").prop("disabled",false);
+		else
+			$(".printbutton").prop("disabled",true);
+	}
+		
 </script>
