@@ -352,7 +352,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 
 		$viewerpdf= html_writer::nonempty_tag(
 				"div",
-				$pdf->Output(),
+				$pdf->Output("ession.pdf", "I"),
 				array(
 						"style" => "height:75vh; width:60vw"
 				));
