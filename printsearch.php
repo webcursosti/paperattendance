@@ -61,7 +61,7 @@ if(is_siteadmin()){
 	$ncourses = count($DB->get_records_sql($sqlcourses, array($year)));
 	$courses = $DB->get_records_sql($sqlcourses, array($year), $page*$perpage,$perpage);
 	$path = 1;
-	$categoryid = 2;
+	$categoryid = 406;
 }
 else{
 	//Query to get the category of the secretary
