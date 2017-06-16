@@ -350,12 +350,12 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		
 		}
 
-		$viewerpdf= html_writer::nonempty_tag(
-				"div",
-				$pdf->Output("session.pdf", "I"),
-				array(
-						"style" => "height:75vh; width:60vw"
-				));
+// 		$viewerpdf= html_writer::nonempty_tag(
+// 				"div",
+// 				$pdf->Output("session.pdf", "I"),
+// 				array(
+// 						"style" => "height:75vh; width:60vw"
+// 				));
 	}
 	
 	// Lists all records in the database
@@ -583,7 +583,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		echo $viewbackbutton;
 	
 		// Preview PDF
-		echo $viewerpdf;
+		$pdf->Output("session.pdf", "I");
 	}
 	
 	// Displays all the records and options
