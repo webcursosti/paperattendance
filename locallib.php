@@ -558,7 +558,7 @@ function paperattendance_get_qr_text($path, $pdf){
 		$qrcodebottom = new QrReader($qrbottom, QrReader::SOURCE_TYPE_RESOURCE);
 		$textbottom = $qrcodebottom->text(); //return decoded text from QR Code
 		$imagick->clear();
-		unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/bottomright".$qrpath);
+//		unlink($CFG -> dataroot. "/temp/local/paperattendance/unread/bottomright".$qrpath);
 		if($textbottom == "" || $textbottom == " " || empty($textbottom)){
 			return "error";
 		}
