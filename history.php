@@ -32,6 +32,7 @@ require_once ($CFG->dirroot."/local/paperattendance/forms/history_form.php");
 require_once ($CFG->dirroot."/local/paperattendance/forms/addstudent_form.php");
 require_once ($CFG->dirroot."/local/paperattendance/forms/reviewattendance_form.php");
 require_once ($CFG->dirroot . '/local/paperattendance/locallib.php');
+
 require_once ($CFG->dirroot . "/repository/lib.php");
 require_once ($CFG->libdir . '/pdflib.php');
 require_once ($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/fpdi.php');

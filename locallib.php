@@ -1402,13 +1402,13 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					$sessid = paperattendance_insert_session($course, $requestorid, $uploaderobj->id, $pdffilename, $description);
 					mtrace("la session id es : ".$sessid);
 					paperattendance_insert_session_module($module, $sessid, $time);
-					save_current_pdf_page_to_session($realpagenum, $sessid);
+					paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid);
 					
 				}
 				else{
 					mtrace("session ya eexiste");
 					$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
-					save_current_pdf_page_to_session($realpagenum, $sessid);
+					paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid);
 				}
 				
 				$arrayalumnos = array();
@@ -1458,7 +1458,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	}
 }
 
-function save_current_pdf_page_to_session($pagenum, $sessid){
+function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid){
 	global $DB;
 	
 	$pagesession = new stdClass();
