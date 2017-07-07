@@ -322,40 +322,35 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				));
 		
 		$pdfname = $DB->get_record("paperattendance_session", array("id" => $attendanceid));
-		
-		//var_dump($contextsystem->id);
-		//Context id as 1 because the var context->id gets the number 6 , check it later
-		$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $pdfname->pdf);
-		$path = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdf;
-		//query para obtener todas las paginas del pdf 
-		//mergear hojas
-		
-		$getpagesofpdf = "SELECT * FROM {paperattendance_sessionpages} 
-						   WHERE sessionid = ?";
+		$getpagesofpdf = "SELECT * FROM {paperattendance_sessionpages}
+						  WHERE sessionid = ?";
 		
 		$resultpagespdf = $DB->get_records_sql($getpagesofpdf, array($attendanceid));
-		
-		
-		$pdf = new FPDI();
-		
+		$pages = array();
 		foreach ($resultpagespdf as $page){
-
-		$pdf->addPage();
-		
-		$pdf->setSourceFile($path);
-		$currentpage = $pdf->importPage($page, '/MediaBox');
-
-		// place the imported page of the document:
-		$pdf->useTemplate($currentpage);
-		
+			$pages[] = $page->pagenum;
 		}
-
-// 		$viewerpdf= html_writer::nonempty_tag(
-// 				"div",
-// 				$pdf->Output("session.pdf", "I"),
-// 				array(
-// 						"style" => "height:75vh; width:60vw"
-// 				));
+		$path = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdf;
+		$pdf = new FPDI();
+		$pageCount = $pdf->setSourceFile($path);
+		for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+			if(in_array($pageNo, $pages)){
+				// import a page
+				$templateId = $pdf->importPage($pageNo);
+				// get the size of the imported page
+				$size = $pdf->getTemplateSize($templateId);
+				//Add page on portrait position
+				$pdf->AddPage('P', array($size['w'], $size['h']));
+				// use the imported page
+				$pdf->useTemplate($templateId);
+			}
+		}
+		// Preview PDF
+		$pdf->Output();
+		/*$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
+				"src" => $pdf->Output(),
+				"style" => "height:75vh; width:60vw"
+		));*/
 	}
 	
 	// Lists all records in the database
@@ -581,9 +576,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		echo html_writer::nonempty_tag("h7", get_string('downloadassistance', 'local_paperattendance'), array("align" => "left"));
 	
 		echo $viewbackbutton;
-	
-		// Preview PDF
-		$pdf->Output("session.pdf", "I");
+		echo $viewerpdf;
 	}
 	
 	// Displays all the records and options
