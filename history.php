@@ -330,9 +330,16 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		foreach ($resultpagespdf as $page){
 			$pages[] = $page->pagenum;
 		}
-		$path = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdf;
+		$originalpdf = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdf;
+		$path = $CFG -> dataroot. "/temp/local/paperattendance/";
+		$timepdf = time();
+		$attendancepdffile = $path . "/print/paperattendance_".$courseid."_".$timepdf.".pdf";
+		if (!file_exists($path . "/print/")) {
+			mkdir($path . "/print/", 0777, true);
+		}
+		
 		$pdf = new FPDI();
-		$pageCount = $pdf->setSourceFile($path);
+		$pageCount = $pdf->setSourceFile($originalpdf);
 		for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
 			if(in_array($pageNo, $pages)){
 				// import a page
@@ -346,11 +353,30 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 			}
 		}
 		// Preview PDF
-		$pdf->Output();
-		/*$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
-				"src" => $pdf->Output(),
+		$pdf->Output($attendancepdffile, "F");
+		
+		$fs = get_file_storage();
+		$file_record = array(
+				'contextid' => $context->id,
+				'component' => 'local_paperattendance',
+				'filearea' => 'scan',
+				'itemid' => 0,
+				'filepath' => '/',
+				'filename' => "paperattendance_".$courseid."_".$timepdf.".pdf"
+		);
+		// If the file already exists we delete it
+		if ($fs->file_exists($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
+			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
+			$previousfile->delete();
+		}
+		// Info for the new file
+		$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
+		$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
+		$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
+				"src" => $url,
 				"style" => "height:75vh; width:60vw"
-		));*/
+		));
+		unlink($attendancepdffile);
 	}
 	
 	// Lists all records in the database
