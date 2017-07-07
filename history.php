@@ -322,40 +322,61 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				));
 		
 		$pdfname = $DB->get_record("paperattendance_session", array("id" => $attendanceid));
-		
-		//var_dump($contextsystem->id);
-		//Context id as 1 because the var context->id gets the number 6 , check it later
-		$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $pdfname->pdf);
-		$path = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdf;
-		//query para obtener todas las paginas del pdf 
-		//mergear hojas
-		
-		$getpagesofpdf = "SELECT * FROM {paperattendance_sessionpages} 
-						   WHERE sessionid = ?";
+		$getpagesofpdf = "SELECT * FROM {paperattendance_sessionpages}
+						  WHERE sessionid = ?";
 		
 		$resultpagespdf = $DB->get_records_sql($getpagesofpdf, array($attendanceid));
-		
+		$pages = array();
+		foreach ($resultpagespdf as $page){
+			$pages[] = $page->pagenum;
+		}
+		$originalpdf = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdf;
+		$path = $CFG -> dataroot. "/temp/local/paperattendance/";
+		$timepdf = time();
+		$attendancepdffile = $path . "/print/paperattendance_".$courseid."_".$timepdf.".pdf";
+		if (!file_exists($path . "/print/")) {
+			mkdir($path . "/print/", 0777, true);
+		}
 		
 		$pdf = new FPDI();
-		
-		foreach ($resultpagespdf as $page){
-
-		$pdf->addPage();
-		
-		$pdf->setSourceFile($path);
-		$currentpage = $pdf->importPage($page, '/MediaBox');
-
-		// place the imported page of the document:
-		$pdf->useTemplate($currentpage);
-		
+		$pageCount = $pdf->setSourceFile($originalpdf);
+		for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+			if(in_array($pageNo, $pages)){
+				// import a page
+				$templateId = $pdf->importPage($pageNo);
+				// get the size of the imported page
+				$size = $pdf->getTemplateSize($templateId);
+				//Add page on portrait position
+				$pdf->AddPage('P', array($size['w'], $size['h']));
+				// use the imported page
+				$pdf->useTemplate($templateId);
+			}
 		}
-
-// 		$viewerpdf= html_writer::nonempty_tag(
-// 				"div",
-// 				$pdf->Output("session.pdf", "I"),
-// 				array(
-// 						"style" => "height:75vh; width:60vw"
-// 				));
+		// Preview PDF
+		$pdf->Output($attendancepdffile, "F");
+		
+		$fs = get_file_storage();
+		$file_record = array(
+				'contextid' => $context->id,
+				'component' => 'local_paperattendance',
+				'filearea' => 'scan',
+				'itemid' => 0,
+				'filepath' => '/',
+				'filename' => "paperattendance_".$courseid."_".$timepdf.".pdf"
+		);
+		// If the file already exists we delete it
+		if ($fs->file_exists($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
+			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
+			$previousfile->delete();
+		}
+		// Info for the new file
+		$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
+		$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
+		$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
+				"src" => $url,
+				"style" => "height:75vh; width:60vw"
+		));
+		unlink($attendancepdffile);
 	}
 	
 	// Lists all records in the database
@@ -581,9 +602,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		echo html_writer::nonempty_tag("h7", get_string('downloadassistance', 'local_paperattendance'), array("align" => "left"));
 	
 		echo $viewbackbutton;
-	
-		// Preview PDF
-		$pdf->Output("session.pdf", "I");
+		echo $viewerpdf;
 	}
 	
 	// Displays all the records and options

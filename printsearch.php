@@ -136,6 +136,7 @@ $table->head = array(get_string('hashtag', 'local_paperattendance'),
 		get_string('teacher', 'local_paperattendance'),
 		get_string('category', 'local_paperattendance'),
 		'Custom print',
+		'Add to cart',
 		'Quick print'
 );
 $table->id = "fbody";
@@ -154,7 +155,8 @@ foreach($courses as $course){
 			html_writer::nonempty_tag("span", $course->teacher, array("teacherid"=>$course->teacherid, "class"=>"teacher")),
 			$course->name,
 			html_writer::nonempty_tag("a", $print, array("href"=>$printurl)),
-			html_writer::nonempty_tag("i", ' ', array("class"=>"icon icon-plus listcart", "clicked"=>0, "courseid"=>$course->id))
+			html_writer::nonempty_tag("i", ' ', array("class"=>"icon icon-plus listcart", "clicked"=>0, "courseid"=>$course->id)),
+			html_writer::nonempty_tag("i", ' ', array("class"=>"icon icon-print quickprint", "clicked"=>0, "courseid"=>$course->id))
 	);
 	$coursecount++;
 }
@@ -173,14 +175,14 @@ $carttable = new html_table();
 $carttable->head = array("Session",	"Description","Date","Module","Requestor","Remove");
 $carttable->id = "carttable";
 
-$formmodal = '<div class="modal fade bs-example-modal-lg" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" style="display: none; width:90%; margin-left:-45%">
+$formmodal = '<div class="modal fade bs-example-modal-lg" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" style="display: none; width:80%; margin-left:-45%">
 			  <div class="modal-dialog modal-lg" role="document">
 			    	<div class="modal-content">
 			    		<div class="modal-header">
 			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			        		<h4 class="modal-title" id="formModalLabel">Lists cart</h4>
 			      		</div>
-		      		<div class="modal-body quickprintappend" style="height:70vh">
+		      		<div class="modal-body" style="height:70vh">
 						'.html_writer::table($carttable).'
 		      		</div>
 		      		<div class="modal-footer">
@@ -204,8 +206,26 @@ $pdfmodal = '<div class="modal fade bs-example-modal-lg" id="pdfModal" tabindex=
 	  		</div>
 		</div>';
 
+$quickprintmodal = '<div class="modal fade bs-example-modal-lg" id="quickprintModal" tabindex="-1" role="dialog" aria-labelledby="quickprintModalLabel" style="display: none;">
+			  <div class="modal-dialog modal-lg" role="document">
+			    	<div class="modal-content">
+			    		<div class="modal-header">
+			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        		<h4 class="modal-title" id="exampleModalLabel">Quick Print</h4>
+			      		</div>
+		      		<div class="modal-body quickprintappend" style="height:70vh">
+		
+		      		</div>
+		      		<div class="modal-footer">
+			       		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		      		</div>
+	      		</div>
+	  		</div>
+		</div>';
+
 echo html_writer::div($formmodal, "modaldiv");
 echo html_writer::div($pdfmodal, "modaldiv");
+echo html_writer::div($quickprintmodal, "modaldiv");
 
 echo $OUTPUT->footer();
 
@@ -306,6 +326,30 @@ $( document ).ready(function() {
 			});
 		}
 	});
+	$( document ).on( "click", ".quickprint", function() {
+		//$(this).removeClass('icon-print').addClass('icon-ok');
+		var courseid = $(this).attr('courseid');
+		$('.quickprintappend').html('<center><img src="img/loading.gif"></center>');
+		$.ajax({
+		    type: 'POST',
+		    url: 'quickprint.php',
+		    data: {
+			      'courseid' : courseid
+		    	},
+		    success: function (response) {
+				$('.quickprintappend').html(response);
+				if(response == "There's nothing to print for today"){
+					$('.printbutton').attr("disabled", true);
+		    	}  	
+				else{
+					$('.printbutton').removeAttr("disabled");
+				}
+		    }
+		});
+		
+		jQuery('#quickprintModal').modal('show'); 
+	
+	});
 	//When the background is clicked, the modal must hide
 	$( document ).on( "click", ".modal-backdrop", function() {
 		jQuery('#formModal').modal('hide');
@@ -349,6 +393,7 @@ $( document ).ready(function() {
 	});
 	//If print button is clicked, then the pdf with all lists is generated
 	$( document ).on( "click", ".printbutton", function() {
+		jQuery('#pdfModal').modal('show'); 
 		$('.pdflists').html('<center><img src="img/loading.gif"></center>');
 		$.ajax({
 		    type: 'POST',
@@ -358,7 +403,6 @@ $( document ).ready(function() {
 		    	},
 		    success: function (response) {
 				$('.pdflists').html(response);
-				jQuery('#pdfModal').modal('show'); 
 		    }
 		});
 	});
