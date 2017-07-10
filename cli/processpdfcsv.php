@@ -34,10 +34,13 @@ require_once ($CFG->libdir . '/clilib.php');
 global $DB;
 
 // Now get cli options
-list($options, $unrecognized) = cli_get_params(
-		array('help'=>false),
-        array('h'=>'help')
-		);
+list($options, $unrecognized) = cli_get_params(array(
+		'help' => false,
+		'debug' => false,
+), array(
+		'h' => 'help',
+		'd' => 'debug'
+));
 if($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
@@ -77,8 +80,10 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
 		$uploaderobj = $DB->get_record("user", array("id" => $pdf-> userid));
 		$process = paperattendance_runcsvproccessing($path, $pdf-> name, $uploaderobj);
  		if($process){
+ 			mtrace("Pdf ".$found." correctly processed");
  			$read++;
  			$DB->delete_records("paperattendance_unprocessed", array('id'=> $pdf-> id)); 
+ 			mtrace("Pdf ".$found." deleted from unprocessed table");
  			//TODO: unlink al pdf grande y viejo y ya no utilizado
  		}
  		else{
