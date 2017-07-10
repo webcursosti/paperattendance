@@ -1455,6 +1455,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 			
 	  		}
 	  		else{
+	  			mtrace("Error: can't procees this page");
 	  			//send email or something to let know this page had problems
 	  		}
 			}
@@ -1516,7 +1517,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	$pdf->writeImages($path."/jpgs/".$pdfname.".jpg", false);
 	$pdf->clear();
 	
-//	mtrace( "terminé de convertir los pdfs a jpg" );
+	mtrace( "All pdf's pages converted to jpg images" );
 	//TODO: cambiar el installation path. para que funcione en produccion
 	$command = 'java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /home/mpozarski/poteito/template.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/jpgs/';
 //	mtrace( "el comando es: ".$command );
@@ -1525,7 +1526,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
     if($return_var != 0) {
     	$errormsg = $lastline;
     }
-//	mtrace( "corrí el command de formscanner" );
+	mtrace( "FormScanner command executed succesfully" );
 	//var_dump($lastline);
 	//var_dump($output);
 	//var_dump($return_var);
@@ -1534,7 +1535,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	
 	foreach(glob("{$path}/jpgs/*.csv") as $file)
 	{
-//		mtrace( "encontré un csv dentro de la carpeta!! - osea el command funcionó" );
+		mtrace( "Csv file founden - command works correct!" );
 		$processed = paperattendance_read_csv($file, $path, $filename, $uploaderobj);
 		
 	}
