@@ -74,9 +74,10 @@ $sqlunreadpdfs = "SELECT  id, filename AS name, uploaderid AS userid
 // Read the pdfs if there is any unread, with readpdf function
 if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
 	$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
-	
+	mtrace("Query find data correctly");
 	foreach($resources as $pdf){
 		$found++;
+		mtrace("Found ".$found." pdfs");
 		$uploaderobj = $DB->get_record("user", array("id" => $pdf-> userid));
 		$process = paperattendance_runcsvproccessing($path, $pdf-> name, $uploaderobj);
  		if($process){

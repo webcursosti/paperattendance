@@ -1355,7 +1355,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 			$numero = count($data);
 			//mtrace( $numero." datoss en la línea ".$fila);
 			//print_r($data);
-			$stop = false;
+			$stop = true;
 			
 			if($fila> 1 && $numero > 26){
 				$qrcodebottom = $data[27];
@@ -1367,11 +1367,12 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						$qrcode = $qrcodebottom;
 					}
 					else{
-						$stop = true;
+						$stop = false;
 					}
 				}
 				
 				if($stop){
+				mtrace("qr correctly finded");
 				$qrinfo = explode("*",$qrcode);
 				//var_dump($qrinfo);
 				$course = $qrinfo[0];
