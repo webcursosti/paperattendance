@@ -1354,7 +1354,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 			$data = fgetcsv($handle, 1000, ";");
 			$numero = count($data);
 			//mtrace( $numero." datoss en la línea ".$fila);
-			//print_r($data);
+			print_r($data);
 			$stop = true;
 			
 			if($fila> 1 && $numero > 26){
