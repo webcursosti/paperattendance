@@ -96,11 +96,11 @@ else{
 		INNER JOIN {course_categories} as cat ON (cat.id = c.category)
 		INNER JOIN {role} r ON (r.id = ra.roleid)
 		WHERE ct.contextlevel = '50' AND r.id = 3 AND e.enrol = 'database'
-		AND cat.path like ? AND c.idnumber > 0
-		GROUP BY u.id";
+		AND (cat.path like ? OR cat.path like ?) AND c.idnumber > 0
+		GROUP BY c.id";
 
-	$ncourses = count($DB->get_records_sql($sqlcourses, array("%/".$path."%")));
-	$courses = $DB->get_records_sql($sqlcourses, array("%/".$path."%"), $page*$perpage,$perpage);
+	$ncourses = count($DB->get_records_sql($sqlcourses, array("%/".$path."/%", "%/".$path)));
+	$courses = $DB->get_records_sql($sqlcourses, array("%/".$path."/%", "%/".$path), $page*$perpage,$perpage);
 }
 
 $context = context_coursecat::instance($categoryid);
