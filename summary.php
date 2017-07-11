@@ -110,22 +110,29 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 	$sessions = count($DB->get_records_sql($sqlsession, $params));
 	$rowcount = $page*$perpage+1;
 	foreach($students as $student){
-		//student summary sql
-		$present = "SELECT COUNT(*)
-						FROM {paperattendance_presence} AS p
-						INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid AND p.status = 1  AND s.courseid = ? AND s.status $statusprocessed  AND p.userid = ?)";
-		$paramspresent = array();
-		$paramspresent = array_merge($params, array($student->id));
-		$present = $DB->count_records_sql($present, $paramspresent);
-		$absent = $sessions - $present;
-		$percentagestudent = round(($present/$sessions)*100);
+		if($sessions == 0 || $sessions == null){
+			$present = 0;
+			$absent = 0;
+			$percentagestudent = '-';
+		}
+		else{
+			//student summary sql
+			$present = "SELECT COUNT(*)
+			FROM {paperattendance_presence} AS p
+			INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid AND p.status = 1  AND s.courseid = ? AND s.status $statusprocessed  AND p.userid = ?)";
+			$paramspresent = array();
+			$paramspresent = array_merge($params, array($student->id));
+			$present = $DB->count_records_sql($present, $paramspresent);
+			$absent = $sessions - $present;
+			$percentagestudent = round(($present/$sessions)*100)."%";
+		}
 		$table->data[] = array(
 				$rowcount,
 				$student->lastname." ".$student->firstname,
 				$student->email,
 				$present,
 				$absent,
-				$percentagestudent."%"
+				$percentagestudent
 		);
 		$rowcount++;
 	}
