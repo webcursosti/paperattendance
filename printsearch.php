@@ -96,11 +96,11 @@ else{
 		INNER JOIN {course_categories} as cat ON (cat.id = c.category)
 		INNER JOIN {role} r ON (r.id = ra.roleid)
 		WHERE ct.contextlevel = '50' AND r.id = 3 AND e.enrol = 'database'
-		AND cat.path like ? AND c.idnumber > 0
-		GROUP BY u.id";
+		AND (cat.path like ? OR cat.path like ?) AND c.idnumber > 0
+		GROUP BY c.id";
 
-	$ncourses = count($DB->get_records_sql($sqlcourses, array("%/".$path."%")));
-	$courses = $DB->get_records_sql($sqlcourses, array("%/".$path."%"), $page*$perpage,$perpage);
+	$ncourses = count($DB->get_records_sql($sqlcourses, array("%/".$path."/%", "%/".$path)));
+	$courses = $DB->get_records_sql($sqlcourses, array("%/".$path."/%", "%/".$path), $page*$perpage,$perpage);
 }
 
 $context = context_coursecat::instance($categoryid);
@@ -285,10 +285,10 @@ $( document ).ready(function() {
 	});
 	//When a plus icon is clicked, that course should be added to 'lists' array
 	$( document ).on( "click", ".listcart", function() {
-		$(this).removeClass('icon-plus').addClass('icon-ok');
 		var courseid = $(this).attr('courseid');
 		var that = $(this);
 		if(that.attr('clicked') == 0){
+			$('.listcart[courseid='+courseid+']').removeClass('icon-plus').addClass('icon-ok');
 		    //Get data to print
 			$.ajax({
 			    type: 'GET',
@@ -320,14 +320,13 @@ $( document ).ready(function() {
 						});
 					}
 					lists.push({"courseid":courseid, "requestorid": arr["requestorid"], "date": today, "modules": selectedmodules, "description": arr["description"]});
-					that.attr('clicked', 1);
+					$('.listcart[courseid='+courseid+']').attr('clicked', 1);
 					enableprintbutton();
 			    }
 			});
 		}
 	});
 	$( document ).on( "click", ".quickprint", function() {
-		//$(this).removeClass('icon-print').addClass('icon-ok');
 		var courseid = $(this).attr('courseid');
 		$('.quickprintappend').html('<center><img src="img/loading.gif"></center>');
 		$.ajax({
@@ -408,6 +407,7 @@ $( document ).ready(function() {
 	});
 	//This function is called to filter the table
 	function callAjax(data, path, print, categoryid) {
+		console.log(lists);
 		var count = 1;
 		$.ajax({
 		    type: 'GET',
@@ -421,13 +421,19 @@ $( document ).ready(function() {
 		    success: function (response) {
 		    	$(".ajaxtr").remove();
 		        $.each(response, function(i, field){
-			        var num = "<td>"+count+"</td>";
+			        var carticon = "<td><i class='icon icon-plus listcart' clicked='0' courseid='"+field['id']+"'></i></td>";
+					$.each(lists, function(i, list){
+						if(list.courseid == field['id']){
+							carticon = "<td><i class='icon icon-ok listcart' clicked='1' courseid='"+field['id']+"'></i></td>";
+						}
+					});
+		        	var num = "<td>"+count+"</td>";
 			        var his = "<td><a href='history.php?courseid="+field['id']+"'>"+field['fullname']+"</a></td>"; 
 			        var teacher = "<td><span class='teacher' teacherid='"+field['teacherid']+"'>"+field['teacher']+"</span></td>";
 			        var category = "<td>"+field['name']+"</td>";
 		        	var printicon = "<td><a href='print.php?courseid="+field['id']+"&categoryid="+path+"'>"+print+"</a></td>";
-		        	var carticon = "<td><i class='icon icon-plus listcart' clicked='0' courseid='"+field['id']+"'></i></td>"; 
-		        	$table.append("<tr class='ajaxtr'>"+num+his+teacher+category+printicon+carticon+"</tr>");
+		        	var quickprinticon = "<td><i class='icon icon-print quickprint' clicked='0' courseid='"+field['id']+"'></i></td>";
+		        	$table.append("<tr class='ajaxtr'>"+num+his+teacher+category+printicon+carticon+quickprinticon+"</tr>");
 					count++;	
 		        });
 		    }
