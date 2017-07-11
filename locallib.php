@@ -76,6 +76,8 @@ function paperattendance_get_students_for_printing($course) {
 /**
  * Get the student list
  * 
+ * @param int $contextid
+ *            Context of the course 
  * @param int $course
  *            Id course
  */
@@ -278,7 +280,6 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			$pdf->SetXY(20, 31);
 			$pdf->Write(1, core_text::strtoupper($descriptionstr));
 				
-			
 			// Logo UAI and Top QR
 			$pdf->Image($logofilepath, 20, 15, 50);
 			// Top QR
@@ -338,6 +339,11 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	$pdf->line(20, $top, (20+8+25+20+90+20), $top);
 }
 
+/**
+ * Draw the framing for the pdf, so formscanner can detect the inside
+ *
+ * @param resource the pdf to frame
+ */
 function paperattendance_drawcircles($pdf){
 	
 	$w = $pdf -> GetPageWidth();
@@ -351,20 +357,30 @@ function paperattendance_drawcircles($pdf){
 	$fillcolor = array(0,0,0);
 	$borderstyle = array("all" => "style");
 	
+	//top left
 	$pdf -> Rect($left, $top, 4, 12, 'F', $borderstyle, $fillcolor);
 	$pdf -> Rect($left, $top, 12, 4, 'F', $borderstyle, $fillcolor);
 	
+	//top right
 	$pdf -> Rect($left + $width -2, $top, 4, 12, 'F', $borderstyle, $fillcolor);
 	$pdf -> Rect($left + $width -2, $top, -8, 4, 'F', $borderstyle, $fillcolor);
 	
+	//bottom left
 	$pdf -> Rect($left, $top + $height -4, 4, -8, 'F', $borderstyle, $fillcolor);
 	$pdf -> Rect($left, $top + $height -4, 12, 4, 'F', $borderstyle, $fillcolor);
 	
+	//bottom right
 	$pdf -> Rect($left + $width -2, $top + $height -4, 4, -8, 'F', $borderstyle, $fillcolor);
 	$pdf -> Rect($left + $width + 2, $top + $height -4, -12, 4, 'F', $borderstyle, $fillcolor);
+	$pdf->SetFillColor(228, 228, 228);
 
 }
 
+/**
+ * Get all students from a course, for list.
+ *
+ * @param unknown_type $courseid
+ */
 function paperattendance_readpdf($path, $filename, $course){
 	global $DB, $CFG;
 	
@@ -1096,6 +1112,20 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 	message_send($eventdata);
 }
 
+/**
+ * Function to upload a pdf to moodledata, and check if its a correct attendance list
+ *
+ * @param resource $file
+ *            Resource of the pdf
+ * @param varchar $path
+ *            Complete path to the pdf
+ * @param varchar $filename
+ *            Complete name of the pdf 
+ * @param int $context
+ *            Context of the uploader
+ * @param int $contextsystem
+ *            Context on the system of the uploader 
+ */
 function paperattendance_uploadattendances($file, $path, $filename, $context, $contextsystem){
 	global $DB, $OUTPUT, $USER;
 	$attendancepdffile = $path ."/unread/".$filename;
@@ -1198,6 +1228,15 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 		return $OUTPUT->notification("File name: ".$originalfilename."<br>".get_string("pdfextensionunrecognized", "local_paperattendance"));
 	}
 }
+
+/**
+ * Function to sync unsynced students
+ *
+ * @param int $courseid
+ *            Course of the id reviewed
+ * @param int $sessionid
+ *            Session id to get the attendance
+ */
 function paperattendance_synctask($courseid, $sessionid){
 	global $DB, $CFG;
 
@@ -1235,6 +1274,12 @@ function paperattendance_synctask($courseid, $sessionid){
 	return $return;
 }
 
+/**
+ * Function to create the tabs for history
+ *
+ * @param int $courseid
+ *            Int of the course
+ */
 function paperattendance_history_tabs($courseid) {
 	$tabs = array();
 	// Create sync
@@ -1258,6 +1303,14 @@ function paperattendance_history_tabs($courseid) {
 	return $tabs;
 }
 
+/**
+ * Function to return the description given a number or all the list
+ *
+ * @param boolean $all
+ *            True if you want the complete list
+ * @param int $descriptionnumber
+ *            From 0 to 6, get description
+ */
 function paperattendance_returnattendancedescription($all, $descriptionnumber=null){
 	if(!$all){
 	$descriptionsarray = array(get_string('class', 'local_paperattendance'),
@@ -1284,6 +1337,18 @@ function paperattendance_returnattendancedescription($all, $descriptionnumber=nu
 	}
 }
 
+/**
+ * Function to insert the execution of a task 
+ *
+ * @param varchar $task
+ *            Title of the Task
+ * @param varchar $result
+ *            Ending result of the Task
+ * @param timestamp $timecreated
+ *            Time created
+ * @param time $executiontime
+ *            How much the execution lasted
+ */
 function paperattendance_cronlog($task, $result = NULL, $timecreated, $executiontime = NULL){
 	global $DB;
 	$cronlog = new stdClass();
@@ -1295,6 +1360,24 @@ function paperattendance_cronlog($task, $result = NULL, $timecreated, $execution
 	
 }
 
+/**
+ * Function to export the Attendance's Summary to excel
+ *
+ * @param varchar $title
+ *            Title of the Summary
+ * @param array $header
+ *            Array containing the header of each row
+ * @param varchar $filename
+ *            Full name of the excel
+ * @param array $data
+ *            Array containing the data of each row
+ * @param array $description
+ *            Array containing the selected descriptions of attendances
+ * @param array $dates
+ *            Array containing the dates of each session
+ * @param array $tabs
+ *            Array containing the tabs of the excel
+ */
 function paperattendance_exporttoexcel($title, $header, $filename, $data, $descriptions, $dates, $tabs){
 	global $CFG;
 	$workbook = new MoodleExcelWorkbook("-");
@@ -1343,6 +1426,18 @@ function paperattendance_exporttoexcel($title, $header, $filename, $data, $descr
 	exit;
 }
 
+/**
+ * Processes the CSV, saves session and presences and sync with omega
+ *
+ * @param resource $file
+ *            Csv resource
+ * @param varchar $path
+ *            Path of the pdf
+ * @param varchar $pdffilename
+ *            Full name of the pdf
+ * @param obj $uploaderobj
+ *            Object of the person who uploaded the pdf
+ */
 function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	global $DB, $CFG, $USER;
 
@@ -1468,6 +1563,14 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	return true;
 }
 
+/**
+ * Inserts the current page of the pdf and session to the database, so its reconstructed later
+ *
+ * @param int $pagenum
+ *            Page number of the pdf
+ * @param int $sessid
+ *            Session id of the current session
+ */
 function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid){
 	global $DB;
 	
@@ -1477,6 +1580,15 @@ function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid){
 	$DB->insert_record('paperattendance_sessionpages', $pagesession, false);
 }
 
+
+/**
+ * Counts the number of pages of a pdf
+ *
+ * @param varchar $path
+ *            Path of the pdf
+ * @param varchar $pdffilename
+ *            Fullname of the pdf, including extension
+ */
 function paperattendance_number_of_pages($path, $pdffilename){
 	$document = new Imagick($path."/".$pdffilename);
 	$num = $document->getNumberImages();
@@ -1484,6 +1596,16 @@ function paperattendance_number_of_pages($path, $pdffilename){
 	return $num;
 }
 
+/**
+ * Transforms pdf found into jpgs, runs shell exec to call formscanner, calls readcsv
+ *
+ * @param varchar $path
+ *            Path of the pdf
+ * @param varchar $filename
+ *            Fullname of the pdf, including extension 
+ * @param obj $uploaderobj
+ *            Object of the person who uploaded the pdf
+ */
 function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	global $CFG;
 	
@@ -1544,7 +1666,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	//delete all jpgs
 	foreach(glob("{$path}/jpgs/*.jpg") as $file)
 	{
-		unlink($file);	
+		//unlink($file);	
 	}
 	if($processed){
 		return true;
