@@ -351,17 +351,17 @@ function paperattendance_drawcircles($pdf){
 	$fillcolor = array(0,0,0);
 	$borderstyle = array("all" => "style");
 	
-	$pdf -> Rect($left, $top, 2, 10, 'F', $borderstyle, $fillcolor);
-	$pdf -> Rect($left, $top, 10, 2, 'F', $borderstyle, $fillcolor);
+	$pdf -> Rect($left, $top, 4, 12, 'F', $borderstyle, $fillcolor);
+	$pdf -> Rect($left, $top, 12, 4, 'F', $borderstyle, $fillcolor);
 	
-	$pdf -> Rect($left + $width, $top, 2, 10, 'F', $borderstyle, $fillcolor);
-	$pdf -> Rect($left + $width, $top, -8, 2, 'F', $borderstyle, $fillcolor);
+	$pdf -> Rect($left + $width -2, $top, 4, 12, 'F', $borderstyle, $fillcolor);
+	$pdf -> Rect($left + $width -2, $top, -8, 4, 'F', $borderstyle, $fillcolor);
 	
-	$pdf -> Rect($left, $top + $height, 2, -8, 'F', $borderstyle, $fillcolor);
-	$pdf -> Rect($left, $top + $height, 10, 2, 'F', $borderstyle, $fillcolor);
+	$pdf -> Rect($left, $top + $height -4, 4, -8, 'F', $borderstyle, $fillcolor);
+	$pdf -> Rect($left, $top + $height -4, 12, 4, 'F', $borderstyle, $fillcolor);
 	
-	$pdf -> Rect($left + $width, $top + $height, 2, -8, 'F', $borderstyle, $fillcolor);
-	$pdf -> Rect($left + $width +2, $top + $height, -10, 2, 'F', $borderstyle, $fillcolor);
+	$pdf -> Rect($left + $width -2, $top + $height -4, 4, -8, 'F', $borderstyle, $fillcolor);
+	$pdf -> Rect($left + $width + 2, $top + $height -4, -12, 4, 'F', $borderstyle, $fillcolor);
 	
 }
 
