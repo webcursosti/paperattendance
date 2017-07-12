@@ -284,7 +284,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			// Logo UAI and Top QR
 			$pdf->Image($logofilepath, 20, 15, 50);
 			// Top QR
-			$qrfilename = paperattendance_create_qr_image($qrstring.$modulecount, $qrpath);
+			$qrfilename = paperattendance_create_qr_image($qrstring.$modulecount."*".$description, $qrpath);
 			//echo $qrfilename."  ".$qrpath."<br>";
 			$pdf->Image($qrpath."/".$qrfilename, 153, 5, 35);
 			
@@ -1703,6 +1703,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				$init = ($page-1)*26+1;
 				$end = $page*26;
 				$count = 1; //start at one because init starts at one
+				$csvcol = 1;
 				foreach ($studentlist as $student){
 					if($count>=$init && $count<=$end){
 						$line = array();
@@ -1710,7 +1711,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						$line['resultado'] = "true";
 						$line['asistencia'] = "false";
 				
-						if($data[$count] == 'A'){
+						if($data[$csvcol] == 'A'){
 							paperattendance_save_student_presence($sessid, $student->id, '1', NULL);
 							$line['asistencia'] = "true";
 						}
@@ -1719,6 +1720,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						}
 				
 						$arrayalumnos[] = $line;
+						$csvcol++;
 					}
 					$count++;
 				}
