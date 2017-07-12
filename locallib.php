@@ -1577,7 +1577,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 		}
 		fclose($handle);
 	}
-	unlink($file);
+	//unlink($file);
 	return true;
 }
 
