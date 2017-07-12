@@ -1005,6 +1005,24 @@ function paperattendance_getcountstudentsbysession($sessionid){
 
 }
 
+/**
+ * Function to send an email when de session is processed
+ *
+ * @param int $attendanceid
+ *            Path of the pdf
+  * @param int $courseid
+ *            Path of the pdf
+ * @param varchar $teacherid
+ *            Path of the pdf 
+ * @param varchar $uploaderid
+ *            Path of the pdf 
+ * @param varchar $date
+ *            Path of the pdf 
+ * @param varchar $course
+ *            Fullname of the pdf, including extension
+ * @param varchar $case
+ *            Path of the pdf 
+ */
 function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploaderid, $date, $course, $case) {
 	GLOBAL $CFG, $USER, $DB;
 	
@@ -1642,7 +1660,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	
 	mtrace( "All pdf's pages converted to jpg images" );
 	//TODO: cambiar el installation path. para que funcione en produccion
-	$command = 'java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /home/mpozarski/poteito/template.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/jpgs/';
+	$command = 'java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /Datos/formscanner/template.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/jpgs/';
 //	mtrace( "el comando es: ".$command );
 	
     $lastline = exec($command, $output, $return_var);
