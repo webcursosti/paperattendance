@@ -377,9 +377,14 @@ function paperattendance_drawcircles($pdf){
 }
 
 /**
- * Get all students from a course, for list.
+ * Unused function to process a pdf 
  *
- * @param unknown_type $courseid
+ * @param varchar $path
+ *			Full path of the pdf
+ * @param varchar $filename
+ * 			Full name of the pdf
+ * @param int $course
+ * 			Course id
  */
 function paperattendance_readpdf($path, $filename, $course){
 	global $DB, $CFG;
@@ -488,6 +493,12 @@ function paperattendance_readpdf($path, $filename, $course){
 	return $return;
 }
 
+/**
+ * Function get the id of a session given the pdffilename
+ *
+ * @param varchar $pdffile
+ *            Name of the pdf
+ */
 function paperattendance_get_sessionid($pdffile){
 	global $DB;
 	
@@ -499,6 +510,18 @@ function paperattendance_get_sessionid($pdffile){
 	return $resultado -> id;
 }
 
+/**
+ * Function to insert a student presence inside a session
+ *
+ * @param int $sessid
+ *            Session id
+ * @param int $studentid
+ *            Student id
+ * @param boolean $status
+ *            Presence 1 or 0
+ * @param int $grayscale (unused)
+ *           Number of grayscale found to debug 
+ */
 function paperattendance_save_student_presence($sessid, $studentid, $status, $grayscale = NULL){
 	global $DB;
 	
@@ -511,6 +534,14 @@ function paperattendance_save_student_presence($sessid, $studentid, $status, $gr
 	$lastinsertid = $DB->insert_record('paperattendance_presence', $sessioninsert, false);
 }
 
+/**
+ * Function to decrypt a QR code
+ *
+ * @param int $path
+ *            Full path of the pdf file
+ * @param int $pdf
+ *            Full pdf name
+ */
 function paperattendance_get_qr_text($path, $pdf){
 	global $CFG, $DB;
 
@@ -588,7 +619,20 @@ function paperattendance_get_qr_text($path, $pdf){
 	}
 }
 
-
+/**
+ * Function to insert a new session
+ *
+ * @param int $courseid
+ *            Course id
+ * @param int $requestorid
+ *            Teacher or assistant requestor id
+ * @param int $userid
+ *            Uploader id
+ * @param varchar $pdffile
+ *            Full name of the pdf
+ * @param int $description
+ *            Description of the session
+ */
 function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffile, $description){
 	global $DB;
 
@@ -611,7 +655,16 @@ function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffi
 	}
 }
 
-
+/**
+ * Function to insert the session module
+ *
+ * @param int $moduleid
+ *            Id of the module
+ * @param int $sessionid
+ *            Session if
+ * @param timestamp $time
+ *            Date of the session
+ */
 function paperattendance_insert_session_module($moduleid, $sessionid, $time){
 	global $DB;
 
@@ -629,7 +682,16 @@ function paperattendance_insert_session_module($moduleid, $sessionid, $time){
 	}
 }
 
-//returns {perfect, repited}
+/**
+ * Function to check if the session given the modules and date already exists
+ *
+ * @param array $arraymodules
+ *            Array of the modules of the session
+ * @param int $courseid
+ *            Course id
+ * @param timestamp $time
+ *            Date of the session
+ */
 function paperattendance_check_session_modules($arraymodules, $courseid, $time){
 	global $DB;
 
@@ -661,6 +723,16 @@ function paperattendance_check_session_modules($arraymodules, $courseid, $time){
 	}
 }
 
+/**
+ * Unused function to read a pdf and save the session
+ *
+ * @param varchar $path
+ *            Input of the desired text to trim
+ * @param varchar $pdffile
+ *            Full name of the pdf
+ * @param varchar $qrtext
+ *            Text decripted of the QR
+ */
 function paperattendance_read_pdf_save_session($path, $pdffile, $qrtext){
 	
 	//path must end with "/"
@@ -723,7 +795,14 @@ function paperattendance_read_pdf_save_session($path, $pdffile, $qrtext){
 	}
 }
 
-// //pdf = pdfname + extension (.pdf)
+/**
+ * Unused function to rotate a pdf if it doesnt come straigth
+ *
+ * @param varchar $path
+ *            Path of the pdf
+ * @param varchar $pdfname
+ *            Pdf full name
+ */
 function paperattendance_rotate($path, $pdfname){
 	
 	//read pdf and rewrite it 
@@ -765,6 +844,18 @@ function paperattendance_rotate($path, $pdfname){
 	}
 }
 
+/**
+ * Function to trim text so it fills between the space in the list
+ *
+ * @param varchar $input
+ *            Input of the desired text to trim
+ * @param int $length
+ *            Max length
+ * @param boolean $ellipses
+ *            Ellipse mode
+ * @param boolean $strip_html
+ *            Strip html mode
+ */
 function trim_text($input, $length, $ellipses = true, $strip_html = true) {
 	//strip tags, if desired
 	if ($strip_html) {
@@ -788,7 +879,12 @@ function trim_text($input, $length, $ellipses = true, $strip_html = true) {
 	return $trimmed_text;
 }
 
-//function for deleting files from moodle data print folder
+/**
+ * Function to delete all inside of a folder
+ *
+ * @param varchar $directory
+ *            Path of the directory
+ */
 function paperattendance_recursiveremovedirectory($directory)
 {
 	foreach(glob("{$directory}/*") as $file)
@@ -804,7 +900,12 @@ function paperattendance_recursiveremovedirectory($directory)
 	//rmdir($directory);
 }
 
-//function for deleting pngs from moodle data unread folder
+/**
+ * Function to Delete all the pngs inside of a folder
+ *
+ * @param varchar $directory
+ *            Directory path
+ */
 function paperattendance_recursiveremovepng($directory)
 {
 	foreach(glob("{$directory}/*.png") as $file)
@@ -818,6 +919,13 @@ function paperattendance_recursiveremovepng($directory)
 	//this comand delete the folder of the path, in this case we only want to delete the files inside the folder
 	//rmdir($directory);
 }
+
+/**
+ * Function to convert a date to langs
+ *
+ * @param timestamp $i
+ *            Timestamp of date
+ */
 function paperattendance_convertdate($i){
 	//arrays of days and months
 	$days = array(get_string('sunday', 'local_paperattendance'),get_string('monday', 'local_paperattendance'), get_string('tuesday', 'local_paperattendance'), get_string('wednesday', 'local_paperattendance'), get_string('thursday', 'local_paperattendance'), get_string('friday', 'local_paperattendance'), get_string('saturday', 'local_paperattendance'));
@@ -827,6 +935,14 @@ function paperattendance_convertdate($i){
 	return $dateconverted;
 }
 
+/**
+ * Function to get the teacher from a course
+ *
+ * @param int $courseid
+ *            Course id
+ * @param int $userid
+ *            Id of the Teacher
+ */
 function paperattendance_getteacherfromcourse($courseid, $userid){
 	global $DB;
 	$sqlteacher = "SELECT u.id
@@ -846,6 +962,14 @@ function paperattendance_getteacherfromcourse($courseid, $userid){
 	return $teacher;
 }
 
+/**
+ * Function to get all students of a course
+ *
+ * @param int $courseid
+ *            Course id
+ * @param int $userid
+ *            Id of the student
+ */
 function paperattendance_getstudentfromcourse($courseid, $userid){
 	global $DB;
 	$sqlstudent = "SELECT u.id
@@ -861,7 +985,16 @@ function paperattendance_getstudentfromcourse($courseid, $userid){
 	return $student;
 }
 
-
+/**
+ * Function to send a curl to omega to create a session
+ *
+ * @param int $courseid
+ *            Id of a Course
+ * @param int $arrayalumnos
+ *            Array containinng the user email and its attendance to the session
+ * @param int $sessid
+ *            Session id
+ */
 function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid){
 	global $DB,$CFG;
 	
@@ -928,6 +1061,12 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 	return $return;
 }
 
+/**
+ * Function to get a username from its userid
+ *
+ * @param int $userid
+ *            User id
+ */
 function paperattendance_getusername($userid){
 	global $DB;
 	$username = $DB->get_record("user", array("id" => $userid));
@@ -935,6 +1074,14 @@ function paperattendance_getusername($userid){
 	return $username;
 }
 
+/**
+ * Function to send a curl to omega to update an attendance
+ *
+ * @param boolean $update
+ *            1 if he attended the session, 0 if not
+ * @param int $omegaid
+ *            Id omega gives for the students attendance of that session
+ */
 function paperattendance_omegaupdateattendance($update, $omegaid){
 	global $CFG, $DB;
 	
@@ -968,6 +1115,12 @@ function paperattendance_omegaupdateattendance($update, $omegaid){
 	}
 }
 
+/**
+ * Function to check if the config token exists
+ *
+ * @param varchar $token
+ *            Token to access omega
+ */
 function paperattendance_checktoken($token){
 	if (!isset($token) || empty($token) || $token == "" || $token == null) {
 		return false;
@@ -977,6 +1130,12 @@ function paperattendance_checktoken($token){
 	}
 }
 
+/**
+ * Function to get the count of students synchronized in a session
+ *
+ * @param int $sessionid
+ *            Session id
+ */
 function paperattendance_getcountstudentssynchronizedbysession($sessionid){
 	//Query for the total count of synchronized students
 	global $DB;
@@ -991,6 +1150,12 @@ function paperattendance_getcountstudentssynchronizedbysession($sessionid){
 	
 }
 
+/**
+ * Function that gets the count of the students in a session
+ *
+ * @param int $sessionid
+ *            Session id
+ */
 function paperattendance_getcountstudentsbysession($sessionid){
 	//Query for the total count of students in a session
 	global $DB;
@@ -1009,19 +1174,19 @@ function paperattendance_getcountstudentsbysession($sessionid){
  * Function to send an email when de session is processed
  *
  * @param int $attendanceid
- *            Path of the pdf
+ *            Session id
   * @param int $courseid
- *            Path of the pdf
- * @param varchar $teacherid
- *            Path of the pdf 
- * @param varchar $uploaderid
- *            Path of the pdf 
- * @param varchar $date
- *            Path of the pdf 
+ *            Id of the course in the session given
+ * @param int $teacherid
+ *            Teacher of the session
+ * @param int $uploaderid
+ *            The person who uploaded the session
+ * @param timestamp $date
+ *            Date of the processed session
  * @param varchar $course
- *            Fullname of the pdf, including extension
+ *            Fullname of the course
  * @param varchar $case
- *            Path of the pdf 
+ *            For what activity to send an email 
  */
 function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploaderid, $date, $course, $case) {
 	GLOBAL $CFG, $USER, $DB;
