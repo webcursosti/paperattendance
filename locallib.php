@@ -273,7 +273,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			$pdf->AddPage();
 			paperattendance_drawcircles($pdf);
 			
-			$top = 42;
+			$top = 40;
 			$modulecount++;
 			
 			// Write the attendance description
