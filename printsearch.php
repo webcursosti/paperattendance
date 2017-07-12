@@ -135,9 +135,9 @@ $table->head = array(get_string('hashtag', 'local_paperattendance'),
 		get_string('course', 'local_paperattendance'),
 		get_string('teacher', 'local_paperattendance'),
 		get_string('category', 'local_paperattendance'),
-		'Custom print',
-		'Add to cart',
-		'Quick print'
+		get_string('customprint', 'local_paperattendance'),
+		get_string('addtocart', 'local_paperattendance'),
+		get_string('quickprint', 'local_paperattendance')
 );
 $table->id = "fbody";
 
@@ -163,7 +163,7 @@ foreach($courses as $course){
 echo $OUTPUT->header();
 echo html_writer::div(get_string("searchprinthelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
 $filterinput = html_writer::empty_tag("input", array( "id"=>"filter", "type"=>"text", "style"=>"float:left; width:25%"));
-$cartbutton = html_writer::nonempty_tag("button", "Lists cart",  array( "id"=>"cartbutton", "style"=>"float:right; margin-right:6%"));
+$cartbutton = html_writer::nonempty_tag("button", get_string("listscart","local_paperattendance"),  array( "id"=>"cartbutton", "style"=>"float:right; margin-right:6%"));
 echo html_writer::div($filterinput.$cartbutton, "topbarmenu");
 
 if ($ncourses>0){
@@ -172,7 +172,14 @@ if ($ncourses>0){
 }
 
 $carttable = new html_table();
-$carttable->head = array("Session",	"Description","Date","Module","Requestor","Remove");
+$carttable->head = array(
+		get_string("session","local_paperattendance"),
+		get_string("description","local_paperattendance"),
+		get_string("date","local_paperattendance"),
+		get_string("module","local_paperattendance"),
+		get_string("requestor","local_paperattendance"),
+		get_string("remove","local_paperattendance")
+);
 $carttable->id = "carttable";
 
 $formmodal = '<div class="modal fade bs-example-modal-lg" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" style="display: none; width:80%; margin-left:-45%">
@@ -214,7 +221,7 @@ $quickprintmodal = '<div class="modal fade bs-example-modal-lg" id="quickprintMo
 			        		<h4 class="modal-title" id="exampleModalLabel">Quick Print</h4>
 			      		</div>
 		      		<div class="modal-body quickprintappend" style="height:70vh">
-		
+
 		      		</div>
 		      		<div class="modal-footer">
 			       		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -234,7 +241,7 @@ $modulesquery = "SELECT *
 				FROM {paperattendance_module}
 				ORDER BY initialtime ASC";
 $modules = $DB->get_records_sql($modulesquery);
-$modulesselect = "<select class='selectpicker' multiple><option value='no'>Seleccionar modulo</option>";
+$modulesselect = "<select class='selectpicker' multiple><option value='no'>".get_string("selectmodules", "local_paperattendance")."</option>";
 foreach ($modules as $module){
 	$modulesselect .= "<option value='".$module->id."*".$module->initialtime."*".$module->endtime."'>".$module->initialtime."</option>";
 }
@@ -326,6 +333,7 @@ $( document ).ready(function() {
 			});
 		}
 	});
+	//When the quickprint icon is clicked
 	$( document ).on( "click", ".quickprint", function() {
 		var courseid = $(this).attr('courseid');
 		$('.quickprintappend').html('<center><img src="img/loading.gif"></center>');

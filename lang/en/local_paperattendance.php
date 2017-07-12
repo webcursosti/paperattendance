@@ -154,6 +154,14 @@ $string['category']="Category";
 $string['searchprinthelp'] = "Type at least 3 characters to search by course or teacher on the input below";
 $string['notallowedsearch'] ="Not allowed to search courses for printing";
 $string['categorynamechange'] = "Error: Category name should change, please contact a programmer";
+$string['customprint']="Custom print";
+$string['addtocart']="Add to cart";
+$string['quickprint']="Quick print";
+$string['listscart']="Lists cart";
+$string['session']="Session";
+$string['remove']="Remove";
+$string['selectmodules']="Select modules";
+$string['nothingtoprint']="There's nothing to print for today";
 
 //messages
 $string['dear'] = "Dear Teacher";

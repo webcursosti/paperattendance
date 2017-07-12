@@ -154,6 +154,14 @@ $string['category']="Categoría";
 $string['searchprinthelp'] = "Escriba al menos 3 caracteres para buscar por curso o profesor en el cuadro de abajo";
 $string['notallowedsearch'] ="No tiene permitido buscar cursos para imprimir";
 $string['categorynamechange'] = "Error: El nombre de la categoría pudo haber cambiado, por favor contactarse con un programador";
+$string['customprint']="Impresión personalizada";
+$string['addtocart']="Añadir al carrito";
+$string['quickprint']="Impresión rápida";
+$string['listscart']="Carrito de listas";
+$string['session']="Sesión";
+$string['remove']="Remover";
+$string['selectmodules']="Seleccione los módulos";
+$string['nothingtoprint']="Nada para imprimir hoy";
 
 //messages
 $string['dear'] = "Estimado Profesor";

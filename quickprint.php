@@ -100,7 +100,7 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$modules = json_decode($result);
 	
 	if(count($modules) == 0){
-		echo "There's nothing to print for today";
+		echo get_string("nothingtoprint","local_paperattendance");
 		die();
 	}
 	
