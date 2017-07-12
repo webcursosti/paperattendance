@@ -318,6 +318,16 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			$topprovisional += 4;
 			$pdf->SetXY($leftprovisional, $topprovisional);
 			$pdf->Write(1, core_text::strtoupper(get_string('students') . ': ' . count($studentinfo)));
+			// Write the table header.
+			$left = 20;
+			$top += 8;
+			$pdf->SetXY($left, $top);
+			$pdf->Cell(8, 8, "N°", 0, 0, 'C');
+			$pdf->Cell(25, 8, core_text::strtoupper(get_string('idnumber')), 0, 0, 'L');
+			$pdf->Cell(20, 8, core_text::strtoupper(""), 0, 0, 'L');
+			$pdf->Cell(90, 8, core_text::strtoupper(get_string('name')), 0, 0, 'L');
+			$pdf->Cell(20, 8, core_text::strtoupper(get_string('pdfattendance','local_paperattendance')), 0, 0, 'L');
+			$pdf->Ln();
 			
 			// Botton QR, messege to fill the circle and Logo Webcursos
 			$pdf->Image($webcursospath, 18, 265, 35);
