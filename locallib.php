@@ -1743,7 +1743,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 		}
 		fclose($handle);
 	}
-	//unlink($file);
+	unlink($file);
 	return true;
 }
 
@@ -1850,7 +1850,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	//delete all jpgs
 	foreach(glob("{$path}/jpgs/*.jpg") as $file)
 	{
-		//unlink($file);	
+		unlink($file);	
 	}
 	if($processed){
 		return true;
