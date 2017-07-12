@@ -17,6 +17,7 @@
  * @package    local
  * @subpackage paperattendance
  * @copyright  2016 Hans Jeria (hansjeria@gmail.com)
+ * @copyright  2017 Jorge Cabané (jcabane@alumnos.cl) 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
