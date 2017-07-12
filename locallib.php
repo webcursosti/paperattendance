@@ -1774,9 +1774,10 @@ function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid){
  *            Fullname of the pdf, including extension
  */
 function paperattendance_number_of_pages($path, $pdffilename){
-	$document = new Imagick($path."/".$pdffilename);
-	$num = $document->getNumberImages();
-	$document->clear();
+	// initiate FPDI
+	$pdf = new FPDI();
+	// get the page count
+	$num = $pdf->setSourceFile($path."/".$pdffilename);
 	return $num;
 }
 
