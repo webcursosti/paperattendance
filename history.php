@@ -328,7 +328,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		$resultpagespdf = $DB->get_records_sql($getpagesofpdf, array($attendanceid));
 		$pages = array();
 		foreach ($resultpagespdf as $page){
-			$pages[] = $page->pagenum;
+			$pages[] = $page->pagenum+1;
 		}
 		$originalpdf = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdf;
 		$path = $CFG -> dataroot. "/temp/local/paperattendance/";
