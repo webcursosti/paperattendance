@@ -1875,7 +1875,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	//delete all jpgs
 	foreach(glob("{$path}/jpgs/*.jpg") as $file)
 	{
-		//unlink($file);	
+		unlink($file);	
 	}
 	if($processed){
 		return true;
