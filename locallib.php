@@ -1326,12 +1326,12 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 	$originalfilename = $file->get_filename();
 	$file->copy_content_to($attendancepdffile);
 	//first check if there's a readable QR code
-	$qrtext = paperattendance_get_qr_text($path."/unread/", $filename);
-	if($qrtext == "error"){
-		//delete the unused pdf
-		unlink($attendancepdffile);
-		return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".get_string("couldntreadqrcode", "local_paperattendance"));
-	}
+// 	$qrtext = paperattendance_get_qr_text($path."/unread/", $filename);
+// 	if($qrtext == "error"){
+// 		//delete the unused pdf
+// 		unlink($attendancepdffile);
+// 		return $OUTPUT->notification(get_string("filename", "local_paperattendance").$originalfilename."<br>".get_string("couldntreadqrcode", "local_paperattendance"));
+// 	}
 	//read pdf and rewrite it
 	$pdf = new FPDI();
 	// get the page count
