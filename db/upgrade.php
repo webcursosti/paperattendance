@@ -454,6 +454,21 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		// Paperattendance savepoint reached.
 		upgrade_plugin_savepoint(true, 2017061602, 'local', 'paperattendance');
 	}
+	if ($oldversion < 2017071301) {
+	
+		// Define field qrpage to be added to paperattendance_sessionpages.
+		$table = new xmldb_table('paperattendance_sessionpages');
+		$field = new xmldb_field('qrpage', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'pagenum');
+	
+		// Conditionally launch add field qrpage.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017071301, 'local', 'paperattendance');
+	}
+	
 	
 	return true;
 }
