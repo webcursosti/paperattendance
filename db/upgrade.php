@@ -468,6 +468,21 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		// Paperattendance savepoint reached.
 		upgrade_plugin_savepoint(true, 2017071301, 'local', 'paperattendance');
 	}
+	if ($oldversion < 2017071302) {
+	
+		// Define field pdfname to be added to paperattendance_sessionpages.
+		$table = new xmldb_table('paperattendance_sessionpages');
+		$field = new xmldb_field('pdfname', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'qrpage');
+	
+		// Conditionally launch add field pdfname.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017071302, 'local', 'paperattendance');
+	}
+	
 	
 	
 	return true;
