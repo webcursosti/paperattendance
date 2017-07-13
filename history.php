@@ -321,16 +321,6 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				array("align" => "left"
 				));
 		
-		$pdfname = $DB->get_record("paperattendance_session", array("id" => $attendanceid));
-		$getpagesofpdf = "SELECT * FROM {paperattendance_sessionpages}
-						  WHERE sessionid = ?";
-		
-		$resultpagespdf = $DB->get_records_sql($getpagesofpdf, array($attendanceid));
-		$pages = array();
-		foreach ($resultpagespdf as $page){
-			$pages[] = $page->pagenum+1;
-		}
-		$originalpdf = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdf;
 		$path = $CFG -> dataroot. "/temp/local/paperattendance/";
 		$timepdf = time();
 		$attendancepdffile = $path . "/print/paperattendance_".$courseid."_".$timepdf.".pdf";
@@ -338,18 +328,35 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 			mkdir($path . "/print/", 0777, true);
 		}
 		
+		$pdfnamesql = "SELECT *
+					   FROM {paperattendance_sessionpages} sp
+					   WHERE sp.sessionid = ?
+					   GROUP BY sp.pdfname";
+		$pdfnames = $DB->get_records_sql($pdfnamesql, array($attendanceid));
+		
 		$pdf = new FPDI();
-		$pageCount = $pdf->setSourceFile($originalpdf);
-		for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
-			if(in_array($pageNo, $pages)){
-				// import a page
-				$templateId = $pdf->importPage($pageNo);
-				// get the size of the imported page
-				$size = $pdf->getTemplateSize($templateId);
-				//Add page on portrait position
-				$pdf->AddPage('P', array($size['w'], $size['h']));
-				// use the imported page
-				$pdf->useTemplate($templateId);
+		foreach($pdfnames as $pdfname){
+			$getpagesofpdf = "SELECT * FROM {paperattendance_sessionpages} sp
+						  WHERE sp.sessionid = ? AND sp.pdfname = ?";
+			$resultpagespdf = $DB->get_records_sql($getpagesofpdf, array($attendanceid, $pdfname->pdfname));
+			$pages = array();
+			foreach ($resultpagespdf as $page){
+				$pages[] = $page->pagenum+1;
+			}
+			$originalpdf = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdfname;
+			
+			$pageCount = $pdf->setSourceFile($originalpdf);
+			for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+				if(in_array($pageNo, $pages)){
+					// import a page
+					$templateId = $pdf->importPage($pageNo);
+					// get the size of the imported page
+					$size = $pdf->getTemplateSize($templateId);
+					//Add page on portrait position
+					$pdf->AddPage('P', array($size['w'], $size['h']));
+					// use the imported page
+					$pdf->useTemplate($templateId);
+				}
 			}
 		}
 		// Preview PDF

@@ -1700,7 +1700,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						$sessid = paperattendance_insert_session($course, $requestorid, $uploaderobj->id, $pdffilename, $description);
 						mtrace("la session id es : ".$sessid);
 						paperattendance_insert_session_module($module, $sessid, $time);
-						paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page);
+						paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename);
 						
 					}
 					else{
@@ -1712,7 +1712,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 							$stop = false;
 						}
 						else{
-							paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page);
+							paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename);
 							mtrace("session ya existe pero esta hoja no habia sido subida ni procesada");
 							$stop = true;
 						}
@@ -1778,13 +1778,14 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
  * @param int $sessid
  *            Session id of the current session
  */
-function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid, $qrpage){
+function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid, $qrpage, $pdfname){
 	global $DB;
 	
 	$pagesession = new stdClass();
 	$pagesession->sessionid = $sessid;
 	$pagesession->pagenum = $pagenum;
 	$pagesession->qrpage = $qrpage;
+	$pagesession->pdfname = $pdfname;
 	$DB->insert_record('paperattendance_sessionpages', $pagesession, false);
 }
 
