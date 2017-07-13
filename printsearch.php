@@ -61,7 +61,6 @@ if(is_siteadmin()){
 	$ncourses = count($DB->get_records_sql($sqlcourses, array($year)));
 	$courses = $DB->get_records_sql($sqlcourses, array($year), $page*$perpage,$perpage);
 	$path = 1;
-	$categoryid = 406;
 }
 else{
 	//Query to get the category of the secretary
@@ -118,7 +117,12 @@ $url = new moodle_url('/local/paperattendance/printsearch.php', array(
 $pagetitle = get_string('printtitle', 'local_paperattendance');
 $PAGE->navbar->add(get_string('printtitle', 'local_paperattendance'));
 $PAGE->navbar->add(get_string('printtitle', 'local_paperattendance'),$url);
-$PAGE->set_context($context);
+if(is_siteadmin()){
+	$PAGE->set_context($contextsystem);
+}
+else {
+	$PAGE->set_context($context);
+}
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title($pagetitle);
