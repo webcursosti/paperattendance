@@ -1678,6 +1678,21 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					}
 				}
 				
+				$numpages = paperattendance_number_of_pages($path, $pdffilename);
+				if($numpages == 1){
+					$realpagenum = 0;
+				}
+				else{
+					$jpgfilenamecsv = $data[0];
+					mtrace("el nombre del jpg recien sacado es: ". $jpgfilenamecsv);
+					$oldpdfpagenumber= explode("-",$jpgfilenamecsv);
+					$oldpdfpagenumber = $oldpdfpagenumber[1];
+					mtrace("el explode es: ".$oldpdfpagenumber);
+					$realpagenum = explode(".", $oldpdfpagenumber);
+					$realpagenum = $oldpdfpagenumber[0];
+					mtrace("el numero de pagina correspondiente a este pdf es: ".$realpagenum);
+				}
+				
 				if($stop){
 					mtrace("qr correctly finded");
 					$qrinfo = explode("*",$qrcode);
@@ -1698,27 +1713,12 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					$sessdoesntexist = paperattendance_check_session_modules($module, $course, $time);
 					mtrace("checkeo de la sesion: ".$sessdoesntexist);
 					
-					$numpages = paperattendance_number_of_pages($path, $pdffilename);
-					if($numpages == 1){
-						$realpagenum = 0;
-					}
-					else{
-						$jpgfilenamecsv = $data[0];
-						mtrace("el nombre del jpg recien sacado es: ". $jpgfilenamecsv);
-						$oldpdfpagenumber= explode("-",$jpgfilenamecsv);
-						$oldpdfpagenumber = $oldpdfpagenumber[1];
-						mtrace("el explode es: ".$oldpdfpagenumber);
-						$realpagenum = explode(".", $oldpdfpagenumber);
-						$realpagenum = $oldpdfpagenumber[0];
-						mtrace("el numero de pagina correspondiente a este pdf es: ".$realpagenum);
-					}
-					
 					if( $sessdoesntexist == "perfect"){
 						mtrace("no existe");
 						$sessid = paperattendance_insert_session($course, $requestorid, $uploaderobj->id, $pdffilename, $description);
 						mtrace("la session id es : ".$sessid);
 						paperattendance_insert_session_module($module, $sessid, $time);
-						paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename);
+						paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1);
 						
 					}
 					else{
@@ -1730,7 +1730,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 							$stop = false;
 						}
 						else{
-							paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename);
+							paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1);
 							mtrace("session ya existe pero esta hoja no habia sido subida ni procesada");
 							$stop = true;
 						}
@@ -1777,8 +1777,11 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 			  		$return++;	
 				}
 	  		else{
+
 	  			mtrace("Error: can't procees this page");
 	  			//$return = false;//send email or something to let know this page had problems
+				paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $pdffilename, 0);
+
 	  		}
 			}
 			$fila++;
@@ -1797,7 +1800,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
  * @param int $sessid
  *            Session id of the current session
  */
-function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid, $qrpage, $pdfname){
+function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid, $qrpage, $pdfname, $processed){
 	global $DB;
 	
 	$pagesession = new stdClass();
@@ -1805,6 +1808,7 @@ function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid, $qr
 	$pagesession->pagenum = $pagenum;
 	$pagesession->qrpage = $qrpage;
 	$pagesession->pdfname = $pdfname;
+	$pagesession->processed = $processed;
 	$DB->insert_record('paperattendance_sessionpages', $pagesession, false);
 }
 
