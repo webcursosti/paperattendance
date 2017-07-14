@@ -1654,7 +1654,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 
 	$omegafailures = array();
 	$fila = 1;
-	$return = true;
+	$return = 0;
 	if (($handle = fopen($file, "r")) !== FALSE) {
 		while(! feof($handle))
   		{
@@ -1774,10 +1774,11 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						$DB->update_record("paperattendance_session", $update);
 					
 			  		}
+			  		$return++;	
 				}
 	  		else{
 	  			mtrace("Error: can't procees this page");
-	  			$return = false;//send email or something to let know this page had problems
+	  			//$return = false;//send email or something to let know this page had problems
 	  		}
 			}
 			$fila++;
@@ -1884,6 +1885,8 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	
 //	mtrace($lastline);
 	
+	$processed = 0;
+	
 	foreach(glob("{$path}/jpgs/*.csv") as $file)
 	{
 		mtrace( "Csv file founden - command works correct!" );
@@ -1896,7 +1899,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	{
 		unlink($file);	
 	}
-	if($processed){
+	if($processed > 1){
 		return true;
 	}
 	else{
