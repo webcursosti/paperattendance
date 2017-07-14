@@ -178,6 +178,8 @@ $string['newdiscussionsubject'] = "New attendance discussion";
 $string['newresponsesubject'] = "New discussion resolution";
 $string['newresponsestudent'] = "Your attendance request have been solved";
 $string['newresponse'] = "You just solved an attendance request";
+$string['nonprocessconfirmationbodysubject'] = "Attendance's list processed incorrectly";
+$string['nonprocessconfirmationbody'] = "Attendance records processing incompleted";
 
 // Settings
 $string['settings']="Basic Configuration";
