@@ -135,7 +135,7 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$requestorinfo = $DB->get_record("user", array("id" => $requestor));
 	
 	//session date from today in unix
-	$sessiondate = time();
+	$sessiondate = strtotime(date('Y-m-d'));
 	
 	//Curricular class
 	$description = 0;
@@ -169,10 +169,12 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	foreach ($modules as $module){
 		$mod = explode(":", $module->horaInicio);
 		$moduleinicio = $mod[0].":".$mod[1];
+		$modfin = explode(":", $module->horaFin);
+		$modulefin = $modfin[0].":".$modfin[1];
 		$modquery = $DB->get_record("paperattendance_module",array("initialtime" => $moduleinicio));
 		$moduleid = $modquery -> id;
 		
-		$key = $moduleid."*".$module->horaInicio."*".$module->horaFin;
+		$key = $moduleid."*".$moduleinicio."*".$modulefin;
 		
 		$stringqr = $courseid."*".$requestor."*".$moduleid."*".$sessiondate."*";
 		
