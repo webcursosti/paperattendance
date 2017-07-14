@@ -1224,6 +1224,23 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 			$messagetext .= get_string("datebody", "local_paperattendance") ." ". $date . "\n";
 			$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
 			break;
+		case "nonprocesspdf":
+			//subject
+			$eventdata->subject = get_string("nonprocessconfirmationbodysubject", "local_paperattendance");
+			//process pdf message
+			$messagehtml = "<html>";
+			$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";
+			$messagehtml .= "<p>".get_string("nonprocessconfirmationbody", "local_paperattendance") . "</p>";
+			$messagehtml .= "<p>".get_string("datebody", "local_paperattendance") ." ". $date . "</p>";
+			$messagehtml .= "<p>".get_string("coursebody", "local_paperattendance") ." ". $course . "</p>";
+			//$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/history.php?action=studentsattendance&attendanceid=". $attendanceid ."&courseid=". $courseid ."'>" . get_string('historytitle', 'local_paperattendance') . "</a></p>";
+			$messagehtml .= "</html>";
+			
+			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
+			$messagetext .= get_string("processconfirmationbody", "local_paperattendance") . "\n";
+			$messagetext .= get_string("datebody", "local_paperattendance") ." ". $date . "\n";
+			$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
+			break;
 		case "newdiscussionteacher":
 			//subject
 			$eventdata->subject = get_string("newdiscussionsubject", "local_paperattendance");
@@ -1297,7 +1314,7 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 	$eventdata->component = "local_paperattendance"; // your component name
 	$eventdata->name = "paperattendance_notification"; // this is the message name from messages.php
 	$eventdata->userfrom = $userfrom;
-	$eventdata->userto = $teacherid;
+	$eventdata->userto = $uploaderid;
 	$eventdata->fullmessage = $messagetext;
 	$eventdata->fullmessageformat = FORMAT_HTML;
 	$eventdata->fullmessagehtml = $messagehtml;
@@ -1637,6 +1654,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 
 	$omegafailures = array();
 	$fila = 1;
+	$return = true;
 	if (($handle = fopen($file, "r")) !== FALSE) {
 		while(! feof($handle))
   		{
@@ -1759,7 +1777,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				}
 	  		else{
 	  			mtrace("Error: can't procees this page");
-	  			//send email or something to let know this page had problems
+	  			$return = false;//send email or something to let know this page had problems
 	  		}
 			}
 			$fila++;
@@ -1767,7 +1785,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 		fclose($handle);
 	}
 	unlink($file);
-	return true;
+	return $return;
 }
 
 /**
