@@ -1882,13 +1882,11 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
     if($return_var != 0) {
     	$errormsg = $lastline;
     }
+    var_dump("output: ".$output);
+    var_dump("returnvar: ".$return_var);
+    var_dump("execlastline: ".$lastline);
 	mtrace( "FormScanner command executed succesfully" );
-	//var_dump($lastline);
-	//var_dump($output);
-	//var_dump($return_var);
-	
-//	mtrace($lastline);
-	
+
 	$processed = 0;
 	
 	foreach(glob("{$path}/jpgs/*.csv") as $file)
