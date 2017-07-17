@@ -1911,7 +1911,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	{
 		unlink($file);	
 	}
-	if($processed > 1){
+	if($processed >= 1){
 		return true;
 	}
 	else{
