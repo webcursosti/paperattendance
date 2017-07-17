@@ -187,7 +187,7 @@ if ($action == "edit") {
 			
 			$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
 					"src" => $url."#page=".$session->pagenum,
-					"style" => "height:75vh; width:60vw"
+					"style" => "height:75vh; width:30vw"
 			));
 			
 			$inputs = html_writer::div('<label for="course">Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017">',"form-group", array());
