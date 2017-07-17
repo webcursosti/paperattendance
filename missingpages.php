@@ -194,7 +194,7 @@ if ($action == "edit") {
 			$inputs .= html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017">',"form-group", array("style"=>"float:right; margin-right:6%"));
 			$inputs .= html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30">',"form-group", array("style"=>"float:right; margin-right:6%"));
 			$inputs .= html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27">',"form-group", array("style"=>"float:right; margin-right:6%"));
-			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Guardar</button>',"form-group", array("style"=>"float:right; margin-right:6%"));
+			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Continuar</button>',"form-group", array("style"=>"float:right; margin-right:6%"));
 			
 		}
 		else {
