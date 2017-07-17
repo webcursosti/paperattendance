@@ -1718,7 +1718,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						$sessid = paperattendance_insert_session($course, $requestorid, $uploaderobj->id, $pdffilename, $description);
 						mtrace("la session id es : ".$sessid);
 						paperattendance_insert_session_module($module, $sessid, $time);
-						paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1);
+						paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1, $uploaderobj->id);
 						
 					}
 					else{
@@ -1731,7 +1731,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 							$stop = false;
 						}
 						else{
-							paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1);
+							paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1, $uploaderobj->id);
 							mtrace("session ya existe pero esta hoja no habia sido subida ni procesada");
 							$stop = true;
 						}
@@ -1781,7 +1781,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 
 	  			mtrace("Error: can't procees this page");
 	  			//$return = false;//send email or something to let know this page had problems
-				paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $pdffilename, 0);
+	  			paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $pdffilename, 0, $uploaderobj->id);
 
 	  		}
 			}
@@ -1801,7 +1801,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
  * @param int $sessid
  *            Session id of the current session
  */
-function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid, $qrpage, $pdfname, $processed){
+function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid, $qrpage, $pdfname, $processed, $uploaderid){
 	global $DB;
 	
 	$pagesession = new stdClass();
@@ -1810,6 +1810,7 @@ function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid, $qr
 	$pagesession->qrpage = $qrpage;
 	$pagesession->pdfname = $pdfname;
 	$pagesession->processed = $processed;
+	$pagesession->uploaderid = $uploaderid;
 	$DB->insert_record('paperattendance_sessionpages', $pagesession, false);
 }
 

@@ -47,10 +47,9 @@ $perpage = 30;
 
 if(is_siteadmin()){
 	//if the user is an admin show everything
-	$sqlmissing = "SELECT s.id AS sessionid, sp.id AS sessionpagesid, sp.pdfname AS pdfname, sp.pagenum AS pdfpagenum, sp.qrpage AS sesspagenum, s.uploaderid AS uploaderid, s.lastmodified AS date, s.courseid AS courseid
-					FROM {paperattendance_sessionpages} sp
-					INNER JOIN {paperattendance_session} s ON ( sp.sessionid = s.id) 
-				    WHERE processed = ?";
+	$sqlmissing = "SELECT * 
+					FROM {paperattendance_sessiongpages}
+					WHERE processed = ?";
 
 	$countmissing = count($DB->get_records_sql($sqlmissing, array(0)));
 	$missing = $DB->get_records_sql($sqlmissing, array(0), $page*$perpage,$perpage);
@@ -71,10 +70,9 @@ else{
 		print_error(get_string('notallowedmissing', 'local_paperattendance'));
 	}
 	
-	$sqlmissing = "SELECT s.id AS sessionid, sp.id AS sessionpagesid, sp.pdfname AS pdfname, sp.pagenum AS pdfpagenum, sp.qrpage AS sesspagenum, s.uploaderid AS uploaderid, s.lastmodified AS date, s.courseid AS courseid 
-					FROM {paperattendance_sessiongpages} sp 
-					INNER JOIN {paperattendance_session} s ON ( sp.sessionid = s.id) 
-					WHERE sp.processed = ? AND s.uploaderid = ?";
+	$sqlmissing = "SELECT * 
+					FROM {paperattendance_sessiongpages}
+					WHERE processed = ? AND uploaderid = ?";
 	$params = array(0, $USER->id);
 	
 	$countmissing = count($DB->get_records_sql($sqlmissing, $params));
@@ -105,7 +103,6 @@ if ($action == "view") {
     if ($countmissing > 0) {
     	$missingtable->head = array(
     			get_string("hashtag", "local_paperattendance"),
-    			get_string('date', 'local_paperattendance'),
         		get_string("scan", "local_paperattendance"),
     			get_string("pagenum", "local_paperattendance"),
         		get_string("uploader", "local_paperattendance"
@@ -118,7 +115,7 @@ if ($action == "view") {
             $deletemissingurl = new moodle_url("/local/paperattendance/missingpages.php",
                     array(
                         "action" => "delete",
-                    	"sesspageid" => $miss->sessionpagesid,
+                    	"sesspageid" => $miss->pagenum,
                         "sesskey" => sesskey()                    	 
                     		
                     ));
@@ -132,7 +129,7 @@ if ($action == "view") {
             $editurlmissing = new moodle_url("/local/paperattendance/missingpages.php",
                     array(
                         "action" => "edit",
-                    	"sesspageid" => $miss->sessionpagesid,
+                    	"sesspageid" => $miss->id,
                         "sesskey" => sesskey()
                     		
                     ));
@@ -141,15 +138,11 @@ if ($action == "view") {
             $editactionmissing = $OUTPUT->action_icon($editurlmissing, $editiconmissing,
                     new confirm_action(get_string("doyouwanteditmissing", "local_paperattendance")
                     		));
-            
-            //conver unix to date
-            $date= $miss->date;
-            $dateconverted = paperattendance_convertdate($date);
-            
+                        
             //view scan action
             $scanurl_attendance = new moodle_url("/local/paperattendance/missingpages.php", array(
             		"action" => "scan",
-            		"sesspageid" => $miss->sessionpagesid
+            		"sesspageid" => $miss->id
             ));
             $scanicon_attendance = new pix_icon("e/new_document", get_string('see', 'local_paperattendance'));
             $scanaction_attendance = $OUTPUT->action_icon(
@@ -163,9 +156,8 @@ if ($action == "view") {
             //add data to table
             $missingtable->data [] = array(
             	$counter,	
-            	$dateconverted,
             	$scanaction_attendance,
-            	$miss->pdfpagenum,
+            	$miss->pagenum,
             	$username,
                 $deleteactionmissing . $editactionmissing);
             
