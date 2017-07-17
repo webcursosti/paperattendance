@@ -186,7 +186,7 @@ if ($action == "edit") {
 			$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $session->pdfname);
 			
 			$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
-					"src" => $url,
+					"src" => $url."#page=".$session->pagenum,
 					"style" => "height:75vh; width:60vw"
 			));
 			
