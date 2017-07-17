@@ -187,14 +187,14 @@ if ($action == "edit") {
 			
 			$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
 					"src" => $url."#page=".$session->pagenum,
-					"style" => "height:75vh; width:30vw"
+					"style" => "height:75vh; width:30vw; float:left"
 			));
 			
 			$inputs = html_writer::div('<label for="course">Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017">',"form-group", array());
-// 			$inputs += html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017">',"form-group", array());
-// 			$inputs += html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30">',"form-group", array());
-// 			$inputs += html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27">',"form-group", array());
-// 			$inputs += html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Guardar</button>',"form-group", array());
+			$inputs += html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017">',"form-group", array());
+			$inputs += html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30">',"form-group", array());
+			$inputs += html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27">',"form-group", array());
+			$inputs += html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Guardar</button>',"form-group", array());
 			
 		}
 		else {
@@ -212,9 +212,9 @@ if ($action == "edit") {
 	echo $OUTPUT->heading(get_string("missingpagestitle", "local_paperattendance"));
 	
 	echo html_writer::div(get_string("missingpageshelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
-	$pdfarea = html_writer::nonempty_tag("div", $viewerpdf, array( "id"=>"pdfviewer", "type"=>"text", "style"=>"float:left, width:50%"));
-	$inputarea = html_writer::nonempty_tag("div", $inputs, array( "id"=>"inputs", "style"=>"float:right; margin-right:6%"));
-	echo html_writer::div($pdfarea .$inputarea, "form");
+// 	$pdfarea = html_writer::nonempty_tag("div", $viewerpdf, array( "id"=>"pdfviewer", "type"=>"text", "style"=>"float:left, width:50%"));
+// 	$inputarea = html_writer::nonempty_tag("div", $inputs, array( "id"=>"inputs", "style"=>"float:right; margin-right:6%"));
+	echo html_writer::div($viewerpdf.$inputs, "form");
 	
 	
 	
