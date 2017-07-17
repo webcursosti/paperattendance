@@ -1882,9 +1882,9 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
     if($return_var != 0) {
     	$errormsg = $lastline;
     }
-    var_dump("output: ".$output);
-    var_dump("returnvar: ".$return_var);
-    var_dump("execlastline: ".$lastline);
+    var_dump($output);
+    var_dump($return_var);
+    var_dump($lastline);
 	mtrace( "FormScanner command executed succesfully" );
 
 	$processed = 0;
