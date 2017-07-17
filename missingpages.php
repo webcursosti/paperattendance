@@ -27,7 +27,6 @@
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 require_once ($CFG->dirroot . "/repository/lib.php");
-require_once($CFG->dirroot . '/local/paperattendance/forms/missingpages_form.php');
 global $CFG, $DB, $OUTPUT, $USER, $PAGE;
 
 // User must be logged in.
