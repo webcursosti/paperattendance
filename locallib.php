@@ -1727,6 +1727,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						//Check if the page already was processed
 						if($DB->record_exists('paperattendance_sessionpages', array('sessionid'=>$sessid,'qrpage'=>$page))){
 							mtrace("session ya existe y esta hoja ya fue subida y procesada");
+							$return++;
 							$stop = false;
 						}
 						else{
