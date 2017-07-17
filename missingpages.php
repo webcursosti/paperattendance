@@ -190,11 +190,11 @@ if ($action == "edit") {
 					"style" => "height:75vh; width:40vw; float:left"
 			));
 			
-			$inputs = html_writer::div('<label for="course">Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017">',"form-group", array("style"=>"float:rigth; margin-right:6%"));
-			$inputs .= html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017">',"form-group", array("style"=>"float:rigth; margin-right:6%"));
-			$inputs .= html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30">',"form-group", array("style"=>"float:rigth; margin-right:6%"));
-			$inputs .= html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27">',"form-group", array("style"=>"float:rigth; margin-right:6%"));
-			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Guardar</button>',"form-group", array("style"=>"float:rigth; margin-right:6%"));
+			$inputs = html_writer::div('<label for="course">Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017">',"form-group", array("style"=>"float:right; margin-right:6%"));
+			$inputs .= html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017">',"form-group", array("style"=>"float:right; margin-right:6%"));
+			$inputs .= html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30">',"form-group", array("style"=>"float:right; margin-right:6%"));
+			$inputs .= html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27">',"form-group", array("style"=>"float:right; margin-right:6%"));
+			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Guardar</button>',"form-group", array("style"=>"float:right; margin-right:6%"));
 			
 		}
 		else {
