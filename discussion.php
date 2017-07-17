@@ -147,8 +147,8 @@ if( $isteacher || is_siteadmin($USER)) {
 			$response->result = $data->result;
 			$response->timemodified = time();
 			$DB->update_record("paperattendance_discussion", $response);
-			paperattendance_sendMail(null, $courseid, $discussion->userid, null, $discdate, $course->fullname, "newresponsestudent");
-			paperattendance_sendMail(null, $courseid, $discussion->teacherid, null, $discdate, $course->fullname, "newresponseteacher");
+			paperattendance_sendMail(null, $courseid, $discussion->userid, null, $discdate, $course->fullname, "newresponsestudent", null);
+			paperattendance_sendMail(null, $courseid, $discussion->teacherid, null, $discdate, $course->fullname, "newresponseteacher", null);
 				
 			if($data->result==2){
 				$presencequery = "SELECT p.id, p.omegaid
