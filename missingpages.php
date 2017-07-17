@@ -97,6 +97,9 @@ $PAGE->navbar->add(get_string('missingpages', 'local_paperattendance'), $url);
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
+$PAGE->requires->jquery();
+$PAGE->requires->jquery_plugin ( 'ui' );
+$PAGE->requires->jquery_plugin ( 'ui-css' );
 
 if ($action == "view") {
     $missingtable = new html_table();
@@ -188,10 +191,10 @@ if ($action == "edit") {
 			));
 			
 			$inputs = html_writer::div('<label for="course">Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017">',"form-group", array());
-			$inputs += html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017">',"form-group", array());
-			$inputs += html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30">',"form-group", array());
-			$inputs += html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27">',"form-group", array());
-			$inputs += html_writer::div('<button type="submit" class="btn btn-default">Guardar</button>',"form-group", array());
+// 			$inputs += html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017">',"form-group", array());
+// 			$inputs += html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30">',"form-group", array());
+// 			$inputs += html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27">',"form-group", array());
+// 			$inputs += html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Guardar</button>',"form-group", array());
 			
 		}
 		else {
@@ -242,3 +245,22 @@ if ($action == "delete") {
 }
 
 echo $OUTPUT->footer();
+
+?>
+
+<script>
+$( document ).on( "click", ".printbutton", function() {
+	jQuery('#pdfModal').modal('show'); 
+	$('.pdflists').html('<center><img src="img/loading.gif"></center>');
+	$.ajax({
+	    type: 'POST',
+	    url: 'cartprint.php',
+	    data: {
+		      'lists' : lists
+	    	},
+	    success: function (response) {
+			$('.pdflists').html(response);
+	    }
+	});
+});
+</script>
