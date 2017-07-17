@@ -496,7 +496,7 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		// Paperattendance savepoint reached.
 		upgrade_plugin_savepoint(true, 2017071401, 'local', 'paperattendance');
 	}
-	if ($oldversion < 2017071701) {
+	if ($oldversion < 2017071702) {
 		
 		// Define field uploaderid to be added to paperattendance_sessionpages.
 		$table = new xmldb_table('paperattendance_sessionpages');
@@ -508,7 +508,7 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		}
 		
 		// Paperattendance savepoint reached.
-		upgrade_plugin_savepoint(true, 2017071701, 'local', 'paperattendance');
+		upgrade_plugin_savepoint(true, 2017071702, 'local', 'paperattendance');
 	}
 	
 	
