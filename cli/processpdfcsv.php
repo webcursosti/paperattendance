@@ -88,15 +88,9 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
  			$DB->delete_records("paperattendance_unprocessed", array('id'=> $pdf-> id)); 
  			mtrace("Pdf ".$found." deleted from unprocessed table");
  			//TODO: unlink al pdf grande y viejo y ya no utilizado
-//  			if($CFG->paperattendance_sendmail == 1){
-//  				paperattendance_sendMail($pdf->id, $pdf->courseid, $pdf->teacherid, $pdf->uploaderid, $pdf->date, $pdf->fullname, "processpdf");
-//  			}
  		}
  		else{
  			mtrace("problem reading the csv or with the pdf");
-//  			if($CFG->paperattendance_sendmail == 1){
-//  				paperattendance_sendMail($pdf->id, $pdf->courseid, $pdf->teacherid, $pdf->uploaderid, $pdf->date, $pdf->fullname, "nonprocesspdf");
-//  			}
  		}
 	}
 	

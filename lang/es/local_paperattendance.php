@@ -179,7 +179,7 @@ $string['newresponsesubject'] = "Nueva resolución de una discusión";
 $string['newresponsestudent'] = "Tu solicitud de revisión de asistencia acaba de ser resuelta";
 $string['newresponse'] = "Acaba de resolver una solicitud de revisión de asistencia";
 $string['nonprocessconfirmationbodysubject'] = "Lista procesada incorrectamente";
-$string['nonprocessconfirmationbody'] = "No se ha completado el procesamiento de registros de asistencias por PaperAttendance";
+$string['nonprocessconfirmationbody'] = "No se ha completado el procesamiento de registros de asistencias por PaperAttendance, error en la página:";
 
 
 // Settings

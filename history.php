@@ -790,8 +790,8 @@ else if ($isstudent) {
 					INNER JOIN {paperattendance_presence} p ON (p.sessionid = s.id AND p.id=?)";
 			$teacher = $DB->get_record_sql($sqlteacher, array($presence->id));
 			$insertdiscussion = $DB->insert_record("paperattendance_discussion", $newdiscussion, false);
-			paperattendance_sendMail(null, $courseid, $USER->id, null, $sessdate, $course->fullname, "newdiscussionstudent");
-			paperattendance_sendMail(null, $courseid, $teacher->id, null, $sessdate, $course->fullname, "newdiscussionteacher");
+			paperattendance_sendMail(null, $courseid, $USER->id, null, $sessdate, $course->fullname, "newdiscussionstudent",null);
+			paperattendance_sendMail(null, $courseid, $teacher->id, null, $sessdate, $course->fullname, "newdiscussionteacher", null);
 			redirect($goback);
 		}
 	}
