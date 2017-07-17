@@ -48,7 +48,7 @@ $perpage = 30;
 if(is_siteadmin()){
 	//if the user is an admin show everything
 	$sqlmissing = "SELECT * 
-					FROM {paperattendance_sessiongpages}
+					FROM {paperattendance_sessionpages}
 					WHERE processed = ?";
 
 	$countmissing = count($DB->get_records_sql($sqlmissing, array(0)));
@@ -71,7 +71,7 @@ else{
 	}
 	
 	$sqlmissing = "SELECT * 
-					FROM {paperattendance_sessiongpages}
+					FROM {paperattendance_sessionpages}
 					WHERE processed = ? AND uploaderid = ?";
 	$params = array(0, $USER->id);
 	
@@ -190,7 +190,8 @@ if ($action == "edit") {
 			$inputs = html_writer::div('<label for="course">Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017">',"form-group", array());
 			$inputs += html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017">',"form-group", array());
 			$inputs += html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30">',"form-group", array());
-			$inputs += html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27">',"form-group", array());			
+			$inputs += html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27">',"form-group", array());
+			$inputs += html_writer::div('<button type="submit" class="btn btn-default">Guardar</button>',"form-group", array());
 			
 		}
 		else {
