@@ -1899,6 +1899,8 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
     	$errormsg = $lastline;
     }
     //return_var es el que devuelve 124 si es que se alcanza el timeout
+    //con la funcion rename de php se puede mover un jpg de una carpeta a otra para correr el command por cada imagen y asi saber realmente cual es la que tiene problemas
+    
     var_dump($return_var);
         
 	mtrace( "FormScanner command executed succesfully" );
