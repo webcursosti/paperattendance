@@ -199,6 +199,6 @@ switch ($action) {
 				}
 				$count++;
 			}
-			echo json_encode($return);
+			echo json_encode($arrayalumnos);
 		break;
 }
