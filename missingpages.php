@@ -269,11 +269,11 @@ $( "#confirm" ).on( "click", function() {
 	    	},
 	    success: function (response) {
 		    $("#inputs").empty();
-		    var table = '<table class="table table-hover" style="float:right; margin-right:20%"><thead><tr><th>Asistencia</th><th>Alumno</th></tr></thead><tbody>';
+		    var table = '<table class="table table-hover" style="float:right; margin-right:20%"><thead><tr><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
 		    $("#inputs").append(table);
 	        $.each(response, function(i, field){
 	        	var appendcheckbox = '<tr class="checkbox usercheckbox"><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
-	        	$("#inputs").append(appendcheckbox);
+	        	$("#appendtrs").append(appendcheckbox);
 	        });
 	    }
 	}).done(function( data ) {
