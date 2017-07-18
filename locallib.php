@@ -1882,8 +1882,9 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	
 	mtrace( "All pdf's pages converted to jpg images" );
 	//TODO: cambiar el installation path. para que funcione en produccion
-	$command = 'java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /Datos/formscanner/template.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/jpgs/';
+	$command = 'timeout 20 java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /Datos/formscanner/template.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/jpgs/';
 //	mtrace( "el comando es: ".$command );
+	$otrocomando = 'echo $?';
 	
     $lastline = exec($command, $output, $return_var);
     if($return_var != 0) {
@@ -1892,6 +1893,15 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
     var_dump($output);
     var_dump($return_var);
     var_dump($lastline);
+    
+    $lastline2 = exec($otrocomando, $output2, $return_var2);
+    if($return_var2 != 0) {
+    	$errormsg2 = $lastline2;
+    }
+    var_dump($output2);
+    var_dump($return_var2);
+    var_dump($lastline2);
+    
 	mtrace( "FormScanner command executed succesfully" );
 
 	$processed = 0;
