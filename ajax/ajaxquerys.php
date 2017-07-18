@@ -195,7 +195,10 @@ switch ($action) {
 			$end = $begin + 25;
 			foreach ($studentlist as $student){
 				if($count>=$begin && $count<=$end){
-					$arrayalumnos[] = paperattendance_getusername($student->id);
+					$line = array();
+					$line["studentid"] = $student->id;
+					$line["username"] = paperattendance_getusername($student->id);
+					$arrayalumnos[] = $line;
 				}
 				$count++;
 			}

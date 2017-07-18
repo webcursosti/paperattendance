@@ -268,9 +268,10 @@ $( "#confirm" ).on( "click", function() {
 		      'begin' : begin.val()
 	    	},
 	    success: function (response) {
-		    
+		    $("#inputs").fadeOut( "slow" );
 	        $.each(response, function(i, field){
-				console.log(field);
+	        	var appendcheckbox = '<div class="checkbox usercheckbox"><label><input type="checkbox" value="'+field["studentid"]+'">'+field["username"]+'</label></div>';
+	        	$("#inputs").append(appendcheckbox);
 	        });
 	    }
 	});
