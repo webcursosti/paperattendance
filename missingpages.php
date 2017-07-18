@@ -269,10 +269,13 @@ $( "#confirm" ).on( "click", function() {
 	    	},
 	    success: function (response) {
 		    $("#inputs").empty();
+		    var table = '<table class="table table-hover" style="float:right; margin-right:20%"><thead><tr><th>Asistencia</th><th>Alumno</th></tr></thead><tbody>';
+		    $("#inputs").append(table);
 	        $.each(response, function(i, field){
-	        	var appendcheckbox = '<div class="checkbox usercheckbox"><label><input type="checkbox" value="'+field["studentid"]+'">'+field["username"]+'</label></div>';
+	        	var appendcheckbox = '<tr class="checkbox usercheckbox"><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
 	        	$("#inputs").append(appendcheckbox);
 	        });
+	        $("#inputs").append("</tbody></table>");
 	    }
 	});
 	
