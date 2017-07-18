@@ -164,7 +164,7 @@ $string['selectmodules']="Seleccione los módulos";
 $string['nothingtoprint']="Nada para imprimir hoy";
 
 //messages
-$string['dear'] = "Estimado Profesor";
+$string['dear'] = "Estimado(a) Profesor(a)";
 $string['processconfirmationbodysubject'] = "Lista procesada correctamente";
 $string['processconfirmationbody'] = "Se ha completado el procesamiento de registros de asistencias por PaperAttendance";
 $string['datebody'] = "De la fecha:";
@@ -180,7 +180,6 @@ $string['newresponsestudent'] = "Tu solicitud de revisión de asistencia acaba d
 $string['newresponse'] = "Acaba de resolver una solicitud de revisión de asistencia";
 $string['nonprocessconfirmationbodysubject'] = "Lista procesada incorrectamente";
 $string['nonprocessconfirmationbody'] = "No se ha completado el procesamiento de registros de asistencias por PaperAttendance, error en la página:";
-
 
 // Settings
 $string['settings']="Configuración Básica";

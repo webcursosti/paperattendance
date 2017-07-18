@@ -1214,32 +1214,27 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 			$messagehtml = "<html>";
 			$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";	
 			$messagehtml .= "<p>".get_string("processconfirmationbody", "local_paperattendance") . "</p>";
-			//$messagehtml .= "<p>".get_string("datebody", "local_paperattendance") ." ". $date . "</p>";
-			$messagehtml .= "<p>".get_string("coursebody", "local_paperattendance") ." ". $course . "</p>";
-			//$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/history.php?action=studentsattendance&attendanceid=". $attendanceid ."&courseid=". $courseid ."'>" . get_string('historytitle', 'local_paperattendance') . "</a></p>";
+			$messagehtml .= "<p>".get_string("datebody", "local_paperattendance") ." ". $date . "</p>";
+			$messagehtml .= "<p>".get_string("course", "local_paperattendance") ." ". $course . "</p>";
+			$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/history.php?action=studentsattendance&attendanceid=". $attendanceid ."&courseid=". $courseid ."'>" . get_string('historytitle', 'local_paperattendance') . "</a></p>";
 			$messagehtml .= "</html>";
 			
 			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
 			$messagetext .= get_string("processconfirmationbody", "local_paperattendance") . "\n";
-			//$messagetext .= get_string("datebody", "local_paperattendance") ." ". $date . "\n";
-			$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
+			$messagetext .= get_string("datebody", "local_paperattendance") ." ". $date . "\n";
+			$messagetext .= get_string("course", "local_paperattendance") ." ". $course . "\n";
 			break;
 		case "nonprocesspdf":
 			//subject
 			$eventdata->subject = get_string("nonprocessconfirmationbodysubject", "local_paperattendance");
 			//process pdf message
 			$messagehtml = "<html>";
-			//$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";
+			$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";
 			$messagehtml .= "<p>".get_string("nonprocessconfirmationbody", "local_paperattendance") . "</p>". $errorpage;
-			//$messagehtml .= "<p>".get_string("datebody", "local_paperattendance") ." ". $date . "</p>";
-			//$messagehtml .= "<p>".get_string("coursebody", "local_paperattendance") ." ". $course . "</p>";
-			//$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/history.php?action=studentsattendance&attendanceid=". $attendanceid ."&courseid=". $courseid ."'>" . get_string('historytitle', 'local_paperattendance') . "</a></p>";
 			$messagehtml .= "</html>";
 			
-			//$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
+			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
 			$messagetext .= get_string("processconfirmationbody", "local_paperattendance") . "\n". $errorpage;
-			//$messagetext .= get_string("datebody", "local_paperattendance") ." ". $date . "\n";
-			//$messagetext .= get_string("coursebody", "local_paperattendance") ." ". $course . "\n";
 			break;
 		case "newdiscussionteacher":
 			//subject
@@ -1721,7 +1716,9 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1, $uploaderobj->id);
 						
 						if($CFG->paperattendance_sendmail == 1){
-							paperattendance_sendMail(null, $course, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "processpdf", null);
+							$coursename = $DB->get_record("course", array("id"=> $course));
+							$sessdate = date("d-m-Y H:i", $time);
+							paperattendance_sendMail($sessid, $course, $requestorid, $uploaderobj->id, $sessdate, $coursename->fullname, "processpdf", null);
 						}
 						
 					}
@@ -1788,7 +1785,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	  			paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $pdffilename, 0, $uploaderobj->id);
 	  			
 	  			if($CFG->paperattendance_sendmail == 1){
-	  				paperattendance_sendMail(null, null, null, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", $realpagenum);
+	  				paperattendance_sendMail(null, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", $realpagenum);
 	  			}
 
 	  		}
