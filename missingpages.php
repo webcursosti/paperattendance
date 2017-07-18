@@ -249,7 +249,7 @@ echo $OUTPUT->footer();
 ?>
 
 <script>
-$( "#confirm" ).on( "click", function() {	
+$( "#confirm" ).on( "click", function() {
 	var course = $('#course');
 	var date = $('#course');
 	var module = $('#module');
@@ -269,10 +269,10 @@ $( "#confirm" ).on( "click", function() {
 	    	},
 	    success: function (response) {
 		    $("#inputs").empty();
-		    var table = '<table class="table table-hover table-condensed table-responsive" style="float:right; width:40%"><thead><tr><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
+		    var table = '<table class="table table-hover table-condensed table-responsive" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
 		    $("#inputs").append(table);
 	        $.each(response, function(i, field){
-	        	var appendcheckbox = '<tr class="usercheckbox"><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
+	        	var appendcheckbox = '<tr class="usercheckbox"><td>'+i+'</td><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
 	        	$("#appendtrs").append(appendcheckbox);
 	        });
 	    }

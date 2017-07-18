@@ -1889,11 +1889,9 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
     if($return_var != 0) {
     	$errormsg = $lastline;
     }
-    var_dump($output);
-    echo "papaya";
+    //return_var es el que devuelve 124 si es que se alcanza el timeout
     var_dump($return_var);
-    var_dump($lastline);
-    
+        
 	mtrace( "FormScanner command executed succesfully" );
 
 	$processed = 0;
