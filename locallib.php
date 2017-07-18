@@ -1230,11 +1230,11 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 			//process pdf message
 			$messagehtml = "<html>";
 			$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";
-			$messagehtml .= "<p>".get_string("nonprocessconfirmationbody", "local_paperattendance") . "</p>". $errorpage;
+			$messagehtml .= "<p>".get_string("nonprocessconfirmationbody", "local_paperattendance") . $errorpage. "</p>";
 			$messagehtml .= "</html>";
 			
 			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
-			$messagetext .= get_string("processconfirmationbody", "local_paperattendance") . "\n". $errorpage;
+			$messagetext .= get_string("processconfirmationbody", "local_paperattendance") . $errorpage. "\n";
 			break;
 		case "newdiscussionteacher":
 			//subject
