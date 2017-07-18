@@ -255,10 +255,10 @@ $( "#confirm" ).on( "click", function() {
 	var module = $('#module');
 	var begin = $('#begin');
 
-	if (!course.val() || !date.val() || !module.val() || !begin.val() ) {
+	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())+1)%26 != 0 ) {
 	    alert("Por favor, rellene todos los campos");
 	}
-
+	else{
 	$.ajax({
 	    type: 'GET',
 	    url: 'ajax/ajaxquerys.php',
@@ -279,7 +279,8 @@ $( "#confirm" ).on( "click", function() {
 	    }
 	}).done(function( data ) {
 		 $("#inputs").append("</tbody></table>");
-	});;
+	});
+	}
 	
 });
 </script>
