@@ -268,7 +268,7 @@ $( "#confirm" ).on( "click", function() {
 		      'begin' : begin.val()
 	    	},
 	    success: function (response) {
-		    $("#inputs").fadeOut( "slow" );
+		    $("#inputs").empty();
 	        $.each(response, function(i, field){
 	        	var appendcheckbox = '<div class="checkbox usercheckbox"><label><input type="checkbox" value="'+field["studentid"]+'">'+field["username"]+'</label></div>';
 	        	$("#inputs").append(appendcheckbox);
