@@ -1824,7 +1824,7 @@ function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid, $qr
 	$pagesession->pdfname = $pdfname;
 	$pagesession->processed = $processed;
 	$pagesession->uploaderid = $uploaderid;
-	$idsessionpage = $DB->insert_record('paperattendance_sessionpages', $pagesession, false);
+	$idsessionpage = $DB->insert_record('paperattendance_sessionpages', $pagesession, true);
 	return $idsessionpage;
 }
 
