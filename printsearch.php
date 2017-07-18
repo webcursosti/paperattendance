@@ -217,7 +217,7 @@ $pdfmodal = '<div class="modal fade bs-example-modal-lg" id="pdfModal" tabindex=
 	  		</div>
 		</div>';
 
-$quickprintmodal = '<div class="modal fade bs-example-modal-lg" id="quickprintModal" tabindex="-1" role="dialog" aria-labelledby="quickprintModalLabel" style="display: none;">
+$quickprintmodal = '<div class="modal fade bs-example-modal-lg" id="quickprintModal" tabindex="-1" role="dialog" aria-labelledby="quickprintModalLabel" style="display: none; display: block; margin: auto; width: 80vw; left: 10%; padding-right: 0px;">
 			  <div class="modal-dialog modal-lg" role="document">
 			    	<div class="modal-content">
 			    		<div class="modal-header">
