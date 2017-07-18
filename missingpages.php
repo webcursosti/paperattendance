@@ -218,7 +218,7 @@ if ($action == "edit") {
  	$pdfarea = html_writer::div($viewerpdf,"col-md-8", array( "id"=>"pdfviewer"));
  	//$inputarea = html_writer::nonempty_tag("div", $inputs, array( "id"=>"inputs", "style"=>"float:right; margin-right:6%"));
  	$inputarea = html_writer::div($inputs,"col-md-3 col-md-offset-1", array( "id"=>"inputs"));
- 	echo html_writer::div($pdfarea.$inputarea, "form");
+ 	echo html_writer::div($pdfarea.$inputarea, "row");
 	
 	
 	
