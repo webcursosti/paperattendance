@@ -184,10 +184,11 @@ switch ($action) {
 		break;
 		case 'getliststudentspage':
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
-			$context = context_course::instance($courseid);
-			$objcourse = new stdClass();
-			$objcourse -> id = $courseid;
-			$studentlist = paperattendance_students_list($context->id, $objcourse);
+			
+			$course = $DB->get_record("course", array("shortname" => $data));
+			
+			$context = context_course::instance($course->id);
+			$studentlist = paperattendance_students_list($context->id, $course);
 			
 			$arrayalumnos = array();
 			$count = 1;
