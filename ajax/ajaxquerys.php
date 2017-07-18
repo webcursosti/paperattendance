@@ -39,6 +39,7 @@ $diasemana = optional_param('diasemana', null, PARAM_TEXT);
 $data = optional_param('result', null, PARAM_TEXT);
 $path = optional_param('path', 0, PARAM_INT);
 $courseid = optional_param("courseid", 1, PARAM_INT);
+$begin = optional_param("begin", 1, PARAM_INT);
 $category = optional_param('category', 1, PARAM_INT);
 $teacherid = optional_param("teacherid", 1, PARAM_INT);
 
@@ -180,5 +181,23 @@ switch ($action) {
 
 			echo json_encode($return);
 		}
+		break;
+		case 'getliststudentspage':
+			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
+			$context = context_course::instance($courseid);
+			$objcourse = new stdClass();
+			$objcourse -> id = $courseid;
+			$studentlist = paperattendance_students_list($context->id, $objcourse);
+			
+			$arrayalumnos = array();
+			$count = 1;
+			$end = $begin + 25;
+			foreach ($studentlist as $student){
+				if($count>=$begin && $count<=$end){
+					$arrayalumnos[] = paperattendance_getusername($student->id);
+				}
+				$count++;
+			}
+			echo json_encode($return);
 		break;
 }

@@ -249,7 +249,31 @@ echo $OUTPUT->footer();
 ?>
 
 <script>
-$( document ).on( "#confirm", function() {
+$( "#confirm" ).on( "click", function() {	
+	var course = $('#course');
+	var date = $('#course');
+	var module = $('#module');
+	var begin = $('#begin');
+
+	if (!course.val() || !date.val() || !module.val() || !begin.val() ) {
+	    alert("Por favor, rellene todos los campos");
+	}
+
+	$.ajax({
+	    type: 'GET',
+	    url: 'ajax/ajaxquerys.php',
+	    data: {
+		      'action' : 'getliststudentspage',
+		      'courseid' : data,
+		      'begin' : path
+	    	},
+	    success: function (response) {
+		    
+	        $.each(response, function(i, field){
+				console.log(field);
+	        });
+	    }
+	});
 	
 });
 </script>
