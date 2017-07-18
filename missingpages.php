@@ -264,8 +264,8 @@ $( "#confirm" ).on( "click", function() {
 	    url: 'ajax/ajaxquerys.php',
 	    data: {
 		      'action' : 'getliststudentspage',
-		      'result' : course,
-		      'begin' : begin
+		      'result' : course.val(),
+		      'begin' : begin.val()
 	    	},
 	    success: function (response) {
 		    

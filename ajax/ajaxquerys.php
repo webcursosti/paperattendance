@@ -187,21 +187,18 @@ switch ($action) {
 			
 			$course = $DB->get_record("course", array("shortname" => $data));
 			
-			var_dump( $course );
 			$context = context_course::instance($course->id);
 			$studentlist = paperattendance_students_list($context->id, $course);
 			
-			var_dump( $studentlist );
-			
-// 			$arrayalumnos = array();
-// 			$count = 1;
-// 			$end = $begin + 25;
-// 			foreach ($studentlist as $student){
-// 				if($count>=$begin && $count<=$end){
-// 					$arrayalumnos[] = paperattendance_getusername($student->id);
-// 				}
-// 				$count++;
-// 			}
-// 			echo json_encode($arrayalumnos);
+			$arrayalumnos = array();
+			$count = 1;
+			$end = $begin + 25;
+			foreach ($studentlist as $student){
+				if($count>=$begin && $count<=$end){
+					$arrayalumnos[] = paperattendance_getusername($student->id);
+				}
+				$count++;
+			}
+			echo json_encode($arrayalumnos);
 		break;
 }
