@@ -214,13 +214,9 @@ if ($action == "edit") {
 	echo $OUTPUT->heading(get_string("missingpagestitle", "local_paperattendance"));
 	
 	echo html_writer::div(get_string("missingpageshelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
- 	//$pdfarea = html_writer::nonempty_tag("div", $viewerpdf, array( "id"=>"pdfviewer", "type"=>"text", "style"=>"float:left, width:50%"));
- 	$pdfarea = html_writer::div($viewerpdf,"col-md-8", array( "id"=>"pdfviewer"));
- 	//$inputarea = html_writer::nonempty_tag("div", $inputs, array( "id"=>"inputs", "style"=>"float:right; margin-right:6%"));
- 	$inputarea = html_writer::div($inputs,"col-md-3 col-md-offset-1", array( "id"=>"inputs"));
+  	$pdfarea = html_writer::div($viewerpdf,"col-md-9", array( "id"=>"pdfviewer"));
+  	$inputarea = html_writer::div($inputs,"col-md-2 col-md-offset-1", array( "id"=>"inputs"));
  	echo html_writer::div($pdfarea.$inputarea, "row");
-	
-	
 	
 }
 
