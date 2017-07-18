@@ -255,7 +255,7 @@ $( "#confirm" ).on( "click", function() {
 	var module = $('#module');
 	var begin = $('#begin');
 
-	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())-1+26)%26 != 0 ) {
+	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())-1+26)%26 != 0 || date.val() === date.val().split('-')[0] || module.val() === module.val().split(':')[0]) {
 	    alert("Por favor, rellene todos los campos e ingrese un inicio de lista correcto");
 	}
 	else{
