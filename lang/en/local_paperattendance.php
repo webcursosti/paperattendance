@@ -180,7 +180,6 @@ $string['newresponsestudent'] = "Your attendance request have been solved";
 $string['newresponse'] = "You just solved an attendance request";
 $string['nonprocessconfirmationbodysubject'] = "Attendance's list processed incorrectly";
 $string['nonprocessconfirmationbody'] = "Attendance records processing incompleted, error on page:";
-$string['pdfnamebody'] = "Name of Pdf file:";
 
 // Settings
 $string['settings']="Basic Configuration";

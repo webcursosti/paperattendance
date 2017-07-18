@@ -180,7 +180,6 @@ $string['newresponsestudent'] = "Tu solicitud de revisión de asistencia acaba d
 $string['newresponse'] = "Acaba de resolver una solicitud de revisión de asistencia";
 $string['nonprocessconfirmationbodysubject'] = "Lista procesada incorrectamente";
 $string['nonprocessconfirmationbody'] = "No se ha completado el procesamiento de registros de asistencias por PaperAttendance, error en la página:";
-$string['pdfnamebody'] = "Nombre del archivo Pdf:";
 
 // Settings
 $string['settings']="Configuración Básica";
