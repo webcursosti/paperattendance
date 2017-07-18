@@ -275,9 +275,10 @@ $( "#confirm" ).on( "click", function() {
 	        	var appendcheckbox = '<tr class="checkbox usercheckbox"><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
 	        	$("#inputs").append(appendcheckbox);
 	        });
-	        $("#inputs").append("</tbody></table>");
 	    }
-	});
+	}).done(function( data ) {
+		 $("#inputs").append("</tbody></table>");
+	});;
 	
 });
 </script>
