@@ -185,8 +185,10 @@ if ($action == "edit") {
 		if ($session = $DB->get_record("paperattendance_sessionpages", array("id" => $sesspageid))){
 			$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $session->pdfname);
 			
+			$viewerstart = $session->pagenum + 1;
+			
 			$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
-					"src" => $url."#page=".$session->pagenum,
+					"src" => $url."#page=".$viewerstart,
 					"style" => "height:75vh; width:40vw; float:left"
 			));
 			
@@ -212,9 +214,11 @@ if ($action == "edit") {
 	echo $OUTPUT->heading(get_string("missingpagestitle", "local_paperattendance"));
 	
 	echo html_writer::div(get_string("missingpageshelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
-// 	$pdfarea = html_writer::nonempty_tag("div", $viewerpdf, array( "id"=>"pdfviewer", "type"=>"text", "style"=>"float:left, width:50%"));
-// 	$inputarea = html_writer::nonempty_tag("div", $inputs, array( "id"=>"inputs", "style"=>"float:right; margin-right:6%"));
-	echo html_writer::div($viewerpdf.$inputs, "form");
+ 	//$pdfarea = html_writer::nonempty_tag("div", $viewerpdf, array( "id"=>"pdfviewer", "type"=>"text", "style"=>"float:left, width:50%"));
+ 	$pdfarea = html_writer::div($viewerpdf,"col-md-8", array( "id"=>"pdfviewer"));
+ 	//$inputarea = html_writer::nonempty_tag("div", $inputs, array( "id"=>"inputs", "style"=>"float:right; margin-right:6%"));
+ 	$inputarea = html_writer::div($inputs,"col-md-3 col-md-offset-1", array( "id"=>"inputs"));
+ 	echo html_writer::div($pdfarea.$inputarea, "form");
 	
 	
 	
@@ -249,18 +253,7 @@ echo $OUTPUT->footer();
 ?>
 
 <script>
-$( document ).on( "click", ".printbutton", function() {
-	jQuery('#pdfModal').modal('show'); 
-	$('.pdflists').html('<center><img src="img/loading.gif"></center>');
-	$.ajax({
-	    type: 'POST',
-	    url: 'cartprint.php',
-	    data: {
-		      'lists' : lists
-	    	},
-	    success: function (response) {
-			$('.pdflists').html(response);
-	    }
-	});
+$( document ).on( "#confirm", function() {
+	
 });
 </script>
