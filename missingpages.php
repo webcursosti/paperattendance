@@ -189,7 +189,7 @@ if ($action == "edit") {
 			
 			$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
 					"src" => $url."#page=".$viewerstart,
-					"style" => "height:75vh; width:40vw; float:left"
+					"style" => "height:100vh; width:40vw; float:left"
 			));
 			
 			$inputs = html_writer::div('<label for="course">Shortname del Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017">',"form-group", array("style"=>"float:right; margin-right:10%"));
@@ -272,7 +272,7 @@ $( "#confirm" ).on( "click", function() {
 		    var table = '<table class="table table-hover" style="float:right; margin-right:20%"><thead><tr><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
 		    $("#inputs").append(table);
 	        $.each(response, function(i, field){
-	        	var appendcheckbox = '<tr class="checkbox usercheckbox"><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
+	        	var appendcheckbox = '<tr class="usercheckbox"><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
 	        	$("#appendtrs").append(appendcheckbox);
 	        });
 	    }
