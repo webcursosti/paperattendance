@@ -1793,7 +1793,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	  			$sessionpageid = paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $pdffilename, 0, $uploaderobj->id);
 	  			
 	  			if($CFG->paperattendance_sendmail == 1){
-	  				paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", $realpagenum);
+	  				paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", $realpagenum+1);
 	  			}
 
 	  		}
