@@ -1230,11 +1230,12 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 			//process pdf message
 			$messagehtml = "<html>";
 			$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";
-			$messagehtml .= "<p>".get_string("nonprocessconfirmationbody", "local_paperattendance") . "</p>". $errorpage;
+			$messagehtml .= "<p>".get_string("nonprocessconfirmationbody", "local_paperattendance") . $errorpage. "</p>";
+			$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/missingpages.php?action=edit&sesspageid=". $attendanceid ."'>" . get_string('missingpagestitle', 'local_paperattendance') . "</a></p>";
 			$messagehtml .= "</html>";
 			
 			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
-			$messagetext .= get_string("processconfirmationbody", "local_paperattendance") . "\n". $errorpage;
+			$messagetext .= get_string("nonprocessconfirmationbody", "local_paperattendance") . $errorpage. "\n";
 			break;
 		case "newdiscussionteacher":
 			//subject
@@ -1309,6 +1310,13 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 	$eventdata->component = "local_paperattendance"; // your component name
 	$eventdata->name = "paperattendance_notification"; // this is the message name from messages.php
 	$eventdata->userfrom = $userfrom;
+	/*TODO descomentar cuando se suba a producción para que mande mails al profesor.
+	 * if ($case == "nonprocesspdf"){
+		$eventdata->userto = $uploaderid;
+	}
+	else {
+		$eventdata->userto = $teacherid;
+	}*/
 	$eventdata->userto = $uploaderid;
 	$eventdata->fullmessage = $messagetext;
 	$eventdata->fullmessageformat = FORMAT_HTML;
@@ -1782,10 +1790,10 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 
 	  			mtrace("Error: can't procees this page");
 	  			//$return = false;//send email or something to let know this page had problems
-	  			paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $pdffilename, 0, $uploaderobj->id);
+	  			$sessionpageid = paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $pdffilename, 0, $uploaderobj->id);
 	  			
 	  			if($CFG->paperattendance_sendmail == 1){
-	  				paperattendance_sendMail(null, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", $realpagenum);
+	  				paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", $realpagenum);
 	  			}
 
 	  		}
@@ -1816,7 +1824,8 @@ function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid, $qr
 	$pagesession->pdfname = $pdfname;
 	$pagesession->processed = $processed;
 	$pagesession->uploaderid = $uploaderid;
-	$DB->insert_record('paperattendance_sessionpages', $pagesession, false);
+	$idsessionpage = $DB->insert_record('paperattendance_sessionpages', $pagesession, false);
+	return $idsessionpage;
 }
 
 

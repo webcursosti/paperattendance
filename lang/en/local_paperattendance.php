@@ -162,6 +162,7 @@ $string['session']="Session";
 $string['remove']="Remove";
 $string['selectmodules']="Select modules";
 $string['nothingtoprint']="There's nothing to print for today";
+$string['missingpagestitle']="Mising Pages";
 
 //messages
 $string['dear'] = "Dear Teacher";

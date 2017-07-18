@@ -162,6 +162,7 @@ $string['session']="Sesión";
 $string['remove']="Remover";
 $string['selectmodules']="Seleccione los módulos";
 $string['nothingtoprint']="Nada para imprimir hoy";
+$string['missingpagestitle']="Páginas Perdidas";
 
 //messages
 $string['dear'] = "Estimado(a) Profesor(a)";
