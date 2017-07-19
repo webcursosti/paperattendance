@@ -1788,14 +1788,14 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				}
 	  		else{
 
-	  			mtrace("Error: can't procees this page");
+	  			mtrace("Error: can't procees this page, no readable qr code");
 	  			//$return = false;//send email or something to let know this page had problems
 	  			$sessionpageid = paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $pdffilename, 0, $uploaderobj->id);
 	  			
 	  			if($CFG->paperattendance_sendmail == 1){
 	  				paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", $realpagenum+1);
 	  			}
-
+				$return++;
 	  		}
 			}
 			$fila++;
@@ -1889,37 +1889,65 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	$pdf->writeImages($path."/jpgs/".$pdfname.".jpg", false);
 	$pdf->clear();
 	
-	mtrace( "All pdf's pages converted to jpg images" );
-	//TODO: cambiar el installation path. para que funcione en produccion
-	$command = 'timeout 20 java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /Datos/formscanner/template.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/jpgs/';
-//	mtrace( "el comando es: ".$command );
 	
-    $lastline = exec($command, $output, $return_var);
-    if($return_var != 0) {
-    	$errormsg = $lastline;
-    }
-    //return_var es el que devuelve 124 si es que se alcanza el timeout
-    //con la funcion rename de php se puede mover un jpg de una carpeta a otra para correr el command por cada imagen y asi saber realmente cual es la que tiene problemas
-    
-    var_dump($return_var);
-        
-	mtrace( "FormScanner command executed succesfully" );
-
-	$processed = 0;
-	
-	foreach(glob("{$path}/jpgs/*.csv") as $file)
-	{
-		mtrace( "Csv file founden - command works correct!" );
-		$processed = paperattendance_read_csv($file, $path, $filename, $uploaderobj);
-		
+	if (!file_exists($path."/jpgs/processing")) {
+		mkdir($path."/jpgs/processing", 0777, true);
 	}
 	
-	//delete all jpgs
+	//process jpgs one by one and then delete it
+	$countprocessed = 0;
 	foreach(glob("{$path}/jpgs/*.jpg") as $file)
 	{
-		unlink($file);	
+		//first move it to the processing folder
+		$jpgname = basename($file);
+		mtrace("el nombre del jpg recien sacado es: ". $jpgname);
+		rename($file, $path."/jpgs/processing/".$jpgname);
+		
+		//now run the exec command
+		$command = 'timeout 30 java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /Datos/formscanner/template.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/jpgs/processing/';	
+		$lastline = exec($command, $output, $return_var);
+		
+		//return_var es el que devuelve 124 si es que se alcanza el timeout
+		if($return_var != 124){
+			mtrace("no se alcanzó el timeout, todo bien");
+			
+			//revisar el csv que creó formscanner
+			foreach(glob("{$path}/jpgs/processing/*.csv") as $filecsv)
+			{
+				mtrace( "Csv file found - command works correct!" );
+				$processed = paperattendance_read_csv($filecsv, $path, $filename, $uploaderobj);
+				$countprocessed += $processed;
+			}
+		}
+		else{
+			//meaning that the timeout was reached, save that page with status unprocessed
+			mtrace("si se alcanzó el timeout, todo mal");
+			$numpages = paperattendance_number_of_pages($path, $filename);
+			
+			if($numpages == 1){
+				$realpagenum = 0;
+			}
+			else{
+				$oldpdfpagenumber= explode("-",$jpgname);
+				$oldpdfpagenumber = $oldpdfpagenumber[1];
+				$realpagenum = explode(".", $oldpdfpagenumber);
+				$realpagenum = $oldpdfpagenumber[0];
+			}
+			
+			$sessionpageid = paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $filename, 0, $uploaderobj->id);
+			
+			if($CFG->paperattendance_sendmail == 1){
+				paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $filename, "nonprocesspdf", $realpagenum);
+			}
+			
+			$countprocessed++;
+		}
+		
+		//finally unlink the jpg file
+		unlink($path."/jpgs/processing/".$jpgname);
 	}
-	if($processed >= 1){
+	
+	if($countprocessed>= 1){
 		return true;
 	}
 	else{
