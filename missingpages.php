@@ -160,7 +160,7 @@ if ($action == "view") {
             $missingtable->data [] = array(
             	$counter,	
             	$scanaction_attendance,
-            	$miss->pagenum,
+            	$miss->pagenum +1,
             	$username,
                 $deleteactionmissing . $editactionmissing);
             
