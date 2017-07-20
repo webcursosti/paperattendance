@@ -154,7 +154,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 					$statusicon = new pix_icon("i/invalid", get_string('absentattendance', 'local_paperattendance'));
 					$msgstatus = get_string('presentattendance', 'local_paperattendance');
 				}
-				}
+				
 				
 				$statusiconaction = $OUTPUT->action_icon(
 						$urlattendance,
