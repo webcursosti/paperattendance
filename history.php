@@ -847,7 +847,7 @@ $( document ).ready(function() {
 		var studentpresence = div.attr("setstudentpresence"); 
 		var presenceid = div.attr("presenceid"); 
 
-		var moodleurl = <?php echo $CFG->wwwroot;?>;
+		var moodleurl = "<?php echo $CFG->wwwroot;?>";
 		
 
 
