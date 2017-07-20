@@ -306,6 +306,15 @@ if($action == "scan"){
 			"src" => $url,
 			"style" => "height:100vh; width:60vw"
 	));
+	
+	$PAGE->set_title(get_string("missingpages", "local_paperattendance"));
+	$PAGE->set_heading(get_string("missingpages", "local_paperattendance"));
+	echo $OUTPUT->header();
+	echo $OUTPUT->heading(get_string("missingpagestitle", "local_paperattendance"));
+	
+	echo $viewbackbutton;
+	echo $viewerpdf;
+	
 }
 
 echo $OUTPUT->footer();
