@@ -1725,7 +1725,8 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						
 						if($CFG->paperattendance_sendmail == 1){
 							$coursename = $DB->get_record("course", array("id"=> $course));
-							$sessdate = date("d-m-Y", $time)." ".$module;
+							$moduleobject = $DB->get_record("paperattendance_module", array("id"=> $module));
+							$sessdate = date("d-m-Y", $time).", ".$moduleobject->name. ": ". $moduleobject->initialtime. " - " .$moduleobject->endtime;
 							paperattendance_sendMail($sessid, $course, $requestorid, $uploaderobj->id, $sessdate, $coursename->fullname, "processpdf", null);
 						}
 						
