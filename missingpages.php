@@ -213,7 +213,7 @@ if ($action == "edit") {
 			
 			$fs = get_file_storage();
 			$file_record = array(
-					'contextid' => $context->id,
+					'contextid' => $contextsystem->id,
 					'component' => 'local_paperattendance',
 					'filearea' => 'scan',
 					'itemid' => 0,
