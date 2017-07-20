@@ -42,6 +42,8 @@ $courseid = optional_param("courseid", 1, PARAM_INT);
 $begin = optional_param("begin", 1, PARAM_INT);
 $category = optional_param('category', 1, PARAM_INT);
 $teacherid = optional_param("teacherid", 1, PARAM_INT);
+$setstudentpresence = optional_param("setstudentpresence", 1, PARAM_INT);
+$presenceid = optional_param("presenceid", 1, PARAM_INT);
 
 switch ($action) {
 	case 'curlgetmoduloshorario' :
@@ -204,4 +206,51 @@ switch ($action) {
 			}
 			echo json_encode($arrayalumnos);
 		break;
+		case 'changestudentpresence':
+			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
+			
+			if($attendance = $DB->get_record("paperattendance_presence", array("id" => $presenceid)) ){
+				
+				$record = new stdClass();
+				$record->id = $presenceid;
+				$record->lastmodified = time();
+				$record->status = $setstudentpresence;
+				
+				$DB->update_record("paperattendance_presence", $record);
+				
+				if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
+				
+					$modifieduserid = $attendance -> userid;
+					$omegaid = $attendance -> omegaid;
+					
+					$curl = curl_init();
+					
+					$url =  $CFG->paperattendance_omegaupdateattendanceurl;
+					$token =  $CFG->paperattendance_omegatoken;
+					
+					if($data->status == 1){
+						$status = "true";
+					}
+					else{
+						$status = "false";
+					}
+					
+					$fields = array (
+							"token" => $token,
+							"asistenciaId" => $omegaid,
+							"asistencia" => $status
+					);
+					
+					curl_setopt($curl, CURLOPT_URL, $url);
+					curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+					curl_setopt($curl, CURLOPT_POST, TRUE);
+					curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($fields));
+					curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+					$result = curl_exec ($curl);
+					curl_close ($curl);
+				}	
+			}
+			
+			echo json_encode(1);
+			break;
 }
