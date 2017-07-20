@@ -52,6 +52,9 @@ $url = new moodle_url("/local/paperattendance/history.php", array('courseid' => 
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout("standard");
+$PAGE->requires->jquery();
+$PAGE->requires->jquery_plugin ( 'ui' );
+$PAGE->requires->jquery_plugin ( 'ui-css' );
 
 $contextsystem = context_system::instance();
 
@@ -164,7 +167,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						);
 							
 				// Define edition icon and url
-				$editactionasistencia = html_writer::div($msgstatus, "presencehover ", array("style"=>"display:none; cursor:pointer; text-decoration: underline; color: blue;", "presenceid"=>"$attendance->idp", "attendanceid"=>"$attendanceid", "setstudentpresence"=>"$setstudentpresence"));
+				$editactionasistencia = html_writer::div($msgstatus, "presencehover ", array("style"=>"display:none; cursor:pointer; text-decoration: underline; color: blue;", "presenceid"=>"$attendance->idp", "setstudentpresence"=>"$setstudentpresence"));
 // 				$editurlattendance = new moodle_url("/local/paperattendance/history.php", array(
 // 						"action" => "edit",
 // 						"presenceid" => $attendance->idp,
@@ -828,3 +831,55 @@ else{
 }
 
 echo $OUTPUT->footer();
+?>
+<script>
+$( document ).ready(function() {
+	
+	$('.generaltable').find('tr').hover(function() {
+			$( this ).find('.presencehover').toggle();
+		}, function() {
+			$( this ).find('.presencehover').toggle();
+		}
+	);
+
+	$('.presencehover').on( "click", function() {
+		var div = $(this);
+		var studentpresence = div.attr("setstudentpresence"); 
+		var presenceid = div.attr("presenceid"); 
+
+		var moodleurl = <?php echo new moodle_url("");?>;
+		
+
+
+		if(studentpresence == 0){
+			var settext = "Presente";
+			var setpresence = 1;
+			var icon = moodleurl+"/theme/image.php?theme=eduhub&amp;component=core&amp;image=i%2Finvalid";
+		}
+		else{
+			var settext = "Ausente";
+			var setpresence = 0;
+			var icon = moodleurl+"/theme/image.php?theme=eduhub&amp;component=core&amp;image=i%2Fvalid";
+		}
+
+		$.ajax({
+		    type: 'GET',
+		    url: 'ajax/ajaxquerys.php',
+		    data: {
+			      'action' : 'changestudentpresence',
+			      'setstudentpresence' : studentpresence,
+			      'presenceid' : presenceid
+		    	},
+		    success: function (response) {
+				div.html(settext);
+				div.attr("setstudentpresence", setpresence);
+
+				div.parent().parent().find('.smallicon').first().attr({
+					  src: icon
+				});
+		    }
+		});
+	});
+	
+});
+</script>

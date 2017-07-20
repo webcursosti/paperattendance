@@ -1133,7 +1133,7 @@ function paperattendance_omegaupdateattendance($update, $omegaid){
  *            Token to access omega
  */
 function paperattendance_checktoken($token){
-	if (!isset($token) || empty($token) || $token == "" || $token == null) {
+	if (!isset($token) || empty($token) || $token == "" || $token == null || $token == " ") {
 		return false;
 	}
 	else{
