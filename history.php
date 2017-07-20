@@ -148,9 +148,13 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				
 				if($attendance->status){
 					$statusicon = new pix_icon("i/valid", get_string('presentattendance', 'local_paperattendance'));
+					$msgstatus = get_string('absentattendance', 'local_paperattendance');
+				}
 				}
 				else{
 					$statusicon = new pix_icon("i/invalid", get_string('absentattendance', 'local_paperattendance'));
+					$msgstatus = get_string('presentattendance', 'local_paperattendance');
+				}
 				}
 				
 				$statusiconaction = $OUTPUT->action_icon(
@@ -159,17 +163,18 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						);
 							
 				// Define edition icon and url
-				$editurlattendance = new moodle_url("/local/paperattendance/history.php", array(
-						"action" => "edit",
-						"presenceid" => $attendance->idp,
-						"attendanceid" => $attendanceid,
-						"courseid" => $courseid
-				));
-				$editiconattendance = new pix_icon("i/edit", get_string('edithistory', 'local_paperattendance'));
-				$editactionasistencia = $OUTPUT->action_icon(
-						$editurlattendance,
-						$editiconattendance
-						);
+				$editactionasistencia = html_writer::div($msgstatus, "presencehover ", array("style"=>"cursor:pointer; text-decoration: underline; color: blue;"));
+// 				$editurlattendance = new moodle_url("/local/paperattendance/history.php", array(
+// 						"action" => "edit",
+// 						"presenceid" => $attendance->idp,
+// 						"attendanceid" => $attendanceid,
+// 						"courseid" => $courseid
+// 				));
+// 				$editiconattendance = new pix_icon("i/edit", get_string('edithistory', 'local_paperattendance'));
+// 				$editactionasistencia = $OUTPUT->action_icon(
+// 						$editurlattendance,
+// 						$editiconattendance
+// 						);
 				
 				$name = ($attendance->firstname.' '.$attendance->lastname);
 				
