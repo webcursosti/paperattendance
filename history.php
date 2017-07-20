@@ -162,7 +162,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						);
 							
 				// Define edition icon and url
-				$editactionasistencia = html_writer::div($msgstatus, "presencehover ", array("style"=>"cursor:pointer; text-decoration: underline; color: blue;"));
+				$editactionasistencia = html_writer::div($msgstatus, "presencehover ", array("style"=>"display:none; cursor:pointer; text-decoration: underline; color: blue;"));
 // 				$editurlattendance = new moodle_url("/local/paperattendance/history.php", array(
 // 						"action" => "edit",
 // 						"presenceid" => $attendance->idp,
