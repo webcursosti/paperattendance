@@ -183,14 +183,51 @@ if ($action == "edit") {
 	}
 	else {
 		if ($session = $DB->get_record("paperattendance_sessionpages", array("id" => $sesspageid))){
-			$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $session->pdfname);
 			
+			$timepdf = time();
+			$path = $CFG -> dataroot. "/temp/local/paperattendance/";
+			$attendancepdffile = $path . "/print/paperattendance_".$sesspageid."_".$timepdf.".pdf";
+			
+			$pdfpath = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$session->pdfname;
 			$viewerstart = $session->pagenum + 1;
 			
+			$pdf = new FPDI();
+			//open the full pdf
+			$pdf->setSourceFile($pdfpath);
+			// import a page
+			$templateId = $pdf->importPage($viewerstart);
+			// get the size of the imported page
+			$size = $pdf->getTemplateSize($templateId);
+			//Add page on portrait position
+			$pdf->AddPage('P', array($size['w'], $size['h']));
+			// use the imported page
+			$pdf->useTemplate($templateId);
+			//write the file
+			$pdf->Output($attendancepdffile, "F");
+			
+			$fs = get_file_storage();
+			$file_record = array(
+					'contextid' => $context->id,
+					'component' => 'local_paperattendance',
+					'filearea' => 'scan',
+					'itemid' => 0,
+					'filepath' => '/',
+					'filename' => "paperattendance_".$courseid."_".$timepdf.".pdf"
+			);
+			// If the file already exists we delete it
+			if ($fs->file_exists($contextsystem->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$sesspageid."_".$timepdf.".pdf")) {
+				$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$sesspageid."_".$timepdf.".pdf");
+				$previousfile->delete();
+			}
+			// Info for the new file
+			$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
+			$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$sesspageid."_".$timepdf.".pdf");
 			$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
-					"src" => $url."#page=".$viewerstart,
+					"src" => $url,
 					"style" => "height:100vh; width:40vw; float:left"
 			));
+			
+			unlink($attendancepdffile);
 			
 			$inputs = html_writer::div('<label for="course">Shortname del Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017">',"form-group", array("style"=>"float:right; margin-right:10%"));
 			$inputs .= html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017">',"form-group", array("style"=>"float:right; margin-right:10%"));
