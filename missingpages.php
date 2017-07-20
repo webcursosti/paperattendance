@@ -46,6 +46,7 @@ if (isguestuser()) {
 $action = optional_param('action', 'view', PARAM_TEXT);
 $categoryid = optional_param('categoryid', 1, PARAM_INT);
 $sesspageid = optional_param('sesspageid', 0, PARAM_INT);
+$pdfname = optional_param('pdfname', '-', PARAM_TEXT);
 $sesskey = optional_param("sesskey", null, PARAM_ALPHANUM);
 //Page
 $page = optional_param('page', 0, PARAM_INT);
@@ -151,7 +152,7 @@ if ($action == "view") {
             //view scan action
             $scanurl_attendance = new moodle_url("/local/paperattendance/missingpages.php", array(
             		"action" => "scan",
-            		"sesspageid" => $miss->id
+            		"pdfname" => $miss->pdfname
             ));
             $scanicon_attendance = new pix_icon("e/new_document", get_string('see', 'local_paperattendance'));
             $scanaction_attendance = $OUTPUT->action_icon(
@@ -285,6 +286,26 @@ if ($action == "delete") {
 	}
 	$url = new moodle_url('/local/paperattendance/missingpages.php');
 	redirect($url);
+}
+
+if($action == "scan"){
+	
+	$backurl = new moodle_url("/local/paperattendance/missingpages.php", array(
+			"action" => "view"
+	));
+	
+	$viewbackbutton = html_writer::nonempty_tag(
+			"div",
+			$OUTPUT->single_button($backurl, get_string('back', 'local_paperattendance')),
+			array("align" => "left"
+			));
+	
+	$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $pdfname);
+	
+	$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
+			"src" => $url,
+			"style" => "height:100vh; width:60vw"
+	));
 }
 
 echo $OUTPUT->footer();
