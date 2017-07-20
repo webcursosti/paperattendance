@@ -104,7 +104,6 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				u.email,
 				p.status,
 				p.omegasync,
-				p.grayscale
 				FROM {paperattendance_presence} AS p
 				INNER JOIN {user} AS u ON (u.id = p.userid)
 				WHERE p.sessionid = ?  
@@ -116,18 +115,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		
 		//Check if we have at least one attendance in the selected session
 		if ($attendancescount > 0){
-			if (is_siteadmin($USER)){
-				$attendancestable->head = array(
-						get_string('hashtag', 'local_paperattendance'),
-						get_string('student', 'local_paperattendance'),
-						get_string('mail', 'local_paperattendance'),
-						get_string('attendance', 'local_paperattendance'),
-						get_string('setting', 'local_paperattendance'),
-						get_string('omegasync', 'local_paperattendance'),
-						get_string('grayscale', 'local_paperattendance')
-				);
-			}
-			else {
+
 				$attendancestable->head = array(
 						get_string('hashtag', 'local_paperattendance'),
 						get_string('student', 'local_paperattendance'),
@@ -136,7 +124,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						get_string('setting', 'local_paperattendance'),
 						get_string('omegasync', 'local_paperattendance')
 				);
-			}
+			
 			//A mere counter for de number of records in the table
 			$counter = $page * $perpage + 1;
 			foreach ($attendances as $attendance){
@@ -186,27 +174,14 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				$name = ($attendance->firstname.' '.$attendance->lastname);
 				
 				//Now we check if the student is present or not
-				if (is_siteadmin($USER)){
-					$attendancestable->data[] = array(
-							$counter,
-							$name,
-							$attendance->email,
-							$statusiconaction,
-							$editactionasistencia,
-							$synchronizediconaction,
-							$attendance->grayscale
-					);
-				}
-				else {
-					$attendancestable->data[] = array(
-							$counter,
-							$name,
-							$attendance->email,
-							$statusiconaction,
-							$editactionasistencia,
-							$synchronizediconaction
-					);
-				}					
+				$attendancestable->data[] = array(
+						$counter,
+						$name,
+						$attendance->email,
+						$statusiconaction,
+						$editactionasistencia,
+						$synchronizediconaction
+				);				
 				$counter++;
 			}
 		}
