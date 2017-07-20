@@ -218,11 +218,11 @@ if ($action == "edit") {
 					'filearea' => 'scan',
 					'itemid' => 0,
 					'filepath' => '/',
-					'filename' => "paperattendance_".$courseid."_".$timepdf.".pdf"
+					'filename' => "paperattendance_".$sesspageid."_".$timepdf.".pdf"
 			);
 			// If the file already exists we delete it
 			if ($fs->file_exists($contextsystem->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$sesspageid."_".$timepdf.".pdf")) {
-				$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$sesspageid."_".$timepdf.".pdf");
+				$previousfile = $fs->get_file($contextsystem->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$sesspageid."_".$timepdf.".pdf");
 				$previousfile->delete();
 			}
 			// Info for the new file
