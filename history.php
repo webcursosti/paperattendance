@@ -103,7 +103,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				u.firstname,
 				u.email,
 				p.status,
-				p.omegasync,
+				p.omegasync
 				FROM {paperattendance_presence} AS p
 				INNER JOIN {user} AS u ON (u.id = p.userid)
 				WHERE p.sessionid = ?  
