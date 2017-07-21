@@ -379,6 +379,7 @@ $( document ).ready(function() {
 	$( document ).on( "click", "#cartbutton", function() {
 		jQuery('#formModal').modal('show');
 		countlistselements(lists);
+		enableprintbutton();
 	});
 	//function to count elements on the lists cart, if none, disable printbutton
 	function countlistselements(lists){
