@@ -189,7 +189,7 @@ switch ($action) {
 			
 			$return = array();
 			$error = array();
-			$data = array();
+			$datareturn = array();
 			
 			$error["error"] = 0; 
 			
@@ -212,8 +212,8 @@ switch ($action) {
 						$count++;
 					}
 					$return[] = $error;
-					$data["alumnos"] = $arrayalumnos;
-					$return[] = $data;
+					$datareturn["alumnos"] = $arrayalumnos;
+					$return[] = $datareturn;
 					echo json_encode($return);
 				}
 				else{
