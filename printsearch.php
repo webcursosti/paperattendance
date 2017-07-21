@@ -378,7 +378,7 @@ $( document ).ready(function() {
 	//When this button is clicked, the modal must show the courses to print
 	$( document ).on( "click", "#cartbutton", function() {
 		jQuery('#formModal').modal('show');
-		countlistelements(lists);
+		countlistselements(lists);
 	});
 	//function to count elements on the lists cart, if none, disable printbutton
 	function countlistselements(lists){
