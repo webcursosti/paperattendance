@@ -322,21 +322,12 @@ echo $OUTPUT->footer();
 ?>
 
 <script>
-var courseval = "";
-var dateval = "";
-var moduleval = "";
-var beginval = "";
 
 $( "#confirm" ).on( "click", function() {
 	var course = $('#course');
 	var date = $('#date');
 	var module = $('#module');
 	var begin = $('#begin');
-
-	courseval = $('#course').val();
-	dateval = $('#date').val();
-	moduleval = $('#module').val();
-	beginval = $('#begin').val();
 
 	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())-1+26)%26 != 0 || date.val() === date.val().split('-')[0] || module.val() === module.val().split(':')[0]) {
 	    alert("Por favor, rellene todos los campos correctamente");
@@ -371,17 +362,6 @@ $( "#confirm" ).on( "click", function() {
 		    }
 		});
 	}	
-
-
-	$( ".savestudentsattendance" ).on( "click", "button", function() {
-		var checkbox = $('input:checkbox');
-		$.each(checkbox, function(i, field){
-			var currentcheckbox = $(this);
-			if(currentcheckbox.prop("checked") == true){
-				console.log("guardando alumno id: " + currentcheckbox.val());
-			}
-		});	
-	});
 });
 
 </script>
