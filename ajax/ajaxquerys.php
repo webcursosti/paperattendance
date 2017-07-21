@@ -212,7 +212,7 @@ switch ($action) {
 						$count++;
 					}
 					$return[] = $error;
-					$datareturn["alumnos"] = $arrayalumnos;
+					$datareturn["alumnos"] = json_encode($arrayalumnos);
 					$return[] = $datareturn;
 					echo json_encode($return);
 				}
