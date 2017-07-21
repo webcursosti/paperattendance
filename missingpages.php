@@ -322,45 +322,64 @@ echo $OUTPUT->footer();
 ?>
 
 <script>
+var courseval = "";
+var dateval = "";
+var moduleval = "";
+var beginval = "";
+
 $( "#confirm" ).on( "click", function() {
 	var course = $('#course');
-	var date = $('#course');
+	var date = $('#date');
 	var module = $('#module');
 	var begin = $('#begin');
+
+	courseval = $('#course').val();
+	dateval = $('#date').val();
+	moduleval = $('#module').val();
+	beginval = $('#begin').val();
 
 	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())-1+26)%26 != 0 || date.val() === date.val().split('-')[0] || module.val() === module.val().split(':')[0]) {
 	    alert("Por favor, rellene todos los campos correctamente");
 	}
 	else{
-	$.ajax({
-	    type: 'GET',
-	    url: 'ajax/ajaxquerys.php',
-	    data: {
-		      'action' : 'getliststudentspage',
-		      'result' : course.val(),
-		      'begin' : begin.val()
-	    	},
-	    success: function (response) {
-	        var error = response["error"];
-	        if (error != 0){
-				alert(error);
-	        }
-	        else{
-			    $("#inputs").empty();
-			    var table = '<table class="table table-hover table-condensed table-responsive" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
-			    $("#inputs").append(table);
-		        $.each(response["alumnos"], function(i, field){
-			        var counter = i + parseFloat(begin.val());
-		        	var appendcheckbox = '<tr class="usercheckbox"><td>'+counter+'</td><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
-		        	$("#appendtrs").append(appendcheckbox);
-		        });
-		        $("#inputs").append("</tbody></table>");
-	    		$("#inputs").append('<button class="btn btn-info savestudentsattendance" style="float:right; width:40%">Guardar Asistencia</button>');
-	    	
-	        }
-	    }
-	})
-	}
-	
+		$.ajax({
+		    type: 'GET',
+		    url: 'ajax/ajaxquerys.php',
+		    data: {
+			      'action' : 'getliststudentspage',
+			      'result' : course.val(),
+			      'begin' : begin.val()
+		    	},
+		    success: function (response) {
+		        var error = response["error"];
+		        if (error != 0){
+					alert(error);
+		        }
+		        else{
+				    $("#inputs").empty();
+				    var table = '<table class="table table-hover table-condensed table-responsive" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
+				    $("#inputs").append(table);
+			        $.each(response["alumnos"], function(i, field){
+				        var counter = i + parseFloat(begin.val());
+			        	var appendcheckbox = '<tr class="usercheckbox"><td>'+counter+'</td><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
+			        	$("#appendtrs").append(appendcheckbox);
+			        });
+			        $("#inputs").append("</tbody></table>");
+		    		$("#inputs").append('<button class="btn btn-info savestudentsattendance" style="float:right; width:40%">Guardar Asistencia</button>');
+		    	
+		        }
+		    }
+		});
+	}	
+});
+
+$( ".savestudentsattendance" ).on( "click", function() {
+	var checkbox = $('input:checkbox');
+	$.each(checkbox, function(i, field){
+		var currentcheckbox = $(this);
+		if(currentcheckbox.prop("checked") == true){
+			console.log("guardando alumno id: " + currentcheckbox.val() +"courseid: "+ courseval = $('#course').val() +"fecha: "+ dateval = $('#date').val() +"modulo: "+ moduleval = $('#module').val() +"beginlist: "+ beginval = $('#begin').val());
+		}
+	});	
 });
 </script>
