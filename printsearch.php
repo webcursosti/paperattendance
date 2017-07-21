@@ -378,8 +378,9 @@ $( document ).ready(function() {
 	//When this button is clicked, the modal must show the courses to print
 	$( document ).on( "click", "#cartbutton", function() {
 		jQuery('#formModal').modal('show');
-		countlistselements(lists);
-		enableprintbutton();
+		if(countlistselements(lists) != 0){
+			enableprintbutton();
+		}
 	});
 	//When a datepicker change, modules should change and lists array should be updated with de new data
 	$( document ).on( "change", ".datepicker", function() {
@@ -548,6 +549,8 @@ $( document ).ready(function() {
 			$('.printbutton').prop( "disabled", true );
 		else
 			$('.printbutton').prop( "disabled", false );
+
+		return lists.length;
 	}
 		
 </script>
