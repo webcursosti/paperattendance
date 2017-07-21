@@ -381,13 +381,6 @@ $( document ).ready(function() {
 		countlistselements(lists);
 		enableprintbutton();
 	});
-	//function to count elements on the lists cart, if none, disable printbutton
-	function countlistselements(lists){
-		if(lists.length == 0)
-			$('.printbutton').prop( "disabled", true );
-		else
-			$('.printbutton').prop( "disabled", false );
-	}
 	//When a datepicker change, modules should change and lists array should be updated with de new data
 	$( document ).on( "change", ".datepicker", function() {
 		var cid = $(this).attr("courseid");
@@ -548,6 +541,13 @@ $( document ).ready(function() {
 			$(".printbutton").prop("disabled",false);
 		else
 			$(".printbutton").prop("disabled",true);
+	}
+	//function to count elements on the lists cart, if none, disable printbutton
+	function countlistselements(lists){
+		if(lists.length == 0)
+			$('.printbutton').prop( "disabled", true );
+		else
+			$('.printbutton').prop( "disabled", false );
 	}
 		
 </script>

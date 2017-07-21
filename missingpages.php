@@ -83,7 +83,7 @@ else{
 	$params = array(0, $USER->id);
 	
 	$countmissing = count($DB->get_records_sql($sqlmissing, $params));
-	$missing = $DB->get_record_sql($sqlcategory, $params, $page*$perpage,$perpage);
+	$missing = $DB->get_record_sql($sqlmissing, $params, $page*$perpage,$perpage);
 }
 
 $context = context_coursecat::instance($categoryid);
