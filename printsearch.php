@@ -419,7 +419,7 @@ $( document ).ready(function() {
 			return e.courseid != cid;
 		});
 		enableprintbutton();
-		countlistelements(lists);
+		countlistselements(lists);
 	});
 	//If print button is clicked, then the pdf with all lists is generated
 	$( document ).on( "click", ".printbutton", function() {
