@@ -322,6 +322,7 @@ echo $OUTPUT->footer();
 ?>
 
 <script>
+var sessinfo = [];
 
 $( "#confirm" ).on( "click", function() {
 	var course = $('#course');
@@ -347,7 +348,9 @@ $( "#confirm" ).on( "click", function() {
 					alert(error);
 		        }
 		        else{
-				    $("#inputs").empty();
+		        	sessinfo.push({"courseid":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()]});
+
+					$("#inputs").empty();
 				    var table = '<table class="table table-hover table-condensed table-responsive" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
 				    $("#inputs").append(table);
 			        $.each(response["alumnos"], function(i, field){
@@ -364,4 +367,14 @@ $( "#confirm" ).on( "click", function() {
 	}	
 });
 
+$( ".savestudentsattendance" ).on( "click", function() {
+	var checkbox = $('input:checkbox');
+	$.each(checkbox, function(i, field){
+		var currentcheckbox = $(this);
+		if(currentcheckbox.prop("checked") == true){
+			console.log("guardando alumno id: " + currentcheckbox.val());
+			console.log(sessinfo);
+		}
+	});	
+});
 </script>
