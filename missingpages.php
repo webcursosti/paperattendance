@@ -348,7 +348,7 @@ $( "#confirm" ).on( "click", function() {
 					alert(error);
 		        }
 		        else{
-		        	sessinfo.push({"courseid":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
+		        	sessinfo.push({"shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
 
 					$("#inputs").empty();
 				    var table = '<table class="table table-hover table-condensed table-responsive" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
@@ -382,7 +382,6 @@ $( ".savestudentsattendance" ).on( "click", function() {
 			var presence = 0;
 		}
 		studentsattendance.push({"userid":currentcheckbox.val(), "presence": presence});
-		//console.log("guardando alumno id: " + currentcheckbox.val());
 	});	
 	console.log(JSON.stringify(studentsattendance));
 	console.log(JSON.stringify(sessinfo));
