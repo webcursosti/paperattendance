@@ -368,6 +368,8 @@ $( "#confirm" ).on( "click", function() {
 });
 
 $( ".savestudentsattendance" ).on( "click", function() {
+
+	console.log("clickeado");
 	var checkbox = $('input:checkbox');
 	$.each(checkbox, function(i, field){
 		var currentcheckbox = $(this);
