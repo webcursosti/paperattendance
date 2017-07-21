@@ -367,6 +367,7 @@ $( "#confirm" ).on( "click", function() {
 	}
 });
 
+// agregar $sesspageid al array de sessinfo
 function RefreshSomeEventListener() {
 $( ".savestudentsattendance" ).on( "click", function() {
 
