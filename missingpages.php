@@ -378,7 +378,7 @@ $( ".savestudentsattendance" ).on( "click", function() {
 	$.each(checkbox, function(i, field){
 		var currentcheckbox = $(this);
 		if(currentcheckbox.prop("checked") == true){
-			console.log("guardando alumno id: " + currentcheckbox.val() +"courseid: "+ courseval = $('#course').val() +"fecha: "+ dateval = $('#date').val() +"modulo: "+ moduleval = $('#module').val() +"beginlist: "+ beginval = $('#begin').val());
+			console.log("guardando alumno id: " + currentcheckbox.val() +"courseid: "+ courseval +"fecha: "+ dateval +"modulo: "+ moduleval +"beginlist: "+ beginval);
 		}
 	});	
 });
