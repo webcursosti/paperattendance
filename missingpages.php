@@ -373,7 +373,7 @@ $( "#confirm" ).on( "click", function() {
 	}	
 });
 
-$( ".savestudentsattendance" ).on( "click", function() {
+$( ".savestudentsattendance" ).on( "click", "button", function() {
 	var checkbox = $('input:checkbox');
 	$.each(checkbox, function(i, field){
 		var currentcheckbox = $(this);
