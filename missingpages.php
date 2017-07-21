@@ -358,7 +358,7 @@ $( "#confirm" ).on( "click", function() {
 	    }
 	}).done(function( data ) {
 		 $("#inputs").append("</tbody></table>");
-		 $("#inputs").append('<div class="form-group savestudentsattendance"> <button class="btn btn-info">Submit</button></div>');
+		 $("#inputs").append('<button class="btn btn-info savestudentsattendance" style="float:right; width:40%">Guardar Asistencia</button>');
 	});
 	}
 	
