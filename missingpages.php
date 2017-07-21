@@ -383,9 +383,9 @@ $( ".savestudentsattendance" ).on( "click", function() {
 		}
 		studentsattendance.push({"userid":currentcheckbox.val(), "presence": presence});
 		//console.log("guardando alumno id: " + currentcheckbox.val());
-		console.log(JSON.stringify(studentsattendance));
-		console.log(JSON.stringify(sessinfo));
 	});	
+	console.log(JSON.stringify(studentsattendance));
+	console.log(JSON.stringify(sessinfo));
 });
 }
 </script>
