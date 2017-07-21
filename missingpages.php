@@ -370,14 +370,21 @@ $( "#confirm" ).on( "click", function() {
 function RefreshSomeEventListener() {
 $( ".savestudentsattendance" ).on( "click", function() {
 
-	console.log("clickeado");
+	var studentsattendance = [];
+	
 	var checkbox = $('input:checkbox');
 	$.each(checkbox, function(i, field){
 		var currentcheckbox = $(this);
 		if(currentcheckbox.prop("checked") == true){
-			console.log("guardando alumno id: " + currentcheckbox.val());
-			console.log(JSON.stringify(sessinfo));
+			var presence = 1;
 		}
+		else{
+			var presence = 0;
+		}
+		studentsattendance.push({"userid":currentcheckbox.val(), "presence": presence});
+		//console.log("guardando alumno id: " + currentcheckbox.val());
+		console.log(JSON.stringify(studentsattendance));
+		console.log(JSON.stringify(sessinfo));
 	});	
 });
 }
