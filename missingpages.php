@@ -376,7 +376,7 @@ $( ".savestudentsattendance" ).on( "click", function() {
 		var currentcheckbox = $(this);
 		if(currentcheckbox.prop("checked") == true){
 			console.log("guardando alumno id: " + currentcheckbox.val());
-			console.log(sessinfo);
+			console.log(JSON.stringify(sessinfo));
 		}
 	});	
 });
