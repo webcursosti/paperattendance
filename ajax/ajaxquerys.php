@@ -188,10 +188,6 @@ switch ($action) {
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 			
 			$return = array();
-			$error = array();
-			$datareturn = array();
-			
-			$error["error"] = 0; 
 			
 			if($course = $DB->get_record("course", array("shortname" => $data))){
 			
@@ -211,20 +207,17 @@ switch ($action) {
 						}
 						$count++;
 					}
-					$return[] = $error;
-					$datareturn["alumnos"] = json_encode($arrayalumnos);
-					$return[] = $datareturn;
+					$return["error"] = 0;
+					$return["alumnos"] = $arrayalumnos;
 					echo json_encode($return);
 				}
 				else{
-					$error["error"] = "Inicio de lista incorrecto";
-					$return[] = $error;
+					$return["error"] = "Inicio de lista incorrecto";
 					echo json_encode($return);
 				}
 			}
 			else{
-				$error["error"] = "No existe curso";
-				$return[] = $error;
+				$return["error"] = "No existe curso";
 				echo json_encode($return);
 			}
 		break;
