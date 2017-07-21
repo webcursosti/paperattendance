@@ -378,11 +378,15 @@ $( document ).ready(function() {
 	//When this button is clicked, the modal must show the courses to print
 	$( document ).on( "click", "#cartbutton", function() {
 		jQuery('#formModal').modal('show');
+		countlistelements(lists);
+	});
+	//function to count elements on the lists cart, if none, disable printbutton
+	function countlistselements(lists){
 		if(lists.length == 0)
 			$('.printbutton').prop( "disabled", true );
 		else
 			$('.printbutton').prop( "disabled", false );
-	});
+	}
 	//When a datepicker change, modules should change and lists array should be updated with de new data
 	$( document ).on( "change", ".datepicker", function() {
 		var cid = $(this).attr("courseid");
@@ -415,6 +419,7 @@ $( document ).ready(function() {
 			return e.courseid != cid;
 		});
 		enableprintbutton();
+		countlistelements(lists);
 	});
 	//If print button is clicked, then the pdf with all lists is generated
 	$( document ).on( "click", ".printbutton", function() {
