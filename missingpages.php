@@ -358,6 +358,7 @@ $( "#confirm" ).on( "click", function() {
 	    }
 	}).done(function( data ) {
 		 $("#inputs").append("</tbody></table>");
+		 $("#inputs").append('<div class="form-group savestudentsattendance"> <button class="btn btn-info">Submit</button></div>');
 	});
 	}
 	
