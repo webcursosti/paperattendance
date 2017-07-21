@@ -336,6 +336,16 @@ $( document ).ready(function() {
 			    }
 			});
 		}
+		else{
+			var trmodal = $('#carttable').find("tr[courseid="+courseid+"]");
+			trmodal.remove();
+			jQuery(".listcart[courseid="+courseid+"]").removeClass('icon-ok').addClass('icon-plus');
+			jQuery(".listcart[courseid="+courseid+"]").attr("clicked", 0);
+			lists = jQuery.grep(lists, function(e){
+				return e.courseid != courseid;
+			});
+			enableprintbutton();
+		}
 	});
 	//When the quickprint icon is clicked
 	$( document ).on( "click", ".quickprint", function() {
