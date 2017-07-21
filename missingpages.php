@@ -371,15 +371,17 @@ $( "#confirm" ).on( "click", function() {
 		    }
 		});
 	}	
+
+
+	$( ".savestudentsattendance" ).on( "click", "button", function() {
+		var checkbox = $('input:checkbox');
+		$.each(checkbox, function(i, field){
+			var currentcheckbox = $(this);
+			if(currentcheckbox.prop("checked") == true){
+				console.log("guardando alumno id: " + currentcheckbox.val() +"courseid: "+ courseval +"fecha: "+ dateval +"modulo: "+ moduleval +"beginlist: "+ beginval);
+			}
+		});	
+	});
 });
 
-$( ".savestudentsattendance" ).on( "click", "button", function() {
-	var checkbox = $('input:checkbox');
-	$.each(checkbox, function(i, field){
-		var currentcheckbox = $(this);
-		if(currentcheckbox.prop("checked") == true){
-			console.log("guardando alumno id: " + currentcheckbox.val() +"courseid: "+ courseval +"fecha: "+ dateval +"modulo: "+ moduleval +"beginlist: "+ beginval);
-		}
-	});	
-});
 </script>
