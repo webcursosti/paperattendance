@@ -353,13 +353,13 @@ $( "#confirm" ).on( "click", function() {
 			        var counter = i + parseFloat(begin.val());
 		        	var appendcheckbox = '<tr class="usercheckbox"><td>'+counter+'</td><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
 		        	$("#appendtrs").append(appendcheckbox);
+		        	 $("#inputs").append("</tbody></table>");
+		    		 $("#inputs").append('<button class="btn btn-info savestudentsattendance" style="float:right; width:40%">Guardar Asistencia</button>');
+		    	
 		        });
 	        }
 	    }
-	}).done(function( data ) {
-		 $("#inputs").append("</tbody></table>");
-		 $("#inputs").append('<button class="btn btn-info savestudentsattendance" style="float:right; width:40%">Guardar Asistencia</button>');
-	});
+	})
 	}
 	
 });
