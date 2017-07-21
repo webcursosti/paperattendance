@@ -348,7 +348,7 @@ $( "#confirm" ).on( "click", function() {
 					alert(error);
 		        }
 		        else{
-		        	sessinfo.push({"courseid":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()]});
+		        	sessinfo.push({"courseid":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
 
 					$("#inputs").empty();
 				    var table = '<table class="table table-hover table-condensed table-responsive" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
