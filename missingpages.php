@@ -341,14 +341,20 @@ $( "#confirm" ).on( "click", function() {
 		      'begin' : begin.val()
 	    	},
 	    success: function (response) {
-		    $("#inputs").empty();
-		    var table = '<table class="table table-hover table-condensed table-responsive" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
-		    $("#inputs").append(table);
-	        $.each(response, function(i, field){
-		        var counter = i + parseFloat(begin.val());
-	        	var appendcheckbox = '<tr class="usercheckbox"><td>'+counter+'</td><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
-	        	$("#appendtrs").append(appendcheckbox);
-	        });
+	        var error = field["error"];
+	        if (error != 0){
+				alert(error);
+	        }
+	        else{
+			    $("#inputs").empty();
+			    var table = '<table class="table table-hover table-condensed table-responsive" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
+			    $("#inputs").append(table);
+		        $.each(field["arrayalumnos"], function(i, field){
+			        var counter = i + parseFloat(begin.val());
+		        	var appendcheckbox = '<tr class="usercheckbox"><td>'+counter+'</td><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
+		        	$("#appendtrs").append(appendcheckbox);
+		        });
+	        }
 	    }
 	}).done(function( data ) {
 		 $("#inputs").append("</tbody></table>");

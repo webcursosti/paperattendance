@@ -187,24 +187,46 @@ switch ($action) {
 		case 'getliststudentspage':
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 			
-			$course = $DB->get_record("course", array("shortname" => $data));
+			$return = array();
+			$error = array();
+			$data = array();
 			
-			$context = context_course::instance($course->id);
-			$studentlist = paperattendance_students_list($context->id, $course);
+			$error["error"] = 0; 
 			
-			$arrayalumnos = array();
-			$count = 1;
-			$end = $begin + 25;
-			foreach ($studentlist as $student){
-				if($count>=$begin && $count<=$end){
-					$line = array();
-					$line["studentid"] = $student->id;
-					$line["username"] = paperattendance_getusername($student->id);
-					$arrayalumnos[] = $line;
+			if($course = $DB->get_record("course", array("shortname" => $data))){
+			
+				$context = context_course::instance($course->id);
+				$studentlist = paperattendance_students_list($context->id, $course);
+				
+				if(count($studentlist) >= $begin){
+					$arrayalumnos = array();
+					$count = 1;
+					$end = $begin + 25;
+					foreach ($studentlist as $student){
+						if($count>=$begin && $count<=$end){
+							$line = array();
+							$line["studentid"] = $student->id;
+							$line["username"] = paperattendance_getusername($student->id);
+							$arrayalumnos[] = $line;
+						}
+						$count++;
+					}
+					$return[] = $error;
+					$data["alumnos"] = $arrayalumnos;
+					$return[] = $data;
+					echo json_encode($return);
 				}
-				$count++;
+				else{
+					$error["error"] = "Inicio de lista incorrecto";
+					$return[] = $error;
+					echo json_encode($return);
+				}
 			}
-			echo json_encode($arrayalumnos);
+			else{
+				$error["error"] = "No existe curso";
+				$return[] = $error;
+				echo json_encode($return);
+			}
 		break;
 		case 'changestudentpresence':
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
