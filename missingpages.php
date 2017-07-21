@@ -349,7 +349,7 @@ $( "#confirm" ).on( "click", function() {
 			    $("#inputs").empty();
 			    var table = '<table class="table table-hover table-condensed table-responsive" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
 			    $("#inputs").append(table);
-		        $.each(response[0]["alumnos"], function(i, field){
+		        $.each(response[0]["alumnos"][0], function(i, field){
 			        var counter = i + parseFloat(begin.val());
 		        	var appendcheckbox = '<tr class="usercheckbox"><td>'+counter+'</td><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
 		        	$("#appendtrs").append(appendcheckbox);
