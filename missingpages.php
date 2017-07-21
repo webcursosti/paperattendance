@@ -367,6 +367,7 @@ $( "#confirm" ).on( "click", function() {
 	}
 });
 
+function RefreshSomeEventListener() {
 $( ".savestudentsattendance" ).on( "click", function() {
 
 	console.log("clickeado");
@@ -379,4 +380,5 @@ $( ".savestudentsattendance" ).on( "click", function() {
 		}
 	});	
 });
+}
 </script>
