@@ -360,11 +360,11 @@ $( "#confirm" ).on( "click", function() {
 			        });
 			        $("#inputs").append("</tbody></table>");
 		    		$("#inputs").append('<button class="btn btn-info savestudentsattendance" style="float:right; width:40%">Guardar Asistencia</button>');
-		    	
+		    		RefreshSomeEventListener();
 		        }
 		    }
 		});
-	}	
+	}
 });
 
 $( ".savestudentsattendance" ).on( "click", function() {
