@@ -215,6 +215,7 @@ $string['doyouwantdeletemissing']="Are you sure you want to delete this missing 
 $string['doyouwanteditmissing']="Are you sure you want to edit this missing page?";
 $string['missingpageshelp']="Please fill in all the fields as they appear in the PDF, begin of list refers to the Nº at the left of the first student on the list";
 $string['nothingmissing']="There are no missing pages";
+$string['viewmissing']="Missing pages";
 
 // Task
 $string['taskprocesspdf']="Process PDFs";
