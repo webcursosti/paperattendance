@@ -206,6 +206,15 @@ $string['maxfiles']="Max number of files";
 $string['maxfilestext']="Max amount of files that can be uploaded";
 $string['discusstimelimit']="Discussion time limit";
 $string['discusstimelimittext']="Maximium time in days to request an attendance discussion";
+$string['pagenum']="Page of the Pdf";
+$string['uploader']="Uploader";
+$string['viewmissingtitle']="Missing Pages";
+$string['editmissing']="Edit missing page";
+$string['deletemissing']="Delete missing page";
+$string['doyouwantdeletemissing']="Are you sure you want to delete this missing page?";
+$string['doyouwanteditmissing']="Are you sure you want to edit this missing page?";
+$string['missingpageshelp']="Please fill in all the fields as they appear in the PDF, begin of list refers to the Nº at the left of the first student on the list";
+$string['nothingmissing']="There are no missing pages";
 
 // Task
 $string['taskprocesspdf']="Process PDFs";

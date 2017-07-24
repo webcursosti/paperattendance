@@ -129,7 +129,7 @@ if ($action == "view") {
                         "sesskey" => sesskey()                    	 
                     		
                     ));
-            $deletemissingicon= new pix_icon("t/delete", get_string("delete", "local_paperattendance"
+            $deletemissingicon= new pix_icon("t/delete", get_string("deletemissing", "local_paperattendance"
             		));
             $deleteactionmissing = $OUTPUT->action_icon($deletemissingurl, $deletemissingicon,
                     new confirm_action(get_string("doyouwantdeletemissing", "local_paperattendance")
@@ -143,7 +143,7 @@ if ($action == "view") {
                         "sesskey" => sesskey()
                     		
                     ));
-            $editiconmissing = new pix_icon("i/edit", get_string("edit", "local_paperattendance"
+            $editiconmissing = new pix_icon("i/edit", get_string("editmissing", "local_paperattendance"
             		));
             $editactionmissing = $OUTPUT->action_icon($editurlmissing, $editiconmissing,
                     new confirm_action(get_string("doyouwanteditmissing", "local_paperattendance")
