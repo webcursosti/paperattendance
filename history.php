@@ -315,26 +315,33 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		$pdfnamesql = "SELECT *
 					   FROM {paperattendance_sessionpages} sp
 					   WHERE sp.sessionid = ?
-					   GROUP BY sp.pdfname
-					   ORDER BY sp.qrpage ASC";
+					   GROUP BY sp.pdfname";
 		$pdfnames = $DB->get_records_sql($pdfnamesql, array($attendanceid));
 		
 		$pdf = new FPDI();
 		foreach($pdfnames as $pdfname){
-
-			$page = $pdfname->pagenum+1;
+			$getpagesofpdf = "SELECT * FROM {paperattendance_sessionpages} sp
+						  WHERE sp.sessionid = ? AND sp.pdfname = ?";
+			$resultpagespdf = $DB->get_records_sql($getpagesofpdf, array($attendanceid, $pdfname->pdfname));
+			$pages = array();
+			foreach ($resultpagespdf as $page){
+				$pages[] = $page->pagenum+1;
+			}
 			$originalpdf = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdfname;
 			
 			$pageCount = $pdf->setSourceFile($originalpdf);
-			// import a page
-			$templateId = $pdf->importPage($page);
-			// get the size of the imported page
-			$size = $pdf->getTemplateSize($templateId);
-			//Add page on portrait position
-			$pdf->AddPage('P', array($size['w'], $size['h']));
-			// use the imported page
-			$pdf->useTemplate($templateId);
-
+			for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+				if(in_array($pageNo, $pages)){
+					// import a page
+					$templateId = $pdf->importPage($pageNo);
+					// get the size of the imported page
+					$size = $pdf->getTemplateSize($templateId);
+					//Add page on portrait position
+					$pdf->AddPage('P', array($size['w'], $size['h']));
+					// use the imported page
+					$pdf->useTemplate($templateId);
+				}
+			}
 		}
 		// Preview PDF
 		$pdf->Output($attendancepdffile, "F");
