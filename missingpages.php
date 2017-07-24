@@ -125,7 +125,7 @@ if ($action == "view") {
             $deletemissingurl = new moodle_url("/local/paperattendance/missingpages.php",
                     array(
                         "action" => "delete",
-                    	"sesspageid" => $miss->pagenum,
+                    	"sesspageid" => $miss->id,
                         "sesskey" => sesskey()                    	 
                     		
                     ));
