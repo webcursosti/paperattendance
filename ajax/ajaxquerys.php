@@ -269,9 +269,9 @@ switch ($action) {
 			echo json_encode(1);
 			break;
 		case 'savestudentsattendance':
-			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 			$sessinfo = $_REQUEST['sessinfo'];
 			$studentsattendance = $_REQUEST['studentsattendance'];
+			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 			if (count($sessinfo) > 1 && count($studentsattendance) > 1){
 				echo json_encode("viene como array");
 			}
