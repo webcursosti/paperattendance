@@ -329,6 +329,7 @@ $( "#confirm" ).on( "click", function() {
 	var date = $('#date');
 	var module = $('#module');
 	var begin = $('#begin');
+	var sesspageid = <?php echo $sesspageid; ?>;
 
 	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())-1+26)%26 != 0 || date.val() === date.val().split('-')[0] || module.val() === module.val().split(':')[0]) {
 	    alert("Por favor, rellene todos los campos correctamente");
@@ -348,7 +349,7 @@ $( "#confirm" ).on( "click", function() {
 					alert(error);
 		        }
 		        else{
-		        	sessinfo.push({"shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
+		        	sessinfo.push({"sesspageid":sesspageid, "shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
 
 					$("#inputs").empty();
 				    var table = '<table class="table table-hover table-condensed table-responsive" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
@@ -367,7 +368,6 @@ $( "#confirm" ).on( "click", function() {
 	}
 });
 
-// agregar $sesspageid al array de sessinfo
 function RefreshSomeEventListener() {
 $( ".savestudentsattendance" ).on( "click", function() {
 
