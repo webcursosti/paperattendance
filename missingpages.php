@@ -386,6 +386,20 @@ $( ".savestudentsattendance" ).on( "click", function() {
 	});	
 	console.log(JSON.stringify(studentsattendance));
 	console.log(JSON.stringify(sessinfo));
+
+	$.ajax({
+	    type: 'GET',
+	    url: 'ajax/ajaxquerys.php',
+	    data: {
+		      'action' : 'savestudentsattendance',
+		      'sessinfo' : sessinfo,
+		      'studentsattendance' : studentsattendance
+	    	},
+	    success: function (response) {
+			console.log(response);
+	    }
+	});
+	});
 });
 }
 </script>

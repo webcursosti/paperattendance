@@ -44,6 +44,8 @@ $category = optional_param('category', 1, PARAM_INT);
 $teacherid = optional_param("teacherid", 1, PARAM_INT);
 $setstudentpresence = optional_param("setstudentpresence", 1, PARAM_INT);
 $presenceid = optional_param("presenceid", 1, PARAM_INT);
+$sessinfo = optional_param('sessinfo', array(), PARAM_TEXT);
+$studentsattendance = optional_param('studentsattendance', array(), PARAM_TEXT);
 
 switch ($action) {
 	case 'curlgetmoduloshorario' :
@@ -267,5 +269,12 @@ switch ($action) {
 			}
 			
 			echo json_encode(1);
+			break;
+		case 'savestudentsattendance':
+			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
+			if (count($sessinfo) > 1 ){
+				echo json_encode(1);
+			}
+			
 			break;
 }
