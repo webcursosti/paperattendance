@@ -273,9 +273,15 @@ switch ($action) {
 			$studentsattendance = $_REQUEST['studentsattendance'];
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 			foreach ($studentsattendance as $attendance){
-				echo $attendance['userid'];
-				echo $attendance['presence'];
+				echo "userid: ".$attendance['userid'];
+				echo " presence: ".$attendance['presence'];
 			}
+			echo " sesspageid: ".$sessinfo['sesspageid'];
+			echo " shorname: ".$sessinfo['shortname'];
+			echo " date: ".$sessinfo['date'];
+			echo " module: ".$sessinfo['module'];
+			echo " begin: ".$sessinfo['begin'];
+			
 			
 			break;
 }
