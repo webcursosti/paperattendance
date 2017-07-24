@@ -370,37 +370,36 @@ $( "#confirm" ).on( "click", function() {
 });
 
 function RefreshSomeEventListener() {
-$( ".savestudentsattendance" ).on( "click", function() {
+	$( ".savestudentsattendance" ).on( "click", function() {
 
-	var studentsattendance = [];
+		var studentsattendance = [];
+		
+		var checkbox = $('input:checkbox');
+		$.each(checkbox, function(i, field){
+			var currentcheckbox = $(this);
+			if(currentcheckbox.prop("checked") == true){
+				var presence = 1;
+			}
+			else{
+				var presence = 0;
+			}
+			studentsattendance.push({"userid":currentcheckbox.val(), "presence": presence});
+		});	
+		console.log(JSON.stringify(studentsattendance));
+		console.log(JSON.stringify(sessinfo));
 	
-	var checkbox = $('input:checkbox');
-	$.each(checkbox, function(i, field){
-		var currentcheckbox = $(this);
-		if(currentcheckbox.prop("checked") == true){
-			var presence = 1;
-		}
-		else{
-			var presence = 0;
-		}
-		studentsattendance.push({"userid":currentcheckbox.val(), "presence": presence});
-	});	
-	console.log(JSON.stringify(studentsattendance));
-	console.log(JSON.stringify(sessinfo));
-
-	$.ajax({
-	    type: 'GET',
-	    url: 'ajax/ajaxquerys.php',
-	    data: {
-		      'action' : 'savestudentsattendance',
-		      'sessinfo' : sessinfo,
-		      'studentsattendance' : studentsattendance
-	    	},
-	    success: function (response) {
-			console.log(response);
-	    }
+		$.ajax({
+		    type: 'GET',
+		    url: 'ajax/ajaxquerys.php',
+		    data: {
+			      'action' : 'savestudentsattendance',
+			      'sessinfo' : sessinfo,
+			      'studentsattendance' : studentsattendance
+		    	},
+		    success: function (response) {
+				console.log(response);
+		    }
+		});
 	});
-	});
-});
 }
 </script>
