@@ -152,7 +152,8 @@ if ($action == "view") {
             //view scan action
             $scanurl_attendance = new moodle_url("/local/paperattendance/missingpages.php", array(
             		"action" => "scan",
-            		"pdfname" => $miss->pdfname
+            		"pdfname" => $miss->pdfname,
+            		"page" => ($miss->pagenum +1)
             ));
             $scanicon_attendance = new pix_icon("e/new_document", get_string('see', 'local_paperattendance'));
             $scanaction_attendance = $OUTPUT->action_icon(
@@ -265,7 +266,7 @@ if ($action == "edit") {
 }
 
 if ($action == "delete") {
-	if ($sesspageid== null) {
+	if ($sesspageid == null) {
 		print_error(get_string("missingdoesnotexist", "local_paperattendance"));
 		$action = "view";
 	}
@@ -303,7 +304,7 @@ if($action == "scan"){
 	$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $pdfname);
 	
 	$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
-			"src" => $url,
+			"src" => $url."#page=[".$page."]",
 			"style" => "height:100vh; width:60vw"
 	));
 	
