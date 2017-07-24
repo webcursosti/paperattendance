@@ -389,7 +389,7 @@ function RefreshSomeEventListener() {
 		console.log(JSON.stringify(sessinfo));
 	
 		$.ajax({
-		    type: 'GET',
+		    type: 'POST',
 		    url: 'ajax/ajaxquerys.php',
 		    data: {
 			      'action' : 'savestudentsattendance',
