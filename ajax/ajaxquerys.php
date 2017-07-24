@@ -272,16 +272,22 @@ switch ($action) {
 			$sessinfo = $_REQUEST['sessinfo'];
 			$studentsattendance = $_REQUEST['studentsattendance'];
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
+
+			$sesspageid = $sessinfo[0]['sesspageid'];
+			$shortname = $sessinfo[0]['shortname'];
+			$date = $sessinfo[0]['date'];
+			$module = $sessinfo[0]['module'];
+			$begin = $sessinfo[0]['begin'];
+			
+			$numberpage =  ($begin + 25)/26;
+			
+			$sessionpage = $DB->get_record("paperattendance_sessionpages", array("id"=> $sesspageid));
+			$course = $DB->get_record("course", array("shortname"=> $shortname));
+			
 			foreach ($studentsattendance as $attendance){
 				echo "userid: ".$attendance['userid'];
 				echo " presence: ".$attendance['presence'];
 			}
-			echo " sesspageid: ".$sessinfo[0]['sesspageid'];
-			echo " shorname: ".$sessinfo[0]['shortname'];
-			echo " date: ".$sessinfo[0]['date'];
-			echo " module: ".$sessinfo[0]['module'];
-			echo " begin: ".$sessinfo[0]['begin'];
-			
 			
 			break;
 }
