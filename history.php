@@ -315,18 +315,16 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		$pdfnamesql = "SELECT *
 					   FROM {paperattendance_sessionpages} sp
 					   WHERE sp.sessionid = ?
-					   GROUP BY sp.pdfname";
+					   GROUP BY sp.pdfname
+					   ORDER BY qrpage ASC";
 		$pdfnames = $DB->get_records_sql($pdfnamesql, array($attendanceid));
 		
 		$pdf = new FPDI();
 		foreach($pdfnames as $pdfname){
-			$getpagesofpdf = "SELECT * FROM {paperattendance_sessionpages} sp
-						  WHERE sp.sessionid = ? AND sp.pdfname = ?";
-			$resultpagespdf = $DB->get_records_sql($getpagesofpdf, array($attendanceid, $pdfname->pdfname));
+
 			$pages = array();
-			foreach ($resultpagespdf as $page){
-				$pages[] = $page->pagenum+1;
-			}
+			$pages[] = $pdfname->pagenum+1;
+			
 			$originalpdf = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdfname;
 			
 			$pageCount = $pdf->setSourceFile($originalpdf);
