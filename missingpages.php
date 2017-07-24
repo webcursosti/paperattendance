@@ -304,7 +304,7 @@ if($action == "scan"){
 	$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $pdfname);
 	
 	$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
-			"src" => $url."#page=[".$page."]",
+			"src" => $url."#page=".$page,
 			"style" => "height:100vh; width:60vw"
 	));
 	
