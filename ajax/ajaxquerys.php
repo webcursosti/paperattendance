@@ -276,11 +276,11 @@ switch ($action) {
 				echo "userid: ".$attendance['userid'];
 				echo " presence: ".$attendance['presence'];
 			}
-			echo " sesspageid: ".$sessinfo['sesspageid'];
-			echo " shorname: ".$sessinfo['shortname'];
-			echo " date: ".$sessinfo['date'];
-			echo " module: ".$sessinfo['module'];
-			echo " begin: ".$sessinfo['begin'];
+			echo " sesspageid: ".$sessinfo[0]['sesspageid'];
+			echo " shorname: ".$sessinfo[0]['shortname'];
+			echo " date: ".$sessinfo[0]['date'];
+			echo " module: ".$sessinfo[0]['module'];
+			echo " begin: ".$sessinfo[0]['begin'];
 			
 			
 			break;
