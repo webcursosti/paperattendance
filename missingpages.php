@@ -101,7 +101,7 @@ $url = new moodle_url('/local/paperattendance/missingpages.php');
 
 $PAGE->navbar->add(get_string('missingpages', 'local_paperattendance'));
 $PAGE->navbar->add(get_string('missingpages', 'local_paperattendance'), $url);
-$PAGE->set_context($context);
+$PAGE->set_context($contextsystem);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
 $PAGE->requires->jquery();
