@@ -306,7 +306,7 @@ switch ($action) {
 							INNER JOIN {role} r ON (r.id = ra.roleid)
 							WHERE r.id = 3 AND c.id = ? AND e.enrol = 'database'";
 				
-				$teachers = $DB->get_record_sql($teachersquery, array($courseid));
+				$teacher = $DB->get_record_sql($teachersquery, array($courseid));
 				
 				$requestor = $teacher->userid;
 				
