@@ -279,11 +279,6 @@ switch ($action) {
 			$module = $sessinfo[0]['module'];
 			$begin = $sessinfo[0]['begin'];
 			
-			foreach ($studentsattendance as $attendance){
-				echo "userid: ".$attendance['userid'];
-				echo " presence: ".$attendance['presence'];
-			}
-			
 			$numberpage =  ($begin + 25)/26;
 			
 			$sesspageobject = $DB->get_record("paperattendance_sessionpages", array("id"=> $sesspageid));
@@ -298,8 +293,8 @@ switch ($action) {
 				mtrace("no existe");
 				
 				//select teacher from course
-				$teachersquery = "SELECT u.id,
-							c.id,
+				$teachersquery = "SELECT u.id AS userid,
+							c.id AS courseid,
 							e.enrol,
 							CONCAT(u.firstname, ' ', u.lastname) AS name
 							FROM {user} u
@@ -319,10 +314,10 @@ switch ($action) {
 					
 					$enrolment = explode(",", $teacher->enrol);
 					// Verifies that the teacher is enrolled through a valid enrolment and that we haven't added him yet.
-					if (count(array_intersect($enrolment, $enrolincludes)) == 0 || isset($arrayteachers[$teacher->id])) {
+					if (count(array_intersect($enrolment, $enrolincludes)) == 0 || isset($arrayteachers[$teacher->userid])) {
 						continue;
 					}
-					$requestor = $teacher->id;
+					$requestor = $teacher->userid;
 				}
 				
 				$sessid = paperattendance_insert_session($courseobject->id, $requestor, $USER->id, $sesspageobject->pdfname, 0);
