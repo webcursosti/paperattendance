@@ -543,6 +543,52 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		// Paperattendance savepoint reached.
 		upgrade_plugin_savepoint(true, 2017072500, 'local', 'paperattendance');
 	}
+	if ($oldversion < 2017072501) {
+		
+		// Define field courseid to be added to paperattendance_print.
+		$table = new xmldb_table('paperattendance_print');
+		$field = new xmldb_field('courseid', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'id');
+		
+		// Conditionally launch add field courseid.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+		// Define field module to be added to paperattendance_print.
+		$table = new xmldb_table('paperattendance_print');
+		$field = new xmldb_field('module', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'courseid');
+		
+		// Conditionally launch add field module.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+		// Define field sessiondate to be added to paperattendance_print.
+		$table = new xmldb_table('paperattendance_print');
+		$field = new xmldb_field('sessiondate', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'module');
+		
+		// Conditionally launch add field sessiondate.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+		// Define field requestor to be added to paperattendance_print.
+		$table = new xmldb_table('paperattendance_print');
+		$field = new xmldb_field('requestor', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'sessiondate');
+		
+		// Conditionally launch add field requestor.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+		// Define field timecreated to be added to paperattendance_print.
+		$table = new xmldb_table('paperattendance_print');
+		$field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'requestor');
+		
+		// Conditionally launch add field timecreated.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017072501, 'local', 'paperattendance');
+	}
+	
 	
 	return true;
 }
