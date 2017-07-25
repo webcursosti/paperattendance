@@ -1027,7 +1027,7 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 
 		$url =  $CFG->paperattendance_omegacreateattendanceurl;
 		$token =  $CFG->paperattendance_omegatoken;
-		mtrace("SESSIONID: " .$datemodule->id. "## Formato de fecha: " . $fecha . " Modulo " . $modulo);
+		//mtrace("SESSIONID: " .$datemodule->id. "## Formato de fecha: " . $fecha . " Modulo " . $modulo);
 		$fields = array (
 				"token" => $token,
 				"seccionId" => $omegaid,
