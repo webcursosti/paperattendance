@@ -510,7 +510,39 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		// Paperattendance savepoint reached.
 		upgrade_plugin_savepoint(true, 2017071702, 'local', 'paperattendance');
 	}
-	
+	if ($oldversion < 2017072500) {
+		
+		// Define table paperattendance_print to be created.
+		$table = new xmldb_table('paperattendance_print');
+		
+		// Adding fields to table paperattendance_print.
+		$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+		
+		// Adding keys to table paperattendance_print.
+		$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+		
+		// Conditionally launch create table for paperattendance_print.
+		if (!$dbman->table_exists($table)) {
+			$dbman->create_table($table);
+		}
+		// Define table paperattendance_printusers to be created.
+		$table = new xmldb_table('paperattendance_printusers');
+		
+		// Adding fields to table paperattendance_printusers.
+		$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+		$table->add_field('print', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
+		$table->add_field('user', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
+		
+		// Adding keys to table paperattendance_printusers.
+		$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+		
+		// Conditionally launch create table for paperattendance_printusers.
+		if (!$dbman->table_exists($table)) {
+			$dbman->create_table($table);
+		}
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017072500, 'local', 'paperattendance');
+	}
 	
 	return true;
 }
