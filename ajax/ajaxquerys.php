@@ -368,12 +368,11 @@ switch ($action) {
 			}
 			if($stop){
 				$arrayalumnos = array();
-				//$init = ($page-1)*26+1;
-				//$end = $page*26;
-				//$count = 1; //start at one because init starts at one
-				//$csvcol = 1;
+				$init = ($numberpage-1)*26+1;
+				$end = $numberpage*26;
+				$count = 1; //start at one because init starts at one
 				foreach ($studentsattendance as $student){
-					//if($count>=$init && $count<=$end){
+					if($count>=$init && $count<=$end){
 						$line = array();
 						$line['emailAlumno'] = paperattendance_getusername($student['userid']);
 						$line['resultado'] = "true";
@@ -388,9 +387,8 @@ switch ($action) {
 						}
 						
 						$arrayalumnos[] = $line;
-						//$csvcol++;
-					//}
-					//$count++;
+					}
+					$count++;
 				}
 				
 				$omegasync = false;
