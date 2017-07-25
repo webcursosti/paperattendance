@@ -590,11 +590,31 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 	}
 	if ($oldversion < 2017072505) {
 		
+		// Rename field print on table paperattendance_printusers to NEWNAMEGOESHERE.
+		$table = new xmldb_table('paperattendance_printusers');
+		$field = new xmldb_field('print', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'id');
+		
+		// Launch rename field printid.
+		$dbman->rename_field($table, $field, 'printid');
+		// Rename field userid on table paperattendance_printusers to NEWNAMEGOESHERE.
+		$table = new xmldb_table('paperattendance_printusers');
+		$field = new xmldb_field('user', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'printid');
+		
+		// Launch rename field userid.
+		$dbman->rename_field($table, $field, 'userid');
 		// Define field listposition to be added to paperattendance_printusers.
 		$table = new xmldb_table('paperattendance_printusers');
 		$field = new xmldb_field('listposition', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'userid');
 		
 		// Conditionally launch add field listposition.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+		// Define field timecreated to be added to paperattendance_printusers.
+		$table = new xmldb_table('paperattendance_printusers');
+		$field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'listposition');
+		
+		// Conditionally launch add field timecreated.
 		if (!$dbman->field_exists($table, $field)) {
 			$dbman->add_field($table, $field);
 		}
