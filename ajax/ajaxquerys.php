@@ -306,19 +306,9 @@ switch ($action) {
 							INNER JOIN {role} r ON (r.id = ra.roleid)
 							WHERE r.id = 3 AND c.id = ? AND e.enrol = 'database'";
 				
-				$teachers = $DB->get_records_sql($teachersquery, array($courseid));
+				$teachers = $DB->get_record_sql($teachersquery, array($courseid));
 				
-				$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
-				
-				foreach ($teachers as $teacher){
-					
-					$enrolment = explode(",", $teacher->enrol);
-					// Verifies that the teacher is enrolled through a valid enrolment and that we haven't added him yet.
-					if (count(array_intersect($enrolment, $enrolincludes)) == 0 || isset($arrayteachers[$teacher->userid])) {
-						continue;
-					}
-					$requestor = $teacher->userid;
-				}
+				$requestor = $teacher->userid;
 				
 				$sessid = paperattendance_insert_session($courseobject->id, $requestor, $USER->id, $sesspageobject->pdfname, 0);
 				mtrace("la session id es : ".$sessid);
