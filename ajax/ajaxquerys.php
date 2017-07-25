@@ -285,7 +285,7 @@ switch ($action) {
 			$courseobject = $DB->get_record("course", array("shortname"=> $shortname));
 			$moduleobject = $DB->get_record("paperattendance_module", array("initialtime"=> $module));
 			
-			$sessdoesntexist = paperattendance_check_session_modules($module->id, $courseobject->id, strtotime($date));
+			$sessdoesntexist = paperattendance_check_session_modules($moduleobject->id, $courseobject->id, strtotime($date));
 			mtrace("checkeo de la sesion: ".$sessdoesntexist);
 			$stop = true;
 			
