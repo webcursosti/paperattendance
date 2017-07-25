@@ -394,7 +394,7 @@ switch ($action) {
 				$omegasync = false;
 				
 				if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
-					if(paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid)){
+					if(paperattendance_omegacreateattendance($courseobject->id, $arrayalumnos, $sessid)){
 						$omegasync = true;
 					}
 				}
@@ -413,11 +413,10 @@ switch ($action) {
 			$return = array();
 			if ($stop){
 				$return["error"] = "Asistencia correctamente guardada";
-				echo json_encode($return);
 			}
 			else{
 				$return["error"] = "Página subida y procesada anteriormente";
-				echo json_encode($return);
 			}
+			echo json_encode($return);
 			break;
 }
