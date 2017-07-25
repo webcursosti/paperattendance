@@ -397,7 +397,11 @@ function RefreshSomeEventListener() {
 			      'studentsattendance' : studentsattendance
 		    	},
 		    success: function (response) {
-				console.log(response);
+				//console.log(response);
+				$("#inputs").empty();
+				var error = response["error"];
+				alert(error);
+				
 		    }
 		});
 	});

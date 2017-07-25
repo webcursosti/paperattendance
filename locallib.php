@@ -1773,15 +1773,23 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 							}
 							$count++;
 						}
+						
+						$omegasync = false;
+						
 						if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
-							if(!paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid)){
-								$omegafailures[] = $sessid;
+							if(paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid)){
+								$omegasync = true;
 							}
 						}
 						
 						$update = new stdClass();
 						$update->id = $sessid;
-						$update->status = 1;
+						if($omegasync){
+							$update->status = 2;
+						}
+						else{
+							$update->status = 1;
+						}
 						$DB->update_record("paperattendance_session", $update);
 					
 			  		}
