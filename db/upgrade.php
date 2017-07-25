@@ -588,7 +588,7 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		// Paperattendance savepoint reached.
 		upgrade_plugin_savepoint(true, 2017072504, 'local', 'paperattendance');
 	}
-	/*if ($oldversion < 2017072503) {
+	if ($oldversion < 2017072505) {
 		
 		// Define field listposition to be added to paperattendance_printusers.
 		$table = new xmldb_table('paperattendance_printusers');
@@ -600,8 +600,8 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		}
 		
 		// Paperattendance savepoint reached.
-		upgrade_plugin_savepoint(true, 2017072503, 'local', 'paperattendance');
-	}*/
+		upgrade_plugin_savepoint(true, 2017072505, 'local', 'paperattendance');
+	}
 	
 	
 	return true;
