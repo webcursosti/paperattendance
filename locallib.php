@@ -126,7 +126,7 @@ function paperattendance_students_list($contextid, $course){
  * @param unknown $studentinfo
  *            the student info including name and idnumber
  */
-function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $qrstring, $webcursospath, $sessiondate, $description) {
+function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $qrstring, $webcursospath, $sessiondate, $description, $printid) {
 	global $DB, $CFG;
 	$modulecount = 1;
 	// Pages should be added automatically while the list grows.
@@ -1962,4 +1962,24 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	else{
 		return false;
 	}
+}
+/**
+ * Get the student list
+ *
+ * @param int $contextid
+ *            Context of the course
+ * @param int $course
+ *            Id course
+ */
+function paperattendance_print_save($courseid, $module, $sessiondate, $requestor){
+	global $DB, $CFG;
+	
+	$print = new stdClass();
+	$print->courseid = $courseid;
+	$print->module = $module;
+	$print->sessiondate = $sessiondate;
+	$print->requestor = $requestor;
+	$print->timecreated = time();
+	
+	return $DB->insert_record('paperattendance_print',$print);
 }
