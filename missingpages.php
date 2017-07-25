@@ -387,7 +387,9 @@ function RefreshSomeEventListener() {
 		});	
 		console.log(JSON.stringify(studentsattendance));
 		console.log(JSON.stringify(sessinfo));
-	
+
+		$("#inputs").empty();
+		$("#inputs").append("<div id='loader'><img src='img/loading.gif'></div>");
 		$.ajax({
 		    type: 'POST',
 		    url: 'ajax/ajaxquerys.php',
@@ -397,11 +399,9 @@ function RefreshSomeEventListener() {
 			      'studentsattendance' : studentsattendance
 		    	},
 		    success: function (response) {
-				//console.log(response);
-				$("#inputs").empty();
 				var error = response["error"];
-				alert(error);
-				
+				$('#loader').hide();
+				$("#inputs").html('<div class="alert alert-success" role="alert">'+error+'</div>');
 		    }
 		});
 	});
