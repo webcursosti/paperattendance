@@ -334,12 +334,12 @@ switch ($action) {
 				$pagesession->uploaderid = $USER->id;
 				$DB->update_record('paperattendance_sessionpages', $pagesession);
 				
-				if($CFG->paperattendance_sendmail == 1){
-					$sessdate = $date.", ".$moduleobject->name. ": ". $moduleobject->initialtime. " - " .$moduleobject->endtime;
+// 				if($CFG->paperattendance_sendmail == 1){
+// 					$sessdate = $date.", ".$moduleobject->name. ": ". $moduleobject->initialtime. " - " .$moduleobject->endtime;
 					
-					//mtrace("sessid: ".$sessid. " courseid: ".$courseobject->id ." requestorid: ".$requestor ." userid: ". $USER->id ." sessdate: ". $sessdate ." coursefullname: ". $courseobject->fullname. "processpdf");
-					paperattendance_sendMail($sessid, $courseobject->id, $requestor, $USER->id, $sessdate, $courseobject->fullname, "processpdf", null);
-				}
+// 					//mtrace("sessid: ".$sessid. " courseid: ".$courseobject->id ." requestorid: ".$requestor ." userid: ". $USER->id ." sessdate: ". $sessdate ." coursefullname: ". $courseobject->fullname. "processpdf");
+// 					paperattendance_sendMail($sessid, $courseobject->id, $requestor, $USER->id, $sessdate, $courseobject->fullname, "processpdf", null);
+// 				}
 				
 			}
 			else{

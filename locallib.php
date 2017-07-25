@@ -647,8 +647,7 @@ function paperattendance_get_qr_text($path, $pdf){
 function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffile, $description){
 	global $DB;
 
-	
-	mtrace("courseid: ".$courseid. " requestorid: ".$requestorid. " userid: ".$userid." pdffile: ".$pdffile. " description: ".$description);
+	//mtrace("courseid: ".$courseid. " requestorid: ".$requestorid. " userid: ".$userid." pdffile: ".$pdffile. " description: ".$description);
 	$sessioninsert = new stdClass();
 	$sessioninsert->id = "NULL";
 	$sessioninsert->courseid = $courseid;
