@@ -115,7 +115,8 @@ if ($action == "view") {
     			get_string("hashtag", "local_paperattendance"),
         		get_string("scan", "local_paperattendance"),
     			get_string("pagenum", "local_paperattendance"),
-        		get_string("uploader", "local_paperattendance"
+        		get_string("uploader", "local_paperattendance"),
+        		get_string("setting", "local_paperattendance"
         				));
     	
     	$counter = $page * $perpage + 1;
@@ -400,8 +401,10 @@ function RefreshSomeEventListener() {
 		    	},
 		    success: function (response) {
 				var error = response["error"];
+				var moodleurl = "<?php echo $CFG->wwwroot;?>";
 				$('#loader').hide();
-				$("#inputs").html('<div class="alert alert-success" role="alert">'+error+'</div>');
+				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:right; width:40%">'+error+'</div>');
+				$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:right; width:40%">Volver</button>');
 		    }
 		});
 	});
