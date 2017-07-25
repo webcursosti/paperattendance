@@ -130,7 +130,7 @@ if($action == "add"){
 				$schedule = explode("*", $key);
 				$arraymodule = $schedule[0];
 				$printid = paperattendance_print_save($courseid, $arraymodule, $sessiondate, $requestor);
-				$stringqr = $printid."*".$courseid."*".$requestor."*".$arraymodule."*".$sessiondate."*";
+				$stringqr = $courseid."*".$requestor."*".$arraymodule."*".$sessiondate."*";
 				
 				paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $key, $path, $stringqr, $webcursospath, $sessiondate, $description, $printid);
 			}

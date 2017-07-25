@@ -175,10 +175,10 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		$moduleid = $modquery -> id;
 		
 		$key = $moduleid."*".$moduleinicio."*".$modulefin;
-		
 		$stringqr = $courseid."*".$requestor."*".$moduleid."*".$sessiondate."*";
 		
-		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $key, $path, $stringqr, $webcursospath, $sessiondate, $description);
+		$printid = paperattendance_print_save($courseid, $moduleid, $sessiondate, $requestor);
+		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $key, $path, $stringqr, $webcursospath, $sessiondate, $description, $printid);
 		
 	}
 	

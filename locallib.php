@@ -128,13 +128,14 @@ function paperattendance_students_list($contextid, $course){
  */
 function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studentinfo, $requestorinfo, $modules, $qrpath, $qrstring, $webcursospath, $sessiondate, $description, $printid) {
 	global $DB, $CFG;
+	
 	$modulecount = 1;
 	// Pages should be added automatically while the list grows.
 	$pdf->SetAutoPageBreak(false);
 	$pdf->AddPage();
 	$pdf->SetFont('Helvetica', '', 8);
 	// Top QR
-	$qrfilename = paperattendance_create_qr_image($qrstring.$modulecount."*".$description, $qrpath);
+	$qrfilename = paperattendance_create_qr_image($qrstring.$modulecount."*".$description."*".$printid, $qrpath);
 	$goodcirlepath = $CFG->dirroot . '/local/paperattendance/img/goodcircle.png';
 	$pdf->Image($qrpath."/".$qrfilename, 153, 5, 35);
 	// Botton QR, messege to fill the circle and Webcursos Logo
@@ -240,8 +241,9 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 	// Write each student.
 	$current = 1;
 	$pdf->SetFillColor(228, 228, 228);
+	$studentlist = array();
 	foreach($studentinfo as $stlist) {
-
+		
 		$pdf->SetXY($left, $top);
 		// Cell color
 		if($current%2 == 0){
@@ -344,9 +346,20 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			unlink($qrpath."/".$qrfilename);
 		}
 		
+		$student = new stdClass();
+		$student->printid = $printid;
+		$student->userid = $stlist->id;
+		$student->listposition = $current;
+		$student->timecreated = time();
+		
+		$studentlist[] = $student;
+		
 		$top += 8;
 		$current++;
 	}
+	
+	$DB->insert_records('paperattendance_printusers', $studentlist);
+	
 	$pdf->line(20, $top, (20+8+25+20+90+20), $top);
 }
 

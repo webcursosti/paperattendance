@@ -130,8 +130,10 @@
     <TABLE NAME="paperattendance_printusers" COMMENT="printed users">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="print" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="paperattendance_print id"/>
-        <FIELD NAME="user" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="user id"/>
+        <FIELD NAME="printid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="paperattendance_print id"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="user id"/>
+        <FIELD NAME="listposition" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="student position on list"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
