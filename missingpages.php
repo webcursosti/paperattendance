@@ -386,8 +386,8 @@ function RefreshSomeEventListener() {
 			}
 			studentsattendance.push({"userid":currentcheckbox.val(), "presence": presence});
 		});	
-		console.log(JSON.stringify(studentsattendance));
-		console.log(JSON.stringify(sessinfo));
+		//console.log(JSON.stringify(studentsattendance));
+		//console.log(JSON.stringify(sessinfo));
 
 		$("#inputs").empty();
 		$("#inputs").append("<div id='loader'><img src='img/loading.gif'></div>");
