@@ -322,7 +322,7 @@ switch ($action) {
 				
 				$sessid = paperattendance_insert_session($courseobject->id, $requestor, $USER->id, $sesspageobject->pdfname, 0);
 				mtrace("la session id es : ".$sessid);
-				paperattendance_insert_session_module($module->id, $sessid, strtotime($date));
+				paperattendance_insert_session_module($moduleobject->id, $sessid, strtotime($date));
 				//paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1, $uploaderobj->id);
 				$pagesession = new stdClass();
 				$pagesession->id = $sesspageid;
