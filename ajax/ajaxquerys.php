@@ -336,6 +336,8 @@ switch ($action) {
 				
 				if($CFG->paperattendance_sendmail == 1){
 					$sessdate = $date.", ".$moduleobject->name. ": ". $moduleobject->initialtime. " - " .$moduleobject->endtime;
+					
+					mtrace("sessid: ".$sessid. " courseid: ".$courseobject->id ." requestorid: ".$requestor ." userid: ". $USER->id ." sessdate: ". $sessdate ." coursefullname: ". $courseobject->fullname. "processpdf");
 					paperattendance_sendMail($sessid, $courseobject->id, $requestor, $USER->id, $sessdate, $courseobject->fullname, "processpdf", null);
 				}
 				
