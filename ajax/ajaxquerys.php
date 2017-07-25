@@ -310,6 +310,8 @@ switch ($action) {
 				
 				$requestor = $teacher->userid;
 				
+				mtrace("requestorid: ".$requestor);
+				
 				$sessid = paperattendance_insert_session($courseobject->id, $requestor, $USER->id, $sesspageobject->pdfname, 0);
 				mtrace("la session id es : ".$sessid);
 				paperattendance_insert_session_module($module->id, $sessid, strtotime($date));
