@@ -244,10 +244,10 @@ switch ($action) {
 					$token =  $CFG->paperattendance_omegatoken;
 					
 					if($data->status == 1){
-						$status = true;
+						$status = "true";
 					}
 					else{
-						$status = false;
+						$status = "false";
 					}
 					
 					$fields = array (
