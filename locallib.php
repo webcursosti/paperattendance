@@ -1718,11 +1718,12 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					$time = $qrinfo[3];
 					$page = $qrinfo[4];
 					$description = $qrinfo[5];
+					$printid = $qrinfo[6];
 						
 					$context = context_course::instance($course);
 					$objcourse = new stdClass();
 					$objcourse -> id = $course;
-					$studentlist = paperattendance_students_list($context->id, $objcourse);
+					$studentlist = paperattendance_get_printed_students($printid);
 					//var_dump($studentlist);
 					
 					$sessdoesntexist = paperattendance_check_session_modules($module, $course, $time);
@@ -1994,4 +1995,35 @@ function paperattendance_print_save($courseid, $module, $sessiondate, $requestor
 	$print->timecreated = time();
 	
 	return $DB->insert_record('paperattendance_print',$print);
+}
+/**
+ * Get the student list
+ *
+ * @param int $contextid
+ *            Context of the course
+ * @param int $course
+ *            Id course
+ */
+function paperattendance_get_printed_students($printid){
+	global $DB;
+	
+	$query = "SELECT u.id, u.lastname, u.firstname, u.idnumber FROM {paperattendance_print} AS pp
+				INNER JOIN {paperattendance_printusers} AS ppu ON (pp.id = ppu.printid AND pp.id = ?)
+				INNER JOIN {user} AS u ON (ppu.userid = u.id)";
+	
+	$students = $DB->get_records_sql($query,array($printid));
+	
+	$studentinfo = array();
+	// Fill studentnames with student info (name, idnumber, id and picture).
+	foreach($students as $student) {
+		// We create a student info object.
+		$studentobj = new stdClass();
+		$studentobj->name = substr("$student->lastname, $student->firstname", 0, 65);
+		$studentobj->idnumber = $student->idnumber;
+		$studentobj->id = $student->id;
+		//$studentobj->picture = emarking_get_student_picture($student, $userimgdir);
+		// Store student info in hash so every student is stored once.
+		$studentinfo[$student->id] = $studentobj;
+	}
+	return $studentinfo;
 }
