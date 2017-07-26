@@ -286,7 +286,7 @@ function paperattendance_draw_student_list($pdf, $logofilepath, $course, $studen
 			// Logo UAI and Top QR
 			$pdf->Image($logofilepath, 20, 15, 50);
 			// Top QR
-			$qrfilename = paperattendance_create_qr_image($qrstring.$modulecount."*".$description, $qrpath);
+			$qrfilename = paperattendance_create_qr_image($qrstring.$modulecount."*".$description."*".$printid, $qrpath);
 			//echo $qrfilename."  ".$qrpath."<br>";
 			$pdf->Image($qrpath."/".$qrfilename, 153, 5, 35);
 			
