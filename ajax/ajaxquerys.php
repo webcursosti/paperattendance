@@ -203,7 +203,7 @@ switch ($action) {
 							$studentobject = $DB->get_record("user", array("id" => $student->id));
 							$line = array();
 							$line["studentid"] = $student->id;
-							$line["username"] = $studentobject->lastname." ".$studentobject->firstname;
+							$line["username"] = $studentobject->lastname.", ".$studentobject->firstname;
 							//$line["username"] = paperattendance_getusername($student->id);
 							$arrayalumnos[] = $line;
 						}
