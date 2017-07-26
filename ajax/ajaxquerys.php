@@ -200,9 +200,11 @@ switch ($action) {
 					$end = $begin + 25;
 					foreach ($studentlist as $student){
 						if($count>=$begin && $count<=$end){
+							$studentobject = $DB->get_record("user", array("id" => $student->id));
 							$line = array();
 							$line["studentid"] = $student->id;
-							$line["username"] = paperattendance_getusername($student->id);
+							$line["username"] = $studentobject->lastname." ".$studentobject->firstname;
+							//$line["username"] = paperattendance_getusername($student->id);
 							$arrayalumnos[] = $line;
 						}
 						$count++;
@@ -333,13 +335,13 @@ switch ($action) {
 				$pagesession->processed = 1;
 				$pagesession->uploaderid = $USER->id;
 				$DB->update_record('paperattendance_sessionpages', $pagesession);
-				
+				/*
 				if($CFG->paperattendance_sendmail == 1){
 					$sessdate = $date.", ".$moduleobject->name. ": ". $moduleobject->initialtime. " - " .$moduleobject->endtime;
 					
 					//mtrace("sessid: ".$sessid. " courseid: ".$courseobject->id ." requestorid: ".$requestor ." userid: ". $USER->id ." sessdate: ". $sessdate ." coursefullname: ". $courseobject->fullname. "processpdf");
 					paperattendance_sendMail($sessid, $courseobject->id, $requestor, $USER->id, $sessdate, $courseobject->fullname, "processpdf", null);
-				}
+				}*/
 				
 			}
 			else{
