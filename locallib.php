@@ -421,7 +421,7 @@ function paperattendance_readpdf($path, $filename, $course){
 	$objcourse = new stdClass();
 	$objcourse -> id = $course;
 	
-	$studentlist = paperattendance_students_list($context ->id, $objcourse);	
+	$studentlist = paperattendance_get_printed_students($context ->id, $objcourse);	
 	$sessid = paperattendance_get_sessionid($filename);
 	
 	// pre process pdf
