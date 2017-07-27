@@ -1966,7 +1966,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		}
 		
 		//finally unlink the jpg file
-		unlink($path."/jpgs/processing/".$jpgname);
+		//unlink($path."/jpgs/processing/".$jpgname);
 	}
 	
 	if($countprocessed>= 1){
