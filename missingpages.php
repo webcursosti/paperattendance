@@ -238,12 +238,69 @@ if ($action == "edit") {
 			
 			unlink($attendancepdffile);
 			
-			$inputs = html_writer::div('<label for="course">Shortname del Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017">',"form-group", array("style"=>"float:right; margin-right:10%"));
-			$inputs .= html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017">',"form-group", array("style"=>"float:right; margin-right:10%"));
-			$inputs .= html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30">',"form-group", array("style"=>"float:right; margin-right:10%"));
-			$inputs .= html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27">',"form-group", array("style"=>"float:right; margin-right:10%"));
+			$inputs = html_writer::div('<label for="course">Shortname del Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#shortnamemodal">?</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
+			$inputs .= html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#datemodal">?</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
+			$inputs .= html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modulemodal">?</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
+			$inputs .= html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#beginmodal">?</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
 			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Continuar</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
 			
+			$shortnamemodal = '<div class="modal fade" id="shortnamemodal" role="dialog" style="width: 50vw;">
+							    <div class="modal-dialog modal-sm">
+							      <div class="modal-content">
+							        <div class="modal-body">
+									  <div class="alert alert-info">Escriba el <strong>curso</strong> perteneciente a su lista escaneada</div>
+									  <img class="img-responsive" src="img/hshortname.png"> 
+							        </div>
+							        <div class="modal-footer">
+							          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+							        </div>
+							      </div>
+							    </div>
+							  </div>';
+			$datemodal = '<div class="modal fade" id="datemodal" role="dialog" style="width: 50vw;">
+							    <div class="modal-dialog modal-sm">
+							      <div class="modal-content">
+							        <div class="modal-body">
+									  <div class="alert alert-info">Escriba la <strong>fecha</strong> perteneciente a su lista escaneada</div>
+									  <img class="img-responsive" src="img/helpdate.png">
+							        </div>
+							        <div class="modal-footer">
+							          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+							        </div>
+							      </div>
+							    </div>
+							  </div>';
+			$modulemodal = '<div class="modal fade" id="modulemodal" role="dialog" style="width: 50vw;">
+							    <div class="modal-dialog modal-sm">
+							      <div class="modal-content">
+							        <div class="modal-body">
+									  <div class="alert alert-info">Escriba la <strong>hora del módulo</strong> perteneciente a su lista escaneada</div>
+									  <img class="img-responsive" src="img/helpmodule.png">
+							        </div>
+							        <div class="modal-footer">
+							          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+							        </div>
+							      </div>
+							    </div>
+							  </div>';
+			$beginmodal = '<div class="modal fade" id="beginmodal" role="dialog" style="width: 50vw;">
+							    <div class="modal-dialog modal-sm">
+							      <div class="modal-content">
+							        <div class="modal-body">
+									  <div class="alert alert-info">Escriba el <strong>nº de inicio</strong> perteneciente a su lista escaneada</div>
+									  <img class="img-responsive" src="img/helpbegin.png">
+							        </div>
+							        <div class="modal-footer">
+							          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+							        </div>
+							      </div>
+							    </div>
+							  </div>';
+			
+			$inputs .= html_writer::div($shortnamemodal, "form-group");
+			$inputs .= html_writer::div($datemodal, "form-group");
+			$inputs .= html_writer::div($modulemodal, "form-group");
+			$inputs .= html_writer::div($beginmodal, "form-group");
 		}
 		else {
 			print_error(get_string("missingpagesdoesnotexist", "local_paperattendance"));
@@ -362,7 +419,7 @@ $( "#confirm" ).on( "click", function() {
 			        	$("#appendtrs").append(appendcheckbox);
 			        });
 			        $("#inputs").append("</tbody></table>");
-		    		$("#inputs").append('<button class="btn btn-info savestudentsattendance" style="float:right; width:40%">Guardar Asistencia</button>');
+		    		$("#inputs").append('<button class="btn btn-info savestudentsattendance" style="float:right; width:30%">Guardar Asistencia</button>');
 		    		RefreshSomeEventListener();
 		        }
 		    }
