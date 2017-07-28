@@ -213,7 +213,7 @@ $string['editmissing']="Editar página perdida";
 $string['deletemissing']="Borrar página perdida";
 $string['doyouwantdeletemissing']="Estás seguro que quieres borrar esta página perdida?";
 $string['doyouwanteditmissing']="Estás seguro que quieres editar esta página perdida?";
-$string['missingpageshelp']="Por favor, rellene los campos tal cual como aparecen en el PDF, inicio lista se refiere al Nº a la izquierda del primer alumno en la lista";
+$string['missingpageshelp']="Por favor rellene los campos tal cual como aparecen en el PDF";
 $string['nothingmissing']="No hay páginas perdidas";
 $string['viewmissing']="Páginas perdidas";
 
