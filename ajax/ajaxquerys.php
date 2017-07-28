@@ -288,11 +288,11 @@ switch ($action) {
 			$moduleobject = $DB->get_record("paperattendance_module", array("initialtime"=> $module));
 			
 			$sessdoesntexist = paperattendance_check_session_modules($moduleobject->id, $courseobject->id, strtotime($date));
-			mtrace("checkeo de la sesion: ".$sessdoesntexist);
+			//mtrace("checkeo de la sesion: ".$sessdoesntexist);
 			$stop = true;
 			
 			if( $sessdoesntexist == "perfect"){
-				mtrace("no existe");
+				//mtrace("no existe");
 				
 				//select teacher from course
 				$teachersquery = "SELECT u.id AS userid,
@@ -323,7 +323,7 @@ switch ($action) {
 				}
 				$description = 0; //0 = for normal class
 				$sessid = paperattendance_insert_session($courseobject->id, $requestor, $USER->id, $sesspageobject->pdfname, $description);
-				mtrace("la session id es : ".$sessid);
+				//mtrace("la session id es : ".$sessid);
 				paperattendance_insert_session_module($moduleobject->id, $sessid, strtotime($date));
 				//paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1, $uploaderobj->id);
 				$pagesession = new stdClass();
@@ -338,13 +338,13 @@ switch ($action) {
 			
 			}
 			else{
-				mtrace("session ya eexiste");
+				//mtrace("session ya eexiste");
 				$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
-				$sessobject = $DB->get_record("paperattendance_session", array("id"=> $sessid));
-				$courseidsession = $sessobject->courseid;
+				//$sessobject = $DB->get_record("paperattendance_session", array("id"=> $sessid));
+				//$courseidsession = $sessobject->courseid;
 				//Check if the page already was processed
-				if( ($DB->record_exists('paperattendance_sessionpages', array('sessionid'=>$sessid,'qrpage'=>$numberpage))) || ($courseidsession != $courseobject->id) ){
-					mtrace("session ya existe y esta hoja ya fue subida y procesada / el curso ingresado no es el mismo de la sesion existente");
+				if( ($DB->record_exists('paperattendance_sessionpages', array('sessionid'=>$sessid,'qrpage'=>$numberpage))) ){
+					//mtrace("session ya existe y esta hoja ya fue subida y procesada / el curso ingresado no es el mismo de la sesion existente");
 					$stop = false;
 				}
 				else{
@@ -358,7 +358,7 @@ switch ($action) {
 					$pagesession->processed = 1;
 					$pagesession->uploaderid = $USER->id;
 					$DB->update_record('paperattendance_sessionpages', $pagesession);
-					mtrace("session ya existe pero esta hoja no habia sido subida ni procesada");
+					//mtrace("session ya existe pero esta hoja no habia sido subida ni procesada");
 					$stop = true;
 				}
 			}
