@@ -36,7 +36,7 @@ if (isguestuser()) {
 	die();
 }
 
-$categoryid = optional_param('categoryid', 1, PARAM_INT);
+$categoryid = optional_param('categoryid', 406, PARAM_INT);
 $action = optional_param('action', 'viewform', PARAM_TEXT);
 //Page
 $page = optional_param('page', 0, PARAM_INT);
