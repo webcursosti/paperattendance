@@ -458,7 +458,7 @@ function RefreshSomeEventListener() {
 		    	},
 		    success: function (response) {
 				var error = response["sesion"];
-				var error2 = response["sesion2"];
+				var error2 = response["sesiondos"];
 				var error3 = response["guardar"];
 				var error4 = response["omegatoken"];
 				var error5 = response["omegatoken2"];
