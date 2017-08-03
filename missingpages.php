@@ -457,11 +457,16 @@ function RefreshSomeEventListener() {
 			      'studentsattendance' : studentsattendance
 		    	},
 		    success: function (response) {
-				var error = response["error"];
+				var error = response["sesion"];
+				var error2 = response["sesion2"];
+				var error3 = response["guardar"];
+				var error4 = response["omegatoken"];
+				var error5 = response["omegatoken2"];
 				var moodleurl = "<?php echo $CFG->wwwroot;?>";
 				$('#loader').hide();
 				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:right; width:40%">'+error+'</div>');
 				$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:right; width:40%">Volver</button>');
+				console.log(error+error2+error3+error4+error5);
 		    }
 		});
 	});
