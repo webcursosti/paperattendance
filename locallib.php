@@ -1841,7 +1841,7 @@ function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid, $qr
 	
 	$pagesession = new stdClass();
 	$pagesession->sessionid = $sessid;
-	$pagesession->pagenum = $pagenum;
+	$pagesession->pagenum = $pagenum;	
 	$pagesession->qrpage = $qrpage;
 	$pagesession->pdfname = $pdfname;
 	$pagesession->processed = $processed;
@@ -1926,7 +1926,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		rename($file, $path."/jpgs/processing/".$jpgname);
 		
 		//now run the exec command
-		$command = 'timeout 30 java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /Datos/formscanner/template.xtmpl /Datos/data/moodledata/temp/local/paperattendance/unread/jpgs/processing/';	
+		$command = 'timeout 30 java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /Datos/formscanner/template.xtmpl /data/data/moodledata/temp/local/paperattendance/unread/jpgs/processing/';	
 		$lastline = exec($command, $output, $return_var);
 		
 		//return_var es el que devuelve 124 si es que se alcanza el timeout
