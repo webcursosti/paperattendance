@@ -56,7 +56,8 @@ if(is_siteadmin()){
 	//if the user is an admin show everything
 	$sqlmissing = "SELECT * 
 					FROM {paperattendance_sessionpages}
-					WHERE processed = ?";
+					WHERE processed = ?
+					ORDER BY id DESC";
 
 	$countmissing = count($DB->get_records_sql($sqlmissing, array(0)));
 	$missing = $DB->get_records_sql($sqlmissing, array(0), $page*$perpage,$perpage);
