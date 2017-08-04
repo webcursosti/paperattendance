@@ -847,13 +847,13 @@ $( document ).ready(function() {
 		if(studentpresence == 0){
 			var settext = "Presente";
 			var setpresence = 1;
-			var icon = moodleurl+"/local/paperattendance/img/valid.svg";
+			var icon = moodleurl+"/local/paperattendance/img/invalid.svg";
 			alert(icon);
 		}
 		else{
 			var settext = "Ausente";
 			var setpresence = 0;
-			var icon = moodleurl+"/local/paperattendance/img/invalid.svg";
+			var icon = moodleurl+"/local/paperattendance/img/valid.svg";
 			alert(icon);
 		}
 
