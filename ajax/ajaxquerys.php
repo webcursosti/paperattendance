@@ -290,9 +290,14 @@ switch ($action) {
 			$sessdoesntexist = paperattendance_check_session_modules($moduleobject->id, $courseobject->id, strtotime($date));
 			//mtrace("checkeo de la sesion: ".$sessdoesntexist);
 			$stop = true;
-			
+			$return = array();
+			$return["sesiondos"] = "";
+			$return["guardar"] = "";
+			$return["omegatoken"] = "";
+			$return["omegatoken2"] = "";
 			if( $sessdoesntexist == "perfect"){
 				//mtrace("no existe");
+				$return["sesion"] = "Sesión no existe, ";
 				
 				//select teacher from course
 				$teachersquery = "SELECT u.id AS userid,
@@ -339,12 +344,14 @@ switch ($action) {
 			}
 			else{
 				//mtrace("session ya eexiste");
+				$return["sesion"] = "Sesión ya existe, ";
 				$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
-				//$sessobject = $DB->get_record("paperattendance_session", array("id"=> $sessid));
-				//$courseidsession = $sessobject->courseid;
+				
 				//Check if the page already was processed
-				if( ($DB->record_exists('paperattendance_sessionpages', array('sessionid'=>$sessid,'qrpage'=>$numberpage))) ){
+				if( $DB->record_exists('paperattendance_sessionpages', array('sessionid'=>$sessid,'qrpage'=>$numberpage)) ){
 					//mtrace("session ya existe y esta hoja ya fue subida y procesada / el curso ingresado no es el mismo de la sesion existente");
+					$return["sesiondos"] = "hoja procesada anteriormente.";
+					//Falta eliminar esta pag ya que no sirve para nada y no se debiera volver a mostrar en missing pages
 					$stop = false;
 				}
 				else{
@@ -359,6 +366,7 @@ switch ($action) {
 					$pagesession->uploaderid = $USER->id;
 					$DB->update_record('paperattendance_sessionpages', $pagesession);
 					//mtrace("session ya existe pero esta hoja no habia sido subida ni procesada");
+					$return["sesiondos"] = "hoja no procesada antes, ";
 					$stop = true;
 				}
 			}
@@ -386,12 +394,14 @@ switch ($action) {
 					}
 					$count++;
 				}
-				
+				$return["guardar"] = "asistencia guardada por cada alumno, ";
 				$omegasync = false;
 				
 				if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
+					$return["omegatoken"] = "Api aceptó token, ";
 					if(paperattendance_omegacreateattendance($courseobject->id, $arrayalumnos, $sessid)){
 						$omegasync = true;
+						$return["omegatoken2"] = "se creó la asistencia en Omega. ";
 					}
 				}
 				
@@ -406,13 +416,13 @@ switch ($action) {
 				$DB->update_record("paperattendance_session", $update);
 				
 			}
-			$return = array();
-			if ($stop){
+			
+			/*if ($stop){
 				$return["error"] = "Asistencia correctamente guardada";
 			}
 			else{
 				$return["error"] = "Página subida y procesada anteriormente";
-			}
+			}*/
 			echo json_encode($return);
 			break;
 }
