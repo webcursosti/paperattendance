@@ -80,7 +80,8 @@ else{
 	
 	$sqlmissing = "SELECT * 
 					FROM {paperattendance_sessionpages}
-					WHERE processed = ? AND uploaderid = ?";
+					WHERE processed = ? AND uploaderid = ?
+					ORDER BY id DESC";
 	$params = array(0, $USER->id);
 	
 	$countmissing = count($DB->get_records_sql($sqlmissing, $params));
