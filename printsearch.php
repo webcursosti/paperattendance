@@ -73,6 +73,7 @@ else{
 					WHERE cc.id = co.instanceid AND r.shortname = ?";
 	$categoryparams = array($USER->id, "secrepaper");
 	$category = $DB->get_record_sql($sqlcategory, $categoryparams);
+	var_dump($category);
 	if($category){
 		$categoryid = $category->id;
 	}else{
