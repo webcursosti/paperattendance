@@ -350,7 +350,7 @@ switch ($action) {
 				//Check if the page already was processed
 				if( $DB->record_exists('paperattendance_sessionpages', array('sessionid'=>$sessid,'qrpage'=>$numberpage)) ){
 					//mtrace("session ya existe y esta hoja ya fue subida y procesada / el curso ingresado no es el mismo de la sesion existente");
-					$return["sesiondos"] = "hoja procesada anteriormente, ";
+					$return["sesiondos"] = "hoja procesada anteriormente.";
 					//Falta eliminar esta pag ya que no sirve para nada y no se debiera volver a mostrar en missing pages
 					$stop = false;
 				}
