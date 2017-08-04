@@ -1071,13 +1071,16 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 				$username = $alumnos[$i]->emailAlumno;
 				$username = explode("@", $username);
 				$username = $username[0];
-				$studentid = $DB->get_record("user", array("username" => $username));
-				$studentid = $studentid -> id;
-					
-				$omegasessionid = $alumnos[$i]->asistenciaId;
-				//save student sync
-				$sqlsyncstate = "UPDATE {paperattendance_presence} SET omegasync = ?, omegaid = ? WHERE sessionid  = ? AND userid = ?";
-				$studentid = $DB->execute($sqlsyncstate, array('1', $omegasessionid, $sessid, $studentid));
+				if($studentid = $DB->get_record("user", array("username" => $username))){
+					$studentid = $studentid -> id;
+						
+					$omegasessionid = $alumnos[$i]->asistenciaId;
+					//save student sync
+					$sqlsyncstate = "UPDATE {paperattendance_presence} SET omegasync = ?, omegaid = ? WHERE sessionid  = ? AND userid = ?";
+					$studentid = $DB->execute($sqlsyncstate, array('1', $omegasessionid, $sessid, $studentid));
+				}else{
+					mtrace("el usuario: $username, no existe query:$studentid");
+				}
 			}
 		}
 	}
