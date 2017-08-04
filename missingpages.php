@@ -466,7 +466,7 @@ function RefreshSomeEventListener() {
 				$('#loader').hide();
 				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:right; width:40%">'+error+error2+error3+error4+error5+'</div>');
 				$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:right; width:40%">Volver</button>');
-				console.log(error+error2+error3+error4+error5);
+				//console.log(error+error2+error3+error4+error5);
 		    }
 		});
 	});
