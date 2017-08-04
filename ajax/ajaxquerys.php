@@ -399,6 +399,9 @@ switch ($action) {
 				
 				if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 					$return["omegatoken"] = "Api aceptó token, ";
+					$return["arregloalumnos"] = print_r($arrayalumnos);
+					$return["idcurso"] = print_r($courseobject->id);
+					$return["idsesion"] = print_r($sessid);
 					if(paperattendance_omegacreateattendance($courseobject->id, $arrayalumnos, $sessid)){
 						$omegasync = true;
 						$return["omegatoken2"] = "se creó la asistencia en Omega. ";
