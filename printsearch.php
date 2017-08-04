@@ -73,7 +73,6 @@ else{
 					WHERE cc.id = co.instanceid AND r.shortname = ?";
 	$categoryparams = array($USER->id, "secrepaper");
 	$category = $DB->get_record_sql($sqlcategory, $categoryparams);
-	var_dump($category);
 	if($category){
 		$categoryid = $category->id;
 	}else{
@@ -107,7 +106,7 @@ $context = context_coursecat::instance($categoryid);
 $contextsystem = context_system::instance();
 
 if (! has_capability('local/paperattendance:printsearch', $context) && ! has_capability('local/paperattendance:printsearch', $contextsystem)) {
-	print_error(get_string('notallowedprint', 'local_paperattendance'));
+	print_error(get_string('notallowedprintaqui', 'local_paperattendance'));
 }
 
 // This page url.
