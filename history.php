@@ -848,11 +848,13 @@ $( document ).ready(function() {
 			var settext = "Presente";
 			var setpresence = 1;
 			var icon = moodleurl+"/theme/image.php?theme=eduhub&amp;component=core&amp;image=i%2Finvalid";
+			alert(icon);
 		}
 		else{
 			var settext = "Ausente";
 			var setpresence = 0;
 			var icon = moodleurl+"/theme/image.php?theme=eduhub&amp;component=core&amp;image=i%2Fvalid";
+			alert(icon);
 		}
 
 		$.ajax({
