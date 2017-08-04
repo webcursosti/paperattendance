@@ -847,7 +847,7 @@ $( document ).ready(function() {
 		if(studentpresence == 0){
 			var settext = "Presente";
 			var setpresence = 1;
-			var icon = moodleurl+"/theme/image.php?theme=eduhub&amp;component=core&amp;image=i%2Finvalid";
+			var icon = moodleurl+"/local/paperattendance/img/valid.svg";
 			alert(icon);
 		}
 		else{
