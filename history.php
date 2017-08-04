@@ -853,7 +853,7 @@ $( document ).ready(function() {
 		else{
 			var settext = "Ausente";
 			var setpresence = 0;
-			var icon = moodleurl+"/theme/image.php?theme=eduhub&amp;component=core&amp;image=i%2Fvalid";
+			var icon = moodleurl+"/local/paperattendance/img/invalid.svg";
 			alert(icon);
 		}
 
