@@ -411,7 +411,7 @@ $( "#confirm" ).on( "click", function() {
 		        	sessinfo.push({"sesspageid":sesspageid, "shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
 
 					$("#inputs").empty();
-				    var table = '<table class="table table-hover table-condensed table-responsive" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
+				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
 				    $("#inputs").append(table);
 			        $.each(response["alumnos"], function(i, field){
 				        var counter = i + parseFloat(begin.val());
@@ -457,11 +457,16 @@ function RefreshSomeEventListener() {
 			      'studentsattendance' : studentsattendance
 		    	},
 		    success: function (response) {
-				var error = response["error"];
+				var error = response["sesion"];
+				var error2 = response["sesiondos"];
+				var error3 = response["guardar"];
+				var error4 = response["omegatoken"];
+				var error5 = response["omegatoken2"];
 				var moodleurl = "<?php echo $CFG->wwwroot;?>";
 				$('#loader').hide();
-				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:right; width:40%">'+error+'</div>');
+				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:right; width:40%">'+error+error2+error3+error4+error5+'</div>');
 				$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:right; width:40%">Volver</button>');
+				//console.log(error+error2+error3+error4+error5);
 		    }
 		});
 	});
