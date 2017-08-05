@@ -403,7 +403,7 @@ $( "#confirm" ).on( "click", function() {
 	var module = $('#module');
 	var begin = $('#begin');
 	var sesspageid = <?php echo $sesspageid; ?>;
-	var pdfviewer = <?php echo $viewerpdfdos; ?>;
+	var pdfviewer = '<?php echo $viewerpdfdos; ?>';
 
 	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())-1+26)%26 != 0 || date.val() === date.val().split('-')[0] || module.val() === module.val().split(':')[0]) {
 	    alert("Por favor, rellene todos los campos correctamente");
