@@ -465,6 +465,7 @@ function RefreshSomeEventListener() {
 		//console.log(JSON.stringify(sessinfo));
 
 		$("#inputs").empty();
+		$("#pdfviewer").empty();
 		$("#inputs").append("<div id='loader'><img src='img/loading.gif'></div>");
 		$.ajax({
 		    type: 'POST',
@@ -485,8 +486,8 @@ function RefreshSomeEventListener() {
 				var error8 = response["idsesion"];
 				var moodleurl = "<?php echo $CFG->wwwroot;?>";
 				$('#loader').hide();
-				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:right; width:40%">'+error+error2+error3+error4+error5+error6+error7+error8+'</div>');
-				$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:right; width:40%">Volver</button>');
+				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:left; width:40%">'+error+error2+error3+error4+error5+error6+error7+error8+'</div>');
+				$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:left; width:40%">Volver</button>');
 				
 		    }
 		});
