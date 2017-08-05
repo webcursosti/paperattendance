@@ -235,7 +235,7 @@ if ($action == "edit") {
 			$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$sesspageid."_".$timepdf.".pdf");
 			$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
 					"src" => $url,
-					"style" => "height:100vh; width:40vw; float:left"
+					"style" => "height:50vh; width:100%vw; float:left"
 			));
 			
 			unlink($attendancepdffile);
