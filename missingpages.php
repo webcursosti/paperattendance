@@ -239,7 +239,7 @@ if ($action == "edit") {
 			));
 			$viewerpdfdos = html_writer::nonempty_tag("embed", " ", array(
 					"src" => $url,
-					"style" => "height:100vh; width:40vw; float:left"
+					"style" => "height:105vh; width:40vw; float:left"
 			));
 			
 			
