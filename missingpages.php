@@ -235,7 +235,7 @@ if ($action == "edit") {
 			$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$sesspageid."_".$timepdf.".pdf");
 			$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
 					"src" => $url,
-					"style" => "height:50vh; width:100%vw; float:left"
+					"style" => "height:50vh; width:100%vw; float:left; padding-top:30px;"
 			));
 			
 			unlink($attendancepdffile);
@@ -244,7 +244,7 @@ if ($action == "edit") {
 			$inputs .= html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#datemodal">?</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
 			$inputs .= html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modulemodal">?</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
 			$inputs .= html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#beginmodal">?</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
-			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Continuar</button>',"form-group", array("style"=>"float:right; margin-right:10%; padding-bottom:30px;"));
+			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Continuar</button>',"form-group", array("style"=>"float:right; margin-right:10%;"));
 			
 			$shortnamemodal = '<div class="modal fade" id="shortnamemodal" role="dialog" style="width: 50vw;">
 							    <div class="modal-dialog modal-sm">
