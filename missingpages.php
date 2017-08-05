@@ -237,6 +237,11 @@ if ($action == "edit") {
 					"src" => $url,
 					"style" => "height:50vh; width:90%; float:left; padding-top:30px; margin-left:5%;"
 			));
+			$viewerpdf2 = html_writer::nonempty_tag("embed", " ", array(
+					"src" => $url,
+					"style" => "height:100vh; width:40vw; float:left"
+			));
+			
 			
 			unlink($attendancepdffile);
 			
@@ -420,6 +425,8 @@ $( "#confirm" ).on( "click", function() {
 		        	sessinfo.push({"sesspageid":sesspageid, "shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
 
 					$("#inputs").empty();
+					$("#pdfviewer").empty();
+					$("#pdfviewer").append(<?php echo $viewerpdf2; ?>);
 				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
 				    $("#inputs").append(table);
 			        $.each(response["alumnos"], function(i, field){
