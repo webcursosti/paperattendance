@@ -318,6 +318,13 @@ if ($action == "edit") {
 	echo $OUTPUT->header();
 	echo $OUTPUT->heading(get_string("missingpagestitle", "local_paperattendance"));
 	
+	echo html_writer::div('<style>
+							.form-control::-webkit-input-placeholder { color: gray; }  /* WebKit, Blink, Edge */
+							.form-control:-moz-placeholder { color: white; }  /* Mozilla Firefox 4 to 18 */
+							.form-control::-moz-placeholder { color: white; }  /* Mozilla Firefox 19+ */
+							.form-control:-ms-input-placeholder { color: white; }  /* Internet Explorer 10-11 */
+							.form-control::-ms-input-placeholder { color: white; }  /* Microsoft Edge *
+							</style>');
 	echo html_writer::div(get_string("missingpageshelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
   	$pdfarea = html_writer::div($viewerpdf,"col-md-9", array( "id"=>"pdfviewer"));
   	$inputarea = html_writer::div($inputs,"col-md-2 col-md-offset-1", array( "id"=>"inputs"));
