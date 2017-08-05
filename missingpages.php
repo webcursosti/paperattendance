@@ -437,7 +437,7 @@ $( "#confirm" ).on( "click", function() {
 			        	$("#appendtrs").append(appendcheckbox);
 			        });
 			        $("#inputs").append("</tbody></table>");
-		    		$("#inputs").append('<button class="btn btn-info savestudentsattendance" style="float:right; width:30%">Guardar Asistencia</button>');
+		    		$("#pdfviewer").append('<button class="btn btn-info savestudentsattendance" style="float:right; width:30%">Guardar Asistencia</button>');
 		    		RefreshSomeEventListener();
 		        }
 		    }
