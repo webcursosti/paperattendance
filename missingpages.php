@@ -319,16 +319,16 @@ if ($action == "edit") {
 	echo $OUTPUT->heading(get_string("missingpagestitle", "local_paperattendance"));
 	
 	echo html_writer::div('<style>
-							.form-control::-webkit-input-placeholder { color: darkgray; }  /* WebKit, Blink, Edge */
-							.form-control:-moz-placeholder { color: gainsboro; }  /* Mozilla Firefox 4 to 18 */
-							.form-control::-moz-placeholder { color: gainsboro; }  /* Mozilla Firefox 19+ */
-							.form-control:-ms-input-placeholder { color: gainsboro; }  /* Internet Explorer 10-11 */
-							.form-control::-ms-input-placeholder { color: gainsboro; }  /* Microsoft Edge *
+							.form-control::-webkit-input-placeholder { color: lightgrey; }  /* WebKit, Blink, Edge */
+							.form-control:-moz-placeholder { color: lightgrey; }  /* Mozilla Firefox 4 to 18 */
+							.form-control::-moz-placeholder { color: lightgrey; }  /* Mozilla Firefox 19+ */
+							.form-control:-ms-input-placeholder { color: lightgrey; }  /* Internet Explorer 10-11 */
+							.form-control::-ms-input-placeholder { color: lightgrey; }  /* Microsoft Edge *
 							</style>');
 	echo html_writer::div(get_string("missingpageshelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
   	$pdfarea = html_writer::div($viewerpdf,"col-md-9", array( "id"=>"pdfviewer"));
   	$inputarea = html_writer::div($inputs,"col-md-2 col-md-offset-1", array( "id"=>"inputs"));
- 	echo html_writer::div($pdfarea.$inputarea, "row");
+ 	echo html_writer::div($pdfarea.$inputarea, "");
 	
 }
 
