@@ -330,7 +330,7 @@ if ($action == "edit") {
 							.form-control:-ms-input-placeholder { color: lightgrey; }  /* Internet Explorer 10-11 */
 							.form-control::-ms-input-placeholder { color: lightgrey; }  /* Microsoft Edge *
 							</style>');
-	echo html_writer::div(get_string("missingpageshelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
+	echo html_writer::div(get_string("missingpageshelp","local_paperattendance"),"alert alert-info", array("role"=>"alert", "id"=>"alerthelp"));
   	$pdfarea = html_writer::div($viewerpdf,"col-md-12", array( "id"=>"pdfviewer"));
   	$inputarea = html_writer::div($inputs,"col-sm-12 row", array( "id"=>"inputs"));
  	echo html_writer::div($inputarea.$pdfarea, "form-group");
@@ -486,8 +486,9 @@ function RefreshSomeEventListener() {
 				var error8 = response["idsesion"];
 				var moodleurl = "<?php echo $CFG->wwwroot;?>";
 				$('#loader').hide();
-				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:left; width:40%">'+error+error2+error3+error4+error5+error6+error7+error8+'</div>');
-				$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:left; width:40%">Volver</button>');
+				$("#alerthelp").hide();
+				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:left;">'+error+error2+error3+error4+error5+error6+error7+error8+'</div>');
+				$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:left; margin-right:70%;">Volver</button>');
 				
 		    }
 		});
