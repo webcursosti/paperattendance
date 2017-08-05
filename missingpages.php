@@ -325,7 +325,7 @@ if ($action == "edit") {
 							.form-control:-ms-input-placeholder { color: lightgrey; }  /* Internet Explorer 10-11 */
 							.form-control::-ms-input-placeholder { color: lightgrey; }  /* Microsoft Edge *
 
-							.inputs-control {padding-bottom: 10%;}
+							.inputs-control {padding-bottom: 20px;}
 							</style>');
 	echo html_writer::div(get_string("missingpageshelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
   	$pdfarea = html_writer::div($viewerpdf,"col-md-12", array( "id"=>"pdfviewer"));
