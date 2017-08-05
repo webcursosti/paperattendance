@@ -237,7 +237,7 @@ if ($action == "edit") {
 					"src" => $url,
 					"style" => "height:50vh; width:90%; float:left; padding-top:30px; margin-left:5%;"
 			));
-			$viewerpdf2 = html_writer::nonempty_tag("embed", " ", array(
+			$viewerpdfdos = html_writer::nonempty_tag("embed", " ", array(
 					"src" => $url,
 					"style" => "height:100vh; width:40vw; float:left"
 			));
@@ -403,6 +403,7 @@ $( "#confirm" ).on( "click", function() {
 	var module = $('#module');
 	var begin = $('#begin');
 	var sesspageid = <?php echo $sesspageid; ?>;
+	var pdfviewer = <?php echo $viewerpdfdos; ?>;
 
 	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())-1+26)%26 != 0 || date.val() === date.val().split('-')[0] || module.val() === module.val().split(':')[0]) {
 	    alert("Por favor, rellene todos los campos correctamente");
@@ -426,7 +427,7 @@ $( "#confirm" ).on( "click", function() {
 
 					$("#inputs").empty();
 					$("#pdfviewer").empty();
-					$("#pdfviewer").append(<?php echo $viewerpdf2; ?>);
+					$("#pdfviewer").append(pdfviewer);
 				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
 				    $("#inputs").append(table);
 			        $.each(response["alumnos"], function(i, field){
