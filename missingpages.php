@@ -244,7 +244,7 @@ if ($action == "edit") {
 			$inputs .= html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#datemodal">?</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
 			$inputs .= html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modulemodal">?</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
 			$inputs .= html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#beginmodal">?</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
-			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Continuar</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
+			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Continuar</button>',"form-group", array("style"=>"float:right; margin-right:10%; padding-bottom:30px;"));
 			
 			$shortnamemodal = '<div class="modal fade" id="shortnamemodal" role="dialog" style="width: 50vw;">
 							    <div class="modal-dialog modal-sm">
@@ -324,12 +324,10 @@ if ($action == "edit") {
 							.form-control::-moz-placeholder { color: lightgrey; }  /* Mozilla Firefox 19+ */
 							.form-control:-ms-input-placeholder { color: lightgrey; }  /* Internet Explorer 10-11 */
 							.form-control::-ms-input-placeholder { color: lightgrey; }  /* Microsoft Edge *
-
-							.inputs-control {padding-bottom: 20px;}
 							</style>');
 	echo html_writer::div(get_string("missingpageshelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
   	$pdfarea = html_writer::div($viewerpdf,"col-md-12", array( "id"=>"pdfviewer"));
-  	$inputarea = html_writer::div($inputs,"col-md-12 row inputs-control", array( "id"=>"inputs"));
+  	$inputarea = html_writer::div($inputs,"col-sm-12 row", array( "id"=>"inputs"));
  	echo html_writer::div($inputarea.$pdfarea, "form-group");
 	
 }
