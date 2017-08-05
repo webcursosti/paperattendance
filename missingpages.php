@@ -426,6 +426,7 @@ $( "#confirm" ).on( "click", function() {
 		        	sessinfo.push({"sesspageid":sesspageid, "shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
 
 					$("#inputs").empty();
+					$("#inputs").removeClass("row");
 					$("#pdfviewer").empty();
 					$("#pdfviewer").append(pdfviewer);
 				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
