@@ -319,7 +319,7 @@ if ($action == "edit") {
 	echo $OUTPUT->heading(get_string("missingpagestitle", "local_paperattendance"));
 	
 	echo html_writer::div('<style>
-							.form-control::-webkit-input-placeholder { color: gainsboro; }  /* WebKit, Blink, Edge */
+							.form-control::-webkit-input-placeholder { color: lightgray; }  /* WebKit, Blink, Edge */
 							.form-control:-moz-placeholder { color: gainsboro; }  /* Mozilla Firefox 4 to 18 */
 							.form-control::-moz-placeholder { color: gainsboro; }  /* Mozilla Firefox 19+ */
 							.form-control:-ms-input-placeholder { color: gainsboro; }  /* Internet Explorer 10-11 */
