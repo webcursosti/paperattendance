@@ -326,8 +326,8 @@ if ($action == "edit") {
 							.form-control::-ms-input-placeholder { color: lightgrey; }  /* Microsoft Edge *
 							</style>');
 	echo html_writer::div(get_string("missingpageshelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
-  	$pdfarea = html_writer::div($viewerpdf,"col-md-9", array( "id"=>"pdfviewer"));
-  	$inputarea = html_writer::div($inputs,"col-md-2 col-md-offset-1 row", array( "id"=>"inputs"));
+  	$pdfarea = html_writer::div($viewerpdf,"col-md-12 row", array( "id"=>"pdfviewer"));
+  	$inputarea = html_writer::div($inputs,"col-md-12 row", array( "id"=>"inputs"));
  	echo html_writer::div($inputarea.$pdfarea, "form-group");
 	
 }
