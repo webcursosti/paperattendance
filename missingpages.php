@@ -56,7 +56,8 @@ if(is_siteadmin()){
 	//if the user is an admin show everything
 	$sqlmissing = "SELECT * 
 					FROM {paperattendance_sessionpages}
-					WHERE processed = ?";
+					WHERE processed = ?
+					ORDER BY id DESC";
 
 	$countmissing = count($DB->get_records_sql($sqlmissing, array(0)));
 	$missing = $DB->get_records_sql($sqlmissing, array(0), $page*$perpage,$perpage);
@@ -79,7 +80,8 @@ else{
 	
 	$sqlmissing = "SELECT * 
 					FROM {paperattendance_sessionpages}
-					WHERE processed = ? AND uploaderid = ?";
+					WHERE processed = ? AND uploaderid = ?
+					ORDER BY id DESC";
 	$params = array(0, $USER->id);
 	
 	$countmissing = count($DB->get_records_sql($sqlmissing, $params));
@@ -233,16 +235,21 @@ if ($action == "edit") {
 			$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$sesspageid."_".$timepdf.".pdf");
 			$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
 					"src" => $url,
-					"style" => "height:100vh; width:40vw; float:left"
+					"style" => "height:50vh; width:90%; float:left; padding-top:30px; margin-left:5%;"
 			));
+			$viewerpdfdos = html_writer::nonempty_tag("embed", " ", array(
+					"src" => $url,
+					"style" => "height:105vh; width:40vw; float:left"
+			));
+			
 			
 			unlink($attendancepdffile);
 			
-			$inputs = html_writer::div('<label for="course">Shortname del Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#shortnamemodal">?</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
-			$inputs .= html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#datemodal">?</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
-			$inputs .= html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modulemodal">?</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
-			$inputs .= html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#beginmodal">?</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
-			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Continuar</button>',"form-group", array("style"=>"float:right; margin-right:10%"));
+			$inputs = html_writer::div('<label for="course">Shortname del Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#shortnamemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			$inputs .= html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#datemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			$inputs .= html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modulemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			$inputs .= html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#beginmodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Continuar</button>',"form-group", array("style"=>"float:right; margin-right:5%; margin-top:5%;"));
 			
 			$shortnamemodal = '<div class="modal fade" id="shortnamemodal" role="dialog" style="width: 50vw;">
 							    <div class="modal-dialog modal-sm">
@@ -316,10 +323,17 @@ if ($action == "edit") {
 	echo $OUTPUT->header();
 	echo $OUTPUT->heading(get_string("missingpagestitle", "local_paperattendance"));
 	
-	echo html_writer::div(get_string("missingpageshelp","local_paperattendance"),"alert alert-info", array("role"=>"alert"));
-  	$pdfarea = html_writer::div($viewerpdf,"col-md-9", array( "id"=>"pdfviewer"));
-  	$inputarea = html_writer::div($inputs,"col-md-2 col-md-offset-1", array( "id"=>"inputs"));
- 	echo html_writer::div($pdfarea.$inputarea, "row");
+	echo html_writer::div('<style>
+							.form-control::-webkit-input-placeholder { color: lightgrey; }  /* WebKit, Blink, Edge */
+							.form-control:-moz-placeholder { color: lightgrey; }  /* Mozilla Firefox 4 to 18 */
+							.form-control::-moz-placeholder { color: lightgrey; }  /* Mozilla Firefox 19+ */
+							.form-control:-ms-input-placeholder { color: lightgrey; }  /* Internet Explorer 10-11 */
+							.form-control::-ms-input-placeholder { color: lightgrey; }  /* Microsoft Edge *
+							</style>');
+	echo html_writer::div(get_string("missingpageshelp","local_paperattendance"),"alert alert-info", array("role"=>"alert", "id"=>"alerthelp"));
+  	$pdfarea = html_writer::div($viewerpdf,"col-md-12", array( "id"=>"pdfviewer"));
+  	$inputarea = html_writer::div($inputs,"col-sm-12 row", array( "id"=>"inputs"));
+ 	echo html_writer::div($inputarea.$pdfarea, "form-group");
 	
 }
 
@@ -389,6 +403,7 @@ $( "#confirm" ).on( "click", function() {
 	var module = $('#module');
 	var begin = $('#begin');
 	var sesspageid = <?php echo $sesspageid; ?>;
+	var pdfviewer = '<?php echo $viewerpdfdos; ?>';
 
 	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())-1+26)%26 != 0 || date.val() === date.val().split('-')[0] || module.val() === module.val().split(':')[0]) {
 	    alert("Por favor, rellene todos los campos correctamente");
@@ -411,6 +426,9 @@ $( "#confirm" ).on( "click", function() {
 		        	sessinfo.push({"sesspageid":sesspageid, "shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
 
 					$("#inputs").empty();
+					$("#inputs").removeClass("row");
+					$("#pdfviewer").empty();
+					$("#pdfviewer").append(pdfviewer);
 				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
 				    $("#inputs").append(table);
 			        $.each(response["alumnos"], function(i, field){
@@ -419,7 +437,7 @@ $( "#confirm" ).on( "click", function() {
 			        	$("#appendtrs").append(appendcheckbox);
 			        });
 			        $("#inputs").append("</tbody></table>");
-		    		$("#inputs").append('<button class="btn btn-info savestudentsattendance" style="float:right; width:30%">Guardar Asistencia</button>');
+		    		$("#pdfviewer").append('<button class="btn btn-info savestudentsattendance" style="float:right; width:30%; margin-right:15%; margin-top:5%;">Guardar Asistencia</button>');
 		    		RefreshSomeEventListener();
 		        }
 		    }
@@ -447,6 +465,7 @@ function RefreshSomeEventListener() {
 		//console.log(JSON.stringify(sessinfo));
 
 		$("#inputs").empty();
+		$("#pdfviewer").empty();
 		$("#inputs").append("<div id='loader'><img src='img/loading.gif'></div>");
 		$.ajax({
 		    type: 'POST',
@@ -462,11 +481,15 @@ function RefreshSomeEventListener() {
 				var error3 = response["guardar"];
 				var error4 = response["omegatoken"];
 				var error5 = response["omegatoken2"];
+				var error6 = response["arregloalumnos"];
+				var error7 = response["idcurso"];
+				var error8 = response["idsesion"];
 				var moodleurl = "<?php echo $CFG->wwwroot;?>";
 				$('#loader').hide();
-				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:right; width:40%">'+error+error2+error3+error4+error5+'</div>');
-				$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:right; width:40%">Volver</button>');
-				//console.log(error+error2+error3+error4+error5);
+				$("#alerthelp").hide();
+				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:left; margin-top:5%;">'+error+error2+error3+error4+error5+error6+error7+error8+'</div>');
+				$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:left; margin-right:70%;">Volver</button>');
+				
 		    }
 		});
 	});
