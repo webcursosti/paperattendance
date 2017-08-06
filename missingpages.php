@@ -239,7 +239,7 @@ if ($action == "edit") {
 			));
 			$viewerpdfdos = html_writer::nonempty_tag("embed", " ", array(
 					"src" => $url,
-					"style" => "height:105vh; width:40vw; float:left"
+					"style" => "height:116vh; width:40vw; float:left"
 			));
 			
 			
@@ -437,7 +437,7 @@ $( "#confirm" ).on( "click", function() {
 			        	$("#appendtrs").append(appendcheckbox);
 			        });
 			        $("#inputs").append("</tbody></table>");
-		    		$(".form-group").append('<div align="center"><button class="btn btn-info savestudentsattendance" style=" width:30%; margin-bottom:5%; margin-top:5%;">Guardar Asistencia</button></div>');
+		    		$(".form-group").append('<div align="center" id="savebutton"><button class="btn btn-info savestudentsattendance" style=" width:30%; margin-bottom:5%; margin-top:5%;">Guardar Asistencia</button></div>');
 		    		RefreshSomeEventListener();
 		        }
 		    }
@@ -466,6 +466,7 @@ function RefreshSomeEventListener() {
 
 		$("#inputs").empty();
 		$("#pdfviewer").empty();
+		$("#savebutton").empty();
 		$("#inputs").append("<div id='loader'><img src='img/loading.gif'></div>");
 		$.ajax({
 		    type: 'POST',
