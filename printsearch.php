@@ -60,11 +60,10 @@ if(is_siteadmin()){
 	$year = strtotime("1 January".(date('Y')));
 	$ncourses = count($DB->get_records_sql($sqlcourses, array($year)));
 	$courses = $DB->get_records_sql($sqlcourses, array($year), $page*$perpage,$perpage);
-	$path = 1;
+	$paths = 1;
 }
 else{
-	//Query to get the category of the secretary
-	//It is assumed that one secretary has just one category on her charge
+	//Query to get the categorys of the secretary
 	$sqlcategory = "SELECT cc.*
 					FROM {course_categories} cc
 					INNER JOIN {role_assignments} ra ON (ra.userid = ?)
@@ -72,34 +71,46 @@ else{
 					INNER JOIN {context} co ON (co.id = ra.contextid)
 					WHERE cc.id = co.instanceid AND r.shortname = ?";
 	$categoryparams = array($USER->id, "secrepaper");
-	$category = $DB->get_record_sql($sqlcategory, $categoryparams);
-	if($category){
-		$categoryid = $category->id;
+	$categorys = $DB->get_records_sql($sqlcategory, $categoryparams);
+	$categoryscount = count($categorys);
+	$categoryids = array();
+	$paths = array();
+	$like = "";
+	$counter = 1;
+	if($categorys){
+		foreach($categorys as $category){
+			$categoryids[] = $category->id;
+			$path = $category->id;
+			$paths[] = $path;
+			if($counter==$categoryscount)
+				$like.= "cat.path like '%/".$path."/%' OR cat.path like '%/".$path."'";
+				else
+					$like.= "cat.path like '%/".$path."/%' OR cat.path like '%/".$path."' OR ";
+					$counter++;
+		}
+		$categoryid = $categoryids[0];
 	}else{
 		print_error(get_string('notallowedprint', 'local_paperattendance'));
 	}
-
-	$path = $categoryid;
-
 	$sqlcourses= "SELECT c.id,
-		c.fullname,
-		cat.name,
-		u.id as teacherid,
-		CONCAT( u.firstname, ' ', u.lastname) as teacher
-		FROM {user} u
-		INNER JOIN {user_enrolments} ue ON (ue.userid = u.id)
-		INNER JOIN {enrol} e ON (e.id = ue.enrolid)
-		INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
-		INNER JOIN {context} ct ON (ct.id = ra.contextid)
-		INNER JOIN {course} c ON (c.id = ct.instanceid AND e.courseid = c.id)
-		INNER JOIN {course_categories} as cat ON (cat.id = c.category)
-		INNER JOIN {role} r ON (r.id = ra.roleid)
-		WHERE ct.contextlevel = '50' AND r.id = 3 AND e.enrol = 'database'
-		AND (cat.path like ? OR cat.path like ?) AND c.idnumber > 0
-		GROUP BY c.id";
+	c.fullname,
+	cat.name,
+	u.id as teacherid,
+	CONCAT( u.firstname, ' ', u.lastname) as teacher
+	FROM {user} u
+	INNER JOIN {user_enrolments} ue ON (ue.userid = u.id)
+	INNER JOIN {enrol} e ON (e.id = ue.enrolid)
+	INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+	INNER JOIN {context} ct ON (ct.id = ra.contextid)
+	INNER JOIN {course} c ON (c.id = ct.instanceid AND e.courseid = c.id)
+	INNER JOIN {course_categories} as cat ON (cat.id = c.category)
+	INNER JOIN {role} r ON (r.id = ra.roleid)
+	WHERE ct.contextlevel = '50' AND r.id = 3
+	AND $like AND c.idnumber > 0
+	GROUP BY c.id";
 
-	$ncourses = count($DB->get_records_sql($sqlcourses, array("%/".$path."/%", "%/".$path)));
-	$courses = $DB->get_records_sql($sqlcourses, array("%/".$path."/%", "%/".$path), $page*$perpage,$perpage);
+	$ncourses = count($DB->get_records_sql($sqlcourses));
+	$courses = $DB->get_records_sql($sqlcourses, null, $page*$perpage,$perpage);
 }
 
 $context = context_coursecat::instance($categoryid);
@@ -283,7 +294,7 @@ $( document ).ready(function() {
 			$table.find("tr").not(".ajaxtr").hide();
 			$paging.hide();
 		    var data = this.value;
-		    var path = <?php echo $path;?>;
+		    var path = <?php echo json_encode(base64_encode(serialize($paths)));?>;
 		    var print = <?php echo json_encode($print);?>;
 			var categoryid = <?php echo $categoryid; ?>;
 		    callAjax(data, path, print, categoryid);

@@ -37,7 +37,7 @@ $action = required_param('action', PARAM_ALPHA);
 $omegaid = optional_param('omegaid', null, PARAM_TEXT);
 $diasemana = optional_param('diasemana', null, PARAM_TEXT);
 $data = optional_param('result', null, PARAM_TEXT);
-$path = optional_param('path', 0, PARAM_INT);
+$paths = optional_param('path', null, PARAM_TEXT);
 $courseid = optional_param("courseid", 1, PARAM_INT);
 $begin = optional_param("begin", 1, PARAM_INT);
 $category = optional_param('category', 1, PARAM_INT);
@@ -89,11 +89,10 @@ switch ($action) {
 	case 'getcourses' :
 		if($category > 1){
 			$context = context_coursecat::instance($category);
-			$path = $category;
 		}else{
 			$context = context_system::instance();
 		}
-
+	
 		$contextsystem = context_system::instance();
 		if (! has_capability('local/paperattendance:printsearch', $context) && ! has_capability('local/paperattendance:printsearch', $contextsystem)) {
 			print_error(get_string('notallowedprint', 'local_paperattendance'));
@@ -102,38 +101,49 @@ switch ($action) {
 			$year = strtotime("1 January".(date('Y')));
 			$filter = array($year, "%".$data."%", $data."%");
 			$sqlcourses = "SELECT c.id,
-			c.fullname,
-			cat.name,
-			u.id as teacherid,
-			CONCAT( u.firstname, ' ', u.lastname) as teacher
-			FROM {user} AS u
-			INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
-			INNER JOIN {context} ct ON (ct.id = ra.contextid)
-			INNER JOIN {course} c ON (c.id = ct.instanceid)
-			INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
-			INNER JOIN {course_categories} as cat ON (cat.id = c.category)
-			WHERE (c.timecreated > ? AND c.idnumber > 0 ) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?)
-			GROUP BY c.id
-			ORDER BY c.fullname";
+						c.fullname,
+						cat.name,
+						u.id as teacherid,
+						CONCAT( u.firstname, ' ', u.lastname) as teacher
+						FROM {user} AS u
+						INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+						INNER JOIN {context} ct ON (ct.id = ra.contextid)
+						INNER JOIN {course} c ON (c.id = ct.instanceid)
+						INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
+						INNER JOIN {course_categories} as cat ON (cat.id = c.category)
+						WHERE (c.timecreated > ? AND c.idnumber > 0 ) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?)
+						GROUP BY c.id
+						ORDER BY c.fullname";
 		}else{
-			$filter = array("%/".$path."%", "%".$data."%", $data."%");
+			$paths = unserialize(base64_decode($paths));
+			$pathscount = count($paths);
+			$like = "";
+			$counter = 1;
+			foreach ($paths as $path){
+				if($counter==$pathscount)
+					$like.= "cat.path like '%/".$path."/%' OR cat.path like '%/".$path."'";
+					else
+						$like.= "cat.path like '%/".$path."/%' OR cat.path like '%/".$path."' OR ";
+						$counter++;
+			}
+			$filter = array("%".$data."%", $data."%");
 			$sqlcourses = "SELECT c.id,
-				c.fullname,
-				cat.name,
-				u.id as teacherid,
-				CONCAT( u.firstname, ' ', u.lastname) as teacher
-				FROM {user} AS u
-				INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
-				INNER JOIN {context} ct ON (ct.id = ra.contextid)
-				INNER JOIN {course} c ON (c.id = ct.instanceid)
-				INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
-				INNER JOIN {course_categories} as cat ON (cat.id = c.category)
-				WHERE (cat.path like ? AND c.idnumber > 0 ) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?)
-				GROUP BY c.id
-				ORDER BY c.fullname";
+						c.fullname,
+						cat.name,
+						u.id as teacherid,
+						CONCAT( u.firstname, ' ', u.lastname) as teacher
+						FROM {user} AS u
+						INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+						INNER JOIN {context} ct ON (ct.id = ra.contextid)
+						INNER JOIN {course} c ON (c.id = ct.instanceid)
+						INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
+						INNER JOIN {course_categories} as cat ON (cat.id = c.category)
+						WHERE ($like AND c.idnumber > 0 ) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?)
+						GROUP BY c.id
+						ORDER BY c.fullname";
 		}
 		$courses = $DB->get_records_sql($sqlcourses, $filter);
-
+	
 		echo json_encode($courses);
 		break;
 	case 'cartlist':
