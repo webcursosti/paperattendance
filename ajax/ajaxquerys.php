@@ -244,7 +244,7 @@ switch ($action) {
 					echo json_encode($return);
 				}
 			}else{
-				$return["error"] = $date;
+				$return["error"] = "Fecha incorrecta";
 				echo json_encode($return);
 			}
 		break;
