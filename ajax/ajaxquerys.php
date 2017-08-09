@@ -236,6 +236,7 @@ switch ($action) {
 				}
 			}else{
 				$return["error"] = "Inicio de modulo incorrecto";
+				echo json_encode($return);
 			}
 		break;
 		case 'changestudentpresence':

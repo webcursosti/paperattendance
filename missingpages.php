@@ -462,7 +462,7 @@ function RefreshSomeEventListener() {
 			}
 			studentsattendance.push({"userid":currentcheckbox.val(), "presence": presence});
 		});	
-		alert(JSON.stringify(studentattendance));
+		alert(JSON.stringify(studentsattendance));
 		//console.log(JSON.stringify(studentsattendance));
 		//console.log(JSON.stringify(sessinfo));
 
