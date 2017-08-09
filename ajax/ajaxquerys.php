@@ -199,7 +199,7 @@ switch ($action) {
 			$module = $_REQUEST['module'];
 			$return = array();
 			
-			if($module = $DB->get_record("paperattendance_module", array("initialtime" => $module))){
+			if($DB->get_record("paperattendance_module", array("initialtime" => $module))){
 				if($course = $DB->get_record("course", array("shortname" => $data))){
 				
 					$context = context_course::instance($course->id);
