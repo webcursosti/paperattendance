@@ -44,6 +44,7 @@ $category = optional_param('category', 1, PARAM_INT);
 $teacherid = optional_param("teacherid", 1, PARAM_INT);
 $setstudentpresence = optional_param("setstudentpresence", 1, PARAM_INT);
 $presenceid = optional_param("presenceid", 1, PARAM_INT);
+$module = optional_param("module", null, PARAM_TEXT);
 
 switch ($action) {
 	case 'curlgetmoduloshorario' :
@@ -196,7 +197,7 @@ switch ($action) {
 		break;
 		case 'getliststudentspage':
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
-			$module = $_REQUEST['module'];
+			
 			$return = array();
 			
 			if($DB->get_record("paperattendance_module", array("initialtime" => $module))){
