@@ -416,7 +416,8 @@ $( "#confirm" ).on( "click", function() {
 			      'action' : 'getliststudentspage',
 			      'result' : course.val(),
 			      'begin' : begin.val(),
-			      'module' : module.val()
+			      'module' : module.val(),
+			      'date' : date.val()
 		    	},
 		    success: function (response) {
 		        var error = response["error"];

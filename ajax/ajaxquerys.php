@@ -45,6 +45,7 @@ $teacherid = optional_param("teacherid", 1, PARAM_INT);
 $setstudentpresence = optional_param("setstudentpresence", 1, PARAM_INT);
 $presenceid = optional_param("presenceid", 1, PARAM_INT);
 $module = optional_param("module", null, PARAM_TEXT);
+$date = optional_param("date", null, PARAM_TEXT);
 
 switch ($action) {
 	case 'curlgetmoduloshorario' :
@@ -200,42 +201,50 @@ switch ($action) {
 			
 			$return = array();
 			
-			if($DB->get_record("paperattendance_module", array("initialtime" => $module))){
-				if($course = $DB->get_record("course", array("shortname" => $data))){
-				
-					$context = context_course::instance($course->id);
-					$studentlist = paperattendance_students_list($context->id, $course);
+			$date = explode("-",$date);
+			if(checkdate($date[1],$date[0],$date[2])){
+			
+				if($DB->get_record("paperattendance_module", array("initialtime" => $module))){
 					
-					if(count($studentlist) >= $begin){
-						$arrayalumnos = array();
-						$count = 1;
-						$end = $begin + 25;
-						foreach ($studentlist as $student){
-							if($count>=$begin && $count<=$end){
-								$studentobject = $DB->get_record("user", array("id" => $student->id));
-								$line = array();
-								$line["studentid"] = $student->id;
-								$line["username"] = $studentobject->lastname.", ".$studentobject->firstname;
-								//$line["username"] = paperattendance_getusername($student->id);
-								$arrayalumnos[] = $line;
+					if($course = $DB->get_record("course", array("shortname" => $data))){
+					
+						$context = context_course::instance($course->id);
+						$studentlist = paperattendance_students_list($context->id, $course);
+						
+						if(count($studentlist) >= $begin){
+							$arrayalumnos = array();
+							$count = 1;
+							$end = $begin + 25;
+							foreach ($studentlist as $student){
+								if($count>=$begin && $count<=$end){
+									$studentobject = $DB->get_record("user", array("id" => $student->id));
+									$line = array();
+									$line["studentid"] = $student->id;
+									$line["username"] = $studentobject->lastname.", ".$studentobject->firstname;
+									//$line["username"] = paperattendance_getusername($student->id);
+									$arrayalumnos[] = $line;
+								}
+								$count++;
 							}
-							$count++;
+							$return["error"] = 0;
+							$return["alumnos"] = $arrayalumnos;
+							echo json_encode($return);
 						}
-						$return["error"] = 0;
-						$return["alumnos"] = $arrayalumnos;
-						echo json_encode($return);
+						else{
+							$return["error"] = "Inicio de lista incorrecto";
+							echo json_encode($return);
+						}
 					}
 					else{
-						$return["error"] = "Inicio de lista incorrecto";
+						$return["error"] = "No existe curso";
 						echo json_encode($return);
 					}
-				}
-				else{
-					$return["error"] = "No existe curso";
+				}else{
+					$return["error"] = "Inicio de modulo incorrecto";
 					echo json_encode($return);
 				}
 			}else{
-				$return["error"] = "Inicio de modulo incorrecto";
+				$return["error"] = "Fecha incorrecta";
 				echo json_encode($return);
 			}
 		break;
