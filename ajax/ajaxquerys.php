@@ -196,41 +196,45 @@ switch ($action) {
 		break;
 		case 'getliststudentspage':
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
-			
+			$module = $_REQUEST['module'];
 			$return = array();
 			
-			if($course = $DB->get_record("course", array("shortname" => $data))){
-			
-				$context = context_course::instance($course->id);
-				$studentlist = paperattendance_students_list($context->id, $course);
+			if($module = $DB->get_record("paperattendance_module", array("initialtime" => $module))){
+				if($course = $DB->get_record("course", array("shortname" => $data))){
 				
-				if(count($studentlist) >= $begin){
-					$arrayalumnos = array();
-					$count = 1;
-					$end = $begin + 25;
-					foreach ($studentlist as $student){
-						if($count>=$begin && $count<=$end){
-							$studentobject = $DB->get_record("user", array("id" => $student->id));
-							$line = array();
-							$line["studentid"] = $student->id;
-							$line["username"] = $studentobject->lastname.", ".$studentobject->firstname;
-							//$line["username"] = paperattendance_getusername($student->id);
-							$arrayalumnos[] = $line;
+					$context = context_course::instance($course->id);
+					$studentlist = paperattendance_students_list($context->id, $course);
+					
+					if(count($studentlist) >= $begin){
+						$arrayalumnos = array();
+						$count = 1;
+						$end = $begin + 25;
+						foreach ($studentlist as $student){
+							if($count>=$begin && $count<=$end){
+								$studentobject = $DB->get_record("user", array("id" => $student->id));
+								$line = array();
+								$line["studentid"] = $student->id;
+								$line["username"] = $studentobject->lastname.", ".$studentobject->firstname;
+								//$line["username"] = paperattendance_getusername($student->id);
+								$arrayalumnos[] = $line;
+							}
+							$count++;
 						}
-						$count++;
+						$return["error"] = 0;
+						$return["alumnos"] = $arrayalumnos;
+						echo json_encode($return);
 					}
-					$return["error"] = 0;
-					$return["alumnos"] = $arrayalumnos;
-					echo json_encode($return);
+					else{
+						$return["error"] = "Inicio de lista incorrecto";
+						echo json_encode($return);
+					}
 				}
 				else{
-					$return["error"] = "Inicio de lista incorrecto";
+					$return["error"] = "No existe curso";
 					echo json_encode($return);
 				}
-			}
-			else{
-				$return["error"] = "No existe curso";
-				echo json_encode($return);
+			}else{
+				$return["error"] = "Inicio de modulo incorrecto";
 			}
 		break;
 		case 'changestudentpresence':

@@ -415,7 +415,8 @@ $( "#confirm" ).on( "click", function() {
 		    data: {
 			      'action' : 'getliststudentspage',
 			      'result' : course.val(),
-			      'begin' : begin.val()
+			      'begin' : begin.val(),
+			      'module' : module.val()
 		    	},
 		    success: function (response) {
 		        var error = response["error"];
@@ -461,6 +462,7 @@ function RefreshSomeEventListener() {
 			}
 			studentsattendance.push({"userid":currentcheckbox.val(), "presence": presence});
 		});	
+		alert(JSON.stringify(studentattendance));
 		//console.log(JSON.stringify(studentsattendance));
 		//console.log(JSON.stringify(sessinfo));
 
