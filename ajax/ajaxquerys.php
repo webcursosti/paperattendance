@@ -312,7 +312,7 @@ switch ($action) {
 			$shortname = $sessinfo[0] -> shortname;
 			$date = $sessinfo[0] -> date;
 			$module = $sessinfo[0] -> module;
-			$begin = $sessinfo[0] -> begin;
+			$begin = (int) $sessinfo[0] -> begin;
 			
 			$return["sesion"] = $begin;
 			
