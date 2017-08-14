@@ -47,7 +47,7 @@ $presenceid = optional_param("presenceid", 1, PARAM_INT);
 $module = optional_param("module", null, PARAM_TEXT);
 $date = optional_param("date", null, PARAM_TEXT);
 $sessinfo =optional_param_array('sessinfo', null, PARAM_INT);
-$variable =optional_param_array('studentsattendance', null, PARAM_INT);
+$studentsattendance =optional_param_array('studentsattendance', null, PARAM_INT);
 
 switch ($action) {
 	case 'curlgetmoduloshorario' :
