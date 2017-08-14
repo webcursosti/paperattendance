@@ -405,11 +405,11 @@ switch ($action) {
 			}
 			if($stop){
 				
-				$return["sesion"] = "PICOPALQUELEE";
 				$arrayalumnos = array();
 				$init = ($numberpage-1)*26+1;
 				$end = $numberpage*26;
 				$count = 1; //start at one because init starts at one
+				$return["sesion"] = $init." ".$end." ".$count;
 				foreach ($studentsattendance as $student){
 					if($count>=$init && $count<=$end){
 						$line = array();
