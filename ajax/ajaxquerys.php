@@ -409,9 +409,11 @@ switch ($action) {
 				$init = ($numberpage-1)*26+1;
 				$end = $numberpage*26;
 				$count = 1; //start at one because init starts at one
-				$return["sesion"] = $init." ".$end." ".$count;
+
 				foreach ($studentsattendance as $student){
+					$return["sesion"] = "entre al foreach";
 					if($count>=$init && $count<=$end){
+						$return["sesion"] = "entre al foreach y deberia estar guardando a alguien S:";
 						$line = array();
 						$line['emailAlumno'] = paperattendance_getusername($student -> userid);
 						$line['resultado'] = "true";
