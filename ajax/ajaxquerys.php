@@ -299,7 +299,7 @@ switch ($action) {
 			$sessinfo = $_REQUEST['sessinfo'];
 			$studentsattendance = $_REQUEST['studentsattendance'];
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
-			$return["arregloinicialalumnos"] = print_r($studentsattendance, true);
+			$return["arregloinicialalumnos"] = $studentsattendance;
 			$sesspageid = $sessinfo[0]['sesspageid'];
 			$shortname = $sessinfo[0]['shortname'];
 			$date = $sessinfo[0]['date'];
