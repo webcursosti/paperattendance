@@ -46,8 +46,8 @@ $setstudentpresence = optional_param("setstudentpresence", 1, PARAM_INT);
 $presenceid = optional_param("presenceid", 1, PARAM_INT);
 $module = optional_param("module", null, PARAM_TEXT);
 $date = optional_param("date", null, PARAM_TEXT);
-$sessinfo = optional_param_array('sessinfo', array("alo"), PARAM_INT);
-$studentsattendance = optional_param_array('studentsattendance', array("alo"), PARAM_INT);
+//$sessinfo = optional_param_array('sessinfo', array("alo"), PARAM_INT);
+//$studentsattendance = optional_param_array('studentsattendance', array("alo"), PARAM_INT);
 
 switch ($action) {
 	case 'curlgetmoduloshorario' :
@@ -298,6 +298,11 @@ switch ($action) {
 			echo json_encode(1);
 			break;
 		case 'savestudentsattendance':
+			$sessinfo = $_REQUEST['sessinfo']; 
+			$sessinfo = json_decode ($sessinfo);
+			$studentsattendance = $_REQUEST['studentsattendance'];
+			$studentsattendance = json_decode ($studentsattendance);
+					
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 			
 			$return["sesion"] = print_r($sessinfo, true);

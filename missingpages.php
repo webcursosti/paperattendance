@@ -475,8 +475,8 @@ function RefreshSomeEventListener() {
 		    url: 'ajax/ajaxquerys.php',
 		    data: {
 			      'action' : 'savestudentsattendance',
-			      'sessinfo' : sessinfo,
-			      'studentsattendance' : studentsattendance
+			      'sessinfo' : JSON.stringify(sessinfo),
+			      'studentsattendance' : JSON.stringify(studentsattendance)
 		    	},
 		    success: function (response) {
 				var error = response["sesion"];
