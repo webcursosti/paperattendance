@@ -415,7 +415,7 @@ $( "#confirm" ).on( "click", function() {
 		    data: {
 			      'action' : 'getliststudentspage',
 			      'result' : course.val(),
-			      'begin' : 27,
+			      'begin' : parseFloat(begin.val()),
 			      'module' : module.val(),
 			      'date' : date.val()
 		    	},

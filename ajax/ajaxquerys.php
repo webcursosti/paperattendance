@@ -314,8 +314,6 @@ switch ($action) {
 			$module = $sessinfo[0] -> module;
 			$begin = (int) $sessinfo[0] -> begin;
 			
-			$return["sesion"] = $begin;
-			
 			$numberpage =  ($begin + 25)/26;
 			
 			$sesspageobject = $DB->get_record("paperattendance_sessionpages", array("id"=> $sesspageid));
@@ -406,6 +404,8 @@ switch ($action) {
 				}
 			}
 			if($stop){
+				
+				$return["sesion"] = "PICOPALQUELEE";
 				$arrayalumnos = array();
 				$init = ($numberpage-1)*26+1;
 				$end = $numberpage*26;
