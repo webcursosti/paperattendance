@@ -415,7 +415,7 @@ switch ($action) {
 						$line['resultado'] = "true";
 						$line['asistencia'] = "false";
 						
-						if($student['presence'] == '1'){
+						if($student -> presence == '1'){
 							paperattendance_save_student_presence($sessid, $student -> userid, '1', NULL);
 							$line['asistencia'] = "true";
 						}
