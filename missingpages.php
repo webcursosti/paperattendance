@@ -491,7 +491,8 @@ function RefreshSomeEventListener() {
 				var moodleurl = "<?php echo $CFG->wwwroot;?>";
 				$('#loader').hide();
 				$("#alerthelp").hide();
-				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:left; margin-top:5%;">'+error+error2+error3+error4+error5+error6+error7+error8+error9+'</div>');
+				//$("#inputs").html('<div class="alert alert-success" role="alert" style="float:left; margin-top:5%;">'+error+error2+error3+error4+error5+error6+error7+error8+error9+'</div>');
+				console.log(error+error2+error3+error4+error5+error6+error7+error8+error9);
 				//$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:left; margin-right:70%;">Volver</button>');
 				
 		    }
