@@ -301,7 +301,8 @@ switch ($action) {
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 			
 			$return["sesion"] = print_r($sessinfo, true);
-			$return["arregloinicialalumnos"] = $studentsattendance;
+			$return["arregloinicialalumnos"] = print_r($studentsattendance, true);
+	
 			$sesspageid = $sessinfo[0]['sesspageid'];
 			$shortname = $sessinfo[0]['shortname'];
 			$date = $sessinfo[0]['date'];
