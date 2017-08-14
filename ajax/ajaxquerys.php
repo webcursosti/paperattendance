@@ -406,9 +406,9 @@ switch ($action) {
 			if($stop){
 				
 				$arrayalumnos = array();
-				$init = ($numberpage-1)*26+1;
-				$end = $numberpage*26;
-				$count = 1; //start at one because init starts at one
+				$init = ($numberpage-1)*26+1; 
+				$end = $numberpage*26;  
+				$count = $init; //start at one because init starts at one
 
 				foreach ($studentsattendance as $student){
 					$return["sesion"] = "entre al foreach";
