@@ -299,6 +299,7 @@ switch ($action) {
 			$sessinfo = $_REQUEST['sessinfo'];
 			$studentsattendance = $_REQUEST['studentsattendance'];
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
+			$return["sesion"] = $sessinfo;
 			$return["arregloinicialalumnos"] = $studentsattendance;
 			$sesspageid = $sessinfo[0]['sesspageid'];
 			$shortname = $sessinfo[0]['shortname'];
@@ -369,7 +370,7 @@ switch ($action) {
 			}
 			else{
 				//mtrace("session ya eexiste");
-				$return["sesion"] = "Sesión ya existe, ";
+				//$return["sesion"] = "Sesión ya existe, ";
 				$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
 				
 				//Check if the page already was processed
