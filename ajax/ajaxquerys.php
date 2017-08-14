@@ -300,7 +300,7 @@ switch ($action) {
 		case 'savestudentsattendance':
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 			
-			$return["sesion"] = $sessinfo;
+			$return["sesion"] = print_r($sessinfo, true);
 			$return["arregloinicialalumnos"] = $studentsattendance;
 			$sesspageid = $sessinfo[0]['sesspageid'];
 			$shortname = $sessinfo[0]['shortname'];
