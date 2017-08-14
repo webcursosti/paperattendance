@@ -304,6 +304,9 @@ switch ($action) {
 			$studentsattendance = json_decode ($studentsattendance);
 					
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
+			
+
+			$return["arregloinicialalumnos"] = print_r($studentsattendance, true);
 	
 			$sesspageid = $sessinfo[0] -> sesspageid;
 			$shortname = $sessinfo[0] -> shortname;
@@ -321,7 +324,10 @@ switch ($action) {
 			//mtrace("checkeo de la sesion: ".$sessdoesntexist);
 			$stop = true;
 			$return = array();
-			$return["guardar"] = "Asistencia no guardada.";
+			$return["sesiondos"] = "";
+			$return["guardar"] = "";
+			$return["omegatoken"] = "";
+			$return["omegatoken2"] = "";
 			if( $sessdoesntexist == "perfect"){
 				//mtrace("no existe");
 				//$return["sesion"] = "Sesión no existe, ";
@@ -377,7 +383,7 @@ switch ($action) {
 				//Check if the page already was processed
 				if( $DB->record_exists('paperattendance_sessionpages', array('sessionid'=>$sessid,'qrpage'=>$numberpage)) ){
 					//mtrace("session ya existe y esta hoja ya fue subida y procesada / el curso ingresado no es el mismo de la sesion existente");
-					//$return["sesiondos"] = "hoja procesada anteriormente.";
+					$return["sesiondos"] = "hoja procesada anteriormente.";
 					//Falta eliminar esta pag ya que no sirve para nada y no se debiera volver a mostrar en missing pages
 					$stop = false;
 				}
@@ -393,7 +399,7 @@ switch ($action) {
 					$pagesession->uploaderid = $USER->id;
 					$DB->update_record('paperattendance_sessionpages', $pagesession);
 					//mtrace("session ya existe pero esta hoja no habia sido subida ni procesada");
-					//$return["sesiondos"] = "hoja no procesada antes, ";
+					$return["sesiondos"] = "hoja no procesada antes, ";
 					$stop = true;
 				}
 			}
@@ -405,17 +411,17 @@ switch ($action) {
 				$count = $init; //start at one because init starts at one
 
 				foreach ($studentsattendance as $student){
-					//$return["sesion"] = "entre al foreach";
+					$return["sesion"] = "entre al foreach";
 					if($count>=$init && $count<=$end){
-						//$return["sesion"] = "entre al foreach y deberia estar guardando a alguien S:";
+						$return["sesion"] = "entre al foreach y deberia estar guardando a alguien S:";
 						$line = array();
-						//$line['emailAlumno'] = paperattendance_getusername($student -> userid);
-						//$line['resultado'] = "true";
-						//$line['asistencia'] = "false";
+						$line['emailAlumno'] = paperattendance_getusername($student -> userid);
+						$line['resultado'] = "true";
+						$line['asistencia'] = "false";
 						
 						if($student -> presence == '1'){
 							paperattendance_save_student_presence($sessid, $student -> userid, '1', NULL);
-							//$line['asistencia'] = "true";
+							$line['asistencia'] = "true";
 						}
 						else{
 							paperattendance_save_student_presence($sessid, $student -> userid, '0', NULL);
@@ -427,12 +433,12 @@ switch ($action) {
 				}
 				$return["guardar"] = "asistencia guardada por cada alumno, ";
 				$omegasync = false;
-				$return["omegatoken2"] = "No se creó la asistencia en Omega! ";
+				
 				if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
-					//$return["omegatoken"] = "Api aceptó token, ";
-					//$return["arregloalumnos"] = print_r($arrayalumnos, true);
-					//$return["idcurso"] = print_r($courseobject->id, true);
-					//$return["idsesion"] = print_r($sessid,true);
+					$return["omegatoken"] = "Api aceptó token, ";
+					$return["arregloalumnos"] = print_r($arrayalumnos, true);
+					$return["idcurso"] = print_r($courseobject->id, true);
+					$return["idsesion"] = print_r($sessid,true);
 					if(paperattendance_omegacreateattendance($courseobject->id, $arrayalumnos, $sessid)){
 						$omegasync = true;
 						$return["omegatoken2"] = "se creó la asistencia en Omega. ";
