@@ -411,16 +411,16 @@ switch ($action) {
 				foreach ($studentsattendance as $student){
 					if($count>=$init && $count<=$end){
 						$line = array();
-						$line['emailAlumno'] = paperattendance_getusername($student['userid']);
+						$line['emailAlumno'] = paperattendance_getusername($student -> userid);
 						$line['resultado'] = "true";
 						$line['asistencia'] = "false";
 						
 						if($student['presence'] == '1'){
-							paperattendance_save_student_presence($sessid, $student['userid'], '1', NULL);
+							paperattendance_save_student_presence($sessid, $student -> userid, '1', NULL);
 							$line['asistencia'] = "true";
 						}
 						else{
-							paperattendance_save_student_presence($sessid, $student['userid'], '0', NULL);
+							paperattendance_save_student_presence($sessid, $student -> userid, '0', NULL);
 						}
 						
 						$arrayalumnos[] = $line;
