@@ -467,8 +467,8 @@ function RefreshSomeEventListener() {
 		//console.log(JSON.stringify(studentsattendance));
 		//console.log(JSON.stringify(sessinfo));
 
-		$("#inputs").empty();
-		$("#pdfviewer").empty();
+		//$("#inputs").empty();
+		//$("#pdfviewer").empty();
 		$("#inputs").append("<div id='loader'><img src='img/loading.gif'></div>");
 		$.ajax({
 		    type: 'POST',
