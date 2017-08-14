@@ -308,11 +308,11 @@ switch ($action) {
 			$return["sesion"] = print_r($sessinfo, true);
 			$return["arregloinicialalumnos"] = print_r($studentsattendance, true);
 	
-			$sesspageid = $sessinfo[0]['sesspageid'];
-			$shortname = $sessinfo[0]['shortname'];
-			$date = $sessinfo[0]['date'];
-			$module = $sessinfo[0]['module'];
-			$begin = $sessinfo[0]['begin'];
+			$sesspageid = $sessinfo[0] -> sesspageid;
+			$shortname = $sessinfo[0] -> shortname;
+			$date = $sessinfo[0] -> date;
+			$module = $sessinfo[0] -> module;
+			$begin = $sessinfo[0] -> begin;
 			
 			$numberpage =  ($begin + 25)/26;
 			
