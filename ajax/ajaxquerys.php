@@ -330,7 +330,7 @@ switch ($action) {
 			$return["omegatoken2"] = "";
 			if( $sessdoesntexist == "perfect"){
 				//mtrace("no existe");
-				$return["sesion"] = "Sesión no existe, ";
+				//$return["sesion"] = "Sesión no existe, ";
 				
 				//select teacher from course
 				$teachersquery = "SELECT u.id AS userid,
