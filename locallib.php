@@ -1713,101 +1713,112 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					mtrace("qr correctly finded");
 					$qrinfo = explode("*",$qrcode);
 					//var_dump($qrinfo);
-					$course = $qrinfo[0];
-					$requestorid = $qrinfo[1];
-					$module = $qrinfo[2];
-					$time = $qrinfo[3];
-					$page = $qrinfo[4];
-					$description = $qrinfo[5];
-					$printid = $qrinfo[6];
+					if(count($qrinfo) == 7){
+						$course = $qrinfo[0];
+						$requestorid = $qrinfo[1];
+						$module = $qrinfo[2];
+						$time = $qrinfo[3];
+						$page = $qrinfo[4];
+						$description = $qrinfo[5];
+						$printid = $qrinfo[6];
+							
+						$context = context_course::instance($course);
+						$objcourse = new stdClass();
+						$objcourse -> id = $course;
+						$studentlist = paperattendance_get_printed_students($printid);
+						//var_dump($studentlist);
 						
-					$context = context_course::instance($course);
-					$objcourse = new stdClass();
-					$objcourse -> id = $course;
-					$studentlist = paperattendance_get_printed_students($printid);
-					//var_dump($studentlist);
-					
-					$sessdoesntexist = paperattendance_check_session_modules($module, $course, $time);
-					mtrace("checkeo de la sesion: ".$sessdoesntexist);
-					
-					if( $sessdoesntexist == "perfect"){
-						mtrace("no existe");
-						$sessid = paperattendance_insert_session($course, $requestorid, $uploaderobj->id, $pdffilename, $description);
-						mtrace("la session id es : ".$sessid);
-						paperattendance_insert_session_module($module, $sessid, $time);
-						paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1, $uploaderobj->id);
+						$sessdoesntexist = paperattendance_check_session_modules($module, $course, $time);
+						mtrace("checkeo de la sesion: ".$sessdoesntexist);
+						
+						if( $sessdoesntexist == "perfect"){
+							mtrace("no existe");
+							$sessid = paperattendance_insert_session($course, $requestorid, $uploaderobj->id, $pdffilename, $description);
+							mtrace("la session id es : ".$sessid);
+							paperattendance_insert_session_module($module, $sessid, $time);
+							paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1, $uploaderobj->id);
+							
+							if($CFG->paperattendance_sendmail == 1){
+								$coursename = $DB->get_record("course", array("id"=> $course));
+								$moduleobject = $DB->get_record("paperattendance_module", array("id"=> $module));
+								$sessdate = date("d-m-Y", $time).", ".$moduleobject->name. ": ". $moduleobject->initialtime. " - " .$moduleobject->endtime;
+								paperattendance_sendMail($sessid, $course, $requestorid, $uploaderobj->id, $sessdate, $coursename->fullname, "processpdf", null);
+							}
+							
+						}
+						else{
+							mtrace("session ya eexiste");
+							$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
+							//Check if the page already was processed
+							if($DB->record_exists('paperattendance_sessionpages', array('sessionid'=>$sessid,'qrpage'=>$page))){
+								mtrace("session ya existe y esta hoja ya fue subida y procesada");
+								$return++;
+								$stop = false;
+							}
+							else{
+								paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1, $uploaderobj->id);
+								mtrace("session ya existe pero esta hoja no habia sido subida ni procesada");
+								$stop = true;
+							}
+						}
+						
+						if($stop){
+							$arrayalumnos = array();
+							$init = ($page-1)*26+1;
+							$end = $page*26;
+							$count = 1; //start at one because init starts at one
+							$csvcol = 1;
+							foreach ($studentlist as $student){
+								if($count>=$init && $count<=$end){
+									$line = array();
+									$line['emailAlumno'] = paperattendance_getusername($student->id);
+									$line['resultado'] = "true";
+									$line['asistencia'] = "false";
+							
+									if($data[$csvcol] == 'A'){
+										paperattendance_save_student_presence($sessid, $student->id, '1', NULL);
+										$line['asistencia'] = "true";
+									}
+									else{
+										paperattendance_save_student_presence($sessid, $student->id, '0', NULL);
+									}
+							
+									$arrayalumnos[] = $line;
+									$csvcol++;
+								}
+								$count++;
+							}
+							
+							$omegasync = false;
+							
+							if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
+								if(paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid)){
+									$omegasync = true;
+								}
+							}
+							
+							$update = new stdClass();
+							$update->id = $sessid;
+							if($omegasync){
+								$update->status = 2;
+							}
+							else{
+								$update->status = 1;
+							}
+							$DB->update_record("paperattendance_session", $update);
+						
+				  		}
+				  		$return++;	
+					}else{
+						mtrace("Error: can't procees this page, no readable qr code");
+						//$return = false;//send email or something to let know this page had problems
+						$sessionpageid = paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $pdffilename, 0, $uploaderobj->id);
 						
 						if($CFG->paperattendance_sendmail == 1){
-							$coursename = $DB->get_record("course", array("id"=> $course));
-							$moduleobject = $DB->get_record("paperattendance_module", array("id"=> $module));
-							$sessdate = date("d-m-Y", $time).", ".$moduleobject->name. ": ". $moduleobject->initialtime. " - " .$moduleobject->endtime;
-							paperattendance_sendMail($sessid, $course, $requestorid, $uploaderobj->id, $sessdate, $coursename->fullname, "processpdf", null);
+							paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", $realpagenum+1);
 						}
-						
+						$return++;
 					}
-					else{
-						mtrace("session ya eexiste");
-						$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
-						//Check if the page already was processed
-						if($DB->record_exists('paperattendance_sessionpages', array('sessionid'=>$sessid,'qrpage'=>$page))){
-							mtrace("session ya existe y esta hoja ya fue subida y procesada");
-							$return++;
-							$stop = false;
-						}
-						else{
-							paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1, $uploaderobj->id);
-							mtrace("session ya existe pero esta hoja no habia sido subida ni procesada");
-							$stop = true;
-						}
-					}
-					
-					if($stop){
-						$arrayalumnos = array();
-						$init = ($page-1)*26+1;
-						$end = $page*26;
-						$count = 1; //start at one because init starts at one
-						$csvcol = 1;
-						foreach ($studentlist as $student){
-							if($count>=$init && $count<=$end){
-								$line = array();
-								$line['emailAlumno'] = paperattendance_getusername($student->id);
-								$line['resultado'] = "true";
-								$line['asistencia'] = "false";
-						
-								if($data[$csvcol] == 'A'){
-									paperattendance_save_student_presence($sessid, $student->id, '1', NULL);
-									$line['asistencia'] = "true";
-								}
-								else{
-									paperattendance_save_student_presence($sessid, $student->id, '0', NULL);
-								}
-						
-								$arrayalumnos[] = $line;
-								$csvcol++;
-							}
-							$count++;
-						}
-						
-						$omegasync = false;
-						
-						if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
-							if(paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid)){
-								$omegasync = true;
-							}
-						}
-						
-						$update = new stdClass();
-						$update->id = $sessid;
-						if($omegasync){
-							$update->status = 2;
-						}
-						else{
-							$update->status = 1;
-						}
-						$DB->update_record("paperattendance_session", $update);
-					
-			  		}
-			  		$return++;	
 				}
 	  		else{
 
