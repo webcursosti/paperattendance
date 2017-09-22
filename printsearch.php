@@ -228,26 +228,8 @@ $pdfmodal = '<div class="modal fade bs-example-modal-lg" id="pdfModal" tabindex=
 	  		</div>
 		</div>';
 
-$quickprintmodal = '<div class="modal fade bs-example-modal-lg" id="quickprintModal" tabindex="-1" role="dialog" aria-labelledby="quickprintModalLabel" style="display: none; width: 80vw; margin-left: -40%;">
-			  <div class="modal-dialog modal-lg" role="document">
-			    	<div class="modal-content">
-			    		<div class="modal-header">
-			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			        		<h4 class="modal-title" id="exampleModalLabel">Quick Print</h4>
-			      		</div>
-		      		<div class="modal-body quickprintappend" style="height:70vh">
-
-		      		</div>
-		      		<div class="modal-footer">
-			       		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		      		</div>
-	      		</div>
-	  		</div>
-		</div>';
-
 echo html_writer::div($formmodal, "modaldiv");
 echo html_writer::div($pdfmodal, "modaldiv");
-echo html_writer::div($quickprintmodal, "modaldiv");
 
 echo $OUTPUT->footer();
 
@@ -361,7 +343,7 @@ $( document ).ready(function() {
 	//When the quickprint icon is clicked
 	$( document ).on( "click", ".quickprint", function() {
 		var courseid = $(this).attr('courseid');
-		$('.quickprintappend').html('<center><img src="img/loading.gif"></center>');
+		$('.pdflists').html('<center><img src="img/loading.gif"></center>');
 		$.ajax({
 		    type: 'POST',
 		    url: 'quickprint.php',
@@ -369,7 +351,7 @@ $( document ).ready(function() {
 			      'courseid' : courseid
 		    	},
 		    success: function (response) {
-				$('.quickprintappend').html(response);
+				$('.pdflists').html(response);
 				if(response == "There's nothing to print for today"){
 					$('.printbutton').attr("disabled", true);
 		    	}  	
@@ -379,7 +361,7 @@ $( document ).ready(function() {
 		    }
 		});
 		
-		jQuery('#quickprintModal').modal('show'); 
+		jQuery('#pdfModal').modal('show'); 
 	
 	});
 	//When the background is clicked, the modal must hide
