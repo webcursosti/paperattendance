@@ -398,6 +398,231 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		// Paperattendance savepoint reached.
 		upgrade_plugin_savepoint(true, 2017011303, 'local', 'paperattendance');
 	}
+	if ($oldversion < 2017052701) {
+	
+		// Define table paperattendance_unprocesspdf to be created.
+		$table = new xmldb_table('paperattendance_unprocessed');
+	
+		// Adding fields to table paperattendance_unprocesspdf.
+		$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+		$table->add_field('filename', XMLDB_TYPE_TEXT, null, null, null, null, null);
+		$table->add_field('lastmodified', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
+	
+		// Adding keys to table paperattendance_unprocesspdf.
+		$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+	
+		// Conditionally launch create table for paperattendance_unprocesspdf.
+		if (!$dbman->table_exists($table)) {
+			$dbman->create_table($table);
+		}
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017052701, 'local', 'paperattendance');
+	}
+	if ($oldversion < 2017053101) {
+		
+		// Define field uploaderid to be added to paperattendance_unprocessed.
+		$table = new xmldb_table('paperattendance_unprocessed');
+		$field = new xmldb_field('uploaderid', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'lastmodified');
+	
+		// Conditionally launch add field uploaderid.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017053101, 'local', 'paperattendance');
+	}
+	if ($oldversion < 2017061602) {
+		
+		// Define table paperattendance_unprocesspdf to be created.
+		$table = new xmldb_table('paperattendance_sessionpages');
+		
+		// Adding fields to table paperattendance_unprocesspdf.
+		$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+		$table->add_field('sessionid', XMLDB_TYPE_INTEGER, 20, null, null, null, null);
+		$table->add_field('pagenum', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
+		
+		// Adding keys to table paperattendance_unprocesspdf.
+		$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+		
+		// Conditionally launch create table for paperattendance_unprocesspdf.
+		if (!$dbman->table_exists($table)) {
+			$dbman->create_table($table);
+		}
+		
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017061602, 'local', 'paperattendance');
+	}
+	if ($oldversion < 2017071301) {
+	
+		// Define field qrpage to be added to paperattendance_sessionpages.
+		$table = new xmldb_table('paperattendance_sessionpages');
+		$field = new xmldb_field('qrpage', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'pagenum');
+	
+		// Conditionally launch add field qrpage.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017071301, 'local', 'paperattendance');
+	}
+	if ($oldversion < 2017071302) {
+	
+		// Define field pdfname to be added to paperattendance_sessionpages.
+		$table = new xmldb_table('paperattendance_sessionpages');
+		$field = new xmldb_field('pdfname', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'qrpage');
+	
+		// Conditionally launch add field pdfname.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017071302, 'local', 'paperattendance');
+	}
+	if ($oldversion < 2017071401) {
+	
+		// Define field processed to be added to paperattendance_sessionpages.
+		$table = new xmldb_table('paperattendance_sessionpages');
+		$field = new xmldb_field('processed', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'pdfname');
+	
+		// Conditionally launch add field processed.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+	
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017071401, 'local', 'paperattendance');
+	}
+	if ($oldversion < 2017071702) {
+		
+		// Define field uploaderid to be added to paperattendance_sessionpages.
+		$table = new xmldb_table('paperattendance_sessionpages');
+		$field = new xmldb_field('uploaderid', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'processed');
+		
+		// Conditionally launch add field uploaderid.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+		
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017071702, 'local', 'paperattendance');
+	}
+	if ($oldversion < 2017072500) {
+		
+		// Define table paperattendance_print to be created.
+		$table = new xmldb_table('paperattendance_print');
+		
+		// Adding fields to table paperattendance_print.
+		$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+		
+		// Adding keys to table paperattendance_print.
+		$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+		
+		// Conditionally launch create table for paperattendance_print.
+		if (!$dbman->table_exists($table)) {
+			$dbman->create_table($table);
+		}
+		// Define table paperattendance_printusers to be created.
+		$table = new xmldb_table('paperattendance_printusers');
+		
+		// Adding fields to table paperattendance_printusers.
+		$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+		$table->add_field('print', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
+		$table->add_field('user', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
+		
+		// Adding keys to table paperattendance_printusers.
+		$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+		
+		// Conditionally launch create table for paperattendance_printusers.
+		if (!$dbman->table_exists($table)) {
+			$dbman->create_table($table);
+		}
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017072500, 'local', 'paperattendance');
+	}
+	if ($oldversion < 2017072504) {
+		
+		// Define field courseid to be added to paperattendance_print.
+		$table = new xmldb_table('paperattendance_print');
+		$field = new xmldb_field('courseid', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'id');
+		
+		// Conditionally launch add field courseid.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+		// Define field module to be added to paperattendance_print.
+		$table = new xmldb_table('paperattendance_print');
+		$field = new xmldb_field('module', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'courseid');
+		
+		// Conditionally launch add field module.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+		// Define field sessiondate to be added to paperattendance_print.
+		$table = new xmldb_table('paperattendance_print');
+		$field = new xmldb_field('sessiondate', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'module');
+		
+		// Conditionally launch add field sessiondate.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+		// Define field requestor to be added to paperattendance_print.
+		$table = new xmldb_table('paperattendance_print');
+		$field = new xmldb_field('requestor', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'sessiondate');
+		
+		// Conditionally launch add field requestor.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+		// Define field timecreated to be added to paperattendance_print.
+		$table = new xmldb_table('paperattendance_print');
+		$field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'requestor');
+		
+		// Conditionally launch add field timecreated.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017072504, 'local', 'paperattendance');
+	}
+	if ($oldversion < 2017072505) {
+		
+		// Rename field print on table paperattendance_printusers to NEWNAMEGOESHERE.
+		$table = new xmldb_table('paperattendance_printusers');
+		$field = new xmldb_field('print', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'id');
+		
+		// Launch rename field printid.
+		$dbman->rename_field($table, $field, 'printid');
+		// Rename field userid on table paperattendance_printusers to NEWNAMEGOESHERE.
+		$table = new xmldb_table('paperattendance_printusers');
+		$field = new xmldb_field('user', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'printid');
+		
+		// Launch rename field userid.
+		$dbman->rename_field($table, $field, 'userid');
+		// Define field listposition to be added to paperattendance_printusers.
+		$table = new xmldb_table('paperattendance_printusers');
+		$field = new xmldb_field('listposition', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'userid');
+		
+		// Conditionally launch add field listposition.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+		// Define field timecreated to be added to paperattendance_printusers.
+		$table = new xmldb_table('paperattendance_printusers');
+		$field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'listposition');
+		
+		// Conditionally launch add field timecreated.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+		
+		// Paperattendance savepoint reached.
+		upgrade_plugin_savepoint(true, 2017072505, 'local', 'paperattendance');
+	}
+	
 	
 	return true;
 }

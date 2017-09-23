@@ -111,6 +111,16 @@ $capabilities = array(
 						'teacher' => CAP_PROHIBIT,
 						'editingteacher' => CAP_PROHIBIT,
 						'manager' => CAP_ALLOW
+				)),
+		'local/paperattendance:missingpages' => array(
+				'captype' => 'write',
+				'riskbitmask' => RISK_MANAGETRUST,
+				'contextlevel' => CONTEXT_COURSECAT,
+				'archetypes' => array(
+						'student' => CAP_PROHIBIT,
+						'teacher' => CAP_PROHIBIT,
+						'editingteacher' => CAP_PROHIBIT,
+						'manager' => CAP_ALLOW
 				))
 		
 );

@@ -100,13 +100,13 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$modules = json_decode($result);
 	
 	if(count($modules) == 0){
-		echo "There's nothing to print for today";
+		echo get_string("nothingtoprint","local_paperattendance");
 		die();
 	}
 	
 	//select teacher from course
-	$teachersquery = "SELECT u.id, 
-							c.id,
+	$teachersquery = "SELECT u.id AS userid, 
+							c.id AS courseid,
 							e.enrol,
 							CONCAT(u.firstname, ' ', u.lastname) AS name
 							FROM {user} u
@@ -126,16 +126,16 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		
 		$enrolment = explode(",", $teacher->enrol);
 		// Verifies that the teacher is enrolled through a valid enrolment and that we haven't added him yet.
-		if (count(array_intersect($enrolment, $enrolincludes)) == 0 || isset($arrayteachers[$teacher->id])) {
+		if (count(array_intersect($enrolment, $enrolincludes)) == 0 || isset($arrayteachers[$teacher->userid])) {
 			continue;
 		}
-		$requestor = $teacher->id;
+		$requestor = $teacher->userid;
 	}
 
 	$requestorinfo = $DB->get_record("user", array("id" => $requestor));
 	
 	//session date from today in unix
-	$sessiondate = time();
+	$sessiondate = strtotime(date('Y-m-d'));
 	
 	//Curricular class
 	$description = 0;
@@ -169,14 +169,16 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	foreach ($modules as $module){
 		$mod = explode(":", $module->horaInicio);
 		$moduleinicio = $mod[0].":".$mod[1];
+		$modfin = explode(":", $module->horaFin);
+		$modulefin = $modfin[0].":".$modfin[1];
 		$modquery = $DB->get_record("paperattendance_module",array("initialtime" => $moduleinicio));
 		$moduleid = $modquery -> id;
 		
-		$key = $moduleid."*".$module->horaInicio."*".$module->horaFin;
-		
+		$key = $moduleid."*".$moduleinicio."*".$modulefin;
 		$stringqr = $courseid."*".$requestor."*".$moduleid."*".$sessiondate."*";
 		
-		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $key, $path, $stringqr, $webcursospath, $sessiondate, $description);
+		$printid = paperattendance_print_save($courseid, $moduleid, $sessiondate, $requestor);
+		paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $key, $path, $stringqr, $webcursospath, $sessiondate, $description, $printid);
 		
 	}
 	

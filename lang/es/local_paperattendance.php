@@ -154,9 +154,18 @@ $string['category']="Categoría";
 $string['searchprinthelp'] = "Escriba al menos 3 caracteres para buscar por curso o profesor en el cuadro de abajo";
 $string['notallowedsearch'] ="No tiene permitido buscar cursos para imprimir";
 $string['categorynamechange'] = "Error: El nombre de la categoría pudo haber cambiado, por favor contactarse con un programador";
+$string['customprint']="Impresión personalizada";
+$string['addtocart']="Añadir al carrito";
+$string['quickprint']="Impresión rápida";
+$string['listscart']="Carrito de listas";
+$string['session']="Sesión";
+$string['remove']="Remover";
+$string['selectmodules']="Seleccione los módulos";
+$string['nothingtoprint']="Nada para imprimir hoy";
+$string['missingpagestitle']="Páginas Perdidas";
 
 //messages
-$string['dear'] = "Estimado Profesor";
+$string['dear'] = "Estimado(a) Profesor(a)";
 $string['processconfirmationbodysubject'] = "Lista procesada correctamente";
 $string['processconfirmationbody'] = "Se ha completado el procesamiento de registros de asistencias por PaperAttendance";
 $string['datebody'] = "De la fecha:";
@@ -170,6 +179,8 @@ $string['newdiscussionsubject'] = "Nueva discusión de asistencia";
 $string['newresponsesubject'] = "Nueva resolución de una discusión";
 $string['newresponsestudent'] = "Tu solicitud de revisión de asistencia acaba de ser resuelta";
 $string['newresponse'] = "Acaba de resolver una solicitud de revisión de asistencia";
+$string['nonprocessconfirmationbodysubject'] = "Lista procesada incorrectamente";
+$string['nonprocessconfirmationbody'] = "No se ha completado el proceso de registros de asistencias por PaperAttendance, error en la página número: ";
 
 // Settings
 $string['settings']="Configuración Básica";
@@ -195,6 +206,16 @@ $string['maxfiles']="Cantidad máxima de archivos";
 $string['maxfilestext']="Cantidad máxima de archivos que pueden ser subidos";
 $string['discusstimelimit']="Limite para discutir una asistencia";
 $string['discusstimelimittext']="Máximo tiempo en días para solicitar la revisión de una asistencia";
+$string['pagenum']="Página del Pdf";
+$string['uploader']="Subido por";
+$string['viewmissingtitle']="Páginas Perdidas";
+$string['editmissing']="Editar página perdida";
+$string['deletemissing']="Borrar página perdida";
+$string['doyouwantdeletemissing']="Estás seguro que quieres borrar esta página perdida?";
+$string['doyouwanteditmissing']="Estás seguro que quieres editar esta página perdida?";
+$string['missingpageshelp']="Por favor rellene los campos tal cual como aparecen en el PDF";
+$string['nothingmissing']="No hay páginas perdidas";
+$string['viewmissing']="Páginas perdidas";
 
 // Task
 $string['taskprocesspdf']="Procesar PDFs";

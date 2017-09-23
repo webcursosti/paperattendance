@@ -31,7 +31,13 @@ require_once (dirname(dirname(dirname(__FILE__)))."/config.php");
 require_once ($CFG->dirroot."/local/paperattendance/forms/history_form.php");
 require_once ($CFG->dirroot."/local/paperattendance/forms/addstudent_form.php");
 require_once ($CFG->dirroot."/local/paperattendance/forms/reviewattendance_form.php");
-require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
+require_once ($CFG->dirroot . '/local/paperattendance/locallib.php');
+
+require_once ($CFG->dirroot . "/repository/lib.php");
+require_once ($CFG->libdir . '/pdflib.php');
+require_once ($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/fpdi.php');
+require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php");
+require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi.php");
 
 global $DB, $PAGE, $OUTPUT, $USER, $CFG;
 
@@ -46,6 +52,9 @@ $url = new moodle_url("/local/paperattendance/history.php", array('courseid' => 
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout("standard");
+$PAGE->requires->jquery();
+$PAGE->requires->jquery_plugin ( 'ui' );
+$PAGE->requires->jquery_plugin ( 'ui-css' );
 
 $contextsystem = context_system::instance();
 
@@ -97,8 +106,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				u.firstname,
 				u.email,
 				p.status,
-				p.omegasync,
-				p.grayscale
+				p.omegasync
 				FROM {paperattendance_presence} AS p
 				INNER JOIN {user} AS u ON (u.id = p.userid)
 				WHERE p.sessionid = ?  
@@ -110,18 +118,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		
 		//Check if we have at least one attendance in the selected session
 		if ($attendancescount > 0){
-			if (is_siteadmin($USER)){
-				$attendancestable->head = array(
-						get_string('hashtag', 'local_paperattendance'),
-						get_string('student', 'local_paperattendance'),
-						get_string('mail', 'local_paperattendance'),
-						get_string('attendance', 'local_paperattendance'),
-						get_string('setting', 'local_paperattendance'),
-						get_string('omegasync', 'local_paperattendance'),
-						get_string('grayscale', 'local_paperattendance')
-				);
-			}
-			else {
+
 				$attendancestable->head = array(
 						get_string('hashtag', 'local_paperattendance'),
 						get_string('student', 'local_paperattendance'),
@@ -130,7 +127,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						get_string('setting', 'local_paperattendance'),
 						get_string('omegasync', 'local_paperattendance')
 				);
-			}
+			
 			//A mere counter for de number of records in the table
 			$counter = $page * $perpage + 1;
 			foreach ($attendances as $attendance){
@@ -154,10 +151,15 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				
 				if($attendance->status){
 					$statusicon = new pix_icon("i/valid", get_string('presentattendance', 'local_paperattendance'));
+					$msgstatus = get_string('absentattendance', 'local_paperattendance');
+					$setstudentpresence = 0; 
 				}
 				else{
 					$statusicon = new pix_icon("i/invalid", get_string('absentattendance', 'local_paperattendance'));
+					$msgstatus = get_string('presentattendance', 'local_paperattendance');
+					$setstudentpresence = 1;
 				}
+				
 				
 				$statusiconaction = $OUTPUT->action_icon(
 						$urlattendance,
@@ -165,42 +167,30 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						);
 							
 				// Define edition icon and url
-				$editurlattendance = new moodle_url("/local/paperattendance/history.php", array(
-						"action" => "edit",
-						"presenceid" => $attendance->idp,
-						"attendanceid" => $attendanceid,
-						"courseid" => $courseid
-				));
-				$editiconattendance = new pix_icon("i/edit", get_string('edithistory', 'local_paperattendance'));
-				$editactionasistencia = $OUTPUT->action_icon(
-						$editurlattendance,
-						$editiconattendance
-						);
+				$editactionasistencia = html_writer::div($msgstatus, "presencehover ", array("style"=>"display:none; cursor:pointer; text-decoration: underline; color: blue;", "presenceid"=>"$attendance->idp", "setstudentpresence"=>"$setstudentpresence"));
+// 				$editurlattendance = new moodle_url("/local/paperattendance/history.php", array(
+// 						"action" => "edit",
+// 						"presenceid" => $attendance->idp,
+// 						"attendanceid" => $attendanceid,
+// 						"courseid" => $courseid
+// 				));
+// 				$editiconattendance = new pix_icon("i/edit", get_string('edithistory', 'local_paperattendance'));
+// 				$editactionasistencia = $OUTPUT->action_icon(
+// 						$editurlattendance,
+// 						$editiconattendance
+// 						);
 				
 				$name = ($attendance->firstname.' '.$attendance->lastname);
 				
 				//Now we check if the student is present or not
-				if (is_siteadmin($USER)){
-					$attendancestable->data[] = array(
-							$counter,
-							$name,
-							$attendance->email,
-							$statusiconaction,
-							$editactionasistencia,
-							$synchronizediconaction,
-							$attendance->grayscale
-					);
-				}
-				else {
-					$attendancestable->data[] = array(
-							$counter,
-							$name,
-							$attendance->email,
-							$statusiconaction,
-							$editactionasistencia,
-							$synchronizediconaction
-					);
-				}					
+				$attendancestable->data[] = array(
+						$counter,
+						$name,
+						$attendance->email,
+						$statusiconaction,
+						$editactionasistencia,
+						$synchronizediconaction
+				);				
 				$counter++;
 			}
 		}
@@ -315,16 +305,62 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				array("align" => "left"
 				));
 		
-		$pdfname = $DB->get_record("paperattendance_session", array("id" => $attendanceid));
+		$path = $CFG -> dataroot. "/temp/local/paperattendance/";
+		$timepdf = time();
+		$attendancepdffile = $path . "/print/paperattendance_".$courseid."_".$timepdf.".pdf";
+		if (!file_exists($path . "/print/")) {
+			mkdir($path . "/print/", 0777, true);
+		}
 		
-		//var_dump($contextsystem->id);
-		//Context id as 1 because the var context->id gets the number 6 , check it later
-		$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $pdfname->pdf);
-	
+		$pdfnamesql = "SELECT *
+					   FROM {paperattendance_sessionpages} sp
+					   WHERE sp.sessionid = ?
+					   ORDER BY qrpage ASC";
+		$pdfnames = $DB->get_records_sql($pdfnamesql, array($attendanceid));
+		
+		$pdf = new FPDI();
+		foreach($pdfnames as $pdfname){
+
+			$pages = $pdfname->pagenum+1;
+			
+			$originalpdf = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdfname;
+			
+			$pageCount = $pdf->setSourceFile($originalpdf);
+			// import a page
+			$templateId = $pdf->importPage($pages);
+			// get the size of the imported page
+			$size = $pdf->getTemplateSize($templateId);
+			//Add page on portrait position
+			$pdf->AddPage('P', array($size['w'], $size['h']));
+			// use the imported page
+			$pdf->useTemplate($templateId);
+
+		}
+		// Preview PDF
+		$pdf->Output($attendancepdffile, "F");
+		
+		$fs = get_file_storage();
+		$file_record = array(
+				'contextid' => $context->id,
+				'component' => 'local_paperattendance',
+				'filearea' => 'scan',
+				'itemid' => 0,
+				'filepath' => '/',
+				'filename' => "paperattendance_".$courseid."_".$timepdf.".pdf"
+		);
+		// If the file already exists we delete it
+		if ($fs->file_exists($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
+			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
+			$previousfile->delete();
+		}
+		// Info for the new file
+		$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
+		$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
 		$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
 				"src" => $url,
 				"style" => "height:75vh; width:60vw"
 		));
+		unlink($attendancepdffile);
 	}
 	
 	// Lists all records in the database
@@ -550,8 +586,6 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		echo html_writer::nonempty_tag("h7", get_string('downloadassistance', 'local_paperattendance'), array("align" => "left"));
 	
 		echo $viewbackbutton;
-	
-		// Preview PDF
 		echo $viewerpdf;
 	}
 	
@@ -733,8 +767,8 @@ else if ($isstudent) {
 					INNER JOIN {paperattendance_presence} p ON (p.sessionid = s.id AND p.id=?)";
 			$teacher = $DB->get_record_sql($sqlteacher, array($presence->id));
 			$insertdiscussion = $DB->insert_record("paperattendance_discussion", $newdiscussion, false);
-			paperattendance_sendMail(null, $courseid, $USER->id, null, $sessdate, $course->fullname, "newdiscussionstudent");
-			paperattendance_sendMail(null, $courseid, $teacher->id, null, $sessdate, $course->fullname, "newdiscussionteacher");
+			paperattendance_sendMail(null, $courseid, $USER->id, null, $sessdate, $course->fullname, "newdiscussionstudent",null);
+			paperattendance_sendMail(null, $courseid, $teacher->id, null, $sessdate, $course->fullname, "newdiscussionteacher", null);
 			redirect($goback);
 		}
 	}
@@ -790,3 +824,55 @@ else{
 }
 
 echo $OUTPUT->footer();
+?>
+<script>
+$( document ).ready(function() {
+	
+	$('.generaltable').find('tr').hover(function() {
+			$( this ).find('.presencehover').toggle();
+		}, function() {
+			$( this ).find('.presencehover').toggle();
+		}
+	);
+
+	$('.presencehover').on( "click", function() {
+		var div = $(this);
+		var studentpresence = div.attr("setstudentpresence"); 
+		var presenceid = div.attr("presenceid"); 
+
+		var moodleurl = "<?php echo $CFG->wwwroot;?>";
+		
+
+
+		if(studentpresence == 0){
+			var settext = "Presente";
+			var setpresence = 1;
+			var icon = moodleurl+"/local/paperattendance/img/invalid.svg";
+		}
+		else{
+			var settext = "Ausente";
+			var setpresence = 0;
+			var icon = moodleurl+"/local/paperattendance/img/valid.svg";
+		}
+
+		$.ajax({
+		    type: 'GET',
+		    url: 'ajax/ajaxquerys.php',
+		    data: {
+			      'action' : 'changestudentpresence',
+			      'setstudentpresence' : studentpresence,
+			      'presenceid' : presenceid
+		    	},
+		    success: function (response) {
+				div.html(settext);
+				div.attr("setstudentpresence", setpresence);
+
+				div.parent().parent().find('.smallicon').first().attr({
+					  src: icon
+				});
+		    }
+		});
+	});
+	
+});
+</script>

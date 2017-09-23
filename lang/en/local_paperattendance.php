@@ -154,6 +154,15 @@ $string['category']="Category";
 $string['searchprinthelp'] = "Type at least 3 characters to search by course or teacher on the input below";
 $string['notallowedsearch'] ="Not allowed to search courses for printing";
 $string['categorynamechange'] = "Error: Category name should change, please contact a programmer";
+$string['customprint']="Custom print";
+$string['addtocart']="Add to cart";
+$string['quickprint']="Quick print";
+$string['listscart']="Lists cart";
+$string['session']="Session";
+$string['remove']="Remove";
+$string['selectmodules']="Select modules";
+$string['nothingtoprint']="There's nothing to print for today";
+$string['missingpagestitle']="Mising Pages";
 
 //messages
 $string['dear'] = "Dear Teacher";
@@ -170,6 +179,8 @@ $string['newdiscussionsubject'] = "New attendance discussion";
 $string['newresponsesubject'] = "New discussion resolution";
 $string['newresponsestudent'] = "Your attendance request have been solved";
 $string['newresponse'] = "You just solved an attendance request";
+$string['nonprocessconfirmationbodysubject'] = "Attendance's list processed incorrectly";
+$string['nonprocessconfirmationbody'] = "Attendance records process incompleted, error on page number: ";
 
 // Settings
 $string['settings']="Basic Configuration";
@@ -195,6 +206,16 @@ $string['maxfiles']="Max number of files";
 $string['maxfilestext']="Max amount of files that can be uploaded";
 $string['discusstimelimit']="Discussion time limit";
 $string['discusstimelimittext']="Maximium time in days to request an attendance discussion";
+$string['pagenum']="Page of the Pdf";
+$string['uploader']="Uploader";
+$string['viewmissingtitle']="Missing Pages";
+$string['editmissing']="Edit missing page";
+$string['deletemissing']="Delete missing page";
+$string['doyouwantdeletemissing']="Are you sure you want to delete this missing page?";
+$string['doyouwanteditmissing']="Are you sure you want to edit this missing page?";
+$string['missingpageshelp']="Please fill in all the fields as they appear in the PDF";
+$string['nothingmissing']="There are no missing pages";
+$string['viewmissing']="Missing pages";
 
 // Task
 $string['taskprocesspdf']="Process PDFs";
