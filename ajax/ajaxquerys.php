@@ -44,6 +44,10 @@ $category = optional_param('category', 1, PARAM_INT);
 $teacherid = optional_param("teacherid", 1, PARAM_INT);
 $setstudentpresence = optional_param("setstudentpresence", 1, PARAM_INT);
 $presenceid = optional_param("presenceid", 1, PARAM_INT);
+$module = optional_param("module", null, PARAM_TEXT);
+$date = optional_param("date", null, PARAM_TEXT);
+//$sessinfo = optional_param_array('sessinfo', array("alo"), PARAM_INT);
+//$studentsattendance = optional_param_array('studentsattendance', array("alo"), PARAM_INT);
 
 switch ($action) {
 	case 'curlgetmoduloshorario' :
@@ -199,37 +203,50 @@ switch ($action) {
 			
 			$return = array();
 			
-			if($course = $DB->get_record("course", array("shortname" => $data))){
+			$date = explode("-",$date);
+			if(checkdate($date[1],$date[0],$date[2])){
 			
-				$context = context_course::instance($course->id);
-				$studentlist = paperattendance_students_list($context->id, $course);
-				
-				if(count($studentlist) >= $begin){
-					$arrayalumnos = array();
-					$count = 1;
-					$end = $begin + 25;
-					foreach ($studentlist as $student){
-						if($count>=$begin && $count<=$end){
-							$studentobject = $DB->get_record("user", array("id" => $student->id));
-							$line = array();
-							$line["studentid"] = $student->id;
-							$line["username"] = $studentobject->lastname.", ".$studentobject->firstname;
-							//$line["username"] = paperattendance_getusername($student->id);
-							$arrayalumnos[] = $line;
+				if($DB->get_record("paperattendance_module", array("initialtime" => $module))){
+					
+					if($course = $DB->get_record("course", array("shortname" => $data))){
+					
+						$context = context_course::instance($course->id);
+						$studentlist = paperattendance_students_list($context->id, $course);
+						
+						if(count($studentlist) >= $begin){
+							$arrayalumnos = array();
+							$count = 1;
+							$end = $begin + 25;
+							foreach ($studentlist as $student){
+								if($count>=$begin && $count<=$end){
+									$studentobject = $DB->get_record("user", array("id" => $student->id));
+									$line = array();
+									$line["studentid"] = $student->id;
+									$line["username"] = $studentobject->lastname.", ".$studentobject->firstname;
+									//$line["username"] = paperattendance_getusername($student->id);
+									$arrayalumnos[] = $line;
+								}
+								$count++;
+							}
+							$return["error"] = 0;
+							$return["alumnos"] = $arrayalumnos;
+							echo json_encode($return);
 						}
-						$count++;
+						else{
+							$return["error"] = "Inicio de lista incorrecto";
+							echo json_encode($return);
+						}
 					}
-					$return["error"] = 0;
-					$return["alumnos"] = $arrayalumnos;
+					else{
+						$return["error"] = "No existe curso";
+						echo json_encode($return);
+					}
+				}else{
+					$return["error"] = "Inicio de modulo incorrecto";
 					echo json_encode($return);
 				}
-				else{
-					$return["error"] = "Inicio de lista incorrecto";
-					echo json_encode($return);
-				}
-			}
-			else{
-				$return["error"] = "No existe curso";
+			}else{
+				$return["error"] = "Fecha incorrecta";
 				echo json_encode($return);
 			}
 		break;
@@ -281,15 +298,21 @@ switch ($action) {
 			echo json_encode(1);
 			break;
 		case 'savestudentsattendance':
-			$sessinfo = $_REQUEST['sessinfo'];
+			$sessinfo = $_REQUEST['sessinfo']; 
+			$sessinfo = json_decode ($sessinfo);
 			$studentsattendance = $_REQUEST['studentsattendance'];
+			$studentsattendance = json_decode ($studentsattendance);
+					
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
+			
 
-			$sesspageid = $sessinfo[0]['sesspageid'];
-			$shortname = $sessinfo[0]['shortname'];
-			$date = $sessinfo[0]['date'];
-			$module = $sessinfo[0]['module'];
-			$begin = $sessinfo[0]['begin'];
+			$return["arregloinicialalumnos"] = print_r($studentsattendance, true);
+	
+			$sesspageid = $sessinfo[0] -> sesspageid;
+			$shortname = $sessinfo[0] -> shortname;
+			$date = $sessinfo[0] -> date;
+			$module = $sessinfo[0] -> module;
+			$begin = (int) $sessinfo[0] -> begin;
 			
 			$numberpage =  ($begin + 25)/26;
 			
@@ -307,7 +330,7 @@ switch ($action) {
 			$return["omegatoken2"] = "";
 			if( $sessdoesntexist == "perfect"){
 				//mtrace("no existe");
-				$return["sesion"] = "Sesión no existe, ";
+				//$return["sesion"] = "Sesión no existe, ";
 				
 				//select teacher from course
 				$teachersquery = "SELECT u.id AS userid,
@@ -354,13 +377,13 @@ switch ($action) {
 			}
 			else{
 				//mtrace("session ya eexiste");
-				$return["sesion"] = "Sesión ya existe, ";
+				//$return["sesion"] = "Sesión ya existe, ";
 				$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
 				
 				//Check if the page already was processed
 				if( $DB->record_exists('paperattendance_sessionpages', array('sessionid'=>$sessid,'qrpage'=>$numberpage)) ){
 					//mtrace("session ya existe y esta hoja ya fue subida y procesada / el curso ingresado no es el mismo de la sesion existente");
-					$return["sesiondos"] = "hoja procesada anteriormente.";
+					$return["guardar"] = "hoja procesada anteriormente.";
 					//Falta eliminar esta pag ya que no sirve para nada y no se debiera volver a mostrar en missing pages
 					$stop = false;
 				}
@@ -381,23 +404,27 @@ switch ($action) {
 				}
 			}
 			if($stop){
+				
 				$arrayalumnos = array();
-				$init = ($numberpage-1)*26+1;
-				$end = $numberpage*26;
-				$count = 1; //start at one because init starts at one
+				$init = ($numberpage-1)*26+1; 
+				$end = $numberpage*26;  
+				$count = $init; //start at one because init starts at one
+
 				foreach ($studentsattendance as $student){
+					$return["sesion"] = "entre al foreach";
 					if($count>=$init && $count<=$end){
+						$return["sesion"] = "entre al foreach y deberia estar guardando a alguien S:";
 						$line = array();
-						$line['emailAlumno'] = paperattendance_getusername($student['userid']);
+						$line['emailAlumno'] = paperattendance_getusername($student -> userid);
 						$line['resultado'] = "true";
 						$line['asistencia'] = "false";
 						
-						if($student['presence'] == '1'){
-							paperattendance_save_student_presence($sessid, $student['userid'], '1', NULL);
+						if($student -> presence == '1'){
+							paperattendance_save_student_presence($sessid, $student -> userid, '1', NULL);
 							$line['asistencia'] = "true";
 						}
 						else{
-							paperattendance_save_student_presence($sessid, $student['userid'], '0', NULL);
+							paperattendance_save_student_presence($sessid, $student -> userid, '0', NULL);
 						}
 						
 						$arrayalumnos[] = $line;
@@ -414,7 +441,9 @@ switch ($action) {
 					$return["idsesion"] = print_r($sessid,true);
 					if(paperattendance_omegacreateattendance($courseobject->id, $arrayalumnos, $sessid)){
 						$omegasync = true;
-						$return["omegatoken2"] = "se creó la asistencia en Omega. ";
+						$return["guardar"] = "se creó la asistencia en Omega. ";
+					}else{
+						$return["guardar"] = "No se creó la asistencia en Omega. ";
 					}
 				}
 				

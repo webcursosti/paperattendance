@@ -415,7 +415,9 @@ $( "#confirm" ).on( "click", function() {
 		    data: {
 			      'action' : 'getliststudentspage',
 			      'result' : course.val(),
-			      'begin' : begin.val()
+			      'begin' : parseFloat(begin.val()),
+			      'module' : module.val(),
+			      'date' : date.val()
 		    	},
 		    success: function (response) {
 		        var error = response["error"];
@@ -461,6 +463,7 @@ function RefreshSomeEventListener() {
 			}
 			studentsattendance.push({"userid":currentcheckbox.val(), "presence": presence});
 		});	
+		//alert(JSON.stringify(studentsattendance));
 		//console.log(JSON.stringify(studentsattendance));
 		//console.log(JSON.stringify(sessinfo));
 
@@ -473,8 +476,8 @@ function RefreshSomeEventListener() {
 		    url: 'ajax/ajaxquerys.php',
 		    data: {
 			      'action' : 'savestudentsattendance',
-			      'sessinfo' : sessinfo,
-			      'studentsattendance' : studentsattendance
+			      'sessinfo' : JSON.stringify(sessinfo),
+			      'studentsattendance' : JSON.stringify(studentsattendance)
 		    	},
 		    success: function (response) {
 				var error = response["sesion"];
@@ -485,10 +488,12 @@ function RefreshSomeEventListener() {
 				var error6 = response["arregloalumnos"];
 				var error7 = response["idcurso"];
 				var error8 = response["idsesion"];
+				var error9 = response["arregloinicialalumnos"];
 				var moodleurl = "<?php echo $CFG->wwwroot;?>";
 				$('#loader').hide();
 				$("#alerthelp").hide();
-				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:left; margin-top:5%;">'+error+error2+error3+error4+error5+error6+error7+error8+'</div>');
+				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:left; margin-top:5%;">'+error3+'</div>');
+				//console.log(error+error2+error3+error4+error5+error6+error7+error8+error9);
 				$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:left; margin-right:70%;">Volver</button>');
 				
 		    }
