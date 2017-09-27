@@ -48,8 +48,9 @@ $module = optional_param("module", null, PARAM_TEXT);
 $date = optional_param("date", null, PARAM_TEXT);
 //$sessinfo = optional_param_array('sessinfo', array("alo"), PARAM_INT);
 //$studentsattendance = optional_param_array('studentsattendance', array("alo"), PARAM_INT);
-
+//switch is used to execute an specific case depending of the page where ajaxquerys was called
 switch ($action) {
+	//This case response returns the omega modules of a class
 	case 'curlgetmoduloshorario' :
 		require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 		$token = $CFG->paperattendance_omegatoken;
@@ -90,6 +91,7 @@ switch ($action) {
 
 		echo  json_encode($result);
 		break;
+	//This case returns courses that match with the searched word on printsearch, it could be by teacher or course name
 	case 'getcourses' :
 		if($category > 1){
 			$context = context_coursecat::instance($category);
@@ -101,35 +103,42 @@ switch ($action) {
 		if (! has_capability('local/paperattendance:printsearch', $context) && ! has_capability('local/paperattendance:printsearch', $contextsystem)) {
 			print_error(get_string('notallowedprint', 'local_paperattendance'));
 		}
+		//If is site admin he can see courses from all categories
 		if(is_siteadmin()){
 			$year = strtotime("1 January".(date('Y')));
 			$filter = array($year, "%".$data."%", $data."%");
+			list($sqlin, $parametros1) = $DB->get_in_or_equal(array(3,4));
 			$sqlcourses = "SELECT c.id,
 						c.fullname,
 						cat.name,
 						u.id as teacherid,
 						CONCAT( u.firstname, ' ', u.lastname) as teacher
-						FROM {user} AS u
-						INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+						FROM {role} AS r
+						INNER JOIN {role_assignments} ra ON (ra.roleid = r.id AND r.id $sqlin)
 						INNER JOIN {context} ct ON (ct.id = ra.contextid)
 						INNER JOIN {course} c ON (c.id = ct.instanceid)
-						INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
+						INNER JOIN {user} u ON (u.id = ra.userid)
 						INNER JOIN {course_categories} as cat ON (cat.id = c.category)
 						WHERE (c.timecreated > ? AND c.idnumber > 0 ) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?)
 						GROUP BY c.id
 						ORDER BY c.fullname";
-		}else{
+		}else{ 
+			//If user is a secretary, he can see only courses from his categorie
 			$paths = unserialize(base64_decode($paths));
 			$pathscount = count($paths);
 			$like = "";
 			$counter = 1;
 			foreach ($paths as $path){
-				if($counter==$pathscount)
-					$like.= "cat.path like '%/".$path."/%' OR cat.path like '%/".$path."'";
-					else
-						$like.= "cat.path like '%/".$path."/%' OR cat.path like '%/".$path."' OR ";
-						$counter++;
+				$searchquery = "cat.path like '%/".$path."/%' OR cat.path like '%/".$path."'";
+				if($counter==$pathscount){
+					$like.= $searchquery;
+				}
+				else{
+						$like.= $searchquery." OR ";
+				}
+			$counter++;
 			}
+			list($sqlin, $parametros1) = $DB->get_in_or_equal(array(3,4));
 			$filter = array("%".$data."%", $data."%");
 			$sqlcourses = "SELECT c.id,
 						c.fullname,
@@ -140,20 +149,22 @@ switch ($action) {
 						INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
 						INNER JOIN {context} ct ON (ct.id = ra.contextid)
 						INNER JOIN {course} c ON (c.id = ct.instanceid)
-						INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
+						INNER JOIN {role} r ON (r.id = ra.roleid AND r.id $sqlin)
 						INNER JOIN {course_categories} as cat ON (cat.id = c.category)
 						WHERE ($like AND c.idnumber > 0 ) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?)
 						GROUP BY c.id
 						ORDER BY c.fullname";
 		}
-		$courses = $DB->get_records_sql($sqlcourses, $filter);
+		$parametros = array_merge($parametros1, $filter);
+		$courses = $DB->get_records_sql($sqlcourses, $parametros);
 	
 		echo json_encode($courses);
 		break;
+	//This case returns the course data to add it to the cart list
 	case 'cartlist':
 		require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 		$return = array();
-		$course = $DB->get_record("course", array("id" => $courseid));
+		$course = $DB->get_record("course", array("id" => $courseid)); //Get the course by id
 		if($teacherid!=1){
 			$return['courseid'] = $courseid;
 			$return['course'] = $course->fullname;
@@ -164,7 +175,7 @@ switch ($action) {
 			$return['requestor'] = $requestorinfo->firstname." ".$requestorinfo->lastname;
 			$return['requestorid'] = $teacherid;
 		}
-			
+		//This is to check modules from omega
 		if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 			//CURL get modulos horario
 			$curl = curl_init();
@@ -223,7 +234,7 @@ switch ($action) {
 									$line = array();
 									$line["studentid"] = $student->id;
 									$line["username"] = $studentobject->lastname.", ".$studentobject->firstname;
-									//$line["username"] = paperattendance_getusername($student->id);
+									
 									$arrayalumnos[] = $line;
 								}
 								$count++;
@@ -233,23 +244,24 @@ switch ($action) {
 							echo json_encode($return);
 						}
 						else{
-							$return["error"] = "Inicio de lista incorrecto";
+							$return["error"] = get_string("incorrectlistinit","local_paperattendance");
 							echo json_encode($return);
 						}
 					}
 					else{
-						$return["error"] = "No existe curso";
+						$return["error"] = get_string("coursedoesntexist","local_paperattendance");
 						echo json_encode($return);
 					}
 				}else{
-					$return["error"] = "Inicio de modulo incorrecto";
+					$return["error"] = get_string("incorrectmoduleinit","local_paperattendance");
 					echo json_encode($return);
 				}
 			}else{
-				$return["error"] = "Fecha incorrecta";
+				$return["error"] = get_string("incorrectdate","local_paperattendance");
 				echo json_encode($return);
 			}
 		break;
+		//This case is to change an student attendance with ajax
 		case 'changestudentpresence':
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 			
@@ -321,7 +333,7 @@ switch ($action) {
 			$moduleobject = $DB->get_record("paperattendance_module", array("initialtime"=> $module));
 			
 			$sessdoesntexist = paperattendance_check_session_modules($moduleobject->id, $courseobject->id, strtotime($date));
-			//mtrace("checkeo de la sesion: ".$sessdoesntexist);
+			//mtrace("checking session: ".$sessdoesntexist);
 			$stop = true;
 			$return = array();
 			$return["sesiondos"] = "";
@@ -329,10 +341,10 @@ switch ($action) {
 			$return["omegatoken"] = "";
 			$return["omegatoken2"] = "";
 			if( $sessdoesntexist == "perfect"){
-				//mtrace("no existe");
-				//$return["sesion"] = "Sesión no existe, ";
+				//mtrace("Session doesn't exists");
+				//$return["sesion"] = "La sesión no existe";
 				
-				//select teacher from course
+				//Query to select teacher from a course
 				$teachersquery = "SELECT u.id AS userid,
 							c.id AS courseid,
 							e.enrol,
@@ -359,11 +371,11 @@ switch ($action) {
 					}
 					$requestor = $teacher->userid;
 				}
-				$description = 0; //0 = for normal class
+				$description = 0; //0 -> Indicates normal class
 				$sessid = paperattendance_insert_session($courseobject->id, $requestor, $USER->id, $sesspageobject->pdfname, $description);
-				//mtrace("la session id es : ".$sessid);
+				//mtrace("el id de la sesión es : ".$sessid);
 				paperattendance_insert_session_module($moduleobject->id, $sessid, strtotime($date));
-				//paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1, $uploaderobj->id);
+				
 				$pagesession = new stdClass();
 				$pagesession->id = $sesspageid;
 				$pagesession->sessionid = $sessid;
@@ -376,19 +388,19 @@ switch ($action) {
 			
 			}
 			else{
-				//mtrace("session ya eexiste");
-				//$return["sesion"] = "Sesión ya existe, ";
+				//mtrace("Session already exists");
+				//$return["sesion"] = "la sesión ya existe, ";
 				$sessid = $sessdoesntexist; //if session exist, then $sessdoesntexist contains the session id
 				
 				//Check if the page already was processed
 				if( $DB->record_exists('paperattendance_sessionpages', array('sessionid'=>$sessid,'qrpage'=>$numberpage)) ){
-					//mtrace("session ya existe y esta hoja ya fue subida y procesada / el curso ingresado no es el mismo de la sesion existente");
+					//mtrace("This session already exists and was already uploaded and processed / the entered course isn't the same than the existing session");
 					$return["guardar"] = "hoja procesada anteriormente.";
-					//Falta eliminar esta pag ya que no sirve para nada y no se debiera volver a mostrar en missing pages
+					
 					$stop = false;
 				}
 				else{
-					//paperattendance_save_current_pdf_page_to_session
+					//To process a page that it session was already created but the page wasn't processed yet
 					$pagesession = new stdClass();
 					$pagesession->id = $sesspageid;
 					$pagesession->sessionid = $sessid;
@@ -398,7 +410,7 @@ switch ($action) {
 					$pagesession->processed = 1;
 					$pagesession->uploaderid = $USER->id;
 					$DB->update_record('paperattendance_sessionpages', $pagesession);
-					//mtrace("session ya existe pero esta hoja no habia sido subida ni procesada");
+					//mtrace("Session already exists but this page had not be uploaded nor processed");
 					$return["sesiondos"] = "hoja no procesada antes, ";
 					$stop = true;
 				}
@@ -459,12 +471,6 @@ switch ($action) {
 				
 			}
 			
-			/*if ($stop){
-				$return["error"] = "Asistencia correctamente guardada";
-			}
-			else{
-				$return["error"] = "Página subida y procesada anteriormente";
-			}*/
 			echo json_encode($return);
 			break;
 }
