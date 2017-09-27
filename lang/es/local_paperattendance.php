@@ -163,6 +163,10 @@ $string['remove']="Remover";
 $string['selectmodules']="Seleccione los módulos";
 $string['nothingtoprint']="Nada para imprimir hoy";
 $string['missingpagestitle']="Páginas Perdidas";
+$string['incorrectlistinit']="Inicio de lista incorrecto";
+$string['coursedoesntexist']="No existe el curso";
+$string['incorrectmoduleinit']="Inicio de módulo incorrecto";
+$string['incorrectdate']="Fecha incorrecta";
 
 //messages
 $string['dear'] = "Estimado(a) Profesor(a)";
