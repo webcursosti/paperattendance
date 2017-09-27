@@ -160,4 +160,34 @@ if ($hassiteconfig) {
 					PARAM_INT
 					)
 			);
+	//Location of the formscanner .jar
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_formscannerjarlocation',
+					get_string('formscannerjarlocation', 'local_paperattendance'),
+					get_string('formscannerjarlocationtext', 'local_paperattendance'),
+					'/Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar',
+					PARAM_TEXT
+					)
+			);
+	//Location of the template .xtmpl for formscanner
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_formscannertemplatelocation',
+					get_string('formscannertemplatelocation', 'local_paperattendance'),
+					get_string('formscannertemplatelocationtext', 'local_paperattendance'),
+					'/Datos/formscanner/template.xtmpl',
+					PARAM_TEXT
+					)
+			);
+	//Location of the folder containing the images to be processed by formscanner
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_formscannerfolderlocation',
+					get_string('formscannerfolderlocation', 'local_paperattendance'),
+					get_string('formscannerfolderlocationtext', 'local_paperattendance'),
+					'/data/data/moodledata/temp/local/paperattendance/unread/jpgs/processing/',
+					PARAM_TEXT
+					)
+			);
 }
