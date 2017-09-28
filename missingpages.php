@@ -245,12 +245,20 @@ if ($action == "edit") {
 			
 			unlink($attendancepdffile);
 			
+			/*Inputs of the form to edit a missing page plus the modals help buttons*/
+			
+			//Input for the Shortname of the course like : 2113-V-ECO121-1-1-2017 
 			$inputs = html_writer::div('<label for="course">Shortname del Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#shortnamemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			//Input for the Date of the list like: 01-08-2017
 			$inputs .= html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#datemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			//Input for the time of the module of the session like: 16:30
 			$inputs .= html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modulemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			//Input for the list begin number like: 27
 			$inputs .= html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#beginmodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			//Input fot the submit button of the form
 			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Continuar</button>',"form-group", array("style"=>"float:right; margin-right:5%; margin-top:3%;"));
 			
+			//We now create de four help modals
 			$shortnamemodal = '<div class="modal fade" id="shortnamemodal" role="dialog" style="width: 50vw;">
 							    <div class="modal-dialog modal-sm">
 							      <div class="modal-content">
@@ -315,7 +323,6 @@ if ($action == "edit") {
 			$url = new moodle_url('/local/paperattendance/missingpages.php');
 			redirect($url);
 		}
-
 	}
 	
 	$PAGE->set_title(get_string("missingpages", "local_paperattendance"));
@@ -323,6 +330,7 @@ if ($action == "edit") {
 	echo $OUTPUT->header();
 	echo $OUTPUT->heading(get_string("missingpagestitle", "local_paperattendance"));
 	
+	//Here we agregate some css style for the placeholders form
 	echo html_writer::div('<style>
 							.form-control::-webkit-input-placeholder { color: lightgrey; }  /* WebKit, Blink, Edge */
 							.form-control:-moz-placeholder { color: lightgrey; }  /* Mozilla Firefox 4 to 18 */
@@ -337,6 +345,7 @@ if ($action == "edit") {
 	
 }
 
+//Delete the selected missing page
 if ($action == "delete") {
 	if ($sesspageid == null) {
 		print_error(get_string("missingdoesnotexist", "local_paperattendance"));
@@ -396,7 +405,7 @@ echo $OUTPUT->footer();
 
 <script>
 var sessinfo = [];
-
+//When submit button in the form is clicked
 $( "#confirm" ).on( "click", function() {
 	var course = $('#course');
 	var date = $('#date');
@@ -405,9 +414,11 @@ $( "#confirm" ).on( "click", function() {
 	var sesspageid = <?php echo $sesspageid; ?>;
 	var pdfviewer = '<?php echo $viewerpdfdos; ?>';
 
+	//Validate the four fields in the form
 	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())-1+26)%26 != 0 || date.val() === date.val().split('-')[0] || module.val() === module.val().split(':')[0]) {
 	    alert("Por favor, rellene todos los campos correctamente");
 	}
+	//If the user completes correctly, we now send the data through AJAX to get the student list of the session list
 	else{
 		$.ajax({
 		    type: 'GET',
@@ -425,12 +436,14 @@ $( "#confirm" ).on( "click", function() {
 					alert(error);
 		        }
 		        else{
+			        //Agregate the info of the session to the var sessinfo array
 		        	sessinfo.push({"sesspageid":sesspageid, "shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
 
 					$("#inputs").empty();
 					$("#inputs").removeClass("row");
 					$("#pdfviewer").empty();
 					$("#pdfviewer").append(pdfviewer);
+					//Create the table with all the students and checkboxs
 				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
 				    $("#inputs").append(table);
 			        $.each(response["alumnos"], function(i, field){
@@ -447,11 +460,12 @@ $( "#confirm" ).on( "click", function() {
 	}
 });
 
+//Function to save the students presence in checkbox to the database
 function RefreshSomeEventListener() {
 	$( ".savestudentsattendance" ).on( "click", function() {
 
 		var studentsattendance = [];
-		
+		//Validate if the checkbox is checked or not, if checked presence = 1
 		var checkbox = $('input:checkbox');
 		$.each(checkbox, function(i, field){
 			var currentcheckbox = $(this);
@@ -461,16 +475,19 @@ function RefreshSomeEventListener() {
 			else{
 				var presence = 0;
 			}
+			//We agregate the info to the de studentsattendance aray
 			studentsattendance.push({"userid":currentcheckbox.val(), "presence": presence});
 		});	
-		//alert(JSON.stringify(studentsattendance));
-		//console.log(JSON.stringify(studentsattendance));
-		//console.log(JSON.stringify(sessinfo));
-
+		/*Shows students attendace and sessinfo in JSON format:
+		alert(JSON.stringify(studentsattendance));
+		console.log(JSON.stringify(studentsattendance));
+		console.log(JSON.stringify(sessinfo));
+		*/
 		$("#inputs").empty();
 		$("#pdfviewer").empty();
 		$("#savebutton").empty();
 		$("#inputs").append("<div id='loader'><img src='img/loading.gif'></div>");
+		//AJAX to save the student attendance in database
 		$.ajax({
 		    type: 'POST',
 		    url: 'ajax/ajaxquerys.php',
@@ -480,15 +497,16 @@ function RefreshSomeEventListener() {
 			      'studentsattendance' : JSON.stringify(studentsattendance)
 		    	},
 		    success: function (response) {
-				var error = response["sesion"];
-				var error2 = response["sesiondos"];
+				/**For the moment we only use the third error, the rest are for debugging**/
+				/*var error = response["sesion"];
+				var error2 = response["sesiondos"];*/
 				var error3 = response["guardar"];
-				var error4 = response["omegatoken"];
+				/*var error4 = response["omegatoken"];
 				var error5 = response["omegatoken2"];
 				var error6 = response["arregloalumnos"];
 				var error7 = response["idcurso"];
 				var error8 = response["idsesion"];
-				var error9 = response["arregloinicialalumnos"];
+				var error9 = response["arregloinicialalumnos"];*/
 				var moodleurl = "<?php echo $CFG->wwwroot;?>";
 				$('#loader').hide();
 				$("#alerthelp").hide();
