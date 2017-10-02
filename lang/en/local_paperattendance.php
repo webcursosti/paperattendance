@@ -163,6 +163,10 @@ $string['remove']="Remove";
 $string['selectmodules']="Select modules";
 $string['nothingtoprint']="There's nothing to print for today";
 $string['missingpagestitle']="Mising Pages";
+$string['incorrectlistinit']="Incorrect list init";
+$string['coursedoesntexist']="Course doesn't exist";
+$string['incorrectmoduleinit']="Incorrect module init";
+$string['incorrectdate']="Incorrect date";
 
 //messages
 $string['dear'] = "Dear Teacher";
