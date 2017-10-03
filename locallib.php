@@ -1681,6 +1681,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 			$stop = true;
 			
 			if($fila> 1 && $numero > 26){
+				//$data[27] and $data[28] brings the info of the session
 				$qrcodebottom = $data[27];
 				$qrcodetop = $data[28];
 				if(strpos($qrcodetop, '*') !== false) {
@@ -1710,16 +1711,24 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				}
 				
 				if($stop){
-					mtrace("qr correctly finded");
+					//If stop is not false, it means that we could read one qr
+					mtrace("qr correctly found");
 					$qrinfo = explode("*",$qrcode);
 					//var_dump($qrinfo);
 					if(count($qrinfo) == 7){
+						//Course id
 						$course = $qrinfo[0];
+						//Requestor id
 						$requestorid = $qrinfo[1];
+						//Module id
 						$module = $qrinfo[2];
+						//Date of the session in unix time
 						$time = $qrinfo[3];
+						//Number of page
 						$page = $qrinfo[4];
+						//Description of the session, example : regular
 						$description = $qrinfo[5];
+						//Print id
 						$printid = $qrinfo[6];
 							
 						$context = context_course::instance($course);
@@ -1810,7 +1819,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				  		}
 				  		$return++;	
 					}else{
-						mtrace("Error: can't procees this page, no readable qr code");
+						mtrace("Error: can't process this page, no readable qr code");
 						//$return = false;//send email or something to let know this page had problems
 						$sessionpageid = paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $pdffilename, 0, $uploaderobj->id);
 						
@@ -1822,7 +1831,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				}
 	  		else{
 
-	  			mtrace("Error: can't procees this page, no readable qr code");
+	  			mtrace("Error: can't process this page, no readable qr code");
 	  			//$return = false;//send email or something to let know this page had problems
 	  			$sessionpageid = paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $pdffilename, 0, $uploaderobj->id);
 	  			
@@ -1830,7 +1839,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	  				paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", $realpagenum+1);
 	  			}
 				$return++;
-	  		}
+	  			}
 			}
 			$fila++;
 		}
@@ -1938,7 +1947,9 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		rename($file, $path."/jpgs/processing/".$jpgname);
 		
 		//now run the exec command
-		$command = 'timeout 30 java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /Datos/formscanner/template.xtmpl /data/data/moodledata/temp/local/paperattendance/unread/jpgs/processing/';	
+		//$command = 'timeout 30 java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /Datos/formscanner/template.xtmpl /data/data/moodledata/temp/local/paperattendance/unread/jpgs/processing/';	
+		$command = "timeout 30 java -jar ".$CFG->paperattendance_formscannerjarlocation." ".$CFG->paperattendance_formscannertemplatelocation." ".$CFG->paperattendance_formscannerfolderlocation;
+		
 		$lastline = exec($command, $output, $return_var);
 		
 		//return_var es el que devuelve 124 si es que se alcanza el timeout
@@ -1989,12 +2000,17 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	}
 }
 /**
- * Get the student list
+ * Save in a new table in db the the session printed
  *
- * @param int $contextid
- *            Context of the course
- * @param int $course
+ * @param int $courseid
  *            Id course
+ * @param int $module
+ *            Id module
+ * @param int $sessiondate
+ * 			  Date of the session
+ * @param int $requestor
+ * 			  Id requestor
+ *            
  */
 function paperattendance_print_save($courseid, $module, $sessiondate, $requestor){
 	global $DB, $CFG;
@@ -2009,12 +2025,11 @@ function paperattendance_print_save($courseid, $module, $sessiondate, $requestor
 	return $DB->insert_record('paperattendance_print',$print);
 }
 /**
- * Get the student list
+ * Get the students printed
  *
- * @param int $contextid
- *            Context of the course
- * @param int $course
- *            Id course
+ * @param int $printid
+ *            Id print
+
  */
 function paperattendance_get_printed_students($printid){
 	global $DB;

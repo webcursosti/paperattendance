@@ -220,6 +220,13 @@ $string['doyouwanteditmissing']="Estás seguro que quieres editar esta página p
 $string['missingpageshelp']="Por favor rellene los campos tal cual como aparecen en el PDF";
 $string['nothingmissing']="No hay páginas perdidas";
 $string['viewmissing']="Páginas perdidas";
+$string['formscannerjarlocation']="Formscanner - Ubicación del .jar";
+$string['formscannerjarlocationtext']="Dirección de la ubicación del archivo .jar del formscanner. Ejemplo: /xxx/xxx.jar";
+$string['formscannertemplatelocation']="Formscanner - Ubicación de la plantilla";
+$string['formscannertemplatelocationtext']="Dirección de la ubicación del archivo .xtmpl del formscanner. Ejemplo: /xxx/xxx.xtmpl";
+$string['formscannerfolderlocation']="Formscanner - Ubicación de la carpeta";
+$string['formscannerfolderlocationtext']="Dirección de la ubicación de la carpeta que contiene las imágenes a procesar. Ejemplo: /xxx/xxx/";
+
 
 // Task
 $string['taskprocesspdf']="Procesar PDFs";
