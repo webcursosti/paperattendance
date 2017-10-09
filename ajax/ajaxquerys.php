@@ -271,13 +271,12 @@ switch ($action) {
 				$record->id = $presenceid;
 				$record->lastmodified = time();
 				$record->status = $setstudentpresence;
-				
+				$omegaid = $attendance -> omegaid;
 				$DB->update_record("paperattendance_presence", $record);
 				
 				if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 				
 					$modifieduserid = $attendance -> userid;
-					$omegaid = $attendance -> omegaid;
 					
 					$curl = curl_init();
 					
@@ -307,7 +306,7 @@ switch ($action) {
 				}	
 			}
 			
-			echo json_encode(1);
+			echo json_encode("presenceid:".$presenceid." omegaid:".$omegaid);
 			break;
 		case 'savestudentsattendance':
 			$sessinfo = $_REQUEST['sessinfo']; 
