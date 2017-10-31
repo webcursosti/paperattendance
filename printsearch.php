@@ -406,8 +406,9 @@ $( document ).ready(function() {
 		lists = jQuery.grep(lists, function(e){
 			return e.courseid != cid;
 		});
-		enableprintbutton();
-		countlistselements(lists);
+		if(countlistselements(lists) != 0){
+			enableprintbutton();
+		}
 	});
 	//If print button is clicked, then the pdf with all lists is generated
 	$( document ).on( "click", ".printbutton", function() {
