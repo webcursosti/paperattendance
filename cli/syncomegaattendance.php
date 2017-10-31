@@ -27,6 +27,7 @@
 define('CLI_SCRIPT', true);
 require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
+require_once ($CFG->libdir . '/clilib.php'); 
 
 global $DB;
 
