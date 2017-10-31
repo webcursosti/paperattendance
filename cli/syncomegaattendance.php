@@ -64,7 +64,7 @@ cli_heading('Paper Attendance attendance sync with omega');
 echo "\nStarting at ".date("F j, Y, G:i:s")."\n";
 $initialtime = time();
 
-var_dump($argv);
+var_dump($options);
 if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$attendancesql = "Select * from {paperattendance_presence} where lastmodified > ? AND lastmodified < ?";
 	$attendance = $DB->get_records_sql($attendancesql,array($options['initialdate'],$options['enddate']));
