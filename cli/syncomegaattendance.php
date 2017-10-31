@@ -64,7 +64,6 @@ cli_heading('Paper Attendance attendance sync with omega');
 echo "\nStarting at ".date("F j, Y, G:i:s")."\n";
 $initialtime = time();
 
-var_dump($options);
 if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$attendancesql = "Select * from {paperattendance_presence} where lastmodified > ? AND lastmodified < ?";
 	$attendance = $DB->get_records_sql($attendancesql,array($options['initialdate'],$options['enddate']));
@@ -86,7 +85,7 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
 		$result = json_decode(curl_exec ($curl));
 		curl_close ($curl);
-		echo $result->resultadoStr;
+		echo $result->resultadoStr."\n";
 		$updates++;
 	}
 	echo "updated $updates precenses \n";
