@@ -35,9 +35,13 @@ global $DB;
 list($options, $unrecognized) = cli_get_params(array(
 		'help' => false,
 		'debug' => false,
+		'initialdate' => null,
+		'enddate' => null
 ), array(
 		'h' => 'help',
-		'd' => 'debug'
+		'd' => 'debug',
+		'i' => 'initialdate',
+		'e' => 'enddate'
 ));
 if($unrecognized) {
 	$unrecognized = implode("\n  ", $unrecognized);
@@ -63,7 +67,7 @@ $initialtime = time();
 var_dump($argv);
 if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$attendancesql = "Select * from {paperattendance_presence} where lastmodified > ? AND lastmodified < ?";
-	$attendance = $DB->get_records_sql($attendancesql,array($argv[1],$argv[2]));
+	$attendance = $DB->get_records_sql($attendancesql,array($options['initialdate'],$options['enddate']));
 	
 	$url =  $CFG->paperattendance_omegaupdateattendanceurl;
 	$token =  $CFG->paperattendance_omegatoken;
