@@ -38,7 +38,7 @@ if (isguestuser()) {
 }
 $courseid = required_param("courseid", PARAM_INT);
 $action = optional_param("action", "add", PARAM_TEXT);
-$category = optional_param('categoryid', 1, PARAM_INT);
+$category = optional_param('categoryid', $CFG->paperattendance_categoryid, PARAM_INT);
 
 if($courseid > 1){
 	if($course = $DB->get_record("course", array("id" => $courseid)) ){

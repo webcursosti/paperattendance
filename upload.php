@@ -43,7 +43,7 @@ if (isguestuser()) {
     die();
 }
 $courseid = optional_param('courseid',1, PARAM_INT);
-$categoryid = optional_param('categoryid', 1, PARAM_INT);
+$categoryid = optional_param('categoryid', $CFG->paperattendance_categoryid, PARAM_INT);
 $action = optional_param('action', 'viewform', PARAM_TEXT);
 
 if($courseid > 1){
