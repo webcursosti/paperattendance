@@ -2054,3 +2054,27 @@ function paperattendance_get_printed_students($printid){
 	}
 	return $studentinfo;
 }
+
+function paperattendance_get_printed_students_missingpages($moduleid,$courseid,$date){
+	global $DB;
+
+	$query = "SELECT u.id, u.lastname, u.firstname, u.idnumber FROM {paperattendance_print} AS pp
+				INNER JOIN {paperattendance_printusers} AS ppu ON (pp.id = ppu.printid AND pp.courseid = ? AND pp.module = ? AND pp.sessiondate = ? )
+				INNER JOIN {user} AS u ON (ppu.userid = u.id)";
+
+	$students = $DB->get_records_sql($query,array($moduleid,$courseid,$date));
+
+	$studentinfo = array();
+	// Fill studentnames with student info (name, idnumber, id and picture).
+	foreach($students as $student) {
+		// We create a student info object.
+		$studentobj = new stdClass();
+		$studentobj->name = substr("$student->lastname, $student->firstname", 0, 65);
+		$studentobj->idnumber = $student->idnumber;
+		$studentobj->id = $student->id;
+		//$studentobj->picture = emarking_get_student_picture($student, $userimgdir);
+		// Store student info in hash so every student is stored once.
+		$studentinfo[$student->id] = $studentobj;
+	}
+	return $studentinfo;
+}

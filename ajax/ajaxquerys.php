@@ -217,12 +217,12 @@ switch ($action) {
 			$date = explode("-",$date);
 			if(checkdate($date[1],$date[0],$date[2])){
 			
-				if($DB->get_record("paperattendance_module", array("initialtime" => $module))){
+				if($moduledata = $DB->get_record("paperattendance_module", array("initialtime" => $module))){
 					
 					if($course = $DB->get_record("course", array("shortname" => $data))){
 					
 						$context = context_course::instance($course->id);
-						$studentlist = paperattendance_students_list($context->id, $course);
+						$studentlist = paperattendance_get_printed_students_missingpages($moduledata->id, $course->id, strtotime($date));
 						
 						if(count($studentlist) >= $begin){
 							$arrayalumnos = array();
