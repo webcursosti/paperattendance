@@ -190,4 +190,14 @@ if ($hassiteconfig) {
 					PARAM_TEXT
 					)
 			);
+	//Categoryid
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_categoryid',
+					get_string('categoryid', 'local_paperattendance'),
+					get_string('categoryidtext', 'local_paperattendance'),
+					1,
+					PARAM_INT
+					)
+			);
 }
