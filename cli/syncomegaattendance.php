@@ -91,7 +91,7 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 			echo "Precense $precense->id failed to update";
 		}else{
 			$updates++;
-			echo "precense $precense->id correctly updated with omega id: $presence->omegaid and status: $presence->status";
+			echo "precense $precense->id correctly updated with omega id: $precense->omegaid and status: $precense->status";
 		}
 		echo $result->resultadoStr."\n";
 		
