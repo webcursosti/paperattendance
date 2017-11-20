@@ -75,8 +75,8 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		$curl = curl_init();
 		$fields = array(
 			"token" => $token,
-			"asistenciaId" => $attendance->omegaid,
-			"asistencia" => $attendance->status
+				"asistenciaId" => $precense->omegaid,
+				"asistencia" => $precense->status
 		);
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
