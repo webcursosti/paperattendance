@@ -226,6 +226,8 @@ $string['formscannertemplatelocation']="Formscanner - Template location";
 $string['formscannertemplatelocationtext']="Address of the location of the .xtmpl file of the formscanner. Example: /xxx/xxx.xtmpl";
 $string['formscannerfolderlocation']="Formscanner - Folder location";
 $string['formscannerfolderlocationtext']="Address of the location of the folder containing the images to be processed. Example: /xxx/xxx/";
+$string['categoryid']="Category Id";
+$string['categoryidtext']="Pregrado's category value: 1 for Webcursos-d / 406 for Webcursos Production";
 
 // Task
 $string['taskprocesspdf']="Process PDFs";

@@ -40,7 +40,7 @@ $data = optional_param('result', null, PARAM_TEXT);
 $paths = optional_param('path', null, PARAM_TEXT);
 $courseid = optional_param("courseid", 1, PARAM_INT);
 $begin = optional_param("begin", 1, PARAM_INT);
-$category = optional_param('category', 1, PARAM_INT);
+$category = optional_param('category', $CFG->paperattendance_categoryid, PARAM_INT);
 $teacherid = optional_param("teacherid", 1, PARAM_INT);
 $setstudentpresence = optional_param("setstudentpresence", 1, PARAM_INT);
 $presenceid = optional_param("presenceid", 1, PARAM_INT);
@@ -271,13 +271,12 @@ switch ($action) {
 				$record->id = $presenceid;
 				$record->lastmodified = time();
 				$record->status = $setstudentpresence;
-				
+				$omegaid = $attendance -> omegaid;
 				$DB->update_record("paperattendance_presence", $record);
 				
 				if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 				
 					$modifieduserid = $attendance -> userid;
-					$omegaid = $attendance -> omegaid;
 					
 					$curl = curl_init();
 					
@@ -307,7 +306,7 @@ switch ($action) {
 				}	
 			}
 			
-			echo json_encode(1);
+			echo json_encode("presenceid:".$presenceid." omegaid:".$omegaid);
 			break;
 		case 'savestudentsattendance':
 			$sessinfo = $_REQUEST['sessinfo']; 

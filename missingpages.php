@@ -44,7 +44,7 @@ if (isguestuser()) {
 
 // Action = { view, edit, delete }, all page options.
 $action = optional_param('action', 'view', PARAM_TEXT);
-$categoryid = optional_param('categoryid', 406, PARAM_INT);
+$categoryid = optional_param('categoryid', $CFG->paperattendance_categoryid, PARAM_INT);
 $sesspageid = optional_param('sesspageid', 0, PARAM_INT);
 $pdfname = optional_param('pdfname', '-', PARAM_TEXT);
 $sesskey = optional_param("sesskey", null, PARAM_ALPHANUM);
