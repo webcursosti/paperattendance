@@ -89,6 +89,8 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		$updates++;
 	}
 	echo "updated $updates precenses \n";
+}else{
+	echo "No Omega webapi \n";
 }
 $finaltime = time();
 $executiontime = $finaltime - $initialtime;
