@@ -73,6 +73,8 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$updates = 0;
 	foreach($attendance as $precense){
 		$curl = curl_init();
+		echo $precense->omegaid."\n";
+		echo $precense->status."\n";
 		$fields = array(
 			"token" => $token,
 				"asistenciaId" => $precense->omegaid,
