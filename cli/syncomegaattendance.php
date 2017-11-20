@@ -71,6 +71,7 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$url =  $CFG->paperattendance_omegaupdateattendanceurl;
 	$token =  $CFG->paperattendance_omegatoken;
 	$updates = 0;
+	$errors = 0;
 	foreach($attendance as $precense){
 		$curl = curl_init();
 		echo $precense->omegaid."\n";
@@ -87,8 +88,13 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
 		$result = json_decode(curl_exec ($curl));
 		curl_close ($curl);
+		if($result->resultadoStr == 'ERROR: asistenciaId=0'){
+			$errors++;
+		}else{
+			$updates++;
+		}
 		echo $result->resultadoStr."\n";
-		$updates++;
+		
 	}
 	echo "updated $updates precenses \n";
 }else{
