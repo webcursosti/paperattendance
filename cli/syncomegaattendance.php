@@ -74,8 +74,6 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$errors = 0;
 	foreach($attendance as $precense){
 		$curl = curl_init();
-		echo $precense->omegaid."\n";
-		echo $precense->status."\n";
 		$fields = array(
 			"token" => $token,
 				"asistenciaId" => $precense->omegaid,
@@ -97,6 +95,7 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		
 	}
 	echo "updated $updates precenses \n";
+	echo "$errors precenses failed to update\n";
 }else{
 	echo "No Omega webapi \n";
 }
