@@ -88,8 +88,10 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		curl_close ($curl);
 		if($result->resultadoStr == 'ERROR: asistenciaId=0'){
 			$errors++;
+			echo "Precense $precense->id failed to update";
 		}else{
 			$updates++;
+			echo "precense $precense->id correctly updated";
 		}
 		echo $result->resultadoStr."\n";
 		
