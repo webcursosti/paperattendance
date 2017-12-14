@@ -115,10 +115,10 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				INNER JOIN mdl_context ct ON ct.id = ra.contextid AND ct.contextlevel = 50
 				INNER JOIN mdl_course c ON c.id=? AND c.id = ct.instanceid AND e.courseid = c.id
 				INNER JOIN mdl_role r ON r.id = ra.roleid AND r.shortname = "student"
-				WHERE p.sessionid = ? AND e.enrol = "database" AND e.status = 0 AND u.suspended = 0 AND u.deleted = 0
+				WHERE p.sessionid = ? AND e.enrol IN ? AND e.status = 0 AND u.suspended = 0 AND u.deleted = 0
 				ORDER BY u.lastname ASC'; //**Nose si quitar (AND e.enrol = "database") para que tambien muestre a los enrolados manualmente
 		
-		$attendances = $DB->get_records_sql($getstudentsattendance, array($courseid, $attendanceid), $page * $perpage, $perpage);
+		$attendances = $DB->get_records_sql($getstudentsattendance, array($courseid, $attendanceid, $CFG->paperattendance_enrolmethod), $page * $perpage, $perpage);
 		
 		$attendancestable = new html_table();
 		
