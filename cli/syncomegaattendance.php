@@ -71,12 +71,13 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$url =  $CFG->paperattendance_omegaupdateattendanceurl;
 	$token =  $CFG->paperattendance_omegatoken;
 	$updates = 0;
+	$errors = 0;
 	foreach($attendance as $precense){
 		$curl = curl_init();
 		$fields = array(
 			"token" => $token,
-			"asistenciaId" => $attendance->omegaid,
-			"asistencia" => $attendance->status
+				"asistenciaId" => $precense->omegaid,
+				"asistencia" => $precense->status
 		);
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
@@ -85,10 +86,20 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
 		$result = json_decode(curl_exec ($curl));
 		curl_close ($curl);
+		if($result->resultadoStr == 'ERROR: asistenciaId=0'){
+			$errors++;
+			echo "Precense $precense->id failed to update";
+		}else{
+			$updates++;
+			echo "precense $precense->id correctly updated with omega id: $precense->omegaid and status: $precense->status";
+		}
 		echo $result->resultadoStr."\n";
-		$updates++;
+		
 	}
 	echo "updated $updates precenses \n";
+	echo "$errors precenses failed to update\n";
+}else{
+	echo "No Omega webapi \n";
 }
 $finaltime = time();
 $executiontime = $finaltime - $initialtime;
