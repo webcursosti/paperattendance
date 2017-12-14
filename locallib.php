@@ -1706,7 +1706,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					$oldpdfpagenumber = $oldpdfpagenumber[1];
 					mtrace("el explode es: ".$oldpdfpagenumber);
 					$realpagenum = explode(".", $oldpdfpagenumber);
-					$realpagenum = $oldpdfpagenumber[0];
+					$realpagenum = $realpagenum[0];
 					mtrace("el numero de pagina correspondiente a este pdf es: ".$realpagenum);
 				}
 				
