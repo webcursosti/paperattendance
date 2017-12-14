@@ -100,7 +100,12 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		$attendancescount = $DB->count_records_sql($getstudentsattendancecount, array($attendanceid));
 		
 		$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
-		list ( $sqlin, $param ) = $DB->get_in_or_equal ( $enrolincludes );
+		list ( $sqlin, $param1 ) = $DB->get_in_or_equal ( $enrolincludes );
+		$param2 = array(
+				$courseid,
+				$attendanceid
+		);
+		$param = array_merge($param2,$param1);
 		
 		//Query to get the table data of attendances
 		$getstudentsattendance = "SELECT
@@ -118,10 +123,10 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				INNER JOIN mdl_context ct ON ct.id = ra.contextid AND ct.contextlevel = 50
 				INNER JOIN mdl_course c ON c.id=? AND c.id = ct.instanceid AND e.courseid = c.id
 				INNER JOIN mdl_role r ON r.id = ra.roleid AND r.shortname = 'student'
-				WHERE e.enrol $sqlin AND p.sessionid = ? AND e.status = 0 AND u.suspended = 0 AND u.deleted = 0
+				WHERE p.sessionid = ? AND e.enrol $sqlin AND e.status = 0 AND u.suspended = 0 AND u.deleted = 0
 				ORDER BY u.lastname ASC"; //**Nose si quitar (AND e.enrol = "database") para que tambien muestre a los enrolados manualmente
 		
-		$attendances = $DB->get_records_sql($getstudentsattendance, array($courseid, $param, $attendanceid), $page * $perpage, $perpage);
+		$attendances = $DB->get_records_sql($getstudentsattendance, $param, $page * $perpage, $perpage);
 		
 		$attendancestable = new html_table();
 		
