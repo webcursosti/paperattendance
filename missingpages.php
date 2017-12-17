@@ -194,26 +194,38 @@ if ($action == "edit") {
 	}
 	else {
 		if ($session = $DB->get_record("paperattendance_sessionpages", array("id" => $sesspageid))){
-			
+				
 			$timepdf = time();
 			$path = $CFG -> dataroot. "/temp/local/paperattendance/";
 			$attendancepdffile = $path . "/print/paperattendance_".$sesspageid."_".$timepdf.".pdf";
-			
-			$pdfpath = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$session->pdfname;
-			$viewerstart = $session->pagenum + 1;
-			
+				
+			//$pdfpath = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$session->pdfname;
+			//$viewerstart = $session->pagenum + 1;
+				
 			$pdf = new FPDI();
-			//open the full pdf
-			$pdf->setSourceFile($pdfpath);
-			// import a page
-			$templateId = $pdf->importPage($viewerstart);
-			// get the size of the imported page
-			$size = $pdf->getTemplateSize($templateId);
-			//Add page on portrait position
-			$pdf->AddPage('P', array($size['w'], $size['h']));
-			// use the imported page
-			$pdf->useTemplate($templateId);
-			//write the file
+			$hashnamesql = "SELECT contenthash
+							FROM {files}
+							WHERE filename = ?";
+			$hashname = $DB->get_record_sql($hashnamesql, array($session->pdfname));
+			if($hashname){
+				$newpdfname = $hashname->contenthash;
+				$f1 = substr($newpdfname, 0 , 2);
+				$f2 = substr($newpdfname, 2, 2);
+				$filepath = $f1."/".$f2."/".$newpdfname;
+				$pages = $session->pagenum + 1;
+		
+				$originalpdf = $CFG -> dataroot. "/filedir/".$filepath;
+					
+				$pageCount = $pdf->setSourceFile($originalpdf);
+				// import a page
+				$templateId = $pdf->importPage($pages);
+				// get the size of the imported page
+				$size = $pdf->getTemplateSize($templateId);
+				//Add page on portrait position
+				$pdf->AddPage('P', array($size['w'], $size['h']));
+				// use the imported page
+				$pdf->useTemplate($templateId);
+			}
 			$pdf->Output($attendancepdffile, "F");
 			
 			$fs = get_file_storage();
