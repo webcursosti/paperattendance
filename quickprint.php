@@ -31,7 +31,7 @@ global $DB, $PAGE, $OUTPUT, $USER, $CFG;
 
 require_login();
 if (isguestuser()) {
-	print_error("ACCESS DENIED");
+	print_error(get_string('notallowedprint', 'local_paperattendance'));
 	die();
 }
 
@@ -48,6 +48,7 @@ if($courseid > 1){
 	else{
 		$context = context_system::instance();
 	}
+// The category of the courses start at 1	
 }else if($category > 1){
 	$context = context_coursecat::instance($category);
 }else{
@@ -96,7 +97,7 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$result = curl_exec ($curl);
 	curl_close ($curl);
 	
-	$modules = array();
+	#$modules = array();
 	$modules = json_decode($result);
 	
 	if(count($modules) == 0){
@@ -104,21 +105,23 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		die();
 	}
 	
+	$teachersparam = array(
+		3,
+		$courseid,
+		'database'
+	);
 	//select teacher from course
-	$teachersquery = "SELECT u.id AS userid, 
-							c.id AS courseid,
-							e.enrol,
-							CONCAT(u.firstname, ' ', u.lastname) AS name
-							FROM {user} u
-							INNER JOIN {user_enrolments} ue ON (ue.userid = u.id)
-							INNER JOIN {enrol} e ON (e.id = ue.enrolid)
-							INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
-							INNER JOIN {context} ct ON (ct.id = ra.contextid)
-							INNER JOIN {course} c ON (c.id = ct.instanceid AND e.courseid = c.id)
-							INNER JOIN {role} r ON (r.id = ra.roleid)
-							WHERE r.id = 3 AND c.id = ? AND e.enrol = 'database'";
+	$teachersquery = "SELECT u.id AS userid,c.id AS courseid,e.enrol,
+						CONCAT(u.firstname, ' ', u.lastname) AS name FROM {user} u
+						INNER JOIN {user_enrolments} ue ON (ue.userid = u.id)
+		      			INNER JOIN {enrol} e ON (e.id = ue.enrolid)
+						INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+						INNER JOIN {context} ct ON (ct.id = ra.contextid)
+						INNER JOIN {course} c ON (c.id = ct.instanceid AND e.courseid = c.id)
+						INNER JOIN {role} r ON (r.id = ra.roleid)
+						WHERE r.id = ? AND c.id = ? AND e.enrol = ?";
 	
-	$teachers = $DB->get_records_sql($teachersquery, array($courseid));
+	$teachers = $DB->get_records_sql($teachersquery, $teachersparam);
 
 	$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
 	
@@ -131,7 +134,7 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 		}
 		$requestor = $teacher->userid;
 	}
-
+    //parameter needed to use the function "paperattendance_draw_student_list"
 	$requestorinfo = $DB->get_record("user", array("id" => $requestor));
 	
 	//session date from today in unix
@@ -141,7 +144,7 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$description = 0;
 	
 	$path = $CFG -> dataroot. "/temp/local/paperattendance/";
-	//list($path, $filename) = paperattendance_create_qr_image($courseid."*".$requestor."*", $path);
+	
 	
 	$uailogopath = $CFG->dirroot . '/local/paperattendance/img/uai.jpeg';
 	$webcursospath = $CFG->dirroot . '/local/paperattendance/img/webcursos.jpg';
@@ -149,6 +152,7 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	$attendancepdffile = $path . "/print/paperattendance_".$courseid."_".$timepdf.".pdf";
 	
 	if (!file_exists($path . "/print/")) {
+		// 0777 its the directory permission on the linux server
 		mkdir($path . "/print/", 0777, true);
 	}
 	
@@ -226,4 +230,3 @@ if (paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 	    document.getElementById('pdf-iframe').contentWindow.print();	
 	});	
 	</script>
-
