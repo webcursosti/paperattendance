@@ -36,6 +36,10 @@ if (isguestuser()) {
 	die();
 }
 
+if (! has_capability('local/paperattendance:printsearch', $context) && ! has_capability('local/paperattendance:printsearch', $contextsystem)) {
+	print_error(get_string('notallowedprintaqui', 'local_paperattendance'));
+}
+
 $categoryid = optional_param('categoryid', $CFG->paperattendance_categoryid, PARAM_INT);
 $action = optional_param('action', 'viewform', PARAM_TEXT);
 //Page
@@ -67,9 +71,9 @@ else{
 	$sqlcategory = "SELECT cc.*
 					FROM {course_categories} cc
 					INNER JOIN {role_assignments} ra ON (ra.userid = ?)
-					INNER JOIN {role} r ON (r.id = ra.roleid)
-					INNER JOIN {context} co ON (co.id = ra.contextid)
-					WHERE cc.id = co.instanceid AND r.shortname = ?";
+					INNER JOIN {role} r ON (r.id = ra.roleid AND r.shortname = ?)
+					INNER JOIN {context} co ON (co.id = ra.contextid  AND  co.instanceid = cc.id  )";
+	
 	$categoryparams = array($USER->id, "secrepaper");
 	$categorys = $DB->get_records_sql($sqlcategory, $categoryparams);
 	$categoryscount = count($categorys);
@@ -92,6 +96,7 @@ else{
 	}else{
 		print_error(get_string('notallowedprint', 'local_paperattendance'));
 	}
+	$sqlcoursesparam = array('50', 3);
 	$sqlcourses= "SELECT c.id,
 	c.fullname,
 	cat.name,
@@ -105,20 +110,39 @@ else{
 	INNER JOIN {course} c ON (c.id = ct.instanceid AND e.courseid = c.id)
 	INNER JOIN {course_categories} as cat ON (cat.id = c.category)
 	INNER JOIN {role} r ON (r.id = ra.roleid)
-	WHERE ct.contextlevel = '50' AND r.id = 3
+	WHERE ct.contextlevel = ? AND r.id = ?
 	AND $like AND c.idnumber > 0
 	GROUP BY c.id";
 
-	$ncourses = count($DB->get_records_sql($sqlcourses));
-	$courses = $DB->get_records_sql($sqlcourses, null, $page*$perpage,$perpage);
+	$ncourses = count($DB->get_records_sql($sqlcourses,$sqlcoursesparam));
+	$courses = $DB->get_records_sql($sqlcourses, $sqlcoursesparam, $page*$perpage,$perpage);
 }
+
+//modules
+$modulesquery = "SELECT *
+				FROM {paperattendance_module}
+				ORDER BY initialtime ASC";
+$modules = $DB->get_records_sql($modulesquery);
+$modulesselect = "<select class='selectpicker' multiple><option value='no'>".get_string("selectmodules", "local_paperattendance")."</option>";
+foreach ($modules as $module){
+	$modulesselect .= "<option value='".$module->id."*".$module->initialtime."*".$module->endtime."'>".$module->initialtime."</option>";
+}
+$modulesselect .= "</select>";
 
 $context = context_coursecat::instance($categoryid);
 $contextsystem = context_system::instance();
 
-if (! has_capability('local/paperattendance:printsearch', $context) && ! has_capability('local/paperattendance:printsearch', $contextsystem)) {
-	print_error(get_string('notallowedprintaqui', 'local_paperattendance'));
-}
+// Creating tables and adding columns header.
+$table = new html_table();
+$table->head = array(get_string('hashtag', 'local_paperattendance'),
+		get_string('course', 'local_paperattendance'),
+		get_string('teacher', 'local_paperattendance'),
+		get_string('category', 'local_paperattendance'),
+		get_string('customprint', 'local_paperattendance'),
+		get_string('addtocart', 'local_paperattendance'),
+		get_string('quickprint', 'local_paperattendance')
+);
+$table->id = "fbody";
 
 // This page url.
 $url = new moodle_url('/local/paperattendance/printsearch.php', array(
@@ -142,19 +166,6 @@ $PAGE->requires->jquery();
 $PAGE->requires->jquery_plugin ( 'ui' );
 $PAGE->requires->jquery_plugin ( 'ui-css' );
 $PAGE->requires->js( new moodle_url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js') );
-//string for print
-$print = get_string("downloadprint", "local_paperattendance");
-// Creating tables and adding columns header.
-$table = new html_table();
-$table->head = array(get_string('hashtag', 'local_paperattendance'),
-		get_string('course', 'local_paperattendance'),
-		get_string('teacher', 'local_paperattendance'),
-		get_string('category', 'local_paperattendance'),
-		get_string('customprint', 'local_paperattendance'),
-		get_string('addtocart', 'local_paperattendance'),
-		get_string('quickprint', 'local_paperattendance')
-);
-$table->id = "fbody";
 
 $coursecount = $page*$perpage+1;
 foreach($courses as $course){
@@ -169,7 +180,7 @@ foreach($courses as $course){
 			html_writer::nonempty_tag("a", $course->fullname, array("href"=>$historyurl)),
 			html_writer::nonempty_tag("span", $course->teacher, array("teacherid"=>$course->teacherid, "class"=>"teacher")),
 			$course->name,
-			html_writer::nonempty_tag("a", $print, array("href"=>$printurl)),
+			html_writer::nonempty_tag("a", get_string("downloadprint", "local_paperattendance"), array("href"=>$printurl)),
 			html_writer::nonempty_tag("i", ' ', array("class"=>"icon icon-plus listcart", "clicked"=>0, "courseid"=>$course->id)),
 			html_writer::nonempty_tag("i", ' ', array("class"=>"icon icon-print quickprint", "clicked"=>0, "courseid"=>$course->id))
 	);
@@ -233,16 +244,7 @@ echo html_writer::div($pdfmodal, "modaldiv");
 
 echo $OUTPUT->footer();
 
-//modules
-$modulesquery = "SELECT *
-				FROM {paperattendance_module}
-				ORDER BY initialtime ASC";
-$modules = $DB->get_records_sql($modulesquery);
-$modulesselect = "<select class='selectpicker' multiple><option value='no'>".get_string("selectmodules", "local_paperattendance")."</option>";
-foreach ($modules as $module){
-	$modulesselect .= "<option value='".$module->id."*".$module->initialtime."*".$module->endtime."'>".$module->initialtime."</option>";
-}
-$modulesselect .= "</select>";
+
 ?>
 <script>
 jQuery('#formModal').modal({
@@ -277,7 +279,7 @@ $( document ).ready(function() {
 			$paging.hide();
 		    var data = this.value;
 		    var path = <?php echo json_encode(base64_encode(serialize($paths)));?>;
-		    var print = <?php echo json_encode($print);?>;
+		    var print = <?php echo json_encode(get_string("downloadprint", "local_paperattendance"));?>;
 			var categoryid = <?php echo $categoryid; ?>;
 		    callAjax(data, path, print, categoryid);
 		}
