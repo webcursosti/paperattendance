@@ -196,7 +196,7 @@ if ($action == "edit") {
 		if ($session = $DB->get_record("paperattendance_sessionpages", array("id" => $sesspageid))){
 				
 			$timepdf = time();
-			$path = $CFG -> dataroot. "/temp/local/paperattendance/";
+			$path = $CFG -> dataroot. "/temp/local/paperattendance";
 			$attendancepdffile = $path . "/print/paperattendance_".$sesspageid."_".$timepdf.".pdf";
 				
 			//$pdfpath = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$session->pdfname;
