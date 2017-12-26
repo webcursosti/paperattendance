@@ -226,7 +226,7 @@ if ($action == "edit") {
 				// use the imported page
 				$pdf->useTemplate($templateId);
 			}
-			$pdf->Output($attendancepdffile, "F");
+			//$pdf->Output($attendancepdffile, "F");
 			
 			$fs = get_file_storage();
 			$file_record = array(
