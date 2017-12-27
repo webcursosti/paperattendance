@@ -95,10 +95,6 @@ if (! has_capability('local/paperattendance:missingpages', $context) && ! has_ca
 	print_error(get_string('notallowedmissing', 'local_paperattendance'));
 }
 
-if($countmissing==0){
-	print_error(get_string('nothingmissing', 'local_paperattendance'));
-}
-
 $url = new moodle_url('/local/paperattendance/missingpages.php');
 
 $PAGE->navbar->add(get_string('missingpages', 'local_paperattendance'));
@@ -110,6 +106,15 @@ $PAGE->requires->jquery();
 $PAGE->requires->jquery_plugin ( 'ui' );
 $PAGE->requires->jquery_plugin ( 'ui-css' );
 
+if($countmissing==0){
+	//print_error(get_string('nothingmissing', 'local_paperattendance'));
+	$PAGE->set_title(get_string("viewmissing", "local_paperattendance"));
+	$PAGE->set_heading(get_string("viewmissing", "local_paperattendance"));
+	echo $OUTPUT->header();
+	echo $OUTPUT->heading(get_string("viewmissingtitle", "local_paperattendance"));
+	
+	echo html_writer::nonempty_tag("h4", get_string('nothingmissing', 'local_paperattendance'), array("align" => "left"));
+}
 if ($action == "view") {
     $missingtable = new html_table();
     if ($countmissing > 0) {
@@ -177,14 +182,14 @@ if ($action == "view") {
             
             $counter++;
         }
+        $PAGE->set_title(get_string("viewmissing", "local_paperattendance"));
+        $PAGE->set_heading(get_string("viewmissing", "local_paperattendance"));
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string("viewmissingtitle", "local_paperattendance"));
+        
+        echo html_writer::table($missingtable);  
     }
     
-    $PAGE->set_title(get_string("viewmissing", "local_paperattendance"));
-    $PAGE->set_heading(get_string("viewmissing", "local_paperattendance"));
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string("viewmissingtitle", "local_paperattendance"));
-  
-    echo html_writer::table($missingtable);  
 }
 
 if ($action == "edit") {
