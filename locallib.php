@@ -2076,5 +2076,6 @@ function paperattendance_get_printed_students_missingpages($moduleid,$courseid,$
 		// Store student info in hash so every student is stored once.
 		$studentinfo[$student->id] = $studentobj;
 	}
+	$studentinfo = [$moduleid, $courseid, $date];
 	return $studentinfo;
 }
