@@ -244,7 +244,7 @@ switch ($action) {
 							echo json_encode($return);
 						}
 						else{
-							$return["error"] = var_dump($studentlist);
+							$return["error"] = "potato?";
 							echo json_encode($return);
 						}
 					}
