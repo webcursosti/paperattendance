@@ -244,8 +244,7 @@ switch ($action) {
 							echo json_encode($return);
 						}
 						else{
-							//$return["error"] = get_string("incorrectlistinit","local_paperattendance");
-							$return["error"] = echo 'los alumnos son: '.count($studentlist);
+							$return["error"] = var_dump($studentlist);
 							echo json_encode($return);
 						}
 					}
