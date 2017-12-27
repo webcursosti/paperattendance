@@ -239,12 +239,12 @@ switch ($action) {
 								}
 								$count++;
 							}
-							$return["error"] = 0;
+							$return["error"] = $studentlist;
 							$return["alumnos"] = $arrayalumnos;
 							echo json_encode($return);
 						}
 						else{
-							$return["error"] = $studentlist;
+							$return["error"] = get_string("incorrectlistinit","local_paperattendance");
 							echo json_encode($return);
 						}
 					}
