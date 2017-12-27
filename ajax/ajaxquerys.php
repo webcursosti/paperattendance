@@ -213,7 +213,7 @@ switch ($action) {
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 			
 			$return = array();
-			$originaldate = $date
+			$originaldate = $date;
 			$date = explode("-",$date);
 			if(checkdate($date[1],$date[0],$date[2])){
 			
