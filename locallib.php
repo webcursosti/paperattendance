@@ -2077,5 +2077,5 @@ function paperattendance_get_printed_students_missingpages($moduleid,$courseid,$
 		$studentinfo[$student->id] = $studentobj;
 	}
 	$studentinfo = [$moduleid, $courseid, $date];
-	return $studentinfo;
+	return $students;
 }
