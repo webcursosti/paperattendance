@@ -244,7 +244,7 @@ switch ($action) {
 							echo json_encode($return);
 						}
 						else{
-							$return["error"] = "potato?";
+							$return["error"] = $studentlist;
 							echo json_encode($return);
 						}
 					}
