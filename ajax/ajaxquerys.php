@@ -244,8 +244,8 @@ switch ($action) {
 							echo json_encode($return);
 						}
 						else{
-							$return["error"] = get_string("incorrectlistinit","local_paperattendance");
-							//$return["error"] = count($studentlist);
+							//$return["error"] = get_string("incorrectlistinit","local_paperattendance");
+							$return["error"] = echo count($studentlist);
 							echo json_encode($return);
 						}
 					}
