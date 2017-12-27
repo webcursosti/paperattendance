@@ -213,7 +213,7 @@ switch ($action) {
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 			
 			$return = array();
-			
+			$originaldate = $date;
 			$date = explode("-",$date);
 			if(checkdate($date[1],$date[0],$date[2])){
 			
@@ -222,7 +222,7 @@ switch ($action) {
 					if($course = $DB->get_record("course", array("shortname" => $data))){
 					
 						$context = context_course::instance($course->id);
-						$studentlist = paperattendance_get_printed_students_missingpages($moduledata->id, $course->id, strtotime($date));
+						$studentlist = paperattendance_get_printed_students_missingpages($moduledata->id, $course->id, strtotime($originaldate));
 						
 						if(count($studentlist) >= $begin){
 							$arrayalumnos = array();

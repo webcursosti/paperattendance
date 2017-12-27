@@ -2062,7 +2062,7 @@ function paperattendance_get_printed_students_missingpages($moduleid,$courseid,$
 				INNER JOIN {paperattendance_printusers} AS ppu ON (pp.id = ppu.printid AND pp.courseid = ? AND pp.module = ? AND pp.sessiondate = ? )
 				INNER JOIN {user} AS u ON (ppu.userid = u.id)";
 
-	$students = $DB->get_records_sql($query,array($moduleid,$courseid,$date));
+	$students = $DB->get_records_sql($query,array($courseid,$moduleid,$date));
 
 	$studentinfo = array();
 	// Fill studentnames with student info (name, idnumber, id and picture).
