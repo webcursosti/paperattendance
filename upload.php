@@ -67,8 +67,8 @@ if($courseid > 1){
 		//$category = $DB->get_record_sql($sqlcategory, $categoryparams);
 		$categorys = $DB->get_records_sql($sqlcategory, $categoryparams);
 		
-		if($category){
-			$categoryid = $category->id;
+		if($categorys){
+			$categoryid = $categorys->id;
 		}else{
 			print_error(get_string('notallowedupload', 'local_paperattendance'));
 		}
