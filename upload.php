@@ -64,11 +64,9 @@ if($courseid > 1){
 						INNER JOIN {context} co ON (co.id = ra.contextid)
 						WHERE cc.id = co.instanceid AND r.shortname = ?";
 		$categoryparams = array($USER->id, "secrepaper");
-		//$category = $DB->get_record_sql($sqlcategory, $categoryparams);
-		$categorys = $DB->get_records_sql($sqlcategory, $categoryparams);
-		
-		if($categorys){
-			$categoryid = $categorys->id;
+		$category = $DB->get_record_sql($sqlcategory, $categoryparams);
+		if($category){
+			$categoryid = $category->id;
 		}else{
 			print_error(get_string('notallowedupload', 'local_paperattendance'));
 		}
