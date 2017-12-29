@@ -58,16 +58,20 @@ if($courseid > 1){
 	}
 	else{
 		$sqlcategory = "SELECT cc.*
-						FROM {course_categories} cc
-						INNER JOIN {role_assignments} ra ON (ra.userid = ?)
-						INNER JOIN {role} r ON (r.id = ra.roleid)
-						INNER JOIN {context} co ON (co.id = ra.contextid)
-						WHERE cc.id = co.instanceid AND r.shortname = ?";
+					FROM {course_categories} cc
+					INNER JOIN {role_assignments} ra ON (ra.userid = ?)
+					INNER JOIN {role} r ON (r.id = ra.roleid AND r.shortname = ?)
+					INNER JOIN {context} co ON (co.id = ra.contextid  AND  co.instanceid = cc.id  )";
+		
 		$categoryparams = array($USER->id, "secrepaper");
 		
-		$category = $DB->get_record_sql($sqlcategory, $categoryparams);
-		if($category){
-			$categoryid = $category->id;
+		$categorys = $DB->get_records_sql($sqlcategory, $categoryparams);
+		$categoryscount = count($categorys);
+		if($categorys){
+			foreach($categorys as $category){
+				$categoryids[] = $category->id;
+			}
+			$categoryid = $categoryids[0];
 		}else{
 			print_error(get_string('notallowedupload', 'local_paperattendance'));
 		}
