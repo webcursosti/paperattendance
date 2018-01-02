@@ -580,7 +580,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 			$left = html_writer::nonempty_tag("div", paperattendance_convertdate($resources->smdate), array("align" => "left"));
 			$left .= html_writer::nonempty_tag("div", get_string("description","local_paperattendance").": ".$summdescription, array("align" => "left"));
 			$left .= html_writer::nonempty_tag("div", get_string("module","local_paperattendance").": ".$resources->hour, array("align" => "left"));			
-			$left .= html_writer::nonempty_tag("div"," ", array("align" => "left"));
+			$left .= html_writer::nonempty_tag("div","hola ", array("align" => "left"));
 			//$left .= html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "center"));
 			//displays button to add a student manually
 			echo html_writer::nonempty_tag("div", $left);
