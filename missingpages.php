@@ -63,6 +63,7 @@ if(is_siteadmin()){
 	$missing = $DB->get_records_sql($sqlmissing, array(0), $page*$perpage,$perpage);
 }
 else{
+	/*
 	//if the user is a secretary show their own uploaded attendances
 	$sqlcategory = "SELECT cc.*
 					FROM {course_categories} cc
@@ -83,7 +84,31 @@ else{
 					WHERE processed = ? AND uploaderid = ?
 					ORDER BY id DESC";
 	$params = array(0, $USER->id);
+	*/
+	$sqlcategory = "SELECT cc.*
+					FROM {course_categories} cc
+					INNER JOIN {role_assignments} ra ON (ra.userid = ?)
+					INNER JOIN {role} r ON (r.id = ra.roleid AND r.shortname = ?)
+					INNER JOIN {context} co ON (co.id = ra.contextid  AND  co.instanceid = cc.id  )";
 	
+	$categoryparams = array($USER->id, "secrepaper");
+	
+	$categorys = $DB->get_records_sql($sqlcategory, $categoryparams);
+	$categoryscount = count($categorys);
+	if($categorys){
+		foreach($categorys as $category){
+			$categoryids[] = $category->id;
+		}
+		$categoryid = $categoryids[0];
+	}else{
+		print_error(get_string('notallowedupload', 'local_paperattendance'));
+	}
+	
+	$sqlmissing = "SELECT *
+					FROM {paperattendance_sessionpages}
+					WHERE processed = ?
+					ORDER BY id DESC";
+	$params = array(0);
 	$countmissing = count($DB->get_records_sql($sqlmissing, $params));
 	$missing = $DB->get_records_sql($sqlmissing, $params, $page*$perpage,$perpage);
 }
