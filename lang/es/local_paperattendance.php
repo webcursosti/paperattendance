@@ -8,7 +8,7 @@
 
 $string['pluginname']="Asistencias en Papel";
 $string['notallowedupload']="No tienes permisos para subir asistencias";
-$string['uploadtitle']="Asistencias en Papel";
+$string['uploadtitle']="Subir listas escaneadas";
 $string['uploadsuccessful']="Asistencia subida correctamente";
 $string['header']="Formulario de subida pdf";
 $string['uploadteacher']="Solicitante";
