@@ -58,7 +58,6 @@ $action = optional_param('action', 'viewform', PARAM_TEXT);
 		$categoryparams = array($USER->id, "secrepaper");
 		
 		$categorys = $DB->get_records_sql($sqlcategory, $categoryparams);
-		var_dump($categorys);
 		$categoryscount = count($categorys);
 		if($categorys){
 			foreach($categorys as $category){
@@ -81,11 +80,13 @@ $url = new moodle_url('/local/paperattendance/upload.php', array(
     'courseid' => $courseid,
 	"categoryid" => $categoryid
 ));
+$pagetitle = get_string('uploadtitle', 'local_paperattendance');
 $PAGE->navbar->add(get_string('uploadtitle', 'local_paperattendance'));
 $PAGE->navbar->add(get_string('header', 'local_paperattendance'),$url);
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
+$PAGE->set_title($pagetitle);
 
 // Add the upload form for the course.
 $addform = new paperattendance_upload_form (null, array(
