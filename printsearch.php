@@ -61,7 +61,8 @@ if(is_siteadmin()){
 	$ncourses = count($DB->get_records_sql($sqlcourses, array($year)));
 	$courses = $DB->get_records_sql($sqlcourses, array($year), $page*$perpage,$perpage);
 	$paths = 1;
-*/		
+*/	
+	//Query to get all the courses for the admin
 	$sqlcourses = "SELECT c.id,
 				c.fullname,
 				cat.name,

@@ -105,7 +105,8 @@ switch ($action) {
 		}
 		//If is site admin he can see courses from all categories
 		if(is_siteadmin()){
-			$year = strtotime("1 January".(date('Y')));
+/*			#Query with date filter
+ * 			$year = strtotime("1 January".(date('Y')));
 			$filter = array($year, "%".$data."%", $data."%");
 			list($sqlin, $parametros1) = $DB->get_in_or_equal(array(3,4));
 			$sqlcourses = "SELECT c.id,
@@ -120,6 +121,24 @@ switch ($action) {
 						INNER JOIN {user} u ON (u.id = ra.userid)
 						INNER JOIN {course_categories} as cat ON (cat.id = c.category)
 						WHERE (c.timecreated > ? AND c.idnumber > 0 ) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?)
+						GROUP BY c.id
+						ORDER BY c.fullname";
+*/			
+			//Query without date filter
+			$filter = array("%".$data."%", $data."%");
+			list($sqlin, $parametros1) = $DB->get_in_or_equal(array(3,4));
+			$sqlcourses = "SELECT c.id,
+						c.fullname,
+						cat.name,
+						u.id as teacherid,
+						CONCAT( u.firstname, ' ', u.lastname) as teacher
+						FROM {role} AS r
+						INNER JOIN {role_assignments} ra ON (ra.roleid = r.id AND r.id $sqlin)
+						INNER JOIN {context} ct ON (ct.id = ra.contextid)
+						INNER JOIN {course} c ON (c.id = ct.instanceid)
+						INNER JOIN {user} u ON (u.id = ra.userid)
+						INNER JOIN {course_categories} as cat ON (cat.id = c.category)
+						WHERE ( c.idnumber > 0 ) AND (CONCAT( u.firstname, ' ', u.lastname) like ? OR c.fullname like ?)
 						GROUP BY c.id
 						ORDER BY c.fullname";
 		}else{ 
