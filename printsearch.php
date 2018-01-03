@@ -43,7 +43,7 @@ $page = optional_param('page', 0, PARAM_INT);
 $perpage = 30;
 
 if(is_siteadmin()){
-	$sqlcourses = "SELECT c.id,
+/*	$sqlcourses = "SELECT c.id,
 				c.fullname,
 				cat.name,
 				u.id as teacherid,
@@ -59,6 +59,25 @@ if(is_siteadmin()){
 				ORDER BY c.fullname";
 	$year = strtotime("1 January".(date('Y')));
 	$ncourses = count($DB->get_records_sql($sqlcourses, array($year)));
+	$courses = $DB->get_records_sql($sqlcourses, array($year), $page*$perpage,$perpage);
+	$paths = 1;
+*/		
+	$sqlcourses = "SELECT c.id,
+				c.fullname,
+				cat.name,
+				u.id as teacherid,
+				CONCAT( u.firstname, ' ', u.lastname) as teacher
+				FROM {user} AS u
+				INNER JOIN {role_assignments} ra ON (ra.userid = u.id)
+				INNER JOIN {context} ct ON (ct.id = ra.contextid)
+				INNER JOIN {course} c ON (c.id = ct.instanceid)
+				INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
+				INNER JOIN {course_categories} as cat ON (cat.id = c.category)
+				WHERE c.idnumber > 0
+				GROUP BY c.id
+				ORDER BY c.fullname";
+	$year = strtotime("1 January".(date('Y')));
+	$ncourses = count($DB->get_records_sql($sqlcourses));
 	$courses = $DB->get_records_sql($sqlcourses, array($year), $page*$perpage,$perpage);
 	$paths = 1;
 }
