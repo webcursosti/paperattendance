@@ -54,10 +54,10 @@ if(is_siteadmin()){
 				INNER JOIN {course} c ON (c.id = ct.instanceid)
 				INNER JOIN {role} r ON (r.id = ra.roleid AND r.id IN ( 3, 4))
 				INNER JOIN {course_categories} as cat ON (cat.id = c.category)
-				WHERE c.timecreated > ? AND c.idnumber > 0
+				WHERE c.timecreated > ? AND c.idnumber > 0 
 				GROUP BY c.id
 				ORDER BY c.fullname";
-	$year = strtotime("1 January".(date('Y')));
+	$year = strtotime("1 January".(date('Y'))); Poner aqui la fecha que se desea para elegir los cursos
 	$ncourses = count($DB->get_records_sql($sqlcourses, array($year)));
 	$courses = $DB->get_records_sql($sqlcourses, array($year), $page*$perpage,$perpage);
 	$paths = 1;
@@ -76,9 +76,8 @@ if(is_siteadmin()){
 				WHERE c.idnumber > 0
 				GROUP BY c.id
 				ORDER BY c.fullname";
-	$year = strtotime("1 January".(date('Y')));
 	$ncourses = count($DB->get_records_sql($sqlcourses));
-	$courses = $DB->get_records_sql($sqlcourses, array($year), $page*$perpage,$perpage);
+	$courses = $DB->get_records_sql($sqlcourses, null, $page*$perpage,$perpage);
 	$paths = 1;
 }
 else{
