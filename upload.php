@@ -45,14 +45,6 @@ if (isguestuser()) {
 $courseid = optional_param('courseid',1, PARAM_INT);
 $categoryid = optional_param('categoryid', $CFG->paperattendance_categoryid, PARAM_INT);
 $action = optional_param('action', 'viewform', PARAM_TEXT);
-
-if($courseid > 1){
-	if($course = $DB->get_record("course", array("id" => $courseid))){
-		$context = context_coursecat::instance($course->category);
-	}
-}else if($categoryid > 1){	
-	$context = context_coursecat::instance($categoryid);
-}else{
 	if(is_siteadmin()){
 		$context = context_system::instance();
 	}
@@ -78,7 +70,6 @@ if($courseid > 1){
 		}
 		$context = context_coursecat::instance($categoryid);
 	}
-}
 
 $contextsystem = context_system::instance();
 
@@ -90,13 +81,6 @@ $url = new moodle_url('/local/paperattendance/upload.php', array(
     'courseid' => $courseid,
 	"categoryid" => $categoryid
 ));
-if($courseid && $courseid != 1){
-	$courseurl = new moodle_url('/course/view.php', array(
-			'id' => $courseid,
-			"categoryid" => $categoryid	
-	));
-	$PAGE->navbar->add($course->fullname, $courseurl );
-}
 $PAGE->navbar->add(get_string('uploadtitle', 'local_paperattendance'));
 $PAGE->navbar->add(get_string('header', 'local_paperattendance'),$url);
 $PAGE->set_context($context);
