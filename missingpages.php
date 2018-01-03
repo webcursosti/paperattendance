@@ -122,7 +122,7 @@ if (! has_capability('local/paperattendance:missingpages', $context) && ! has_ca
 
 $url = new moodle_url('/local/paperattendance/missingpages.php');
 
-$PAGE->navbar->add(get_string('missingpages', 'local_paperattendance'));
+$PAGE->navbar->add(get_string('pluginname', 'local_paperattendance'));
 $PAGE->navbar->add(get_string('missingpages', 'local_paperattendance'), $url);
 $PAGE->set_context($contextsystem);
 $PAGE->set_url($url);

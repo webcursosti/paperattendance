@@ -150,7 +150,7 @@ $url = new moodle_url('/local/paperattendance/printsearch.php', array(
 ));
 
 $pagetitle = get_string('printtitle', 'local_paperattendance');
-$PAGE->navbar->add(get_string('printtitle', 'local_paperattendance'));
+$PAGE->navbar->add(get_string('pluginname', 'local_paperattendance'));
 $PAGE->navbar->add(get_string('printtitle', 'local_paperattendance'),$url);
 if(is_siteadmin()){
 	$PAGE->set_context($contextsystem);
