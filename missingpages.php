@@ -101,7 +101,7 @@ else{
 		}
 		$categoryid = $categoryids[0];
 	}else{
-		print_error(get_string('notallowedupload', 'local_paperattendance'));
+		print_error(get_string('notallowedmissing', 'local_paperattendance'));
 	}
 	
 	$sqlmissing = "SELECT *
