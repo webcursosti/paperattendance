@@ -66,6 +66,7 @@ if($courseid > 1){
 		$categoryparams = array($USER->id, "secrepaper");
 		
 		$categorys = $DB->get_records_sql($sqlcategory, $categoryparams);
+		var_dump($categorys);
 		$categoryscount = count($categorys);
 		if($categorys){
 			foreach($categorys as $category){
