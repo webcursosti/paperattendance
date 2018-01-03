@@ -168,6 +168,7 @@ $PAGE->requires->jquery_plugin ( 'ui-css' );
 $PAGE->requires->js( new moodle_url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js') );
 
 var_dump($courses);
+var_dump($ncourses);
 $coursecount = $page*$perpage+1;
 foreach($courses as $course){
 	$printurl = new moodle_url('/local/paperattendance/print.php', array(
