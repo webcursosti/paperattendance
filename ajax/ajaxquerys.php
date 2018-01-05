@@ -413,7 +413,7 @@ switch ($action) {
 				//Check if the page already was processed
 				if( $DB->record_exists('paperattendance_sessionpages', array('sessionid'=>$sessid,'qrpage'=>$numberpage)) ){
 					//mtrace("This session already exists and was already uploaded and processed / the entered course isn't the same than the existing session");
-					$return["guardar"] = "hoja procesada anteriormente.";
+					$return["guardar"] = "Hoja procesada anteriormente.";
 					
 					$stop = false;
 				}
@@ -429,7 +429,7 @@ switch ($action) {
 					$pagesession->uploaderid = $USER->id;
 					$DB->update_record('paperattendance_sessionpages', $pagesession);
 					//mtrace("Session already exists but this page had not be uploaded nor processed");
-					$return["sesiondos"] = "hoja no procesada antes, ";
+					$return["sesiondos"] = "Hoja no procesada antes, ";
 					$stop = true;
 				}
 			}
@@ -461,7 +461,7 @@ switch ($action) {
 					}
 					$count++;
 				}
-				$return["guardar"] = "asistencia guardada por cada alumno, ";
+				$return["guardar"] = "Asistencia guardada por cada alumno, ";
 				$omegasync = false;
 				
 				if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
@@ -471,7 +471,7 @@ switch ($action) {
 					$return["idsesion"] = print_r($sessid,true);
 					if(paperattendance_omegacreateattendance($courseobject->id, $arrayalumnos, $sessid)){
 						$omegasync = true;
-						$return["guardar"] = "se creó la asistencia en Omega. ";
+						$return["guardar"] = "Se creó la asistencia en Omega. ";
 					}else{
 						$return["guardar"] = "No se creó la asistencia en Omega. ";
 					}
