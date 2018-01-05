@@ -50,7 +50,7 @@ $pdfname = optional_param('pdfname', '-', PARAM_TEXT);
 $sesskey = optional_param("sesskey", null, PARAM_ALPHANUM);
 //Page
 $page = optional_param('page', 0, PARAM_INT);
-$perpage = 30;
+$perpage = 20;
 
 if(is_siteadmin()){
 	//if the user is an admin show everything
