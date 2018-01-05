@@ -213,6 +213,9 @@ if ($action == "view") {
         echo $OUTPUT->heading(get_string("viewmissingtitle", "local_paperattendance"));
         
         echo html_writer::table($missingtable);  
+        //displays de pagination bar
+        echo $OUTPUT->paging_bar($countmissing, $page, $perpage,
+        		$CFG->wwwroot . '/local/paperattendance/missingpages.php?action=' . $action . '&page=');
     }
     
 }
