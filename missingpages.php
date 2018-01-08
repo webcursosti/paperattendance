@@ -147,9 +147,19 @@ if ($action == "view") {
     			get_string("hashtag", "local_paperattendance"),
         		get_string("scan", "local_paperattendance"),
     			get_string("pagenum", "local_paperattendance"),
+    			get_string('date', 'local_paperattendance'),
         		get_string("uploader", "local_paperattendance"),
         		get_string("setting", "local_paperattendance"
         				));
+    	
+    	$missingtable->align = array(
+    			'left',
+    			'center',
+    			'center',
+    			'left',
+    			'center',
+    			'center'
+    	);
     	
     	$counter = $page * $perpage + 1;
     	foreach ($missing as $miss) {
@@ -196,12 +206,16 @@ if ($action == "view") {
             
             //get username
             $username = paperattendance_getusername($miss->uploaderid);
+            //Convert the unix date to a local date
+            $timecreated= $miss->timecreated;
+            $dateconverted = paperattendance_convertdate($timecreated);
             
             //add data to table
             $missingtable->data [] = array(
             	$counter,	
             	$scanaction_attendance,
             	$miss->pagenum +1,
+            	$dateconverted,	
             	$username,
                 $deleteactionmissing . $editactionmissing);
             
