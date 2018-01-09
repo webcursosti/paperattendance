@@ -396,7 +396,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						   INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 						   INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
 						   WHERE s.courseid = ?
-						   ORDER BY sm.date DESC";
+						   ORDER BY sm.date, hour DESC";
 		
 		$attendances = $DB->get_records_sql($getattendances, array($courseid));
 		
