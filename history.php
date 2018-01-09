@@ -391,13 +391,12 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						   CONCAT( m.initialtime, ' - ', m.endtime) AS hour,
 				 		   s.pdf,
 						   s.status AS status,
-						   s.description AS description,
-						   sm.moduleid,
+						   s.description AS description
 						   FROM {paperattendance_session} AS s
 						   INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 						   INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
 						   WHERE s.courseid = ?
-						   ORDER BY sm.date, sm.moduleid DESC";
+						   ORDER BY sm.date DESC";
 		
 		$attendances = $DB->get_records_sql($getattendances, array($courseid));
 		
