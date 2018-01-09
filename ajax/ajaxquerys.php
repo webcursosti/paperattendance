@@ -471,9 +471,9 @@ switch ($action) {
 					$return["idsesion"] = print_r($sessid,true);
 					if(paperattendance_omegacreateattendance($courseobject->id, $arrayalumnos, $sessid)){
 						$omegasync = true;
-						$return["guardar"] = "Se creó la asistencia en Omega. ";
+						$return["omegatoken2"] = "Se creó la asistencia en Omega. ";
 					}else{
-						$return["guardar"] = "No se creó la asistencia en Omega. ";
+						$return["omegatoken2"] = "No se creó la asistencia en Omega. ";
 					}
 				}
 				
