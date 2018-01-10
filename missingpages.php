@@ -307,18 +307,18 @@ if ($action == "edit") {
 			/*Inputs of the form to edit a missing page plus the modals help buttons*/
 			
 			//Input for the Shortname of the course like : 2113-V-ECO121-1-1-2017 
-			$inputs = html_writer::div('<label for="course">Shortname del Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#shortnamemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			$inputs = html_writer::div('<label for="course">Shortname del Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017"><button id="sn" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#shortnamemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
 			//Input for the Date of the list like: 01-08-2017
-			$inputs .= html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#datemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			$inputs .= html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017"><button id="d" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#datemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
 			//Input for the time of the module of the session like: 16:30
-			$inputs .= html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modulemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			$inputs .= html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30"><button id="m" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modulemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
 			//Input for the list begin number like: 27
-			$inputs .= html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27"><button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#beginmodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			$inputs .= html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27"><button id="b" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#beginmodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
 			//Input fot the submit button of the form
 			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Continuar</button>',"form-group", array("style"=>"float:right; margin-right:5%; margin-top:3%;"));
 			
 			//We now create de four help modals
-			$shortnamemodal = '<div class="modal fade" id="shortnamemodal" role="dialog" style="width: 50vw;">
+			$shortnamemodal = '<div class="modal fade" id="shortnamemodal" role="dialog" style="width: 50vw; z-index: -10;">
 							    <div class="modal-dialog modal-sm">
 							      <div class="modal-content">
 							        <div class="modal-body">
@@ -331,7 +331,7 @@ if ($action == "edit") {
 							      </div>
 							    </div>
 							  </div>';
-			$datemodal = '<div class="modal fade" id="datemodal" role="dialog" style="width: 50vw;">
+			$datemodal = '<div class="modal fade" id="datemodal" role="dialog" style="width: 50vw; z-index: -10;">
 							    <div class="modal-dialog modal-sm">
 							      <div class="modal-content">
 							        <div class="modal-body">
@@ -344,7 +344,7 @@ if ($action == "edit") {
 							      </div>
 							    </div>
 							  </div>';
-			$modulemodal = '<div class="modal fade" id="modulemodal" role="dialog" style="width: 50vw;">
+			$modulemodal = '<div class="modal fade" id="modulemodal" role="dialog" style="width: 50vw; z-index: -10;">
 							    <div class="modal-dialog modal-sm">
 							      <div class="modal-content">
 							        <div class="modal-body">
@@ -357,7 +357,7 @@ if ($action == "edit") {
 							      </div>
 							    </div>
 							  </div>';
-			$beginmodal = '<div class="modal fade" id="beginmodal" role="dialog" style="width: 50vw;">
+			$beginmodal = '<div class="modal fade" id="beginmodal" role="dialog" style="width: 50vw; z-index: -10;">
 							    <div class="modal-dialog modal-sm">
 							      <div class="modal-content">
 							        <div class="modal-body">
@@ -461,6 +461,22 @@ if($action == "scan"){
 echo $OUTPUT->footer();
 
 ?>
+
+</script>
+	<script type="text/javascript">
+	$( document ).on( "click", "#sn", function() {
+		jQuery('#shortnamemodal').css('z-index', '');
+	});
+	$(document).on("click", "#d", function() {
+		jQuery("#datemodal").css('z-index', '');
+	});
+	$(document).on("click", "#m", function() {
+		jQuery("#modulemodal").css('z-index', '');
+	});
+	$(document).on("click", "#b", function() {
+		jQuery("#beginmodal").css('z-index', '');
+	});
+</script>
 
 <script>
 var sessinfo = [];
