@@ -677,7 +677,7 @@ else if ($isstudent) {
 				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
 				INNER JOIN {paperattendance_presence} AS p ON (s.id = p.sessionid)
 				INNER JOIN {user} AS u ON (u.id = p.userid AND u.id = ?)
-				ORDER BY sm.date DESC";
+				ORDER BY sm.date DESC, m.name DESC";
 		
 		$attendances = $DB->get_records_sql($getstudentattendances, array($courseid, $USER->id));
 	
