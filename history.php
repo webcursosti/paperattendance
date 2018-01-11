@@ -418,9 +418,9 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 			$attendancestable->size = array(
 					'5%',
 					'27%',
-					'14%',
+					'13%',
 					'8%',
-					'12%',
+					'13%',
 					'10%',
 					'8%',
 					'8%',
