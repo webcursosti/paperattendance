@@ -1323,14 +1323,14 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 	$eventdata->component = "local_paperattendance"; // your component name
 	$eventdata->name = "paperattendance_notification"; // this is the message name from messages.php
 	$eventdata->userfrom = $userfrom;
-	/*TODO descomentar cuando se suba a producción para que mande mails al profesor.
-	 * if ($case == "nonprocesspdf"){
+	//TODO descomentar cuando se suba a producción para que mande mails al profesor.
+	if ($case == "nonprocesspdf"){
 		$eventdata->userto = $uploaderid;
 	}
 	else {
 		$eventdata->userto = $teacherid;
-	}*/
-	$eventdata->userto = $uploaderid;
+	}
+	//$eventdata->userto = $uploaderid;
 	$eventdata->fullmessage = $messagetext;
 	$eventdata->fullmessageformat = FORMAT_HTML;
 	$eventdata->fullmessagehtml = $messagehtml;
