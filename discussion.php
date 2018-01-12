@@ -34,6 +34,7 @@ global $DB, $PAGE, $OUTPUT, $USER, $CFG;
 $action = optional_param("action", "view", PARAM_TEXT);
 $discussionid = optional_param("discussionid", null, PARAM_INT);
 $courseid = required_param('courseid', PARAM_INT);
+$sessid = optional_param("sessid", null, PARAM_INT);
 
 $context = context_course::instance($COURSE->id);
 $url = new moodle_url("/local/paperattendance/discussion.php", array('courseid' => $courseid));
@@ -72,6 +73,7 @@ $backbuttonurl = new moodle_url("/course/view.php", array("id" => $courseid));
 if( $isteacher || is_siteadmin($USER)) {
 	if($action == "view"){
 		$discussionquery = "SELECT d.id, 
+							s.id AS sessid,
 							d.comment, 
 							p.userid, 
 							d.result, 
@@ -99,7 +101,7 @@ if( $isteacher || is_siteadmin($USER)) {
 		$counter = 1;
 		foreach($discussions as $discussion){
 			if($discussion->result == 0){
-				$formbuttonurl = new moodle_url("/local/paperattendance/discussion.php", array("action"=>"response","discussionid" => $discussion->id,"courseid" => $courseid));
+				$formbuttonurl = new moodle_url("/local/paperattendance/discussion.php", array("action"=>"response","discussionid" => $discussion->id,"courseid" => $courseid, "sessid" => $discussion->sessid));
 				$discussiontable->data[] = array(
 						$counter,
 						$discussion->name,
