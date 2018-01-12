@@ -143,6 +143,7 @@ if( $isteacher || is_siteadmin($USER)) {
 		$discussion = $DB->get_record_sql($sqldiscussion, array($discussionid));
 		$discdate = paperattendance_convertdate($discussion->date);
 		
+		//Pdf viewer for the session list
 		$path = $CFG -> dataroot. "/temp/local/paperattendance/";
 		$timepdf = time();
 		$attendancepdffile = $path . "/print/paperattendance_".$courseid."_".$timepdf.".pdf";
@@ -267,7 +268,7 @@ if( $isteacher || is_siteadmin($USER)) {
 		$resume .= html_writer::nonempty_tag("div", get_string('module', 'local_paperattendance').": ".$discussion->module, array("align" => "left"));
 		echo html_writer::nonempty_tag("div", $resume, array("style" => "width:30%; margin-bottom:30px"));
 		$responseform->display();
-		
+		//Display de scan of the list
 		echo $viewerpdf;
 	}
 	echo html_writer::nonempty_tag("div", $OUTPUT->single_button($backbuttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left"));
