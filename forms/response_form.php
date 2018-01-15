@@ -39,6 +39,7 @@ class paperattendance_response_form extends moodleform {
 		$mform->addElement("text", "response", get_string("response", "local_paperattendance"));
 		$mform->setType("response", PARAM_TEXT);
 		$mform->addElement("select", "result", get_string("result", "local_paperattendance"), $result);
+		$mform->addRule('result', get_string("required", "local_paperattendance"), 'required', null, 'client', false, false);
 		$mform->addElement("hidden", "action", "response");
 		$mform->setType("action", PARAM_TEXT);
 		$mform->addElement("hidden", "courseid", $courseid);
