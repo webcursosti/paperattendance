@@ -27,13 +27,11 @@ require_once ($CFG->dirroot . "/local/paperattendance/forms/print_form.php");
 require_once ($CFG->libdir . '/pdflib.php');
 require_once ($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/fpdi.php');
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php");
-//require_once ($CFG->dirroot . "/mod/emarking/lib/openbub/ans_pdf_open.php");
-//require_once ($CFG->dirroot . "/mod/emarking/print/locallib.php");
 require_once ("locallib.php");
 global $DB, $PAGE, $OUTPUT, $USER, $CFG;
 require_login();
 if (isguestuser()) {
-	print_error("ACCESS DENIED");
+	print_error(get_string('notallowedprint', 'local_paperattendance'));
 	die();
 }
 $courseid = required_param("courseid", PARAM_INT);
@@ -129,9 +127,28 @@ if($action == "add"){
 			if($value == 1){
 				$schedule = explode("*", $key);
 				$arraymodule = $schedule[0];
+				/*
+				 * $courseid it's a object with the ID of the course
+				 * $arraymodule it's the first component of the $schedule array
+				 * $sessiondate  it's the date of the session
+				 * $requestor it's a object with the ID of the teacher
+				 */
 				$printid = paperattendance_print_save($courseid, $arraymodule, $sessiondate, $requestor);
 				$stringqr = $courseid."*".$requestor."*".$arraymodule."*".$sessiondate."*";
-				
+				/*
+				 * $pdf it's a pdf object creted on line 112
+				 * $uailogopath it's a url of a image of uai logo
+				 * $course it's a object with the attributes of the course
+				 * $studentinfo it's an array with a object for each student in the list
+				 * $requestorinfo return a object with the attributes of the user
+				 * $key save the value of the selected modules separated by *(9:00*10:00*14:00) 
+				 * $path in wich is saved the document
+				 * $stringqr it's a object that contain all the variables of paperattendance_print_save function united by a *
+				 * $webcursospath it's a url of a image of webcursos logo
+				 * $sessiondate it's the date of the session
+				 * $description it's a object with the description of the Attendance
+				 * $printid return the last id of the table "paperattendance_print"
+				 */ 
 				paperattendance_draw_student_list($pdf, $uailogopath, $course, $studentinfo, $requestorinfo, $key, $path, $stringqr, $webcursospath, $sessiondate, $description, $printid);
 			}
 		}
@@ -190,10 +207,10 @@ if($action == "add"){
 	echo html_writer::nonempty_tag("h2", $course->shortname." - ".$course->fullname);
 	$addform->display();
 }
-
+// it's the download action when the attendancepdffile is created correctly
 if($action == "download" && isset($attendancepdffile)){
 
-	//echo $OUTPUT->action_icon($url, new pix_icon('i/grades', "download"), null, array("target" => "_blank"));
+	
 	echo html_writer::div('<button style="margin-left:1%" type="button" class="btn btn-primary print">'.get_string("downloadprint", "local_paperattendance").'</button>');
 	// Back button
 	echo $button;
