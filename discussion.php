@@ -269,6 +269,7 @@ if( $isteacher || is_siteadmin($USER)) {
 		echo html_writer::nonempty_tag("div", $resume, array("style" => "width:30%; margin-bottom:30px"));
 		$responseform->display();
 		//Display de scan of the list
+		echo html_writer::div('<br>');
 		echo "<br>";
 		echo $viewerpdf;
 	}
