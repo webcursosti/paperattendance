@@ -268,6 +268,8 @@ if( $isteacher || is_siteadmin($USER)) {
 		$resume .= html_writer::nonempty_tag("div", get_string('module', 'local_paperattendance').": ".$discussion->module, array("align" => "left"));
 		echo html_writer::nonempty_tag("div", $resume, array("style" => "width:30%; margin-bottom:30px"));
 		$responseform->display();
+		//Display a space
+		echo html_writer::div('<br>');
 		//Display de scan of the list
 		echo $viewerpdf;
 	}
