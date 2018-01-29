@@ -8,7 +8,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname']="Paper Attendance";
 $string['notallowedupload']="Not allowed to upload attendances";
-$string['uploadtitle']="PaperAttendance";
+$string['uploadtitle']="Upload scanned list";
 $string['uploadsuccessful']="Attendance correctly uploaded";
 $string['header']="Upload form";
 $string['uploadteacher']="Upload requested by";
@@ -220,6 +220,14 @@ $string['doyouwanteditmissing']="Are you sure you want to edit this missing page
 $string['missingpageshelp']="Please fill in all the fields as they appear in the PDF";
 $string['nothingmissing']="There are no missing pages";
 $string['viewmissing']="Missing pages";
+$string['formscannerjarlocation']="Formscanner - .jar location";
+$string['formscannerjarlocationtext']="Address of the location of the .jar file of the formscanner. Example: /xxx/xxx.jar";
+$string['formscannertemplatelocation']="Formscanner - Template location";
+$string['formscannertemplatelocationtext']="Address of the location of the .xtmpl file of the formscanner. Example: /xxx/xxx.xtmpl";
+$string['formscannerfolderlocation']="Formscanner - Folder location";
+$string['formscannerfolderlocationtext']="Address of the location of the folder containing the images to be processed. Example: /xxx/xxx/";
+$string['categoryid']="Category Id";
+$string['categoryidtext']="Pregrado's category value: 1 for Webcursos-d / 406 for Webcursos Production";
 
 // Task
 $string['taskprocesspdf']="Process PDFs";

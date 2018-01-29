@@ -99,8 +99,16 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		
 		$attendancescount = $DB->count_records_sql($getstudentsattendancecount, array($attendanceid));
 		
+		$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
+		list ( $sqlin, $param1 ) = $DB->get_in_or_equal ( $enrolincludes );
+		$param2 = array(
+				$courseid,
+				$attendanceid
+		);
+		$param = array_merge($param2,$param1);
+		
 		//Query to get the table data of attendances
-		$getstudentsattendance = 'SELECT
+		$getstudentsattendance = "SELECT
 				p.id AS idp,
 				u.lastname,
 				u.firstname,
@@ -109,10 +117,16 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				p.omegasync
 				FROM {paperattendance_presence} AS p
 				INNER JOIN {user} AS u ON (u.id = p.userid)
-				WHERE p.sessionid = ?  
-				ORDER BY u.lastname ASC';
+				INNER JOIN mdl_user_enrolments ue ON ue.userid = u.id
+				INNER JOIN mdl_enrol e ON e.id = ue.enrolid
+				INNER JOIN mdl_role_assignments ra ON ra.userid = u.id
+				INNER JOIN mdl_context ct ON ct.id = ra.contextid AND ct.contextlevel = 50
+				INNER JOIN mdl_course c ON c.id=? AND c.id = ct.instanceid AND e.courseid = c.id
+				INNER JOIN mdl_role r ON r.id = ra.roleid AND r.shortname = 'student'
+				WHERE p.sessionid = ? AND e.enrol $sqlin AND e.status = 0 AND u.suspended = 0 AND u.deleted = 0
+				ORDER BY u.lastname ASC"; //**Nose si quitar (AND e.enrol = "database") para que tambien muestre a los enrolados manualmente
 		
-		$attendances = $DB->get_records_sql($getstudentsattendance, array($attendanceid), $page * $perpage, $perpage);
+		$attendances = $DB->get_records_sql($getstudentsattendance, $param, $page * $perpage, $perpage);
 		
 		$attendancestable = new html_table();
 		
@@ -373,7 +387,8 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 	// Lists all records in the database
 	if ($action == "view"){
 		$getattendances = "SELECT s.id,
-						   sm.date, 
+						   sm.date,
+						   m.name,	 
 						   CONCAT( m.initialtime, ' - ', m.endtime) AS hour,
 				 		   s.pdf,
 						   s.status AS status,
@@ -382,7 +397,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						   INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 						   INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
 						   WHERE s.courseid = ?
-						   ORDER BY sm.date DESC";
+						   ORDER BY sm.date DESC, m.name DESC";
 		
 		$attendances = $DB->get_records_sql($getattendances, array($courseid));
 		
@@ -393,6 +408,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 					get_string('hashtag', 'local_paperattendance'),
 					get_string('date', 'local_paperattendance'),
 					get_string('time', 'local_paperattendance'),
+					get_string('module', 'local_paperattendance'),
 					get_string('description', 'local_paperattendance'),
 					get_string('percentagestudent', 'local_paperattendance'),
 					get_string('scan', 'local_paperattendance'),
@@ -401,9 +417,10 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 			);
 			$attendancestable->size = array(
 					'5%',
-					'25%',
-					'20%',
-					'16%',
+					'27%',
+					'13%',
+					'8%',
+					'13%',
 					'10%',
 					'8%',
 					'8%',
@@ -414,7 +431,8 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 					'left',
 					'left',
 					'left',
-					'left',
+					'center',
+					'center',
 					'center',
 					'center',
 					'center',
@@ -487,6 +505,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						$counter,
 						$dateconverted,
 						$attendance->hour,
+						$attendance->name,
 						$attdescription,
 						$percentage->percentage."%",
 						$scanaction_attendance,
@@ -566,7 +585,8 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 			$left = html_writer::nonempty_tag("div", paperattendance_convertdate($resources->smdate), array("align" => "left"));
 			$left .= html_writer::nonempty_tag("div", get_string("description","local_paperattendance").": ".$summdescription, array("align" => "left"));
 			$left .= html_writer::nonempty_tag("div", get_string("module","local_paperattendance").": ".$resources->hour, array("align" => "left"));			
-			$left .= html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "center"));
+			$left .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
+			//$left .= html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "center"));
 			//displays button to add a student manually
 			echo html_writer::nonempty_tag("div", $left);
 			
@@ -661,7 +681,7 @@ else if ($isstudent) {
 				INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
 				INNER JOIN {paperattendance_presence} AS p ON (s.id = p.sessionid)
 				INNER JOIN {user} AS u ON (u.id = p.userid AND u.id = ?)
-				ORDER BY sm.date DESC";
+				ORDER BY sm.date DESC, m.name DESC";
 		
 		$attendances = $DB->get_records_sql($getstudentattendances, array($courseid, $USER->id));
 	

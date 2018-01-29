@@ -29,11 +29,19 @@ require_once (dirname(dirname(dirname(__FILE__)))."/config.php");
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 require_once ($CFG->dirroot."/local/paperattendance/forms/response_form.php");
 
+//libraries for FPDI
+require_once ($CFG->dirroot . "/repository/lib.php");
+require_once ($CFG->libdir . '/pdflib.php');
+require_once ($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/fpdi.php');
+require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php");
+require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi.php");
+
 global $DB, $PAGE, $OUTPUT, $USER, $CFG;
 
 $action = optional_param("action", "view", PARAM_TEXT);
 $discussionid = optional_param("discussionid", null, PARAM_INT);
 $courseid = required_param('courseid', PARAM_INT);
+$sessid = optional_param("sessid", null, PARAM_INT);
 
 $context = context_course::instance($COURSE->id);
 $url = new moodle_url("/local/paperattendance/discussion.php", array('courseid' => $courseid));
@@ -72,6 +80,7 @@ $backbuttonurl = new moodle_url("/course/view.php", array("id" => $courseid));
 if( $isteacher || is_siteadmin($USER)) {
 	if($action == "view"){
 		$discussionquery = "SELECT d.id, 
+							s.id AS sessid,
 							d.comment, 
 							p.userid, 
 							d.result, 
@@ -99,7 +108,7 @@ if( $isteacher || is_siteadmin($USER)) {
 		$counter = 1;
 		foreach($discussions as $discussion){
 			if($discussion->result == 0){
-				$formbuttonurl = new moodle_url("/local/paperattendance/discussion.php", array("action"=>"response","discussionid" => $discussion->id,"courseid" => $courseid));
+				$formbuttonurl = new moodle_url("/local/paperattendance/discussion.php", array("action"=>"response","discussionid" => $discussion->id,"courseid" => $courseid, "sessid" => $discussion->sessid));
 				$discussiontable->data[] = array(
 						$counter,
 						$discussion->name,
@@ -133,6 +142,72 @@ if( $isteacher || is_siteadmin($USER)) {
 							WHERE d.id = ?";
 		$discussion = $DB->get_record_sql($sqldiscussion, array($discussionid));
 		$discdate = paperattendance_convertdate($discussion->date);
+		
+		//Pdf viewer for the session list
+		$path = $CFG -> dataroot. "/temp/local/paperattendance/";
+		$timepdf = time();
+		$attendancepdffile = $path . "/print/paperattendance_".$courseid."_".$timepdf.".pdf";
+		if (!file_exists($path . "/print/")) {
+			mkdir($path . "/print/", 0777, true);
+		}
+		
+		$pdfnamesql = "SELECT *
+					   FROM {paperattendance_sessionpages} sp
+					   WHERE sp.sessionid = ?
+					   ORDER BY qrpage ASC";
+		$pdfnames = $DB->get_records_sql($pdfnamesql, array($sessid));
+		$pdf = new FPDI();
+		foreach($pdfnames as $pdfname){
+			$hashnamesql = "SELECT contenthash
+							FROM {files}
+							WHERE filename = ?";
+			$hashname = $DB->get_record_sql($hashnamesql, array($pdfname->pdfname));
+			if($hashname){
+				$newpdfname = $hashname->contenthash;
+				$f1 = substr($newpdfname, 0 , 2);
+				$f2 = substr($newpdfname, 2, 2);
+				$filepath = $f1."/".$f2."/".$newpdfname;
+				$pages = $pdfname->pagenum + 1;
+				//$originalpdf = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdfname;
+				$originalpdf = $CFG -> dataroot. "/filedir/".$filepath;
+				
+				$pageCount = $pdf->setSourceFile($originalpdf);
+				// import a page
+				$templateId = $pdf->importPage($pages);
+				// get the size of the imported page
+				$size = $pdf->getTemplateSize($templateId);
+				//Add page on portrait position
+				$pdf->AddPage('P', array($size['w'], $size['h']));
+				// use the imported page
+				$pdf->useTemplate($templateId);
+			}
+			
+		}
+		// Preview PDF
+		$pdf->Output($attendancepdffile, "F");
+		$fs = get_file_storage();
+		$file_record = array(
+				'contextid' => $context->id,
+				'component' => 'local_paperattendance',
+				'filearea' => 'scan',
+				'itemid' => 0,
+				'filepath' => '/',
+				'filename' => "paperattendance_".$courseid."_".$timepdf.".pdf"
+		);
+		// If the file already exists we delete it
+		if ($fs->file_exists($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
+			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
+			$previousfile->delete();
+		}
+		// Info for the new file
+		$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
+		$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
+		$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
+				"src" => $url,
+				"style" => "height:75vh; width:60vw"
+		));
+		unlink($attendancepdffile);
+		
 		if($responseform->is_cancelled()){
 			$goback = new moodle_url("/local/paperattendance/discussion.php", array(
 					"courseid" => $courseid
@@ -165,6 +240,7 @@ if( $isteacher || is_siteadmin($USER)) {
 					paperattendance_omegaupdateattendance(1, $presence->omegaid);
 				}
 			}
+			
 			$goback = new moodle_url("/local/paperattendance/discussion.php", array(
 					"courseid" => $courseid
 			));
@@ -192,6 +268,10 @@ if( $isteacher || is_siteadmin($USER)) {
 		$resume .= html_writer::nonempty_tag("div", get_string('module', 'local_paperattendance').": ".$discussion->module, array("align" => "left"));
 		echo html_writer::nonempty_tag("div", $resume, array("style" => "width:30%; margin-bottom:30px"));
 		$responseform->display();
+		//Display a space
+		echo html_writer::div('<br>');
+		//Display de scan of the list
+		echo $viewerpdf;
 	}
 	echo html_writer::nonempty_tag("div", $OUTPUT->single_button($backbuttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left"));
 	echo $OUTPUT->footer();
