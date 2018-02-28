@@ -485,10 +485,27 @@ if( $isteacher || is_siteadmin($USER)) {
 			else{
 				$summdescription = get_string('class', 'local_paperattendance');
 			}
-				
+			
+			// add scanbutton for the teacher to open scan on new window
+			$scanurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
+			    "action" => "scan",
+			    "attendanceid" => $attendance->id,
+			    "courseid" => $courseid
+			    
+			));
+			$scanicon_attendance = new pix_icon("e/new_document", get_string('see', 'local_paperattendance'));
+			$scanaction_attendance = $OUTPUT->action_icon(
+			    $scanurl_attendance,
+			    $scanicon_attendance,
+			    null,
+			    array("target" => "_blank")
+			    );
+			
 			$left = html_writer::nonempty_tag("div", paperattendance_convertdate($resources->smdate), array("align" => "left"));
 			$left .= html_writer::nonempty_tag("div", get_string("description","local_paperattendance").": ".$summdescription, array("align" => "left"));
 			$left .= html_writer::nonempty_tag("div", get_string("module","local_paperattendance").": ".$resources->hour, array("align" => "left"));			
+			$left .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
+			$left .= html_writer::nonempty_tag("div", get_string("scan","local_paperattendance").": ".$scanaction_attendance, array("align" => "left"));
 			$left .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
 			//$left .= html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "center"));
 			//displays button to add a student manually
