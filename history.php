@@ -75,7 +75,7 @@ $isteacher = paperattendance_getteacherfromcourse($courseid, $USER->id);
 
 $isstudent = paperattendance_getstudentfromcourse($courseid, $USER->id);
 
-if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:printsecre', $categorycontext)) {
+if( $isteacher || is_siteadmin($USER)) {
 	
 	//breadcrumb for navigation
 	$PAGE->navbar->ignore_active();
@@ -182,17 +182,6 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 							
 				// Define edition icon and url
 				$editactionasistencia = html_writer::div($msgstatus, "presencehover ", array("style"=>"display:none; cursor:pointer; text-decoration: underline; color: blue;", "presenceid"=>"$attendance->idp", "setstudentpresence"=>"$setstudentpresence"));
-// 				$editurlattendance = new moodle_url("/local/paperattendance/history.php", array(
-// 						"action" => "edit",
-// 						"presenceid" => $attendance->idp,
-// 						"attendanceid" => $attendanceid,
-// 						"courseid" => $courseid
-// 				));
-// 				$editiconattendance = new pix_icon("i/edit", get_string('edithistory', 'local_paperattendance'));
-// 				$editactionasistencia = $OUTPUT->action_icon(
-// 						$editurlattendance,
-// 						$editiconattendance
-// 						);
 				
 				$name = ($attendance->firstname.' '.$attendance->lastname);
 				
@@ -216,93 +205,6 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				"attendanceid" => $attendanceid
 		));
 	}	
-	// Edits an existent record for the students attendance view
-	if($action == "edit"){
-		if($presenceid == null){
-			print_error(get_string('nonselectedstudent', 'local_paperattendance'));
-			$cancelled = new moodle_url("/local/paperattendance/history.php", array(
-					"attendanceid" => $attendanceid,
-					"courseid" => $courseid
-					));
-			redirect($cancelled);
-		}
-		else{
-			
-			if($attendance = $DB->get_record("paperattendance_presence", array("id" => $presenceid)) ){
-			
-				$editform = new paperattendance_editattendance_form(null, array(
-						"attendanceid" => $attendanceid,
-						"courseid" => $courseid,
-						"presenceid" => $presenceid
-				));
-	
-				if($editform->is_cancelled()){
-					$cancelled = new moodle_url("/local/paperattendance/history.php", array(
-							"action" => "studentsattendance",
-							"attendanceid" => $attendanceid,
-							"courseid" => $courseid
-					));
-					redirect($cancelled);
-	
-				}
-				else if($data = $editform->get_data()){
-	
-					$record = new stdClass();
-					$record->id = $presenceid;
-					$record->lastmodified = time();
-					$record->status = $data->status;
-						
-					$DB->update_record("paperattendance_presence", $record);
-					
-					$modifieduserid = $attendance -> userid;
-					$omegaid = $attendance -> omegaid;
-					
-					$curl = curl_init();
-					
-					$url =  $CFG->paperattendance_omegaupdateattendanceurl;
-					$token =  $CFG->paperattendance_omegatoken;
-
-					if($data->status == 1){
-						$status = "true";
-					}
-					else{
-						$status = "false";
-					}
-					
-					$fields = array (
-							"token" => $token,
-							"asistenciaId" => $omegaid,
-							"asistencia" => $status
-					);
-					
-					curl_setopt($curl, CURLOPT_URL, $url);
-					curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-					curl_setopt($curl, CURLOPT_POST, TRUE);
-					curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($fields));
-					curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-					$result = curl_exec ($curl);
-					curl_close ($curl);
-					
-					$backurl = new moodle_url("/local/paperattendance/history.php", array(
-							"action" => "studentsattendance",
-							"attendanceid" => $attendanceid,
-							"courseid" => $courseid
-					));
-					redirect($backurl);										
-				}
-			}
-			else{
-				print_error(get_string('nonexiststudent', 'local_paperattendance'));
-				$canceled = new moodle_url("/local/paperattendance/history.php", array(
-						"action" => "studentsattendance",
-						"attendanceid" => $attendanceid,
-						"courseid" => $courseid
-				));
-				redirect($canceled);
-			
-			}
-		}
-	}
 	
 	//Scan view
 	if($action == "scan"){
@@ -461,7 +363,9 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				$scanicon_attendance = new pix_icon("e/new_document", get_string('see', 'local_paperattendance'));
 				$scanaction_attendance = $OUTPUT->action_icon(
 						$scanurl_attendance,
-						$scanicon_attendance
+						$scanicon_attendance,
+				        '',
+				        array("target" => "_blank")
 						);
 	
 				// Define Asistencia alumnos icon and url
