@@ -505,7 +505,7 @@ if( $isteacher || is_siteadmin($USER)) {
 			$left .= html_writer::nonempty_tag("div", get_string("description","local_paperattendance").": ".$summdescription, array("align" => "left"));
 			$left .= html_writer::nonempty_tag("div", get_string("module","local_paperattendance").": ".$resources->hour, array("align" => "left"));			
 			$left .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
-			$left .= html_writer::nonempty_tag("div", "<strong><h3>".get_string("scan","local_paperattendance").": ".$scanaction_attendance."</h3></strong>", array("align" => "left"));
+			$left .= html_writer::nonempty_tag("div", "<center><strong><h5>".get_string("scan","local_paperattendance").": ".$scanaction_attendance."</h5></strong></center>", array("align" => "left"));
 			$left .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
 			//$left .= html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "center"));
 			//displays button to add a student manually
