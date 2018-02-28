@@ -494,7 +494,7 @@ if( $isteacher || is_siteadmin($USER)) {
 			    
 			));
 			$scanicon_attendance = new pix_icon("e/new_document", get_string('see', 'local_paperattendance'));
-			$scanaction_attendance = $OUTPUT->action_icon(
+			$scanaction_attendance = $OUTPUT->action_button(
 			    $scanurl_attendance,
 			    $scanicon_attendance,
 			    null,
