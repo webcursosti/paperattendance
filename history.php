@@ -489,7 +489,7 @@ if( $isteacher || is_siteadmin($USER)) {
 			// add scanbutton for the teacher to open scan on new window
 			$scanurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
 			    "action" => "scan",
-			    "attendanceid" => $attendance->id,
+			    "attendanceid" => $attendanceid,
 			    "courseid" => $courseid
 			    
 			));
