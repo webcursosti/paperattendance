@@ -494,7 +494,7 @@ if( $isteacher || is_siteadmin($USER)) {
 			    
 			));
 			$scanicon_attendance = new pix_icon("e/new_document", get_string('see', 'local_paperattendance'));
-			$scanaction_attendance = $OUTPUT->action_button(
+			$scanaction_attendance = $OUTPUT->action_icon(
 			    $scanurl_attendance,
 			    $scanicon_attendance,
 			    null,
@@ -505,7 +505,7 @@ if( $isteacher || is_siteadmin($USER)) {
 			$left .= html_writer::nonempty_tag("div", get_string("description","local_paperattendance").": ".$summdescription, array("align" => "left"));
 			$left .= html_writer::nonempty_tag("div", get_string("module","local_paperattendance").": ".$resources->hour, array("align" => "left"));			
 			$left .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
-			$left .= html_writer::nonempty_tag("div", "<strong>".get_string("scan","local_paperattendance").": ".$scanaction_attendance."</strong>", array("align" => "left"));
+			$left .= html_writer::nonempty_tag("div", "<strong><h5>".get_string("scan","local_paperattendance").": ".$scanaction_attendance."</h5></strong>", array("align" => "left"));
 			$left .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
 			//$left .= html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "center"));
 			//displays button to add a student manually
