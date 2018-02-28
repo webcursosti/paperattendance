@@ -364,8 +364,8 @@ if( $isteacher || is_siteadmin($USER)) {
 				$scanaction_attendance = $OUTPUT->action_icon(
 						$scanurl_attendance,
 						$scanicon_attendance,
-				        '',
-				        array("target" => "_blank")
+				        $action = null,
+				        $attribute = array("target" => "_blank")
 						);
 	
 				// Define Asistencia alumnos icon and url
