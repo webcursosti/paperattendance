@@ -325,7 +325,7 @@ switch ($action) {
 				}	
 			}
 			
-			echo json_encode("presenceid:".$presenceid." omegaid:".$omegaid."status:".$setstudentpresence);
+			echo json_encode("presenceid:".$presenceid." omegaid:".$omegaid.);
 			break;
 		case 'savestudentsattendance':
 			$sessinfo = $_REQUEST['sessinfo']; 
