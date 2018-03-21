@@ -75,7 +75,7 @@ $isteacher = paperattendance_getteacherfromcourse($courseid, $USER->id);
 
 $isstudent = paperattendance_getstudentfromcourse($courseid, $USER->id);
 
-if( $isteacher || is_siteadmin($USER)) {
+if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:printsecre', $categorycontext)) {
 	
 	//breadcrumb for navigation
 	$PAGE->navbar->ignore_active();
