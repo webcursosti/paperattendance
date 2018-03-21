@@ -302,7 +302,7 @@ switch ($action) {
 					$url =  $CFG->paperattendance_omegaupdateattendanceurl;
 					$token =  $CFG->paperattendance_omegatoken;
 					
-					if($data->status == 1){
+					if($setstudentpresence == 1){
 						$status = "true";
 					}
 					else{
