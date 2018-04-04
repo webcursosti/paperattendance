@@ -1825,6 +1825,10 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						
 						if($CFG->paperattendance_sendmail == 1){
 							paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", $realpagenum+1);
+							$admins = get_admins();
+							foreach ($admins as $admin){
+								paperattendance_sendMail($sessionpageid, null, $admin->id, $admin->id, null, $pdffilename, "nonprocesspdf", $realpagenum+1);
+							}
 						}
 						$return++;
 					}
@@ -1837,6 +1841,10 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	  			
 	  			if($CFG->paperattendance_sendmail == 1){
 	  				paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", $realpagenum+1);
+	  				$admins = get_admins();
+	  				foreach ($admins as $admin){
+	  					paperattendance_sendMail($sessionpageid, null, $admin->id, $admin->id, null, $pdffilename, "nonprocesspdf", $realpagenum+1);
+	  				}
 	  			}
 				$return++;
 	  			}
@@ -1984,6 +1992,10 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 			
 			if($CFG->paperattendance_sendmail == 1){
 				paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $filename, "nonprocesspdf", $realpagenum);
+				$admins = get_admins();
+				foreach ($admins as $admin){
+					paperattendance_sendMail($sessionpageid, null, $admin->id, $admin->id, null, $pdffilename, "nonprocesspdf", $realpagenum+1);
+				}
 			}
 			
 			$countprocessed++;
