@@ -1703,6 +1703,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					$jpgfilenamecsv = $data[0];
 					mtrace("el nombre del jpg recien sacado es: ". $jpgfilenamecsv);
 					$oldpdfpagenumber= explode("-",$jpgfilenamecsv);
+					var_dump($oldpdfpagenumber);
 					$oldpdfpagenumber = $oldpdfpagenumber[1];
 					mtrace("el explode es: ".$oldpdfpagenumber);
 					$realpagenum = explode(".", $oldpdfpagenumber);
