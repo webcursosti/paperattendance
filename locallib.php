@@ -1984,6 +1984,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 			}
 			else{
 				$oldpdfpagenumber= explode("-",$jpgname);
+				var_dump($oldpdfpagenumber);
 				$oldpdfpagenumber = $oldpdfpagenumber[1];
 				$realpagenum = explode(".", $oldpdfpagenumber);
 				$realpagenum = $oldpdfpagenumber[0];
