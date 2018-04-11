@@ -1255,7 +1255,11 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 			$messagehtml .= "</html>";
 			*/
 			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
-			$messagetext .= get_string("nonprocessconfirmationbody", "local_paperattendance") . $errorpage. "\n";
+			//$messagetext .= get_string("nonprocessconfirmationbody", "local_paperattendance") . $errorpage. "\n";
+			$messagetext .= get_string("nonprocessconfirmationbody", "local_paperattendance");
+			foreach ($attendanceid as $pageid){
+				$messagetext.= $pageid->pagenumber."\n";
+			}
 			break;
 		case "newdiscussionteacher":
 			//subject
@@ -1836,7 +1840,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						
 						if($CFG->paperattendance_sendmail == 1){
 							$errorpage = new StdClass();
-							$errorpage->pagenumber = $realpagenum;
+							$errorpage->pagenumber = $realpagenum+1;
 							$errorpage->pageid = $sessionpageid;
 							$pagesWithError[] = $errorpage;
 							/*
@@ -1857,7 +1861,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	  			
 	  			if($CFG->paperattendance_sendmail == 1){
 	  				$errorpage = new StdClass();
-	  				$errorpage->pagenumber = $realpagenum;
+	  				$errorpage->pagenumber = $realpagenum+1;
 	  				$errorpage->pageid = $sessionpageid;
 	  				$pagesWithError[] = $errorpage;
 	  					
@@ -1876,9 +1880,13 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 		fclose($handle);
 	}
 	if (count($pagesWithError) > 0){
-		paperattendance_sendMail($pagesWithError, null, $admin->id, $admin->id, null, $pdffilename, "nonprocesspdf", null);
-	}
+		paperattendance_sendMail($pagesWithError, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", null);
+		$admins = get_admins();
+		foreach ($admins as $admin){
+			paperattendance_sendMail($pagesWithError, null, $admin->id, $admin->id, null, $pdffilename, "nonprocesspdf", null);
 	
+		}
+	}
 	unlink($file);
 	return $return;
 }
