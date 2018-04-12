@@ -2013,6 +2013,15 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 			{
 				mtrace( "Csv file found - command works correct!" );
 				$returnarray = paperattendance_read_csv($filecsv, $path, $filename, $uploaderobj);
+				/************************************/
+				if ($returnarray[1] != null){
+					paperattendance_sendMail($returnarray[1], null, $uploaderobj->id, $uploaderobj->id, null, "NotNull", "nonprocesspdf", null);
+					$admins = get_admins();
+					foreach ($admins as $admin){
+						paperattendance_sendMail($returnarray[1], null, $admin->id, $admin->id, null, "NotNull", "nonprocesspdf", null);
+					}
+				}
+				/*************************************/
 				$processed = $returnarray[0];
 				$countprocessed += $processed;
 			}
