@@ -1685,7 +1685,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	$fila = 1;
 	$return = 0;
 	
-	$pagesWithError = array();
+	$errorpage = null;
 	
 	if (($handle = fopen($file, "r")) !== FALSE) {
 		while(! feof($handle))
@@ -1844,7 +1844,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 							$errorpage = new StdClass();
 							$errorpage->pagenumber = $realpagenum+1;
 							$errorpage->pageid = $sessionpageid;
-							$pagesWithError[] = $errorpage;
+							//$pagesWithError[] = $errorpage;
 							/*
 							paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", $realpagenum+1);
 							$admins = get_admins();
@@ -1865,7 +1865,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	  				$errorpage = new StdClass();
 	  				$errorpage->pagenumber = $realpagenum+1;
 	  				$errorpage->pageid = $sessionpageid;
-	  				$pagesWithError[] = $errorpage;
+	  				//$pagesWithError[] = $errorpage;
 	  					
 	  				/*
 	  				paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", $realpagenum+1);
@@ -1881,6 +1881,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 		}
 		fclose($handle);
 	}
+	/*
 	if (count($pagesWithError) > 0){
 		paperattendance_sendMail($pagesWithError, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", null);
 		$admins = get_admins();
@@ -1888,7 +1889,11 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 			paperattendance_sendMail($pagesWithError, null, $admin->id, $admin->id, null, $pdffilename, "nonprocesspdf", null);
 	
 		}
-	}
+	}*/
+	
+	$returnarray = array();
+	$returnarray[] = $return;
+	$returnarray[] = $errorpage;
 	unlink($file);
 	return $return;
 }
@@ -1946,6 +1951,8 @@ function paperattendance_number_of_pages($path, $pdffilename){
 function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	global $CFG;
 	
+	$returnpaperattendance_runcsvproccessingarray = array();
+
 	// convert pdf to jpg
 	$pdf = new Imagick();
 
@@ -2005,7 +2012,8 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 			foreach(glob("{$path}/jpgs/processing/*.csv") as $filecsv)
 			{
 				mtrace( "Csv file found - command works correct!" );
-				$processed = paperattendance_read_csv($filecsv, $path, $filename, $uploaderobj);
+				$returnarray = paperattendance_read_csv($filecsv, $path, $filename, $uploaderobj);
+				$processed = $returnarray[0];
 				$countprocessed += $processed;
 			}
 		}
@@ -2019,7 +2027,6 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 			}
 			else{
 				$oldpdfpagenumber= explode("-",$jpgname);
-				var_dump($oldpdfpagenumber);
 				$oldpdfpagenumber = $oldpdfpagenumber[1];
 				$realpagenum = explode(".", $oldpdfpagenumber);
 				$realpagenum = $oldpdfpagenumber[0];
@@ -2043,11 +2050,15 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	}
 	
 	if($countprocessed>= 1){
-		return true;
+		$returnpaperattendance_runcsvproccessingarray[] = true;
 	}
 	else{
-		return false;
+		$returnpaperattendance_runcsvproccessingarray[] = false;
 	}
+	if ($returnarray[1] != null){
+		$pagesWithError[] = $returnarray[1];
+	}
+	return $returnpaperattendance_runcsvproccessingarray;
 }
 /**
  * Save in a new table in db the the session printed
