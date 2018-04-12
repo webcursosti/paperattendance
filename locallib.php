@@ -1244,7 +1244,7 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 			$messagehtml = "<html>";
 			$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";
 			$messagehtml .= "<p>".get_string("nonprocessconfirmationbody", "local_paperattendance") . "</p>";
-			$messagehtml .= "<p>Number of elements in attendanceid". count($attendanceid)."</p>";
+			$messagehtml .= "<p>attendanceid: ". var_dump($attendanceid)."</p>";
 			foreach ($attendanceid as $pageid){
 				$messagehtml.= "<p>.<a href='" . $CFG->wwwroot . "/local/paperattendance/missingpages.php?action=edit&sesspageid=". $pageid->pageid ."'>" .$pageid->pagenumber. "</a></p>";
 			}
