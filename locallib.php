@@ -1214,7 +1214,7 @@ function paperattendance_getcountstudentsbysession($sessionid){
  */
 function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploaderid, $date, $course, $case, $errorpage) {
 	GLOBAL $CFG, $USER, $DB;
-	
+	var_dump($attendanceid);
 	$teacher = $DB->get_record("user", array("id"=> $teacherid));
 	$userfrom = core_user::get_noreply_user();
 	$userfrom->maildisplay = true;
