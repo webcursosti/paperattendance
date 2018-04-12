@@ -2056,7 +2056,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		$returnpaperattendance_runcsvproccessingarray[] = false;
 	}
 	if ($returnarray[1] != null){
-		$pagesWithError[] = $returnarray[1];
+		$returnpaperattendance_runcsvproccessingarray[] = $returnarray[1];
 	}
 	return $returnpaperattendance_runcsvproccessingarray;
 }
