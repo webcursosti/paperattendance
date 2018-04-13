@@ -1883,10 +1883,10 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	}
 	
 	if ($errorpage != null){
-		paperattendance_sendMail($pagesWithError, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", null);
+		paperattendance_sendMail($errorpage, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", null);
 		$admins = get_admins();
 		foreach ($admins as $admin){
-			paperattendance_sendMail($pagesWithError, null, $admin->id, $admin->id, null, $pdffilename, "nonprocesspdf", null);
+			paperattendance_sendMail($errorpage, null, $admin->id, $admin->id, null, $pdffilename, "nonprocesspdf", null);
 	
 		}
 	}
