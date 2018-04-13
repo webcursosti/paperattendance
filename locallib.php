@@ -1881,15 +1881,17 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 		}
 		fclose($handle);
 	}
-	/*
-	if (count($pagesWithError) > 0){
+	
+	if ($errorpage != null){
 		paperattendance_sendMail($pagesWithError, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", null);
 		$admins = get_admins();
 		foreach ($admins as $admin){
 			paperattendance_sendMail($pagesWithError, null, $admin->id, $admin->id, null, $pdffilename, "nonprocesspdf", null);
 	
 		}
-	}*/
+	}
+	
+	
 	
 	$returnarray = array();
 	$returnarray[] = $return;
