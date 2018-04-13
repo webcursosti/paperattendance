@@ -1448,7 +1448,7 @@ function paperattendance_uploadattendances($file, $path, $filename, $context, $c
 		$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
 	
 		//rotate pages of the pdf if necessary
-		paperattendance_rotate($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
+		//paperattendance_rotate($path."/unread/", "paperattendance_".$courseid."_".$time.".pdf");
 	
 		//read pdf and save session and sessmodules
 //		$pdfprocessed = paperattendance_read_pdf_save_session($path."/unread/", $filename, $qrtext);
