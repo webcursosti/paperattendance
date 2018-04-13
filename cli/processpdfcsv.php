@@ -84,6 +84,7 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
 		$uploaderobj = $DB->get_record("user", array("id" => $pdf-> userid));
 		$returnpaperattendance_runcsvproccessingarray = paperattendance_runcsvproccessing($path, $pdf-> name, $uploaderobj); 
 		$process = $returnpaperattendance_runcsvproccessingarray[0];
+		mtrace($returnpaperattendance_runcsvproccessingarray);
 		
 		if ($returnpaperattendance_runcsvproccessingarray[1] != null){
 			$pagesWithErrors[] = $returnpaperattendance_runcsvproccessingarray[1]; 
@@ -102,10 +103,11 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
 	}
 	
 	if (count($pagesWithErrors) > 0){
+		mtrace($pagesWithErrors);
 		paperattendance_sendMail($pagesWithError, null, $uploaderobj->id, $uploaderobj->id, null, "NotNull", "nonprocesspdf", null);
 		$admins = get_admins();
 		foreach ($admins as $admin){
-			paperattendance_sendMail($pagesWithError, null, $admin->id, $admin->id, null, "NotNull", "nonprocesspdf", null);
+			//paperattendance_sendMail($pagesWithError, null, $admin->id, $admin->id, null, "NotNull", "nonprocesspdf", null);
 		}
 	}
 	
