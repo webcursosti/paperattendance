@@ -103,7 +103,7 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
 	}
 	
 	if (count($pagesWithErrors) > 0){
-		mtrace($pagesWithErrors);
+		var_dump($pagesWithErrors);
 		paperattendance_sendMail($pagesWithErrors, null, $uploaderobj->id, $uploaderobj->id, null, "NotNull", "nonprocesspdf", null);
 		$admins = get_admins();
 		foreach ($admins as $admin){
