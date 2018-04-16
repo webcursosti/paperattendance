@@ -2028,7 +2028,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		paperattendance_sendMail($pagesWithErrors, null, $uploaderobj->id, $uploaderobj->id, null, "NotNull", "nonprocesspdf", null);
 		$admins = get_admins();
 		foreach ($admins as $admin){
-			paperattendance_sendMail($pagesWithError, null, $admin->id, $admin->id, null, "NotNull", "nonprocesspdf", null);
+			paperattendance_sendMail($pagesWithErrors, null, $admin->id, $admin->id, null, "NotNull", "nonprocesspdf", null);
 		}
 	}
 	
