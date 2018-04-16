@@ -2068,9 +2068,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	else{
 		$returnpaperattendance_runcsvproccessingarray[] = false;
 	}
-	if ($returnarray[1] != null){
-		$returnpaperattendance_runcsvproccessingarray[] = $returnarray[1];
-	}
+	$returnpaperattendance_runcsvproccessingarray[] = $returnarray[1];
 	return $returnpaperattendance_runcsvproccessingarray;
 }
 /**

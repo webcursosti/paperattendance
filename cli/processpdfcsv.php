@@ -84,7 +84,7 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
 		$uploaderobj = $DB->get_record("user", array("id" => $pdf-> userid));
 		$returnpaperattendance_runcsvproccessingarray = paperattendance_runcsvproccessing($path, $pdf-> name, $uploaderobj); 
 		$process = $returnpaperattendance_runcsvproccessingarray[0];
-		mtrace($returnpaperattendance_runcsvproccessingarray);
+		var_dump($returnpaperattendance_runcsvproccessingarray);
 		
 		if ($returnpaperattendance_runcsvproccessingarray[1] != null){
 			$pagesWithErrors[] = $returnpaperattendance_runcsvproccessingarray[1]; 
