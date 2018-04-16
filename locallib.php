@@ -1243,12 +1243,12 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 			//process pdf message
 			$messagehtml = "<html>";
 			$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";
-			$messagehtml .= "<p>".get_string("nonprocessconfirmationbody", "local_paperattendance") . "</p>";
-			$messagehtml .= "<p>attendanceid: ". var_dump($attendanceid)."</p>";
+			$messagehtml .= "<p>".get_string("nonprocessconfirmationbody", "local_paperattendance");
 			foreach ($attendanceid as $pageid){
-				$messagehtml.= "<p>.<a href='" . $CFG->wwwroot . "/local/paperattendance/missingpages.php?action=edit&sesspageid=". $pageid->pageid ."'>" .$pageid->pagenumber. "</a></p>";
+				$messagehtml.= " <a href='" . $CFG->wwwroot . "/local/paperattendance/missingpages.php?action=edit&sesspageid=". $pageid->pageid ."'>" .$pageid->pagenumber. " </a></p>";
 			}
-			$messagehtml .= "</html>";
+			$messagehtml .= "</p>";
+			$messagehtml .= get_string("grettings", "local_paperattendance"). "</html>";
 			
 			/*
 			$messagehtml .= "<p>".get_string("nonprocessconfirmationbody", "local_paperattendance") . $errorpage. "</p>";
@@ -1257,11 +1257,11 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 			*/
 			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
 			//$messagetext .= get_string("nonprocessconfirmationbody", "local_paperattendance") . $errorpage. "\n";
-			$messagetext .= "The spam continues\n".var_dump($attendanceid)."\n";
 			$messagetext .= get_string("nonprocessconfirmationbody", "local_paperattendance");
 			foreach ($attendanceid as $pageid){
-				$messagetext.= $pageid->pagenumber."\n";
+				$messagetext.= $pageid->pagenumber." ";
 			}
+			$messagetext.= "\n". get_string("grettings", "local_paperattendance");
 			break;
 		case "newdiscussionteacher":
 			//subject

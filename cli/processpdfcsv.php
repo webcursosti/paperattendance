@@ -82,7 +82,6 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
 		mtrace("Found ".$found." pdfs");
 		$uploaderobj = $DB->get_record("user", array("id" => $pdf-> userid));
 		$process = paperattendance_runcsvproccessing($path, $pdf-> name, $uploaderobj); 
-		var_dump($returnpaperattendance_runcsvproccessingarray);
 		
  		if($process){
  			mtrace("Pdf ".$found." correctly processed");
