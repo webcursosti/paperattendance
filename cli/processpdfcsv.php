@@ -75,20 +75,14 @@ $sqlunreadpdfs = "SELECT  id, filename AS name, uploaderid AS userid
 
 // Read the pdfs if there is any unread, with readpdf function
 if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
-	$pagesWithErrors = array();
 	$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
 	mtrace("Query find data correctly");
 	foreach($resources as $pdf){
 		$found++;
 		mtrace("Found ".$found." pdfs");
 		$uploaderobj = $DB->get_record("user", array("id" => $pdf-> userid));
-		$returnpaperattendance_runcsvproccessingarray = paperattendance_runcsvproccessing($path, $pdf-> name, $uploaderobj); 
-		$process = $returnpaperattendance_runcsvproccessingarray[0];
+		$process = paperattendance_runcsvproccessing($path, $pdf-> name, $uploaderobj); 
 		var_dump($returnpaperattendance_runcsvproccessingarray);
-		
-		if ($returnpaperattendance_runcsvproccessingarray[1] != null){
-			$pagesWithErrors[] = $returnpaperattendance_runcsvproccessingarray[1]; 
-		}
 		
  		if($process){
  			mtrace("Pdf ".$found." correctly processed");
@@ -100,15 +94,6 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
  		else{
  			mtrace("problem reading the csv or with the pdf");
  		}
-	}
-	
-	if (count($pagesWithErrors) > 0){
-		var_dump($pagesWithErrors);
-		paperattendance_sendMail($pagesWithErrors, null, $uploaderobj->id, $uploaderobj->id, null, "NotNull", "nonprocesspdf", null);
-		$admins = get_admins();
-		foreach ($admins as $admin){
-			//paperattendance_sendMail($pagesWithError, null, $admin->id, $admin->id, null, "NotNull", "nonprocesspdf", null);
-		}
 	}
 	
 	echo $found." PDF found. \n";

@@ -1954,7 +1954,7 @@ function paperattendance_number_of_pages($path, $pdffilename){
 function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	global $CFG;
 	
-	$returnpaperattendance_runcsvproccessingarray = array();
+	$pagesWithErrors = array();
 
 	// convert pdf to jpg
 	$pdf = new Imagick();
@@ -2015,7 +2015,12 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 			foreach(glob("{$path}/jpgs/processing/*.csv") as $filecsv)
 			{
 				mtrace( "Csv file found - command works correct!" );
-				$returnarray = paperattendance_read_csv($filecsv, $path, $filename, $uploaderobj);
+				$arraypaperattendance_read_csv = array();
+				$arraypaperattendance_read_csv = paperattendance_read_csv($filecsv, $path, $filename, $uploaderobj);
+				$processed = $arraypaperattendance_read_csv[0];
+				if ($arraypaperattendance_read_csv != null){
+					$pagesWithErrors[] = $arraypaperattendance_read_csv[1];
+				}
 				/************************************
 				if ($returnarray[1] != null){
 					paperattendance_sendMail($returnarray[1], null, $uploaderobj->id, $uploaderobj->id, null, "NotNull", "nonprocesspdf", null);
@@ -2025,8 +2030,6 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 					}
 				}
 				/************************************ */
-				var_dump($returnarray);
-				$processed = $returnarray[0];
 				$countprocessed += $processed;
 			}
 		}
@@ -2062,14 +2065,21 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		unlink($path."/jpgs/processing/".$jpgname);
 	}
 	
+	if (count($pagesWithErrors) > 0){
+		var_dump($pagesWithErrors);
+		paperattendance_sendMail($pagesWithErrors, null, $uploaderobj->id, $uploaderobj->id, null, "NotNull", "nonprocesspdf", null);
+		$admins = get_admins();
+		foreach ($admins as $admin){
+			//paperattendance_sendMail($pagesWithError, null, $admin->id, $admin->id, null, "NotNull", "nonprocesspdf", null);
+		}
+	}
+	
 	if($countprocessed>= 1){
-		$returnpaperattendance_runcsvproccessingarray[] = true;
+		return true;
 	}
 	else{
-		$returnpaperattendance_runcsvproccessingarray[] = false;
+		return false;
 	}
-	$returnpaperattendance_runcsvproccessingarray[] = $returnarray[1];
-	return $returnpaperattendance_runcsvproccessingarray;
 }
 /**
  * Save in a new table in db the the session printed
