@@ -1245,7 +1245,7 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 			$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";
 			$messagehtml .= "<p>".get_string("nonprocessconfirmationbody", "local_paperattendance");
 			foreach ($attendanceid as $pageid){
-				$messagehtml.= " <a href='" . $CFG->wwwroot . "/local/paperattendance/missingpages.php?action=edit&sesspageid=". $pageid->pageid ."'>" .$pageid->pagenumber. " </a></p>";
+				$messagehtml.= " <a href='" . $CFG->wwwroot . "/local/paperattendance/missingpages.php?action=edit&sesspageid=". $pageid->pageid ."'>" .$pageid->pagenumber. " </a>";
 			}
 			$messagehtml .= "</p>";
 			$messagehtml .= get_string("grettings", "local_paperattendance"). "</html>";
@@ -1880,24 +1880,11 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 		}
 		fclose($handle);
 	}
-	/****************************************/
-	if ($errorpage != null){
-		$ret = array();
-		$ret[] = $errorpage;
-		paperattendance_sendMail($ret, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", null);
-		$admins = get_admins();
-		foreach ($admins as $admin){
-			//paperattendance_sendMail($errorpage, null, $admin->id, $admin->id, null, $pdffilename, "nonprocesspdf", null);
-	
-		}
-	}
-	/********************************************/
 	
 	$returnarray = array();
 	$returnarray[] = $return;
 	$returnarray[] = $errorpage;
 	unlink($file);
-	var_dump($returnarray);
 	return $returnarray;
 }
 
@@ -2021,15 +2008,6 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 				if ($arraypaperattendance_read_csv != null){
 					$pagesWithErrors[] = $arraypaperattendance_read_csv[1];
 				}
-				/************************************
-				if ($returnarray[1] != null){
-					paperattendance_sendMail($returnarray[1], null, $uploaderobj->id, $uploaderobj->id, null, "NotNull", "nonprocesspdf", null);
-					$admins = get_admins();
-					foreach ($admins as $admin){
-						//paperattendance_sendMail($returnarray[1], null, $admin->id, $admin->id, null, "NotNull", "nonprocesspdf", null);
-					}
-				}
-				/************************************ */
 				$countprocessed += $processed;
 			}
 		}
