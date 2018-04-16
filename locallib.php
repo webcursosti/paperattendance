@@ -1763,7 +1763,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 							paperattendance_insert_session_module($module, $sessid, $time);
 							paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1, $uploaderobj->id, time());
 							
-							if($CFG->paperattendance_sendMail == 1){
+							if($CFG->paperattendance_sendmail == 1){
 								$coursename = $DB->get_record("course", array("id"=> $course));
 								$moduleobject = $DB->get_record("paperattendance_module", array("id"=> $module));
 								$sessdate = date("d-m-Y", $time).", ".$moduleobject->name. ": ". $moduleobject->initialtime. " - " .$moduleobject->endtime;
@@ -1839,7 +1839,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						//$return = false;//send email or something to let know this page had problems
 						$sessionpageid = paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $pdffilename, 0, $uploaderobj->id, time());
 						
-						if($CFG->paperattendance_sendMail == 1){
+						if($CFG->paperattendance_sendmail == 1){
 							$errorpage = new StdClass();
 							$errorpage->pagenumber = $realpagenum+1;
 							$errorpage->pageid = $sessionpageid;
@@ -1860,7 +1860,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	  			//$return = false;//send email or something to let know this page had problems
 	  			$sessionpageid = paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $pdffilename, 0, $uploaderobj->id, time());
 	  			
-	  			if($CFG->paperattendance_sendMail == 1){
+	  			if($CFG->paperattendance_sendmail == 1){
 	  				$errorpage = new StdClass();
 	  				$errorpage->pagenumber = $realpagenum+1;
 	  				$errorpage->pageid = $sessionpageid;
@@ -2047,7 +2047,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 			
 			$sessionpageid = paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $filename, 0, $uploaderobj->id, time());
 			
-			if($CFG->paperattendance_sendMail == 1){
+			if($CFG->paperattendance_sendmail == 1){
 				paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $filename, "nonprocesspdf", $realpagenum);
 				$admins = get_admins();
 				foreach ($admins as $admin){
