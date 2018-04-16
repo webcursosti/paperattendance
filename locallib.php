@@ -1214,7 +1214,6 @@ function paperattendance_getcountstudentsbysession($sessionid){
  */
 function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploaderid, $date, $course, $case, $errorpage) {
 	GLOBAL $CFG, $USER, $DB;
-	var_dump($attendanceid);
 	$teacher = $DB->get_record("user", array("id"=> $teacherid));
 	$userfrom = core_user::get_noreply_user();
 	$userfrom->maildisplay = true;
@@ -1247,7 +1246,7 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 			foreach ($attendanceid as $pageid){
 				$messagehtml.= " <a href='" . $CFG->wwwroot . "/local/paperattendance/missingpages.php?action=edit&sesspageid=". $pageid->pageid ."'>" .$pageid->pagenumber. ", </a>";
 			}
-			$messagehtml = rtrim($messagehtml, ',');
+			$messagehtml = rtrim($messagehtml, ', ');
 			$messagehtml .= "</p>";
 			$messagehtml .= get_string("grettings", "local_paperattendance"). "</html>";
 			
@@ -2045,7 +2044,6 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	}
 	
 	if (count($pagesWithErrors) > 0){
-		var_dump($pagesWithErrors);
 		paperattendance_sendMail($pagesWithErrors, null, $uploaderobj->id, $uploaderobj->id, null, "NotNull", "nonprocesspdf", null);
 		$admins = get_admins();
 		foreach ($admins as $admin){
