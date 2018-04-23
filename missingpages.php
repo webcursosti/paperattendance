@@ -539,6 +539,8 @@ $( "#confirm" ).on( "click", function() {
 function RefreshSomeEventListener() {
 	$( ".savestudentsattendance" ).on( "click", function() {
 
+		var checkbox = $('input:checkedAll');
+		
 		var studentsattendance = [];
 		//Validate if the checkbox is checked or not, if checked presence = 1
 		var checkbox = $('input:checkbox');
@@ -557,21 +559,21 @@ function RefreshSomeEventListener() {
  $(document).ready(function() {
 	    $("#checkedAll").change(function() {
 	        if (this.checked) {
-	            $(".checkSingle").each(function() {
+	            $(".checkbox").each(function() {
 	                this.checked=true;
 	            });
 	        } else {
-	            $(".checkSingle").each(function() {
+	            $(".checkbox").each(function() {
 	                this.checked=false;
 	            });
 	        }
 	    });
 
-	    $(".checkSingle").click(function () {
+	    $(".checkbox").click(function () {
 	        if ($(this).is(":checked")) {
 	            var isAllChecked = 0;
 
-	            $(".checkSingle").each(function() {
+	            $(".checkbox").each(function() {
 	                if (!this.checked)
 	                    isAllChecked = 1;
 	            });
