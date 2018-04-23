@@ -556,38 +556,7 @@ function RefreshSomeEventListener() {
 			studentsattendance.push({"userid":currentcheckbox.val(), "presence": presence});
 		});	
 
- $(document).ready(function() {
-	    $("#checkedAll").change(function() {
-	        if (this.checked) {
-	            $(".checkbox").each(function() {
-	                this.checked=true;
-	            });
-	        } else {
-	            $(".checkbox").each(function() {
-	                this.checked=false;
-	            });
-	        }
-	    });
-
-	    $(".checkbox").click(function () {
-	        if ($(this).is(":checked")) {
-	            var isAllChecked = 0;
-
-	            $(".checkbox").each(function() {
-	                if (!this.checked)
-	                    isAllChecked = 1;
-	            });
-
-	            if (isAllChecked == 0) {
-	                $("#checkedAll").prop("checked", true);
-	            }     
-	        }
-	        else {
-	            $("#checkedAll").prop("checked", false);
-	        }
-	    });
-	});
-
+ 
  
 
 
@@ -632,4 +601,41 @@ function RefreshSomeEventListener() {
 		});
 	});
 }
+</script>
+
+<script>
+
+$(document).ready(function() {
+    $("#checkedAll").change(function() {
+        if (this.checked) {
+            $(".checkbox").each(function() {
+                this.checked=true;
+            });
+        } else {
+            $(".checkbox").each(function() {
+                this.checked=false;
+            });
+        }
+    });
+
+    $(".checkbox").click(function () {
+        if ($(this).is(":checked")) {
+            var isAllChecked = 0;
+
+            $(".checkbox").each(function() {
+                if (!this.checked)
+                    isAllChecked = 1;
+            });
+
+            if (isAllChecked == 0) {
+                $("#checkedAll").prop("checked", true);
+            }     
+        }
+        else {
+            $("#checkedAll").prop("checked", false);
+        }
+    });
+});
+
+
 </script>
