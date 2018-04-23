@@ -1258,6 +1258,7 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 			}
 			$messagetext = rtrim($messagetext, ', ');
 			$messagetext.= "\n". get_string("grettings", "local_paperattendance");
+			mtrace($messagehtml);
 			break;
 		case "newdiscussionteacher":
 			//subject
