@@ -553,6 +553,43 @@ function RefreshSomeEventListener() {
 			//We agregate the info to the de studentsattendance aray
 			studentsattendance.push({"userid":currentcheckbox.val(), "presence": presence});
 		});	
+
+ $(document).ready(function() {
+	    $("#checkedAll").change(function() {
+	        if (this.checked) {
+	            $(".checkSingle").each(function() {
+	                this.checked=true;
+	            });
+	        } else {
+	            $(".checkSingle").each(function() {
+	                this.checked=false;
+	            });
+	        }
+	    });
+
+	    $(".checkSingle").click(function () {
+	        if ($(this).is(":checked")) {
+	            var isAllChecked = 0;
+
+	            $(".checkSingle").each(function() {
+	                if (!this.checked)
+	                    isAllChecked = 1;
+	            });
+
+	            if (isAllChecked == 0) {
+	                $("#checkedAll").prop("checked", true);
+	            }     
+	        }
+	        else {
+	            $("#checkedAll").prop("checked", false);
+	        }
+	    });
+	});
+
+ 
+
+
+		
 		/*Shows students attendace and sessinfo in JSON format:
 		alert(JSON.stringify(studentsattendance));
 		console.log(JSON.stringify(studentsattendance));
