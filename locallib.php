@@ -2016,10 +2016,12 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 				foreach ($admins as $admin){
 					paperattendance_sendMail($sessionpageid, null, $admin->id, $admin->id, null, $pdffilename, "nonprocesspdf", $realpagenum+1);
 				}*/
+				/*
 				$errorpage = new stdClass();
 				$errorpage->pageid = $sessionpageid;
 				$errorpage->pagenumber = $realpagenum + 1;
 				$pagesWithErrors[] = $errorpage;
+				*/
 			}
 			
 			$countprocessed++;
