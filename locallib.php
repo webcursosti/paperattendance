@@ -1986,7 +1986,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 				$arraypaperattendance_read_csv = array();
 				$arraypaperattendance_read_csv = paperattendance_read_csv($filecsv, $path, $filename, $uploaderobj);
 				$processed = $arraypaperattendance_read_csv[0];
-				if ($arraypaperattendance_read_csv != null){
+				if ($arraypaperattendance_read_csv[1] != null){
 					$pagesWithErrors[] = $arraypaperattendance_read_csv[1];
 				}
 				$countprocessed += $processed;
