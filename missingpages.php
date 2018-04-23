@@ -539,7 +539,7 @@ $( "#confirm" ).on( "click", function() {
 function RefreshSomeEventListener() {
 	$( ".savestudentsattendance" ).on( "click", function() {
 
-		var checkbox = $('input:checkedAll');
+		var checkAll = $('input:checkedbox');
 		
 		var studentsattendance = [];
 		//Validate if the checkbox is checked or not, if checked presence = 1
