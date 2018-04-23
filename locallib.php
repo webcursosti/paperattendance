@@ -1989,6 +1989,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 				$processed = $arraypaperattendance_read_csv[0];
 				if ($arraypaperattendance_read_csv[1] != null){
 					$pagesWithErrors[] = $arraypaperattendance_read_csv[1];
+					var_dump($pagesWithErrors);
 				}
 				$countprocessed += $processed;
 			}
@@ -2021,6 +2022,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 				$errorpage->pageid = $sessionpageid;
 				$errorpage->pagenumber = $realpagenum + 1;
 				$pagesWithErrors[] = $errorpage;
+				var_dump($pagesWithErrors);
 			}
 			
 			$countprocessed++;
@@ -2037,6 +2039,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		foreach ($admins as $admin){
 			paperattendance_sendMail($pagesWithErrors, null, $admin->id, $admin->id, null, "NotNull", "nonprocesspdf", null);
 		}
+		mtrace("end pages with errors var dump");
 	}
 	
 	if($countprocessed>= 1){
