@@ -2030,6 +2030,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	}
 	
 	if (count($pagesWithErrors) > 0){
+		var_dump($pagesWithErrors);
 		paperattendance_sendMail($pagesWithErrors, null, $uploaderobj->id, $uploaderobj->id, null, "NotNull", "nonprocesspdf", null);
 		$admins = get_admins();
 		foreach ($admins as $admin){
