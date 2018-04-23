@@ -1214,6 +1214,7 @@ function paperattendance_getcountstudentsbysession($sessionid){
  */
 function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploaderid, $date, $course, $case, $errorpage) {
 	GLOBAL $CFG, $USER, $DB;
+	mtrace($attendanceid); mtrace($courseid); mtrace($teacherid); mtrace($uploaderid); mtrace($date); mtrace($course); mtrace($case); mtrace($errorpage);
 	$teacher = $DB->get_record("user", array("id"=> $teacherid));
 	$userfrom = core_user::get_noreply_user();
 	$userfrom->maildisplay = true;
@@ -1258,7 +1259,6 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 			}
 			$messagetext = rtrim($messagetext, ', ');
 			$messagetext.= "\n". get_string("grettings", "local_paperattendance");
-			mtrace($messagehtml);
 			break;
 		case "newdiscussionteacher":
 			//subject
