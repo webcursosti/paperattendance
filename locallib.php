@@ -1034,7 +1034,7 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 		//var_dump($datemodule);
 		$fecha = $datemodule -> sessdate;
 		$modulo = $datemodule -> sesstime;
-	
+	    $initialtime = time();
 		//CURL CREATE ATTENDANCE OMEGA
 		$curl = curl_init();
 
@@ -1056,7 +1056,8 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
 		$result = curl_exec ($curl);
 		curl_close ($curl);
-
+        $executiontime = time() - $initialtime;
+        paperattendance_cronlog($url, $result, time(), $executiontime);
 		$alumnos = new stdClass();
 		$alumnos = json_decode($result)->alumnos;
 		
@@ -1127,7 +1128,7 @@ function paperattendance_omegaupdateattendance($update, $omegaid){
 				"asistenciaId" => $omegaid,
 				"asistencia" => $update
 		);
-	
+	   $initialtime = time();
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
@@ -1136,6 +1137,8 @@ function paperattendance_omegaupdateattendance($update, $omegaid){
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
 		$result = curl_exec ($curl);
 		curl_close ($curl);
+		$executiontime = time() - $initialtime;
+		paperattendance_cronlog($url, $result, time(), $executiontime);
 	}
 }
 
