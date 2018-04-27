@@ -13,35 +13,29 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-
 /**
  *
 *
 * @package    local
 * @subpackage paperattendance
-* @copyright  2017 Jorge Cabané (jcabane@alumnos.uai.cl) 					
+* @copyright  2017 Jorge Cabané (jcabane@alumnos.uai.cl)
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 //Pertenece al plugin PaperAttendance
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 require_once ($CFG->dirroot . "/repository/lib.php");
-
 require_once ($CFG->libdir . '/pdflib.php');
 require_once ($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/fpdi.php');
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php");
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi.php");
-
 global $CFG, $DB, $OUTPUT, $USER, $PAGE;
-
 // User must be logged in.
 require_login();
 if (isguestuser()) {
 	print_error(get_string('notallowedprint', 'local_paperattendance'));
 	die();
 }
-
 // Action = { view, edit, delete }, all page options.
 $action = optional_param('action', 'view', PARAM_TEXT);
 $categoryid = optional_param('categoryid', $CFG->paperattendance_categoryid, PARAM_INT);
@@ -51,48 +45,46 @@ $sesskey = optional_param("sesskey", null, PARAM_ALPHANUM);
 //Page
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = 20;
-
 if(is_siteadmin()){
 	//if the user is an admin show everything
-	$sqlmissing = "SELECT * 
+	$sqlmissing = "SELECT *
 					FROM {paperattendance_sessionpages}
 					WHERE processed = ?
 					ORDER BY id DESC";
-
 	$countmissing = count($DB->get_records_sql($sqlmissing, array(0)));
 	$missing = $DB->get_records_sql($sqlmissing, array(0), $page*$perpage,$perpage);
 }
 else{
 	/*
-	//if the user is a secretary show their own uploaded attendances
-	$sqlcategory = "SELECT cc.*
-					FROM {course_categories} cc
-					INNER JOIN {role_assignments} ra ON (ra.userid = ?)
-					INNER JOIN {role} r ON (r.id = ra.roleid)
-					INNER JOIN {context} co ON (co.id = ra.contextid)
-					WHERE cc.id = co.instanceid AND r.shortname = ?";
-	$categoryparams = array($USER->id, "secrepaper");
-	$category = $DB->get_record_sql($sqlcategory, $categoryparams);
-	if($category){
+	 //if the user is a secretary show their own uploaded attendances
+	 $sqlcategory = "SELECT cc.*
+	 FROM {course_categories} cc
+	 INNER JOIN {role_assignments} ra ON (ra.userid = ?)
+	 INNER JOIN {role} r ON (r.id = ra.roleid)
+	 INNER JOIN {context} co ON (co.id = ra.contextid)
+	 WHERE cc.id = co.instanceid AND r.shortname = ?";
+	 $categoryparams = array($USER->id, "secrepaper");
+	 $category = $DB->get_record_sql($sqlcategory, $categoryparams);
+	 if($category){
 		$categoryid = $category->id;
-	}else{
+		}else{
 		print_error(get_string('notallowedmissing', 'local_paperattendance'));
-	}
-	
-	$sqlmissing = "SELECT * 
-					FROM {paperattendance_sessionpages}
-					WHERE processed = ? AND uploaderid = ?
-					ORDER BY id DESC";
-	$params = array(0, $USER->id);
-	*/
+		}
+
+		$sqlmissing = "SELECT *
+		FROM {paperattendance_sessionpages}
+		WHERE processed = ? AND uploaderid = ?
+		ORDER BY id DESC";
+		$params = array(0, $USER->id);
+		*/
 	$sqlcategory = "SELECT cc.*
 					FROM {course_categories} cc
 					INNER JOIN {role_assignments} ra ON (ra.userid = ?)
 					INNER JOIN {role} r ON (r.id = ra.roleid AND r.shortname = ?)
 					INNER JOIN {context} co ON (co.id = ra.contextid  AND  co.instanceid = cc.id  )";
-	
+
 	$categoryparams = array($USER->id, "secrepaper");
-	
+
 	$categorys = $DB->get_records_sql($sqlcategory, $categoryparams);
 	$categoryscount = count($categorys);
 	if($categorys){
@@ -103,7 +95,7 @@ else{
 	}else{
 		print_error(get_string('notallowedmissing', 'local_paperattendance'));
 	}
-	
+
 	$sqlmissing = "SELECT *
 					FROM {paperattendance_sessionpages}
 					WHERE processed = ?
@@ -112,16 +104,12 @@ else{
 	$countmissing = count($DB->get_records_sql($sqlmissing, $params));
 	$missing = $DB->get_records_sql($sqlmissing, $params, $page*$perpage,$perpage);
 }
-
 $context = context_coursecat::instance($categoryid);
 $contextsystem = context_system::instance();
-
 if (! has_capability('local/paperattendance:missingpages', $context) && ! has_capability('local/paperattendance:missingpages', $contextsystem)) {
 	print_error(get_string('notallowedmissing', 'local_paperattendance'));
 }
-
 $url = new moodle_url('/local/paperattendance/missingpages.php');
-
 $PAGE->navbar->add(get_string('pluginname', 'local_paperattendance'));
 $PAGE->navbar->add(get_string('missingpages', 'local_paperattendance'), $url);
 $PAGE->set_context($contextsystem);
@@ -130,110 +118,108 @@ $PAGE->set_pagelayout('standard');
 $PAGE->requires->jquery();
 $PAGE->requires->jquery_plugin ( 'ui' );
 $PAGE->requires->jquery_plugin ( 'ui-css' );
-
 if($countmissing==0){
 	//print_error(get_string('nothingmissing', 'local_paperattendance'));
 	$PAGE->set_title(get_string("viewmissing", "local_paperattendance"));
 	$PAGE->set_heading(get_string("viewmissing", "local_paperattendance"));
 	echo $OUTPUT->header();
 	echo $OUTPUT->heading(get_string("viewmissingtitle", "local_paperattendance"));
-	
+
 	echo html_writer::nonempty_tag("h4", get_string('nothingmissing', 'local_paperattendance'), array("align" => "left"));
 }
 if ($action == "view") {
-    $missingtable = new html_table();
-    if ($countmissing > 0) {
-    	$missingtable->head = array(
-    			get_string("hashtag", "local_paperattendance"),
-        		get_string("scan", "local_paperattendance"),
-    			get_string("pagenum", "local_paperattendance"),
-    			get_string('date', 'local_paperattendance'),
-        		get_string("uploader", "local_paperattendance"),
-        		get_string("setting", "local_paperattendance"
-        				));
-    	
-    	$missingtable->align = array(
-    			'left',
-    			'center',
-    			'center',
-    			'left',
-    			'center',
-    			'center'
-    	);
-    	
-    	$counter = $page * $perpage + 1;
-    	foreach ($missing as $miss) {
-    		
-    		//delete action
-            $deletemissingurl = new moodle_url("/local/paperattendance/missingpages.php",
-                    array(
-                        "action" => "delete",
-                    	"sesspageid" => $miss->id,
-                        "sesskey" => sesskey()                    	 
-                    		
-                    ));
-            $deletemissingicon= new pix_icon("t/delete", get_string("deletemissing", "local_paperattendance"
-            		));
-            $deleteactionmissing = $OUTPUT->action_icon($deletemissingurl, $deletemissingicon,
-                    new confirm_action(get_string("doyouwantdeletemissing", "local_paperattendance")
-                    		));
-            
-            //edit action
-            $editurlmissing = new moodle_url("/local/paperattendance/missingpages.php",
-                    array(
-                        "action" => "edit",
-                    	"sesspageid" => $miss->id,
-                        "sesskey" => sesskey()
-                    		
-                    ));
-            $editiconmissing = new pix_icon("i/edit", get_string("editmissing", "local_paperattendance"
-            		));
-            $editactionmissing = $OUTPUT->action_icon($editurlmissing, $editiconmissing,
-                    new confirm_action(get_string("doyouwanteditmissing", "local_paperattendance")
-                    		));
-                        
-            //view scan action
-            $scanurl_attendance = new moodle_url("/local/paperattendance/missingpages.php", array(
-            		"action" => "scan",
-            		"pdfname" => $miss->pdfname,
-            		"page" => ($miss->pagenum +1)
-            ));
-            $scanicon_attendance = new pix_icon("e/new_document", get_string('see', 'local_paperattendance'));
-            $scanaction_attendance = $OUTPUT->action_icon(
-            		$scanurl_attendance,
-            		$scanicon_attendance
-            		);
-            
-            //get username
-            $username = paperattendance_getusername($miss->uploaderid);
-            //Convert the unix date to a local date
-            $timecreated= $miss->timecreated;
-            $dateconverted = paperattendance_convertdate($timecreated);
-            
-            //add data to table
-            $missingtable->data [] = array(
-            	$counter,	
-            	$scanaction_attendance,
-            	$miss->pagenum +1,
-            	$dateconverted,	
-            	$username,
-                $deleteactionmissing . $editactionmissing);
-            
-            $counter++;
-        }
-        $PAGE->set_title(get_string("viewmissing", "local_paperattendance"));
-        $PAGE->set_heading(get_string("viewmissing", "local_paperattendance"));
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string("viewmissingtitle", "local_paperattendance"));
-        
-        echo html_writer::table($missingtable);  
-        //displays de pagination bar
-        echo $OUTPUT->paging_bar($countmissing, $page, $perpage,
-        		$CFG->wwwroot . '/local/paperattendance/missingpages.php?action=' . $action . '&page=');
-    }
-    
-}
+	$missingtable = new html_table();
+	if ($countmissing > 0) {
+		$missingtable->head = array(
+				get_string("hashtag", "local_paperattendance"),
+				get_string("scan", "local_paperattendance"),
+				get_string("pagenum", "local_paperattendance"),
+				get_string('date', 'local_paperattendance'),
+				get_string("uploader", "local_paperattendance"),
+				get_string("setting", "local_paperattendance"
+						));
+		 
+		$missingtable->align = array(
+				'left',
+				'center',
+				'center',
+				'left',
+				'center',
+				'center'
+		);
+		 
+		$counter = $page * $perpage + 1;
+		foreach ($missing as $miss) {
 
+			//delete action
+			$deletemissingurl = new moodle_url("/local/paperattendance/missingpages.php",
+					array(
+							"action" => "delete",
+							"sesspageid" => $miss->id,
+							"sesskey" => sesskey()
+
+					));
+			$deletemissingicon= new pix_icon("t/delete", get_string("deletemissing", "local_paperattendance"
+					));
+			$deleteactionmissing = $OUTPUT->action_icon($deletemissingurl, $deletemissingicon,
+					new confirm_action(get_string("doyouwantdeletemissing", "local_paperattendance")
+							));
+
+			//edit action
+			$editurlmissing = new moodle_url("/local/paperattendance/missingpages.php",
+					array(
+							"action" => "edit",
+							"sesspageid" => $miss->id,
+							"sesskey" => sesskey()
+
+					));
+			$editiconmissing = new pix_icon("i/edit", get_string("editmissing", "local_paperattendance"
+					));
+			$editactionmissing = $OUTPUT->action_icon($editurlmissing, $editiconmissing,
+					new confirm_action(get_string("doyouwanteditmissing", "local_paperattendance")
+							));
+
+			//view scan action
+			$scanurl_attendance = new moodle_url("/local/paperattendance/missingpages.php", array(
+					"action" => "scan",
+					"pdfname" => $miss->pdfname,
+					"page" => ($miss->pagenum +1)
+			));
+			$scanicon_attendance = new pix_icon("e/new_document", get_string('see', 'local_paperattendance'));
+			$scanaction_attendance = $OUTPUT->action_icon(
+					$scanurl_attendance,
+					$scanicon_attendance
+					);
+
+			//get username
+			$username = paperattendance_getusername($miss->uploaderid);
+			//Convert the unix date to a local date
+			$timecreated= $miss->timecreated;
+			$dateconverted = paperattendance_convertdate($timecreated);
+
+			//add data to table
+			$missingtable->data [] = array(
+					$counter,
+					$scanaction_attendance,
+					$miss->pagenum +1,
+					$dateconverted,
+					$username,
+					$deleteactionmissing . $editactionmissing);
+
+			$counter++;
+		}
+		$PAGE->set_title(get_string("viewmissing", "local_paperattendance"));
+		$PAGE->set_heading(get_string("viewmissing", "local_paperattendance"));
+		echo $OUTPUT->header();
+		echo $OUTPUT->heading(get_string("viewmissingtitle", "local_paperattendance"));
+
+		echo html_writer::table($missingtable);
+		//displays de pagination bar
+		echo $OUTPUT->paging_bar($countmissing, $page, $perpage,
+				$CFG->wwwroot . '/local/paperattendance/missingpages.php?action=' . $action . '&page=');
+	}
+
+}
 if ($action == "edit") {
 	if ($sesspageid == null) {
 		print_error(get_string("sessdoesnotexist", "local_attendance"));
@@ -241,14 +227,14 @@ if ($action == "edit") {
 	}
 	else {
 		if ($session = $DB->get_record("paperattendance_sessionpages", array("id" => $sesspageid))){
-				
+
 			$timepdf = time();
 			$path = $CFG -> dataroot. "/temp/local/paperattendance";
 			$attendancepdffile = $path . "/print/paperattendance_".$sesspageid."_".$timepdf.".pdf";
-				
+
 			//$pdfpath = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$session->pdfname;
 			//$viewerstart = $session->pagenum + 1;
-				
+
 			$pdf = new FPDI();
 			$hashnamesql = "SELECT contenthash
 							FROM {files}
@@ -260,7 +246,7 @@ if ($action == "edit") {
 				$f2 = substr($newpdfname, 2, 2);
 				$filepath = $f1."/".$f2."/".$newpdfname;
 				$pages = $session->pagenum + 1;
-		
+
 				$originalpdf = $CFG -> dataroot. "/filedir/".$filepath;
 					
 				$pageCount = $pdf->setSourceFile($originalpdf);
@@ -274,7 +260,7 @@ if ($action == "edit") {
 				$pdf->useTemplate($templateId);
 			}
 			$pdf->Output($attendancepdffile, "F");
-			
+				
 			$fs = get_file_storage();
 			$file_record = array(
 					'contextid' => $contextsystem->id,
@@ -300,13 +286,13 @@ if ($action == "edit") {
 					"src" => $url,
 					"style" => "height:116vh; width:40vw; float:left"
 			));
-			
-			
+				
+				
 			unlink($attendancepdffile);
-			
+				
 			/*Inputs of the form to edit a missing page plus the modals help buttons*/
-			
-			//Input for the Shortname of the course like : 2113-V-ECO121-1-1-2017 
+				
+			//Input for the Shortname of the course like : 2113-V-ECO121-1-1-2017
 			$inputs = html_writer::div('<label for="course">Shortname del Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017"><button id="sn" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#shortnamemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
 			//Input for the Date of the list like: 01-08-2017
 			$inputs .= html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017"><button id="d" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#datemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
@@ -316,14 +302,14 @@ if ($action == "edit") {
 			$inputs .= html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27"><button id="b" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#beginmodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
 			//Input fot the submit button of the form
 			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Continuar</button>',"form-group", array("style"=>"float:right; margin-right:5%; margin-top:3%;"));
-			
+				
 			//We now create de four help modals
 			$shortnamemodal = '<div class="modal fade" id="shortnamemodal" role="dialog" style="width: 50vw; z-index: -10;">
 							    <div class="modal-dialog modal-sm">
 							      <div class="modal-content">
 							        <div class="modal-body">
 									  <div class="alert alert-info">Escriba el <strong>curso</strong> perteneciente a su lista escaneada</div>
-									  <img class="img-responsive" src="img/hshortname.png"> 
+									  <img class="img-responsive" src="img/hshortname.png">
 							        </div>
 							        <div class="modal-footer">
 							          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -370,7 +356,7 @@ if ($action == "edit") {
 							      </div>
 							    </div>
 							  </div>';
-			
+				
 			$inputs .= html_writer::div($shortnamemodal, "form-group");
 			$inputs .= html_writer::div($datemodal, "form-group");
 			$inputs .= html_writer::div($modulemodal, "form-group");
@@ -383,12 +369,12 @@ if ($action == "edit") {
 			redirect($url);
 		}
 	}
-	
+
 	$PAGE->set_title(get_string("missingpages", "local_paperattendance"));
 	$PAGE->set_heading(get_string("missingpages", "local_paperattendance"));
 	echo $OUTPUT->header();
 	echo $OUTPUT->heading(get_string("missingpagestitle", "local_paperattendance"));
-	
+
 	//Here we agregate some css style for the placeholders form
 	echo html_writer::div('<style>
 							.form-control::-webkit-input-placeholder { color: lightgrey; }  /* WebKit, Blink, Edge */
@@ -398,12 +384,11 @@ if ($action == "edit") {
 							.form-control::-ms-input-placeholder { color: lightgrey; }  /* Microsoft Edge *
 							</style>');
 	echo html_writer::div(get_string("missingpageshelp","local_paperattendance"),"alert alert-info", array("role"=>"alert", "id"=>"alerthelp"));
-  	$pdfarea = html_writer::div($viewerpdf,"col-md-12", array( "id"=>"pdfviewer"));
-  	$inputarea = html_writer::div($inputs,"col-sm-12 row", array( "id"=>"inputs"));
- 	echo html_writer::div($inputarea.$pdfarea, "form-group");
-	
-}
+	$pdfarea = html_writer::div($viewerpdf,"col-md-12", array( "id"=>"pdfviewer"));
+	$inputarea = html_writer::div($inputs,"col-sm-12 row", array( "id"=>"inputs"));
+	echo html_writer::div($inputarea.$pdfarea, "form-group");
 
+}
 //Delete the selected missing page
 if ($action == "delete") {
 	if ($sesspageid == null) {
@@ -412,13 +397,13 @@ if ($action == "delete") {
 	}
 	else {
 		if ($session = $DB->get_record("paperattendance_sessionpages", array("id" => $sesspageid))) {
-				if ($sesskey == $USER->sesskey) {
-					$DB->delete_records("paperattendance_sessionpages", array("id" => $sesspageid));
-					$action = "view";
-				}
-				else {
-					print_error(get_string("usernotloggedin", "local_paperattendance"));
-				}
+			if ($sesskey == $USER->sesskey) {
+				$DB->delete_records("paperattendance_sessionpages", array("id" => $sesspageid));
+				$action = "view";
+			}
+			else {
+				print_error(get_string("usernotloggedin", "local_paperattendance"));
+			}
 		}
 		else {
 			print_error(get_string("missingdoesnotexist", "local_paperattendance"));
@@ -428,38 +413,35 @@ if ($action == "delete") {
 	$url = new moodle_url('/local/paperattendance/missingpages.php');
 	redirect($url);
 }
-
 if($action == "scan"){
-	
+
 	$backurl = new moodle_url("/local/paperattendance/missingpages.php", array(
 			"action" => "view"
 	));
-	
+
 	$viewbackbutton = html_writer::nonempty_tag(
 			"div",
 			$OUTPUT->single_button($backurl, get_string('back', 'local_paperattendance')),
 			array("align" => "left"
 			));
-	
+
 	$url = moodle_url::make_pluginfile_url($contextsystem->id, 'local_paperattendance', 'draft', 0, '/', $pdfname);
-	
+
 	$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
 			"src" => $url."#page=".$page,
 			"style" => "height:100vh; width:60vw"
 	));
-	
+
 	$PAGE->set_title(get_string("missingpages", "local_paperattendance"));
 	$PAGE->set_heading(get_string("missingpages", "local_paperattendance"));
 	echo $OUTPUT->header();
 	echo $OUTPUT->heading(get_string("missingpagestitle", "local_paperattendance"));
-	
+
 	echo $viewbackbutton;
 	echo $viewerpdf;
-	
+
 }
-
 echo $OUTPUT->footer();
-
 ?>
 
 </script>
@@ -488,7 +470,6 @@ $( "#confirm" ).on( "click", function() {
 	var begin = $('#begin');
 	var sesspageid = <?php echo $sesspageid; ?>;
 	var pdfviewer = '<?php echo $viewerpdfdos; ?>';
-
 	//Validate the four fields in the form
 	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())-1+26)%26 != 0 || date.val() === date.val().split('-')[0] || module.val() === module.val().split(':')[0]) {
 	    alert("Por favor, rellene todos los campos correctamente");
@@ -513,7 +494,6 @@ $( "#confirm" ).on( "click", function() {
 		        else{
 			        //Agregate the info of the session to the var sessinfo array
 		        	sessinfo.push({"sesspageid":sesspageid, "shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
-
 					$("#inputs").empty();
 					$("#inputs").removeClass("row");
 					$("#pdfviewer").empty();
@@ -534,11 +514,9 @@ $( "#confirm" ).on( "click", function() {
 		});
 	}
 });
-
 //Function to save the students presence in checkbox to the database
 function RefreshSomeEventListener() {
 	$( ".savestudentsattendance" ).on( "click", function() {
-
 		var studentsattendance = [];
 		//Validate if the checkbox is checked or not, if checked presence = 1
 		var checkbox = $('input:checkbox');

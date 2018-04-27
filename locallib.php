@@ -1217,7 +1217,7 @@ function paperattendance_getcountstudentsbysession($sessionid){
  */
 function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploaderid, $date, $course, $case, $errorpage) {
 	GLOBAL $CFG, $USER, $DB;
-	
+	var_dump($attendanceid); mtrace($courseid); mtrace($teacherid); mtrace($uploaderid); mtrace($date); mtrace($course); mtrace($case); mtrace($errorpage);
 	$teacher = $DB->get_record("user", array("id"=> $teacherid));
 	$userfrom = core_user::get_noreply_user();
 	$userfrom->maildisplay = true;
@@ -1246,12 +1246,22 @@ function paperattendance_sendMail($attendanceid, $courseid, $teacherid, $uploade
 			//process pdf message
 			$messagehtml = "<html>";
 			$messagehtml .= "<p>".get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",</p>";
-			$messagehtml .= "<p>".get_string("nonprocessconfirmationbody", "local_paperattendance") . $errorpage. "</p>";
-			$messagehtml .= "<p>".get_string("checkyourattendance", "local_paperattendance")." <a href='" . $CFG->wwwroot . "/local/paperattendance/missingpages.php?action=edit&sesspageid=". $attendanceid ."'>" . get_string('missingpagestitle', 'local_paperattendance') . "</a></p>";
-			$messagehtml .= "</html>";
-			
+			$messagehtml .= "<p>".get_string("nonprocessconfirmationbody", "local_paperattendance");
+			foreach ($attendanceid as $pageid){
+				$messagehtml.= " <a href='" . $CFG->wwwroot . "/local/paperattendance/missingpages.php?action=edit&sesspageid=". $pageid->pageid ."'>" .$pageid->pagenumber. "</a>,";
+			}
+			$messagehtml = rtrim($messagehtml, ', ');
+			$messagehtml .= "</p>";
+			$messagehtml .= get_string("grettings", "local_paperattendance"). "</html>";
+
 			$messagetext = get_string("dear", "local_paperattendance") ." ". $teacher->firstname . " " . $teacher->lastname . ",\n";
-			$messagetext .= get_string("nonprocessconfirmationbody", "local_paperattendance") . $errorpage. "\n";
+			//$messagetext .= get_string("nonprocessconfirmationbody", "local_paperattendance") . $errorpage. "\n";
+			$messagetext .= get_string("nonprocessconfirmationbody", "local_paperattendance");
+			foreach ($attendanceid as $pageid){
+				$messagetext.= $pageid->pagenumber.", ";
+			}
+			$messagetext = rtrim($messagetext, ', ');
+			$messagetext.= "\n". get_string("grettings", "local_paperattendance");
 			break;
 		case "newdiscussionteacher":
 			//subject
@@ -1671,9 +1681,12 @@ function paperattendance_exporttoexcel($title, $header, $filename, $data, $descr
 function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	global $DB, $CFG, $USER;
 
-	$omegafailures = array();
+	$omegafailures = array(); //Is not in use
 	$fila = 1;
 	$return = 0;
+	
+	$errorpage = null;
+	
 	if (($handle = fopen($file, "r")) !== FALSE) {
 		while(! feof($handle))
   		{
@@ -1827,7 +1840,9 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						$sessionpageid = paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $pdffilename, 0, $uploaderobj->id, time());
 						
 						if($CFG->paperattendance_sendmail == 1){
-							paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", $realpagenum+1);
+							$errorpage = new StdClass();
+							$errorpage->pagenumber = $realpagenum+1;
+							$errorpage->pageid = $sessionpageid;
 						}
 						$return++;
 					}
@@ -1839,7 +1854,9 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	  			$sessionpageid = paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $pdffilename, 0, $uploaderobj->id, time());
 	  			
 	  			if($CFG->paperattendance_sendmail == 1){
-	  				paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $pdffilename, "nonprocesspdf", $realpagenum+1);
+	  				$errorpage = new StdClass();
+	  				$errorpage->pagenumber = $realpagenum+1;
+	  				$errorpage->pageid = $sessionpageid;
 	  			}
 				$return++;
 	  			}
@@ -1848,8 +1865,12 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 		}
 		fclose($handle);
 	}
+	
+	$returnarray = array();
+	$returnarray[] = $return;
+	$returnarray[] = $errorpage;
 	unlink($file);
-	return $return;
+	return $returnarray;
 }
 
 /**
@@ -1905,6 +1926,8 @@ function paperattendance_number_of_pages($path, $pdffilename){
 function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	global $CFG;
 	
+	$pagesWithErrors = array();
+
 	// convert pdf to jpg
 	$pdf = new Imagick();
 
@@ -1964,7 +1987,13 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 			foreach(glob("{$path}/jpgs/processing/*.csv") as $filecsv)
 			{
 				mtrace( "Csv file found - command works correct!" );
-				$processed = paperattendance_read_csv($filecsv, $path, $filename, $uploaderobj);
+				$arraypaperattendance_read_csv = array();
+				$arraypaperattendance_read_csv = paperattendance_read_csv($filecsv, $path, $filename, $uploaderobj);
+				$processed = $arraypaperattendance_read_csv[0];
+				if ($arraypaperattendance_read_csv[1] != null){
+					$pagesWithErrors[] = $arraypaperattendance_read_csv[1];
+					var_dump($pagesWithErrors);
+				}
 				$countprocessed += $processed;
 			}
 		}
@@ -1986,7 +2015,17 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 			$sessionpageid = paperattendance_save_current_pdf_page_to_session($realpagenum, null, null, $filename, 0, $uploaderobj->id, time());
 			
 			if($CFG->paperattendance_sendmail == 1){
+				/*
 				paperattendance_sendMail($sessionpageid, null, $uploaderobj->id, $uploaderobj->id, null, $filename, "nonprocesspdf", $realpagenum);
+				$admins = get_admins();
+				foreach ($admins as $admin){
+					paperattendance_sendMail($sessionpageid, null, $admin->id, $admin->id, null, $pdffilename, "nonprocesspdf", $realpagenum+1);
+				}*/
+				$errorpage = new stdClass();
+				$errorpage->pageid = $sessionpageid;
+				$errorpage->pagenumber = $realpagenum + 1;
+				$pagesWithErrors[] = $errorpage;
+				var_dump($pagesWithErrors);
 			}
 			
 			$countprocessed++;
@@ -1994,6 +2033,16 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		
 		//finally unlink the jpg file
 		unlink($path."/jpgs/processing/".$jpgname);
+	}
+	
+	if (count($pagesWithErrors) > 0){
+		var_dump($pagesWithErrors);
+		paperattendance_sendMail($pagesWithErrors, null, $uploaderobj->id, $uploaderobj->id, null, "NotNull", "nonprocesspdf", null);
+		$admins = get_admins();
+		foreach ($admins as $admin){
+			paperattendance_sendMail($pagesWithErrors, null, $admin->id, $admin->id, null, "NotNull", "nonprocesspdf", null);
+		}
+		mtrace("end pages with errors var dump");
 	}
 	
 	if($countprocessed>= 1){

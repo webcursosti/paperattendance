@@ -184,7 +184,8 @@ $string['newresponsesubject'] = "Nueva resolución de una discusión";
 $string['newresponsestudent'] = "Tu solicitud de revisión de asistencia acaba de ser resuelta";
 $string['newresponse'] = "Acaba de resolver una solicitud de revisión de asistencia";
 $string['nonprocessconfirmationbodysubject'] = "Lista procesada incorrectamente";
-$string['nonprocessconfirmationbody'] = "No se ha completado el proceso de registros de asistencias por PaperAttendance, error en la página número: ";
+$string['nonprocessconfirmationbody'] = "No se ha completado el proceso de registros de asistencias por PaperAttendance en su totalidad, existen errores en las páginas:";
+$string['grettings'] = "Saludos</p><p> Equipo WebCursos";
 
 // Settings
 $string['settings']="Configuración Básica";
