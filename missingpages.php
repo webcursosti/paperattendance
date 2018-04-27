@@ -609,33 +609,33 @@ function RefreshSomeEventListener() {
 <script>
 
 $(document).ready(function() {
-    $("#checkAll").change(function() {
+    $(".checkAll").change(function() {
         if (this.checked) {
-            $("#usercheckbox").each(function() {
+            $(".usercheckbox").each(function() {
                 this.checked=true;
             });
         } else {
-            $("#usercheckbox").each(function() {
+            $(".usercheckbox").each(function() {
                 this.checked=false;
             });
         }
     });
 
-    $("#usercheckbox").click(function () {
+    $(".usercheckbox").click(function () {
         if ($(this).is(":checked")) {
             var isAllChecked = 0;
 
-            $("#usercheckbox").each(function() {
+            $(".usercheckbox").each(function() {
                 if (!this.checked)
                     isAllChecked = 1;
             });
 
             if (isAllChecked == 0) {
-                $("#checkedAll").prop("checked", true);
+                $(".checkedAll").prop("checked", true);
             }     
         }
         else {
-            $("#checkedAll").prop("checked", false);
+            $(".checkedAll").prop("checked", false);
         }
     });
 });
