@@ -526,6 +526,9 @@ $( "#confirm" ).on( "click", function() {
 			        	var appendcheckbox = '<tr class="usercheckbox"><td>'+counter+'</td><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
 			        	$("#appendtrs").append(appendcheckbox);
 			        });
+					var checkAllcheckbox = '<tr class="checkAll"><td></td><td><input type="checkbox"></td><td>Check All</td></tr>';
+					$("#appendtrs").append(checkAllcheckbox);
+			        
 			        $("#inputs").append("</tbody></table>");
 		    		$(".form-group").append('<div align="center" id="savebutton"><button class="btn btn-info savestudentsattendance" style=" width:30%; margin-bottom:5%; margin-top:5%;">Guardar Asistencia</button></div>');
 		    		RefreshSomeEventListener();
@@ -606,7 +609,7 @@ function RefreshSomeEventListener() {
 <script>
 
 $(document).ready(function() {
-    $("#checkedAll").change(function() {
+    $("#checkAll").change(function() {
         if (this.checked) {
             $(".checkbox").each(function() {
                 this.checked=true;
