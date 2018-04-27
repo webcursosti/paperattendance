@@ -611,21 +611,21 @@ function RefreshSomeEventListener() {
 $(document).ready(function() {
     $("#checkAll").change(function() {
         if (this.checked) {
-            $(".checkbox").each(function() {
+            $("#usercheckbox").each(function() {
                 this.checked=true;
             });
         } else {
-            $(".checkbox").each(function() {
+            $("#usercheckbox").each(function() {
                 this.checked=false;
             });
         }
     });
 
-    $(".checkbox").click(function () {
+    $("#usercheckbox").click(function () {
         if ($(this).is(":checked")) {
             var isAllChecked = 0;
 
-            $(".checkbox").each(function() {
+            $("#usercheckbox").each(function() {
                 if (!this.checked)
                     isAllChecked = 1;
             });
