@@ -498,44 +498,60 @@ $( "#confirm" ).on( "click", function() {
 	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())-1+26)%26 != 0 || date.val() === date.val().split('-')[0] || module.val() === module.val().split(':')[0]) {
 	    alert("Por favor, rellene todos los campos correctamente");
 	}
-	//If the user completes correctly, we now send the data through AJAX to get the student list of the session list
-	else{
+	else {
+		//AJAX to check if the page was processed
 		$.ajax({
-		    type: 'GET',
-		    url: 'ajax/ajaxquerys.php',
-		    data: {
-			      'action' : 'getliststudentspage',
-			      'result' : course.val(),
-			      'begin' : parseFloat(begin.val()),
-			      'module' : module.val(),
-			      'date' : date.val()
-		    	},
-		    success: function (response) {
-		        var error = response["error"];
-		        if (error != 0){
-					alert(error);
-		        }
-		        else{
-			        //Agregate the info of the session to the var sessinfo array
-		        	sessinfo.push({"sesspageid":sesspageid, "shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
+			    type: 'GET',
+			    url: 'ajax/ajaxquerys.php',
+			    data: {
+				      'action' : 'getliststudentspage',
+				      'result' : course.val(),
+				      'begin' : parseFloat(begin.val()),
+				      'module' : module.val(),
+				      'date' : date.val()
+			    	},
+			    success: function (response) {
+			        var error = response["error"];
+			        if (error != 0){
+						alert(error);
+			        }
+			        else{
+				        //Agregate the info of the session to the var sessinfo array
+			        	sessinfo.push({"sesspageid":sesspageid, "shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
 
-					$("#inputs").empty();
-					$("#inputs").removeClass("row");
-					$("#pdfviewer").empty();
-					$("#pdfviewer").append(pdfviewer);
-					//Create the table with all the students and checkboxs
-				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
-				    $("#inputs").append(table);
-			        $.each(response["alumnos"], function(i, field){
-				        var counter = i + parseFloat(begin.val());
-			        	var appendcheckbox = '<tr class="usercheckbox"><td>'+counter+'</td><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
-			        	$("#appendtrs").append(appendcheckbox);
-			        });
-			        $("#inputs").append("</tbody></table>");
-		    		$(".form-group").append('<div align="center" id="savebutton"><button class="btn btn-info savestudentsattendance" style=" width:30%; margin-bottom:5%; margin-top:5%;">Guardar Asistencia</button></div>');
-		    		RefreshSomeEventListener();
-		        }
-		    }
+			        	$.ajax({
+			        	    type: 'POST',
+			        	    url: 'ajax/ajaxquerys.php',
+			        	    data: {
+			        		      'action' : 'checkprocesspage',
+			        		      'sessinfo' : JSON.stringify(sessinfo)
+			        	    	},
+			        	    success: function (response) {
+			        	    	var error = response["process"];
+			        	        if (error != 0){
+			        				alert(error);
+			        	        }
+			        	        else{			    			        
+			    					$("#inputs").empty();
+			    					$("#inputs").removeClass("row");
+			    					$("#pdfviewer").empty();
+			    					$("#pdfviewer").append(pdfviewer);
+			    					//Create the table with all the students and checkboxs
+			    				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
+			    				    $("#inputs").append(table);
+			    			        $.each(response["alumnos"], function(i, field){
+			    				        var counter = i + parseFloat(begin.val());
+			    			        	var appendcheckbox = '<tr class="usercheckbox"><td>'+counter+'</td><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
+			    			        	$("#appendtrs").append(appendcheckbox);
+			    			        });
+			    			        $("#inputs").append("</tbody></table>");
+			    		    		$(".form-group").append('<div align="center" id="savebutton"><button class="btn btn-info savestudentsattendance" style=" width:30%; margin-bottom:5%; margin-top:5%;">Guardar Asistencia</button></div>');
+			    		    		RefreshSomeEventListener();
+			    		        }
+			        	    }
+			        	});
+			        }
+			    }
 		});
 	}
 });
