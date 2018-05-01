@@ -468,7 +468,7 @@ echo $OUTPUT->footer();
 ?>
 
 </script>
-	<script type="text/javascript">
+<script type="text/javascript">
 	$( document ).on( "click", "#sn", function() {
 		jQuery('#shortnamemodal').css('z-index', '');
 	});
