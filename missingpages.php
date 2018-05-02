@@ -528,8 +528,8 @@ $( "#confirm" ).on( "click", function() {
 			        		      'action' : 'checkprocesspage',
 			        		      'sessinfo' : JSON.stringify(sessinfo)
 			        	    	},
-			        	    success: function (response) {
-			        	    	var error = response["process"];
+			        	    success: function (responsetwo) {
+			        	    	var error = responsetwo["process"];
 			        	    	console.log(error);
 			        	        if (error != 0){
 			        				alert(error);
