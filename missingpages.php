@@ -406,6 +406,17 @@ if ($action == "edit") {
   	$pdfarea = html_writer::div($viewerpdf,"col-md-12", array( "id"=>"pdfviewer"));
   	$inputarea = html_writer::div($inputs,"col-sm-12 row", array( "id"=>"inputs"));
  	echo html_writer::div($inputarea.$pdfarea, "form-group");
+ 	
+ 	$backurl = new moodle_url("/local/paperattendance/missingpages.php", array(
+ 			"action" => "view"
+ 	));
+ 	
+ 	$viewbackbutton = html_writer::nonempty_tag(
+ 			"div",
+ 			$OUTPUT->single_button($backurl, get_string('back', 'local_paperattendance')),
+ 			array("align" => "left"
+ 			));
+ 	echo $viewbackbutton;
 	
 }
 
