@@ -514,11 +514,13 @@ $( "#confirm" ).on( "click", function() {
 			        var error = response["error"];
 			        if (error != 0){
 						alert(error);
+						console.log(517);
 			        }
 			        else{
 				        //Agregate the info of the session to the var sessinfo array
 			        	sessinfo.push({"sesspageid":sesspageid, "shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
-
+						console.log(520);
+						cconsole.log(JSON.stringify(sessinfo));
 			        	$.ajax({
 			        	    type: 'POST',
 			        	    url: 'ajax/ajaxquerys.php',
@@ -531,7 +533,8 @@ $( "#confirm" ).on( "click", function() {
 			        	        if (error != 0){
 			        				alert(error);
 			        	        }
-			        	        else{			    			        
+			        	        else{
+			        	        	console.log(537);			    			        
 			    					$("#inputs").empty();
 			    					$("#inputs").removeClass("row");
 			    					$("#pdfviewer").empty();
