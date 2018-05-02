@@ -407,6 +407,7 @@ if ($action == "edit") {
   	$inputarea = html_writer::div($inputs,"col-sm-12 row", array( "id"=>"inputs"));
  	echo html_writer::div($inputarea.$pdfarea, "form-group");
  	
+ 	//Add back button 
  	$backurl = new moodle_url("/local/paperattendance/missingpages.php", array(
  			"action" => "view"
  	));
@@ -414,7 +415,7 @@ if ($action == "edit") {
  	$viewbackbutton = html_writer::nonempty_tag(
  			"div",
  			$OUTPUT->single_button($backurl, get_string('back', 'local_paperattendance')),
- 			array("align" => "left"
+ 			array("align" => "left", "style" => "position:fixed; bottom:0"
  			));
  	echo $viewbackbutton;
 	
@@ -510,7 +511,7 @@ $( "#confirm" ).on( "click", function() {
 	    alert("Por favor, rellene todos los campos correctamente");
 	}
 	else {
-		//AJAX to check if the page was processed
+		//AJAX to get the students list
 		$.ajax({
 			    type: 'GET',
 			    url: 'ajax/ajaxquerys.php',
@@ -532,6 +533,7 @@ $( "#confirm" ).on( "click", function() {
 			        	sessinfo.push({"sesspageid":sesspageid, "shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
 						console.log(520);
 						console.log(JSON.stringify(sessinfo));
+						//AJAX to check if the page was processed
 			        	$.ajax({
 			        	    type: 'POST',
 			        	    url: 'ajax/ajaxquerys.php',
@@ -544,7 +546,8 @@ $( "#confirm" ).on( "click", function() {
 			        	    	console.log(error);
 			        	        if (error != 0){
 			        				alert(error);
-			        	        }			        	        
+			        	        }	
+			        	        //now we create the table with the students		        	        
 			        	        else{
 			        	        	console.log(537);			    			        
 			    					$("#inputs").empty();
