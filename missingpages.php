@@ -566,7 +566,7 @@ $( "#confirm" ).on( "click", function() {
 			    			        });
 			    			        $("#inputs").append("</tbody></table>");
 			    		    		$(".form-group").append('<div align="center" id="savebutton"><button class="btn btn-info savestudentsattendance" style=" width:30%; margin-bottom:5%; margin-top:5%;">Guardar Asistencia</button></div>');
-			    		    		$("#backbutton").append(viewbackbutton);
+			    		    		$("#backbutton").append(backbutton);
 			    		    		RefreshSomeEventListener();
 			    		        }
 			        	    }
