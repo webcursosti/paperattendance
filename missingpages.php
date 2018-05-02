@@ -415,7 +415,7 @@ if ($action == "edit") {
  	$viewbackbutton = html_writer::nonempty_tag(
  			"div",
  			$OUTPUT->single_button($backurl, get_string('back', 'local_paperattendance')),
- 			array("align" => "left", "style" => "position:sticky; bottom:0"
+ 			array("align" => "left", "style" => "position:sticky; bottom:0", "id"=>"backbutton"
  			));
  	echo $viewbackbutton;
 	
@@ -505,6 +505,7 @@ $( "#confirm" ).on( "click", function() {
 	var begin = $('#begin');
 	var sesspageid = <?php echo $sesspageid; ?>;
 	var pdfviewer = '<?php echo $viewerpdfdos; ?>';
+	var backbutton = '<?php echo $viewbackbutton; ?>';
 
 	//Validate the four fields in the form
 	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())-1+26)%26 != 0 || date.val() === date.val().split('-')[0] || module.val() === module.val().split(':')[0]) {
@@ -549,7 +550,8 @@ $( "#confirm" ).on( "click", function() {
 			        	        }	
 			        	        //now we create the table with the students		        	        
 			        	        else{
-			        	        	console.log(537);			    			        
+			        	        	console.log(537);	
+			        	        	$("#backbutton").empty();		    			        
 			    					$("#inputs").empty();
 			    					$("#inputs").removeClass("row");
 			    					$("#pdfviewer").empty();
@@ -564,6 +566,7 @@ $( "#confirm" ).on( "click", function() {
 			    			        });
 			    			        $("#inputs").append("</tbody></table>");
 			    		    		$(".form-group").append('<div align="center" id="savebutton"><button class="btn btn-info savestudentsattendance" style=" width:30%; margin-bottom:5%; margin-top:5%;">Guardar Asistencia</button></div>');
+			    		    		$("#backbutton").append(viewbackbutton);
 			    		    		RefreshSomeEventListener();
 			    		        }
 			        	    }
