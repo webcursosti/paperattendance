@@ -505,7 +505,6 @@ $( "#confirm" ).on( "click", function() {
 	var begin = $('#begin');
 	var sesspageid = <?php echo $sesspageid; ?>;
 	var pdfviewer = '<?php echo $viewerpdfdos; ?>';
-	var backbutton = '<?php echo $viewbackbutton; ?>';
 
 	//Validate the four fields in the form
 	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())-1+26)%26 != 0 || date.val() === date.val().split('-')[0] || module.val() === module.val().split(':')[0]) {
