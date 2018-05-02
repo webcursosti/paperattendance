@@ -520,7 +520,7 @@ $( "#confirm" ).on( "click", function() {
 				        //Agregate the info of the session to the var sessinfo array
 			        	sessinfo.push({"sesspageid":sesspageid, "shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
 						console.log(520);
-						cconsole.log(JSON.stringify(sessinfo));
+						console.log(JSON.stringify(sessinfo));
 			        	$.ajax({
 			        	    type: 'POST',
 			        	    url: 'ajax/ajaxquerys.php',
