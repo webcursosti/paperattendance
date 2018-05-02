@@ -533,6 +533,7 @@ $( "#confirm" ).on( "click", function() {
 			        	        if (error != 0){
 			        				alert(error);
 			        	        }
+			        	        console.log(error);
 			        	        else{
 			        	        	console.log(537);			    			        
 			    					$("#inputs").empty();
