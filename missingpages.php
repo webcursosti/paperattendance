@@ -530,10 +530,10 @@ $( "#confirm" ).on( "click", function() {
 			        	    	},
 			        	    success: function (response) {
 			        	    	var error = response["process"];
+			        	    	console.log(error);
 			        	        if (error != 0){
 			        				alert(error);
-			        	        }
-			        	        console.log(error);
+			        	        }			        	        
 			        	        else{
 			        	        	console.log(537);			    			        
 			    					$("#inputs").empty();
