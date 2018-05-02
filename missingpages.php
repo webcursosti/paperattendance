@@ -406,7 +406,7 @@ if ($action == "edit") {
   	$pdfarea = html_writer::div($viewerpdf,"col-md-12", array( "id"=>"pdfviewer"));
   	$inputarea = html_writer::div($inputs,"col-sm-12 row", array( "id"=>"inputs"));
  	echo html_writer::div($inputarea.$pdfarea, "form-group");
- 	
+ 	/*
  	//Add back button 
  	$backurl = new moodle_url("/local/paperattendance/missingpages.php", array(
  			"action" => "view"
@@ -418,7 +418,7 @@ if ($action == "edit") {
  			array("align" => "left", "style" => "position:sticky; bottom:0", "id"=>"backbutton"
  			));
  	echo $viewbackbutton;
-	
+	*/
 }
 
 //Delete the selected missing page
@@ -505,7 +505,7 @@ $( "#confirm" ).on( "click", function() {
 	var begin = $('#begin');
 	var sesspageid = <?php echo $sesspageid; ?>;
 	var pdfviewer = '<?php echo $viewerpdfdos; ?>';
-	var backbutton = '<?php echo $viewbackbutton; ?>';
+	//var backbutton = '<?php echo $viewbackbutton; ?>';
 
 	//Validate the four fields in the form
 	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())-1+26)%26 != 0 || date.val() === date.val().split('-')[0] || module.val() === module.val().split(':')[0]) {
@@ -551,7 +551,7 @@ $( "#confirm" ).on( "click", function() {
 			        	        //now we create the table with the students		        	        
 			        	        else{
 			        	        	console.log(537);	
-			        	        	$("#backbutton").empty();		    			        
+			        	        	//$("#backbutton").empty();		    			        
 			    					$("#inputs").empty();
 			    					$("#inputs").removeClass("row");
 			    					$("#pdfviewer").empty();
@@ -566,7 +566,7 @@ $( "#confirm" ).on( "click", function() {
 			    			        });
 			    			        $("#inputs").append("</tbody></table>");
 			    		    		$(".form-group").append('<div align="center" id="savebutton"><button class="btn btn-info savestudentsattendance" style=" width:30%; margin-bottom:5%; margin-top:5%;">Guardar Asistencia</button></div>');
-			    		    		$("#backbutton").append(backbutton);
+			    		    		//$("#backbutton").append(backbutton);
 			    		    		RefreshSomeEventListener();
 			    		        }
 			        	    }
