@@ -415,7 +415,7 @@ if ($action == "edit") {
  	$viewbackbutton = html_writer::nonempty_tag(
  			"div",
  			$OUTPUT->single_button($backurl, get_string('back', 'local_paperattendance')),
- 			array("align" => "left", "style" => "position:relative; bottom:0"
+ 			array("align" => "left", "style" => "position:absolute; bottom:0"
  			));
  	echo $viewbackbutton;
 	
