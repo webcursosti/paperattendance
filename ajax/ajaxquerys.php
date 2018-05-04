@@ -302,7 +302,7 @@ switch ($action) {
 					$url =  $CFG->paperattendance_omegaupdateattendanceurl;
 					$token =  $CFG->paperattendance_omegatoken;
 					
-					if($data->status == 1){
+					if($setstudentpresence == 1){
 						$status = "true";
 					}
 					else{
@@ -325,7 +325,7 @@ switch ($action) {
 				}	
 			}
 			
-			echo json_encode("presenceid:".$presenceid." omegaid:".$omegaid);
+			echo json_encode("presenceid:".$presenceid." omegaid:".$omegaid."status:".$setstudentpresence);
 			break;
 		case 'savestudentsattendance':
 			$sessinfo = $_REQUEST['sessinfo']; 
