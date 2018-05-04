@@ -151,6 +151,7 @@ if ($action == "view") {
 		$counter = $page * $perpage + 1;
 		foreach ($missing as $miss) {
 
+
 			//delete action
 			$deletemissingurl = new moodle_url("/local/paperattendance/missingpages.php",
 					array(
@@ -384,9 +385,24 @@ if ($action == "edit") {
 							.form-control::-ms-input-placeholder { color: lightgrey; }  /* Microsoft Edge *
 							</style>');
 	echo html_writer::div(get_string("missingpageshelp","local_paperattendance"),"alert alert-info", array("role"=>"alert", "id"=>"alerthelp"));
-	$pdfarea = html_writer::div($viewerpdf,"col-md-12", array( "id"=>"pdfviewer"));
-	$inputarea = html_writer::div($inputs,"col-sm-12 row", array( "id"=>"inputs"));
-	echo html_writer::div($inputarea.$pdfarea, "form-group");
+
+  	$pdfarea = html_writer::div($viewerpdf,"col-md-12", array( "id"=>"pdfviewer"));
+  	$inputarea = html_writer::div($inputs,"col-sm-12 row", array( "id"=>"inputs"));
+ 	echo html_writer::div($inputarea.$pdfarea, "form-group");
+ 	
+ 	//Add back button 
+ 	$backurl = new moodle_url("/local/paperattendance/missingpages.php", array(
+ 			"action" => "view"
+ 	));
+ 	
+ 	$viewbackbutton = html_writer::nonempty_tag(
+ 			"div",
+ 			$OUTPUT->single_button($backurl, get_string('back', 'local_paperattendance')),
+ 			array("align" => "left", "style" => "position:sticky; bottom:0", "id"=>"backbutton"
+ 			));
+ 	echo $viewbackbutton;
+	
+}
 
 }
 //Delete the selected missing page
@@ -445,7 +461,7 @@ echo $OUTPUT->footer();
 ?>
 
 </script>
-	<script type="text/javascript">
+<script type="text/javascript">
 	$( document ).on( "click", "#sn", function() {
 		jQuery('#shortnamemodal').css('z-index', '');
 	});
@@ -470,47 +486,74 @@ $( "#confirm" ).on( "click", function() {
 	var begin = $('#begin');
 	var sesspageid = <?php echo $sesspageid; ?>;
 	var pdfviewer = '<?php echo $viewerpdfdos; ?>';
+	var backbutton = '<?php echo $viewbackbutton; ?>';
 	//Validate the four fields in the form
 	if (!course.val() || !date.val() || !module.val() || !begin.val() || (parseFloat(begin.val())-1+26)%26 != 0 || date.val() === date.val().split('-')[0] || module.val() === module.val().split(':')[0]) {
 	    alert("Por favor, rellene todos los campos correctamente");
 	}
-	//If the user completes correctly, we now send the data through AJAX to get the student list of the session list
-	else{
+	else {
+		//AJAX to get the students list
 		$.ajax({
-		    type: 'GET',
-		    url: 'ajax/ajaxquerys.php',
-		    data: {
-			      'action' : 'getliststudentspage',
-			      'result' : course.val(),
-			      'begin' : parseFloat(begin.val()),
-			      'module' : module.val(),
-			      'date' : date.val()
-		    	},
-		    success: function (response) {
-		        var error = response["error"];
-		        if (error != 0){
-					alert(error);
-		        }
-		        else{
-			        //Agregate the info of the session to the var sessinfo array
-		        	sessinfo.push({"sesspageid":sesspageid, "shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
-					$("#inputs").empty();
-					$("#inputs").removeClass("row");
-					$("#pdfviewer").empty();
-					$("#pdfviewer").append(pdfviewer);
-					//Create the table with all the students and checkboxs
-				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
-				    $("#inputs").append(table);
-			        $.each(response["alumnos"], function(i, field){
-				        var counter = i + parseFloat(begin.val());
-			        	var appendcheckbox = '<tr class="usercheckbox"><td>'+counter+'</td><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
-			        	$("#appendtrs").append(appendcheckbox);
-			        });
-			        $("#inputs").append("</tbody></table>");
-		    		$(".form-group").append('<div align="center" id="savebutton"><button class="btn btn-info savestudentsattendance" style=" width:30%; margin-bottom:5%; margin-top:5%;">Guardar Asistencia</button></div>');
-		    		RefreshSomeEventListener();
-		        }
-		    }
+
+			    type: 'GET',
+			    url: 'ajax/ajaxquerys.php',
+			    data: {
+				      'action' : 'getliststudentspage',
+				      'result' : course.val(),
+				      'begin' : parseFloat(begin.val()),
+				      'module' : module.val(),
+				      'date' : date.val()
+			    	},
+			    success: function (response) {
+			        var error = response["error"];
+			        if (error != 0){
+						alert(error);
+						console.log(517);
+			        }
+			        else{
+				        //Agregate the info of the session to the var sessinfo array
+			        	sessinfo.push({"sesspageid":sesspageid, "shortname":course.val(), "date": date.val(), "module": module.val(), "begin": begin.val()});
+						console.log(520);
+						console.log(JSON.stringify(sessinfo));
+						//AJAX to check if the page was processed
+			        	$.ajax({
+			        	    type: 'POST',
+			        	    url: 'ajax/ajaxquerys.php',
+			        	    data: {
+			        		      'action' : 'checkprocesspage',
+			        		      'sessinfo' : JSON.stringify(sessinfo)
+			        	    	},
+			        	    success: function (responsetwo) {
+			        	    	var error = responsetwo["process"];
+			        	    	console.log(error);
+			        	        if (error != 0){
+			        				alert(error);
+			        	        }	
+			        	        //now we create the table with the students		        	        
+			        	        else{
+			        	        	console.log(537);	
+			        	        	$("#backbutton").empty();		    			        
+			    					$("#inputs").empty();
+			    					$("#inputs").removeClass("row");
+			    					$("#pdfviewer").empty();
+			    					$("#pdfviewer").append(pdfviewer);
+			    					//Create the table with all the students and checkboxs
+			    				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
+			    				    $("#inputs").append(table);
+			    			        $.each(response["alumnos"], function(i, field){
+			    				        var counter = i + parseFloat(begin.val());
+			    			        	var appendcheckbox = '<tr class="usercheckbox"><td>'+counter+'</td><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
+			    			        	$("#appendtrs").append(appendcheckbox);
+			    			        });
+			    			        $("#inputs").append("</tbody></table>");
+			    		    		$(".form-group").append('<div align="center" id="savebutton"><button class="btn btn-info savestudentsattendance" style=" width:30%; margin-bottom:5%; margin-top:5%;">Guardar Asistencia</button></div>');
+			    		    		$("#backbutton").append(backbutton);
+			    		    		RefreshSomeEventListener();
+			    		        }
+			        	    }
+			        	});
+			        }
+			    }
 		});
 	}
 });
