@@ -296,7 +296,7 @@ switch ($action) {
 				if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 				
 					$modifieduserid = $attendance -> userid;
-					
+					$initialtime = time();
 					$curl = curl_init();
 					
 					$url =  $CFG->paperattendance_omegaupdateattendanceurl;
@@ -322,6 +322,8 @@ switch ($action) {
 					curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
 					$result = curl_exec ($curl);
 					curl_close ($curl);
+					$executiontime = time() - $initialtime;
+					paperattendance_cronlog($url, $result, time(), $executiontime);
 				}	
 			}
 			
