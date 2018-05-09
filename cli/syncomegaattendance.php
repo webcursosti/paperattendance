@@ -65,7 +65,7 @@ echo "\nStarting at ".date("F j, Y, G:i:s")."\n";
 $initialtime = time();
 
 if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
-    $sessionssql= "SELECT * FROM {paperattendance_session} where lastmodified > ? AND lasmodified < ?";
+    $sessionssql= "SELECT * FROM {paperattendance_session} where lastmodified > ? AND lastmodified < ?";
     $sessions = $DB->get_records_sql($sessionssql,array($options['initialdate'],$options['enddate']));
     if(count($sessions) > 0){
         $countsessions = 0;
