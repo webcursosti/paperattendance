@@ -83,7 +83,7 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
             foreach ($students as $student){
                 $count++;
                 $line = array();
-                $line['emailAlumno'] = paperattendance_getusername($student->id);
+                $line['emailAlumno'] = paperattendance_getusername($student->userid);
                 $line['resultado'] = "true";
                 $line['asistencia'] = $student->status;
                 
@@ -99,7 +99,7 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
                     $update->status = 1;
                     $DB->update_record("paperattendance_session", $update);
                 }else{
-                    echo "omega sync failed... check php code";
+                    echo "omega sync failed... check php code \n";
                 }
             }else{
                 echo "Omega api disconected... trying next session \n";
