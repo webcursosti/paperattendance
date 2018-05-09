@@ -89,6 +89,7 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
                 
                 $arrayalumnos[] = $line;
             }
+            var_dump($arrayalumnos);
             $countstudents += $count;
             if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
                 if(paperattendance_omegacreateattendance($session->courseid, $arrayalumnos, $session->id)){
