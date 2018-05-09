@@ -104,10 +104,15 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
             }else{
                 echo "Omega api disconected... trying next session \n";
             }
-        }else{
-            echo "No sessions for this dates \n";
         }
+        echo "total sessions: $countsessions \n";
+        echo "synced sessions: $syncedsessions \n";
+        echo "total students: $countstudents \n";
+        echo "synced students: $syncedstudents \n";
+    }else{
+        echo "No sessions for this dates \n";
     }
+}
    /* $attendancesql = "Select * from {paperattendance_presence} where lastmodified > ? AND lastmodified < ?";
     $attendance = $DB->get_records_sql($attendancesql,array($options['initialdate'],$options['enddate']));
     
@@ -142,7 +147,7 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
     echo "updated $updates precenses \n";
     echo "$errors precenses failed to update\n";*/
 }else{
-	echo "No Omega webapi \n";
+	echo "No Omega webapi connected \n";
 }
 $finaltime = time();
 $executiontime = $finaltime - $initialtime;
