@@ -112,7 +112,7 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
     }else{
         echo "No sessions for this dates \n";
     }
-}
+
    /* $attendancesql = "Select * from {paperattendance_presence} where lastmodified > ? AND lastmodified < ?";
     $attendance = $DB->get_records_sql($attendancesql,array($options['initialdate'],$options['enddate']));
     
