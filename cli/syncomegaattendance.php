@@ -75,7 +75,7 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
         foreach ($sessions as $session){
             $countsessions++;
             $studentssql = "SELECT * FROM {paperattendance_presence} WHERE sessionid = ?";
-            $students = $DB->get_records_sql($studentssql,array($session->id);
+            $students = $DB->get_records_sql($studentssql,array($session->id));
             
             $arrayalumnos = array();
             
