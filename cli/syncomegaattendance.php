@@ -85,8 +85,11 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
                 $line = array();
                 $line['emailAlumno'] = paperattendance_getusername($student->userid);
                 $line['resultado'] = "true";
-                $line['asistencia'] = $student->status;
-                
+                if($student->status == 1){
+                    $line['asistencia'] = "true";
+                }else{
+                    $line['asistencia'] = "false";
+                }
                 $arrayalumnos[] = $line;
             }
             $countstudents += $count;
