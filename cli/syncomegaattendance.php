@@ -36,12 +36,14 @@ list($options, $unrecognized) = cli_get_params(array(
 		'help' => false,
 		'debug' => false,
 		'initialdate' => null,
-		'enddate' => null
+		'enddate' => null,
+        'course' => null
 ), array(
 		'h' => 'help',
 		'd' => 'debug',
 		'i' => 'initialdate',
-		'e' => 'enddate'
+		'e' => 'enddate',
+        'c' => 'course'
 ));
 if($unrecognized) {
 	$unrecognized = implode("\n  ", $unrecognized);
@@ -65,8 +67,15 @@ echo "\nStarting at ".date("F j, Y, G:i:s")."\n";
 $initialtime = time();
 
 if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
-    $sessionssql= "SELECT * FROM {paperattendance_session} where lastmodified > ? AND lastmodified < ?";
-    $sessions = $DB->get_records_sql($sessionssql,array($options['initialdate'],$options['enddate']));
+    if($options['initialdate'] !== null && $options['enddate'] !== null){
+        $sessionssql= "SELECT * FROM {paperattendance_session} where lastmodified > ? AND lastmodified < ?";
+        $sessions = $DB->get_records_sql($sessionssql,array($options['initialdate'],$options['enddate']));
+    }
+    if($options['course'] !== null){
+        $sessionssql= "SELECT * FROM {paperattendance_session} where courseid = ?";
+        $sessions = $DB->get_records_sql($sessionssql,array($options['course']));
+    }
+    
     if(count($sessions) > 0){
         $countsessions = 0;
         $syncedsessions = 0;
