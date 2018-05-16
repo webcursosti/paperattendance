@@ -133,7 +133,6 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
                     "modulos" => array( array("hora" => $modulo) ),
                     "alumnos" => $arrayalumnos
                 );
-                echo json_encode($fields);
                 curl_setopt($curl, CURLOPT_URL, $url);
                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
                 curl_setopt($curl, CURLOPT_POST, TRUE);
