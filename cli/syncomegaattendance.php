@@ -67,15 +67,15 @@ echo "\nStarting at ".date("F j, Y, G:i:s")."\n";
 $initialtime = time();
 
 if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
-    if($options['initialdate'] !== null && $options['enddate'] !== null){
+    if(!is_null($options['initialdate']) && !is_null($options['enddate'])){
         $sessionssql= "SELECT * FROM {paperattendance_session} where lastmodified > ? AND lastmodified < ?";
         $sessions = $DB->get_records_sql($sessionssql,array($options['initialdate'],$options['enddate']));
     }
-    if($options['course'] !== null){
+    if(!is_null($options['course'])){
         $sessionssql= "SELECT * FROM {paperattendance_session} where courseid = ?";
         $sessions = $DB->get_records_sql($sessionssql,array($options['course']));
     }
-    
+    echo "query success\n";
     if(count($sessions) > 0){
         $countsessions = 0;
         $syncedsessions = 0;
