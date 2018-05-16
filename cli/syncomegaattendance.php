@@ -140,6 +140,7 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
                 curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
                 $result = curl_exec ($curl);
                 curl_close ($curl);
+                var_dump($result);
                 $executiontime = time() - $initialtime;
                 $cron = paperattendance_cronlog($url, $result, time(), $executiontime);
                 $alumnos = new stdClass();
@@ -166,7 +167,12 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
                         }
                     }
                 }
+                
                 if($return){
+                    $update = new stdClass();
+                    $update->id = $sessid;
+                        $update->status = 2;
+                    $DB->update_record("paperattendance_session", $update);
                     $syncedsessions++;
                     $syncedstudents += $count;
                     $update = new stdClass();
