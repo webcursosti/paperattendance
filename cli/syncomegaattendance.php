@@ -91,7 +91,7 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
             $arrayalumnos = array();
             
             $count = 0;
-            echo "session:$count \n";
+            echo "session:$countsessions \n";
             foreach ($students as $student){
                 $count++;
                 $line = array();
