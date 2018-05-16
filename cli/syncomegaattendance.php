@@ -133,6 +133,7 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
                     "modulos" => array( array("hora" => $modulo) ),
                     "alumnos" => $arrayalumnos
                 );
+                echo json_encode($fields);
                 curl_setopt($curl, CURLOPT_URL, $url);
                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
                 curl_setopt($curl, CURLOPT_POST, TRUE);
@@ -140,7 +141,7 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
                 curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
                 $result = curl_exec ($curl);
                 curl_close ($curl);
-                $executiontime = time() - $initialtime;
+                $executiontime = time() - $initialtime;º
                 $cron = paperattendance_cronlog($url, $result, time(), $executiontime);
                 $alumnos = new stdClass();
                 $alumnos = json_decode($result)->alumnos;
