@@ -141,7 +141,7 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
                 curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
                 $result = curl_exec ($curl);
                 curl_close ($curl);
-                $executiontime = time() - $initialtime;º
+                $executiontime = time() - $initialtime;
                 $cron = paperattendance_cronlog($url, $result, time(), $executiontime);
                 $alumnos = new stdClass();
                 $alumnos = json_decode($result)->alumnos;
