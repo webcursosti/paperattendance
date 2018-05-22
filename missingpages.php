@@ -404,7 +404,6 @@ if ($action == "edit") {
 	
 }
 
-}
 //Delete the selected missing page
 if ($action == "delete") {
 	if ($sesspageid == null) {
@@ -540,14 +539,39 @@ $( "#confirm" ).on( "click", function() {
 			    					//Create the table with all the students and checkboxs
 			    				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
 			    				    $("#inputs").append(table);
+			    				    var checkAllcheckbox = '<tr class="checkAll"><td></td><td><input type="checkbox" id="checkAll"></td><td>Check All</td></tr>';
+			    					$("#appendtrs").append(checkAllcheckbox);
+			    				    
+			    				    
 			    			        $.each(response["alumnos"], function(i, field){
 			    				        var counter = i + parseFloat(begin.val());
-			    			        	var appendcheckbox = '<tr class="usercheckbox"><td>'+counter+'</td><td><input type="checkbox" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
+			    				    	var appendcheckbox = '<tr class="usercheckbox"><td>'+counter+'</td><td><input type="checkbox" class="usercheck" value="'+field["studentid"]+'"></td><td>'+field["username"]+'</td></tr>';
 			    			        	$("#appendtrs").append(appendcheckbox);
 			    			        });
 			    			        $("#inputs").append("</tbody></table>");
 			    		    		$(".form-group").append('<div align="center" id="savebutton"><button class="btn btn-info savestudentsattendance" style=" width:30%; margin-bottom:5%; margin-top:5%;">Guardar Asistencia</button></div>');
 			    		    		$("#backbutton").append(backbutton);
+
+
+			    		    		jQuery(".usercheck").click(function () {
+			    		    		    if (jQuery(this).is(":checked")) {
+			    		    		        var isAllChecked = 0;
+			    		    		
+			    		    		        jQuery(".usercheck").each(function() {
+			    		    		            if (!this.checked)
+			    		    		                isAllChecked = 1;
+			    		    		        });
+			    		    		
+			    		    		        if (isAllChecked == 0) {
+			    		    		        	jQuery("#checkAll").prop("checked", true);
+			    		    		        }     
+			    		    		    }
+			    		    		    else {
+			    		    		    	jQuery("#checkAll").prop("checked", false);
+			    		    		    }
+			    		    		});
+			    		    		
+			    		    		
 			    		    		RefreshSomeEventListener();
 			    		        }
 			        	    }
