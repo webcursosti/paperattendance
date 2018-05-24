@@ -537,11 +537,8 @@ $( "#confirm" ).on( "click", function() {
 			    					$("#pdfviewer").empty();
 			    					$("#pdfviewer").append(pdfviewer);
 			    					//Create the table with all the students and checkboxs
-			    				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
+			    				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th>class="checkAll input type="checkbox" id="checkAll" Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
 			    				    $("#inputs").append(table);
-			    				    var checkAllcheckbox = '<tr class="checkAll"><td></td><td><input type="checkbox" id="checkAll"></td><td>Check All</td></tr>';
-			    					$("#appendtrs").append(checkAllcheckbox);
-			    				    
 			    				    
 			    			        $.each(response["alumnos"], function(i, field){
 			    				        var counter = i + parseFloat(begin.val());
@@ -553,6 +550,38 @@ $( "#confirm" ).on( "click", function() {
 			    		    		$("#backbutton").append(backbutton);
 
 
+			    		    		$("#checkAll").change(function() {
+			    		    	        if (this.checked) {
+			    		    	            $(".usercheck").each(function() {
+			    		    	                this.checked=true;
+			    		    	            });
+			    		    	        } else {
+			    		    	            $(".usercheck").each(function() {
+			    		    	                this.checked=false;
+			    		    	            });
+			    		    	        }
+			    		    	    });
+
+			    		    	    $(".usercheck").click(function () {
+			    		    	        if ($(this).is(":checked")) {
+			    		    	            var isAllChecked = 0;
+
+			    		    	            $(".usercheck").each(function() {
+			    		    	                if (!this.checked)
+			    		    	                    isAllChecked = 1;
+			    		    	            });
+
+			    		    	            if (isAllChecked == 0) {
+			    		    	                $("#checkAll").prop("checked", true);
+			    		    	            }     
+			    		    	        }
+			    		    	        else {
+			    		    	            $("#checkAll").prop("checked", false);
+			    		    	        }
+			    		    	    });
+			    		    	});
+
+			    		    		/*
 			    		    		jQuery(".usercheck").click(function () {
 			    		    		    if (jQuery(this).is(":checked")) {
 			    		    		        var isAllChecked = 0;
@@ -569,7 +598,7 @@ $( "#confirm" ).on( "click", function() {
 			    		    		    else {
 			    		    		    	jQuery("#checkAll").prop("checked", false);
 			    		    		    }
-			    		    		});
+			    		    		});*/
 			    		    		
 			    		    		
 			    		    		RefreshSomeEventListener();
