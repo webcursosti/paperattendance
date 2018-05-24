@@ -579,7 +579,6 @@ $( "#confirm" ).on( "click", function() {
 			    		    	            $("#checkAll").prop("checked", false);
 			    		    	        }
 			    		    	    });
-			    		    	});
 
 			    		    		/*
 			    		    		jQuery(".usercheck").click(function () {
