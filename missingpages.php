@@ -537,7 +537,7 @@ $( "#confirm" ).on( "click", function() {
 			    					$("#pdfviewer").empty();
 			    					$("#pdfviewer").append(pdfviewer);
 			    					//Create the table with all the students and checkboxs
-			    				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><td input type="checkbox" id="checkAll"></td><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
+			    				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><td> input type="checkbox" id="checkAll"</td><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
 			    				    $("#inputs").append(table);
 			    				    
 			    			        $.each(response["alumnos"], function(i, field){
