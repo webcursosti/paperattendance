@@ -614,7 +614,7 @@ function RefreshSomeEventListener() {
 	$( ".savestudentsattendance" ).on( "click", function() {
 		var studentsattendance = [];
 		//Validate if the checkbox is checked or not, if checked presence = 1
-		var checkbox = $('input:checkbox');
+		var checkbox = $('.usercheck');
 		$.each(checkbox, function(i, field){
 			var currentcheckbox = $(this);
 			if(currentcheckbox.prop("checked") == true){
