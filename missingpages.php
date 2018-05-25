@@ -646,19 +646,19 @@ function RefreshSomeEventListener() {
 		    	},
 		    success: function (response) {
 				/**For the moment we only use the third error, the rest are for debugging**/
-				/*var error = response["sesion"];
-				var error2 = response["sesiondos"];*/
+				var error = response["sesion"];
+				var error2 = response["sesiondos"];
 				var error3 = response["guardar"];
-				//var error4 = response["omegatoken"];
+				var error4 = response["omegatoken"];
 				var error5 = response["omegatoken2"];
-				/*var error6 = response["arregloalumnos"];
+				var error6 = response["arregloalumnos"];
 				var error7 = response["idcurso"];
 				var error8 = response["idsesion"];
-				var error9 = response["arregloinicialalumnos"];*/
+				var error9 = response["arregloinicialalumnos"];
 				var moodleurl = "<?php echo $CFG->wwwroot;?>";
 				$('#loader').hide();
 				$("#alerthelp").hide();
-				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:left; margin-top:5%;">'+error3+error5+'</div>');
+				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:left; margin-top:5%;">'+error+error2++error3+error4+error5+error6+error7+error8+error9+'</div>');
 				//console.log(error+error2+error3+error4+error5+error6+error7+error8+error9);
 				$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:left; margin-right:70%;">Volver</button>');
 				
