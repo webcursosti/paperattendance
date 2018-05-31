@@ -328,7 +328,7 @@ switch ($action) {
 			echo json_encode("presenceid:".$presenceid." omegaid:".$omegaid."status:".$setstudentpresence);
 			break;
 		case 'savestudentsattendance':
-			var_dump("this is the correct sector");
+			consle.log(var_dump("this is the correct sector"));
 			$sessinfo = $_REQUEST['sessinfo']; 
 			$sessinfo = json_decode ($sessinfo);
 			$studentsattendance = $_REQUEST['studentsattendance'];
@@ -434,9 +434,9 @@ switch ($action) {
 					$stop = true;
 				}
 			}
-			var_dump($stop);
+			console.log(var_dump($stop));
 			if($stop){
-				var_dump("Im in");
+				console.log(var_dump("Im in"));
 				
 				$arrayalumnos = array();
 				$init = ($numberpage-1)*26+1; 
