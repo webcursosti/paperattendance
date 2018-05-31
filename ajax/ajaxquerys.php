@@ -434,6 +434,7 @@ switch ($action) {
 				}
 			}
 			if($stop){
+				var_dump("Im in");
 				
 				$arrayalumnos = array();
 				$init = ($numberpage-1)*26+1; 
