@@ -491,7 +491,7 @@ switch ($action) {
 				$DB->update_record("paperattendance_session", $update);
 				
 			}
-			console.log("why cant you end?");
+			console.log(var_dump("why cant you end?"));
 			echo json_encode($return);
 			break;
 			
