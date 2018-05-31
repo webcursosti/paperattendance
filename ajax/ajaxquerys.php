@@ -328,6 +328,7 @@ switch ($action) {
 			echo json_encode("presenceid:".$presenceid." omegaid:".$omegaid."status:".$setstudentpresence);
 			break;
 		case 'savestudentsattendance':
+			var_dump("this is the correct sector");
 			$sessinfo = $_REQUEST['sessinfo']; 
 			$sessinfo = json_decode ($sessinfo);
 			$studentsattendance = $_REQUEST['studentsattendance'];
