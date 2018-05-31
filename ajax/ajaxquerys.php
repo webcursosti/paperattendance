@@ -486,6 +486,9 @@ switch ($action) {
 					$update->status = 1;
 				}
 				$DB->update_record("paperattendance_session", $update);
+				echo json_encode($return);
+				break;
+					
 				
 			}
 			
