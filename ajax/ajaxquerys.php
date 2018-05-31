@@ -540,7 +540,7 @@ switch ($action) {
 					$return["process"] = 0;
 				}
 			}
-
+			console.log("why cant you end?");
 			echo json_encode($return);
 			break;
 }
