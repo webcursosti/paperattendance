@@ -433,6 +433,7 @@ switch ($action) {
 					$stop = true;
 				}
 			}
+			var_dump($stop);
 			if($stop){
 				var_dump("Im in");
 				
