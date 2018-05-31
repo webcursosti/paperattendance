@@ -492,6 +492,7 @@ switch ($action) {
 				
 			}
 			console.log(var_dump("why cant you end?"));
+			console.log(var_dump($return));
 			echo json_encode($return);
 			break;
 			
