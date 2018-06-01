@@ -1077,9 +1077,6 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 					//save student sync
 					$sqlsyncstate = "UPDATE {paperattendance_presence} SET omegasync = ?, omegaid = ? WHERE sessionid  = ? AND userid = ?";
 					$studentid = $DB->execute($sqlsyncstate, array('1', $omegasessionid, $sessid, $studentid));
-				}else{
-					mtrace("el usuario: $username, no existe query:$studentid");
-				}
 			}
 		}
 	}
