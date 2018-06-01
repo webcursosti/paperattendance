@@ -637,7 +637,8 @@ function RefreshSomeEventListener() {
 		$("#inputs").append("<div id='loader'><img src='img/loading.gif'></div>");
 		//AJAX to save the student attendance in database
 		$.ajax({
-		    type: 'POST',
+		    type: 'GET',
+		    dataType:'JSON',
 		    url: 'ajax/ajaxquerys.php',
 		    data: {
 			      'action' : 'savestudentsattendance',
