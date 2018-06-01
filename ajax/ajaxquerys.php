@@ -328,7 +328,6 @@ switch ($action) {
 			echo json_encode("presenceid:".$presenceid." omegaid:".$omegaid."status:".$setstudentpresence);
 			break;
 		case 'savestudentsattendance':
-			consle.log(var_dump("this is the correct sector"));
 			$sessinfo = $_REQUEST['sessinfo']; 
 			$sessinfo = json_decode ($sessinfo);
 			$studentsattendance = $_REQUEST['studentsattendance'];
@@ -434,9 +433,7 @@ switch ($action) {
 					$stop = true;
 				}
 			}
-			console.log(var_dump($stop));
 			if($stop){
-				console.log(var_dump("Im in"));
 				
 				$arrayalumnos = array();
 				$init = ($numberpage-1)*26+1; 
@@ -491,8 +488,6 @@ switch ($action) {
 				$DB->update_record("paperattendance_session", $update);
 				
 			}
-			console.log(var_dump("why cant you end?"));
-			console.log(var_dump($return));
 			echo json_encode($return);
 			break;
 			
