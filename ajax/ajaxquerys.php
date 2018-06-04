@@ -336,7 +336,7 @@ switch ($action) {
 			require_once($CFG->dirroot . '/local/paperattendance/locallib.php');
 			
 
-			$return["arregloinicialalumnos"] = print_r($studentsattendance, true);
+			//$return["arregloinicialalumnos"] = print_r($studentsattendance, true);
 	
 			$sesspageid = $sessinfo[0] -> sesspageid;
 			$shortname = $sessinfo[0] -> shortname;
@@ -354,9 +354,9 @@ switch ($action) {
 			//mtrace("checking session: ".$sessdoesntexist);
 			$stop = true;
 			$return = array();
-			$return["sesiondos"] = "";
+			//$return["sesiondos"] = "";
 			$return["guardar"] = "";
-			$return["omegatoken"] = "";
+			//$return["omegatoken"] = "";
 			$return["omegatoken2"] = "";
 			if( $sessdoesntexist == "perfect"){
 				//mtrace("Session doesn't exists");
@@ -429,7 +429,7 @@ switch ($action) {
 					$pagesession->uploaderid = $USER->id;
 					$DB->update_record('paperattendance_sessionpages', $pagesession);
 					//mtrace("Session already exists but this page had not be uploaded nor processed");
-					$return["sesiondos"] = "Hoja no procesada antes, ";
+				//	$return["sesiondos"] = "Hoja no procesada antes, ";
 					$stop = true;
 				}
 			}
@@ -441,9 +441,9 @@ switch ($action) {
 				$count = $init; //start at one because init starts at one
 
 				foreach ($studentsattendance as $student){
-					$return["sesion"] = "entre al foreach";
+					//$return["sesion"] = "entre al foreach";
 					if($count>=$init && $count<=$end){
-						$return["sesion"] = "entre al foreach y deberia estar guardando a alguien S:";
+						//$return["sesion"] = "entre al foreach y deberia estar guardando a alguien S:";
 						$line = array();
 						$line['emailAlumno'] = paperattendance_getusername($student -> userid);
 						$line['resultado'] = "true";
@@ -465,10 +465,10 @@ switch ($action) {
 				$omegasync = false;
 				
 				if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
-					$return["omegatoken"] = "Api aceptó token, ";
-					$return["arregloalumnos"] = print_r($arrayalumnos, true);
-					$return["idcurso"] = print_r($courseobject->id, true);
-					$return["idsesion"] = print_r($sessid,true);
+					//$return["omegatoken"] = "Api aceptó token, ";
+					//$return["arregloalumnos"] = print_r($arrayalumnos, true);
+					//$return["idcurso"] = print_r($courseobject->id, true);
+					//$return["idsesion"] = print_r($sessid,true);
 					if(paperattendance_omegacreateattendance($courseobject->id, $arrayalumnos, $sessid)){
 						$omegasync = true;
 						$return["omegatoken2"] = "Se creó la asistencia en Omega. ";
@@ -488,7 +488,6 @@ switch ($action) {
 				$DB->update_record("paperattendance_session", $update);
 				
 			}
-			
 			echo json_encode($return);
 			break;
 			
@@ -534,7 +533,6 @@ switch ($action) {
 					$return["process"] = 0;
 				}
 			}
-
 			echo json_encode($return);
 			break;
 }
