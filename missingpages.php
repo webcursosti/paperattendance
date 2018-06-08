@@ -537,11 +537,8 @@ $( "#confirm" ).on( "click", function() {
 			    					$("#pdfviewer").empty();
 			    					$("#pdfviewer").append(pdfviewer);
 			    					//Create the table with all the students and checkboxs
-			    				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th>Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
+			    				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th><input type="checkbox" id="checkAll">Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
 			    				    $("#inputs").append(table);
-			    				    var checkAllcheckbox = '<tr class="checkAll"><td></td><td><input type="checkbox" id="checkAll"></td><td>Check All</td></tr>';
-			    					$("#appendtrs").append(checkAllcheckbox);
-			    				    
 			    				    
 			    			        $.each(response["alumnos"], function(i, field){
 			    				        var counter = i + parseFloat(begin.val());
@@ -553,6 +550,37 @@ $( "#confirm" ).on( "click", function() {
 			    		    		$("#backbutton").append(backbutton);
 
 
+			    		    		$("#checkAll").change(function() {
+			    		    	        if (this.checked) {
+			    		    	            $(".usercheck").each(function() {
+			    		    	                this.checked=true;
+			    		    	            });
+			    		    	        } else {
+			    		    	            $(".usercheck").each(function() {
+			    		    	                this.checked=false;
+			    		    	            });
+			    		    	        }
+			    		    	    });
+
+			    		    	    $(".usercheck").click(function () {
+			    		    	        if ($(this).is(":checked")) {
+			    		    	            var isAllChecked = 0;
+
+			    		    	            $(".usercheck").each(function() {
+			    		    	                if (!this.checked)
+			    		    	                    isAllChecked = 1;
+			    		    	            });
+
+			    		    	            if (isAllChecked == 0) {
+			    		    	                $("#checkAll").prop("checked", true);
+			    		    	            }     
+			    		    	        }
+			    		    	        else {
+			    		    	            $("#checkAll").prop("checked", false);
+			    		    	        }
+			    		    	    });
+
+			    		    		/*
 			    		    		jQuery(".usercheck").click(function () {
 			    		    		    if (jQuery(this).is(":checked")) {
 			    		    		        var isAllChecked = 0;
@@ -569,7 +597,7 @@ $( "#confirm" ).on( "click", function() {
 			    		    		    else {
 			    		    		    	jQuery("#checkAll").prop("checked", false);
 			    		    		    }
-			    		    		});
+			    		    		});*/
 			    		    		
 			    		    		
 			    		    		RefreshSomeEventListener();
@@ -586,7 +614,7 @@ function RefreshSomeEventListener() {
 	$( ".savestudentsattendance" ).on( "click", function() {
 		var studentsattendance = [];
 		//Validate if the checkbox is checked or not, if checked presence = 1
-		var checkbox = $('input:checkbox');
+		var checkbox = $('.usercheck');
 		$.each(checkbox, function(i, field){
 			var currentcheckbox = $(this);
 			if(currentcheckbox.prop("checked") == true){
@@ -609,7 +637,8 @@ function RefreshSomeEventListener() {
 		$("#inputs").append("<div id='loader'><img src='img/loading.gif'></div>");
 		//AJAX to save the student attendance in database
 		$.ajax({
-		    type: 'POST',
+		    type: 'GET',
+		    dataType:'JSON',
 		    url: 'ajax/ajaxquerys.php',
 		    data: {
 			      'action' : 'savestudentsattendance',
@@ -634,6 +663,9 @@ function RefreshSomeEventListener() {
 				//console.log(error+error2+error3+error4+error5+error6+error7+error8+error9);
 				$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:left; margin-right:70%;">Volver</button>');
 				
+		    },
+		    complete: function (index){
+				console.log(index);
 		    }
 		});
 	});
