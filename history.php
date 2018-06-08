@@ -128,14 +128,17 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		$originalattendances = $DB->get_records_sql($gettotalstudentsattendances, array($attendanceid), $page * $perpage, $perpage);
 
 		$attendancestable = new html_table();
-
+		
 		//Check if we have at least one attendance in the selected session
 		if ($attendancescount > 0){
+			$setpresence = 1;
+			$changeallattendance = html_writer::div("Todos Presentes", "changeall", array("style"=>"display:none; cursor:pointer; text-decoration: underline; color: blue;","setpresence"=>"$setpresence"));
+			
 			$attendancestable->head = array(
 					get_string('hashtag', 'local_paperattendance'),
 					get_string('student', 'local_paperattendance'),
 					get_string('mail', 'local_paperattendance'),
-					get_string('attendance', 'local_paperattendance'),
+					$changeallattendance.get_string('attendance', 'local_paperattendance'),
 					get_string('setting', 'local_paperattendance'),
 					get_string('omegasync', 'local_paperattendance')
 			);
@@ -192,12 +195,14 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 					// 				$editactionasistencia = $OUTPUT->action_icon(
 					// 						$editurlattendance,
 							// 						$editiconattendance
-							// 						);
-
+							// 						);	
+					//define email table data: class email, attr email.		
+					$email = html_writer::div($attendance->email, "email", array("email"=>"$attendance->email"));
+					
 							$attendancestable->data[] = array(
 									$counter,
 									$name,
-									$attendance->email,
+									$email,
 									$statusiconaction,
 									$editactionasistencia,
 									$synchronizediconaction
@@ -207,7 +212,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 								$attendancestable->data[] = array(
 										"<strike>$counter</strike>",
 										"<strike>$name</strike>",
-										"<strike>$attendance->email</strike>",
+										"<strike>$email</strike>",
 										"<strike>Desmatriculado</strike>", //Add lan
 										null,
 										$synchronizediconaction
@@ -862,6 +867,12 @@ $( document ).ready(function() {
 			$( this ).find('.presencehover').toggle();
 		}
 	);
+	$('.generaltable').find('th').hover(function() {
+			$( this ).find('.changeall').toggle();
+		}, function() {
+			$( this ).find('.changeall').toggle();
+		}
+	);
 	$('.presencehover').on( "click", function() {
 		var div = $(this);
 		var studentpresence = div.attr("setstudentpresence"); 
@@ -895,6 +906,77 @@ $( document ).ready(function() {
 		    }
 		});
 	});
-	
+	// Change all presence function
+	$('.changeall').on( "click", function() {
+		//first we need the session id, course is and setpresence attribute located in the table head
+		var studentspresenceinfo = [];
+		var sessinfo = [];
+		var sessid = <?php echo $attendanceid; ?>;
+		var courseid = <?php echo $courseid; ?>;
+		var setpresence = $('.generaltable').find('th').find('.changeall').attr("setpresence");
+		//we add this info to de array sessinfo
+		sessinfo.push({'courseid' : courseid, 'sessid' : sessid, 'setpresence' : setpresence});
+		//now for each student we save his presence id and his email, presenceid for saving in database and email for saving in omega
+		var trow = $('.generaltable').find('tr');
+		$.each(trow, function(i, field){
+			var div = $(this); 
+			var email= div.find('.email').attr("email");
+			var presenceid = div.find('.presencehover').attr("presenceid");
+			//We agregate the info to the de studentspresenceinfo array
+			studentspresenceinfo.push({'presenceid' : presenceid, 'email' : email});
+			
+		});
+		console.log(JSON.stringify(studentspresenceinfo));
+		console.log(JSON.stringify(sessinfo));
+		//ajax to ajaxquerys with 2 arrays, one with the info session and the other with every studen presence id an email
+		$.ajax({
+		    type: 'POST',
+		    url: 'ajax/ajaxquerys.php',
+		    data: {
+			      'action' : 'changeallpresence',
+			      'sessinfo' : JSON.stringify(sessinfo),
+			      'studentspresenceinfo' : JSON.stringify(studentspresenceinfo)
+		    	},
+		    success: function (response) {
+			    //now that we save the students attendance, we need to actualize the setpresence: 0 ->when was changed to present and 1->when changed to absent
+		    	setpresence = response["setpresence"];
+
+		    	var moodleurl = "<?php echo $CFG->wwwroot;?>";
+				
+				if(setpresence == 1){
+					var settext = "Presente";
+					var settextchangeall = "Todos Presentes";
+					var setpresencestudent = 1;
+					var icon = moodleurl+"/local/paperattendance/img/invalid.svg";
+				}
+				else{
+					var settext = "Ausente";
+					var settextchangeall = "Todos Ausentes";
+					var setpresencestudent = 0;
+					var icon = moodleurl+"/local/paperattendance/img/valid.svg";
+				}
+
+				//now we find every student in the table and change his frontend to present or absent
+				var trow = $('.generaltable').find('tr').find('.presencehover');
+		    	$.each(trow, function(i, field){
+					var div = $(this); 
+					div.html(settext);
+					div.attr("setstudentpresence", setpresencestudent);
+					div.parent().parent().find('.smallicon').first().attr({
+						  src: icon
+					});
+					
+				});
+				//now finally we change the frontend for the "changeall" button
+				var htmlchangeall = $('.generaltable').find('th').find('.changeall');
+		    	htmlchangeall.attr("setpresence", setpresence);
+		    	htmlchangeall.html(settextchangeall);
+				//var error3 = response["guardar"];
+				
+				
+		    }
+		});
+		
+	});
 });
 </script>
