@@ -239,8 +239,8 @@ if ($action == "edit") {
 			$pdf = new FPDI();
 			$hashnamesql = "SELECT contenthash
 							FROM {files}
-							WHERE filename = ?";
-			$hashname = $DB->get_record_sql($hashnamesql, array($session->pdfname));
+							WHERE filename = ? AND component = ?";
+			$hashname = $DB->get_record_sql($hashnamesql, array($session->pdfname, 'local_paperattendance' ));
 			if($hashname){
 				$newpdfname = $hashname->contenthash;
 				$f1 = substr($newpdfname, 0 , 2);

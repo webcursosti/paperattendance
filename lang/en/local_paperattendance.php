@@ -167,6 +167,7 @@ $string['incorrectlistinit']="Incorrect list init";
 $string['coursedoesntexist']="Course doesn't exist";
 $string['incorrectmoduleinit']="Incorrect module init";
 $string['incorrectdate']="Incorrect date";
+$string['changepresence']="Change presence";
 
 //messages
 $string['dear'] = "Dear Teacher";

@@ -167,6 +167,7 @@ $string['incorrectlistinit']="Inicio de lista incorrecto";
 $string['coursedoesntexist']="No existe el curso";
 $string['incorrectmoduleinit']="Inicio de módulo incorrecto";
 $string['incorrectdate']="Fecha incorrecta";
+$string['changepresence']="Cambiar asitencia";
 
 //messages
 $string['dear'] = "Estimado(a) Profesor(a)";
