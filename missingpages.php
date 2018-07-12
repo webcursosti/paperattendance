@@ -176,9 +176,8 @@ if ($action == "view") {
 					));
 			$editiconmissing = new pix_icon("i/edit", get_string("editmissing", "local_paperattendance"
 					));
-			$editactionmissing = $OUTPUT->action_icon($editurlmissing, $editiconmissing,
-					new confirm_action(get_string("doyouwanteditmissing", "local_paperattendance")
-							));
+			$editactionmissing = $OUTPUT->action_icon($editurlmissing, $editiconmissing
+					);
 
 			//view scan action
 			$scanurl_attendance = new moodle_url("/local/paperattendance/missingpages.php", array(
