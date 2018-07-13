@@ -2038,6 +2038,18 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		var_dump($pagesWithErrors);
 		paperattendance_sendMail($pagesWithErrors, null, $uploaderobj->id, $uploaderobj->id, null, "NotNull", "nonprocesspdf", null);
 		$admins = get_admins();
+		
+		if (count($pagesWithErrors) > 1){
+			// Obtener una lista de columnas
+			foreach ($pagesWithErrors as $clave => $fila) {
+				$pageid[$clave] = $fila['pageid'];
+				$pagenumber[$clave] = $fila['pagenumber'];
+			}
+			
+			// Ordenar los datos con volumen descendiente, edición ascendiente
+			// Agregar $datos como el último parámetro, para ordenar por la clave común
+			array_multisort($pagenumber, SORT_ASC, $pagesWithErrors);
+		}
 		foreach ($admins as $admin){
 			paperattendance_sendMail($pagesWithErrors, null, $admin->id, $admin->id, null, "NotNull", "nonprocesspdf", null);
 		}
