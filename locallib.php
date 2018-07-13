@@ -2040,7 +2040,10 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		$admins = get_admins();
 		
 		if (count($pagesWithErrors) > 1){
-			
+			uasort($array, 'sort_by_orden');
+			function sort_by_orden ($a, $b) {
+				return $a['pagenumber'] - $b['pagenumber'];
+			}
 		}
 		var_dump($pagesWithErrors);
 		foreach ($admins as $admin){
