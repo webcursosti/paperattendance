@@ -2048,8 +2048,9 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 			
 			// Ordenar los datos con volumen descendiente, edición ascendiente
 			// Agregar $datos como el último parámetro, para ordenar por la clave común
-			array_multisort($pagenumber, SORT_ASC, SORT_NUMERIC, $pagesWithErrors);
+			array_multisort($pagenumber, SORT_NUMERIC, $pagesWithErrors);
 		}
+		var_dump($pagesWithErrors);
 		foreach ($admins as $admin){
 			paperattendance_sendMail($pagesWithErrors, null, $admin->id, $admin->id, null, "NotNull", "nonprocesspdf", null);
 		}
