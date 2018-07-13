@@ -944,6 +944,26 @@ function paperattendance_recursiveremovepng($directory)
 }
 
 /**
+ * Function to Delete all the csv inside of a folder
+ *
+ * @param varchar $directory
+ *            Directory path
+ */
+function paperattendance_recursiveremovecsv($directory)
+{
+	foreach(glob("{$directory}/*.csv") as $file)
+	{
+		if(is_dir($file)) {
+			paperattendance_recursiveremovecsv($file);
+		} else {
+			unlink($file);
+		}
+	}
+	//this comand delete the folder of the path, in this case we only want to delete the files inside the folder
+	//rmdir($directory);
+}
+
+/**
  * Function to convert a date to langs
  *
  * @param timestamp $i
@@ -1966,6 +1986,9 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	}
 	//Remove initial pngs in the directory
 	paperattendance_recursiveremovepng($path."/jpgs/processing");
+	
+	//Remove initial csv in the directory
+	paperattendance_recursiveremovecsv($path."/jpgs/processing");
 	
 	//process jpgs one by one and then delete it
 	$countprocessed = 0;
