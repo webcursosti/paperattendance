@@ -931,7 +931,7 @@ function paperattendance_recursiveremovedirectory($directory)
  */
 function paperattendance_recursiveremovepng($directory)
 {
-	foreach(glob("{$directory}/*.png") as $file)
+	foreach(glob("{$directory}/*.jpg") as $file)
 	{
 		if(is_dir($file)) {
 			paperattendance_recursiveremovepng($file);
@@ -1952,7 +1952,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		mkdir($path."/jpgs", 0777, true);
 	}
 	//Remove initial pngs in the directory
-	paperattendance_recursiveremovepng($path."/jpgs/");
+	paperattendance_recursiveremovepng($path."/jpgs");
 	
 	$pdfname = explode(".",$filename);
 	$pdfname = $pdfname[0];
@@ -1965,7 +1965,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		mkdir($path."/jpgs/processing", 0777, true);
 	}
 	//Remove initial pngs in the directory
-	paperattendance_recursiveremovepng($path."/jpgs/processing/");
+	paperattendance_recursiveremovepng($path."/jpgs/processing");
 	
 	//process jpgs one by one and then delete it
 	$countprocessed = 0;
