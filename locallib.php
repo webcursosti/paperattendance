@@ -1951,6 +1951,8 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	if (!file_exists($path."/jpgs")) {
 		mkdir($path."/jpgs", 0777, true);
 	}
+	//Remove initial pngs in the directory
+	paperattendance_recursiveremovepng($path."/jpgs");
 	
 	$pdfname = explode(".",$filename);
 	$pdfname = $pdfname[0];
@@ -1962,6 +1964,8 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	if (!file_exists($path."/jpgs/processing")) {
 		mkdir($path."/jpgs/processing", 0777, true);
 	}
+	//Remove initial pngs in the directory
+	paperattendance_recursiveremovepng($path."/jpgs/processing");
 	
 	//process jpgs one by one and then delete it
 	$countprocessed = 0;
