@@ -2040,15 +2040,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		$admins = get_admins();
 		
 		if (count($pagesWithErrors) > 1){
-			// Obtener una lista de columnas
-			foreach ($pagesWithErrors as $clave => $fila) {
-				$pageid[$clave] = $fila['pageid'];
-				$pagenumber[$clave] = $fila['pagenumber'];
-			}
 			
-			// Ordenar los datos con volumen descendiente, edición ascendiente
-			// Agregar $datos como el último parámetro, para ordenar por la clave común
-			array_multisort($pagenumber, SORT_NUMERIC, $pagesWithErrors);
 		}
 		var_dump($pagesWithErrors);
 		foreach ($admins as $admin){
