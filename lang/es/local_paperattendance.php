@@ -167,6 +167,7 @@ $string['incorrectlistinit']="Inicio de lista incorrecto";
 $string['coursedoesntexist']="No existe el curso";
 $string['incorrectmoduleinit']="Inicio de módulo incorrecto";
 $string['incorrectdate']="Fecha incorrecta";
+$string['changepresence']="Cambiar asitencia";
 
 //messages
 $string['dear'] = "Estimado(a) Profesor(a)";
@@ -185,7 +186,7 @@ $string['newresponsestudent'] = "Tu solicitud de revisión de asistencia acaba d
 $string['newresponse'] = "Acaba de resolver una solicitud de revisión de asistencia";
 $string['nonprocessconfirmationbodysubject'] = "Lista procesada incorrectamente";
 $string['nonprocessconfirmationbody'] = "No se ha completado el proceso de registros de asistencias por PaperAttendance en su totalidad, existen errores en las páginas:";
-$string['grettings'] = "Saludos</p><p> Equipo WebCursos";
+$string['grettings'] = "Saludos,</p><p> Equipo WebCursos";
 
 // Settings
 $string['settings']="Configuración Básica";

@@ -167,6 +167,7 @@ $string['incorrectlistinit']="Incorrect list init";
 $string['coursedoesntexist']="Course doesn't exist";
 $string['incorrectmoduleinit']="Incorrect module init";
 $string['incorrectdate']="Incorrect date";
+$string['changepresence']="Change presence";
 
 //messages
 $string['dear'] = "Dear Teacher";
@@ -185,7 +186,7 @@ $string['newresponsestudent'] = "Your attendance request have been solved";
 $string['newresponse'] = "You just solved an attendance request";
 $string['nonprocessconfirmationbodysubject'] = "Attendance's list processed incorrectly";
 $string['nonprocessconfirmationbody'] = "Attendance records process incompleted, there are errors on pages: ";
-$string['grettings'] = "Greetings</p><p> WebCursos team";
+$string['grettings'] = "Greetings,</p><p> WebCursos team";
 
 // Settings
 $string['settings']="Basic Configuration";
