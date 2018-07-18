@@ -147,6 +147,10 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 			$studentnumberinarray = 0;
 			foreach ($originalattendances as $attendance){
 				$name = ($attendance->firstname.' '.$attendance->lastname);
+				
+				//define email table data: class email, attr email.
+				$email = html_writer::div($attendance->email, "email", array("email"=>"$attendance->email"));
+				
 				//Define synchronized or unsynchronized icon
 				$urlomegasync = new moodle_url("#");
 				if ($attendance->omegasync){
@@ -192,8 +196,6 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 					// 						$editurlattendance,
 							// 						$editiconattendance
 							// 						);	
-					//define email table data: class email, attr email.		
-					$email = html_writer::div($attendance->email, "email", array("email"=>"$attendance->email"));
 					
 							$attendancestable->data[] = array(
 									$counter,
@@ -208,7 +210,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 								$attendancestable->data[] = array(
 										"<strike>$counter</strike>",
 										"<strike>$name</strike>",
-										"<strike>$attendance->email</strike>",
+										"<strike>$email</strike>",
 										"<strike>Desmatriculado</strike>", //Add lan
 										null,
 										$synchronizediconaction
