@@ -437,6 +437,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 			//A mere counter for the number of records
 			$counter = 1;
 			foreach ($attendances as $attendance){
+				/*
 				//Query to get attendance percentage
 				$percentagequery = "SELECT TRUNCATE((COUNT(*)/(SELECT COUNT(*)
 									FROM {paperattendance_presence} AS p
@@ -446,6 +447,37 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 									INNER JOIN {paperattendance_session} AS s ON (s.id = p.sessionid)
 									WHERE p.sessionid = ? AND p.status = 1";
 				$percentage = $DB->get_record_sql($percentagequery, array($attendance->id, $attendance->id));
+				*/
+				$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
+				list ( $sqlin, $param1 ) = $DB->get_in_or_equal ( $enrolincludes );
+				$param2 = array(
+						$courseid,
+						$attendance->id
+				);
+				$param = array_merge($param2,$param1, $param2, $param1);
+				
+				$percentagequery = "SELECT TRUNCATE((COUNT(*)/(SELECT COUNT(*)
+									FROM {paperattendance_presence} AS p
+									INNER JOIN {user} AS u ON (u.id = p.userid)
+									INNER JOIN {user_enrolments} ue ON ue.userid = u.id
+									INNER JOIN {enrol} e ON e.id = ue.enrolid
+									INNER JOIN {role_assignments} ra ON ra.userid = u.id
+									INNER JOIN {context} ct ON ct.id = ra.contextid AND ct.contextlevel = 50
+									INNER JOIN {course} c ON c.id=? AND c.id = ct.instanceid AND e.courseid = c.id
+									INNER JOIN {role} r ON r.id = ra.roleid AND r.shortname = 'student'
+									WHERE p.sessionid = ? AND e.enrol $sqlin AND e.status = 0 AND u.suspended = 0 AND u.deleted = 0)*100),0) AS percentage
+									FROM {paperattendance_presence} AS p
+									INNER JOIN {user} AS u ON (u.id = p.userid)
+									INNER JOIN {user_enrolments} ue ON ue.userid = u.id
+									INNER JOIN {enrol} e ON e.id = ue.enrolid
+									INNER JOIN {role_assignments} ra ON ra.userid = u.id
+									INNER JOIN {context} ct ON ct.id = ra.contextid AND ct.contextlevel = 50
+									INNER JOIN {course} c ON c.id=? AND c.id = ct.instanceid AND e.courseid = c.id
+									INNER JOIN {role} r ON r.id = ra.roleid AND r.shortname = 'student'
+									WHERE p.sessionid = ? AND e.enrol $sqlin AND e.status = 0 AND u.suspended = 0 AND u.deleted = 0 AND p.status = 1";
+				$percentage = $DB->get_record_sql($percentagequery, $param);
+				
+				
 				// Define scan icon and url
 				$scanurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
 						"action" => "scan",
