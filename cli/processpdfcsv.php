@@ -68,6 +68,9 @@ $initialtime = time();
 $read = 0;
 $found = 0;
 
+$DB->execute('SET SESSION wait_timeout = 28800');
+$DB->execute('SET SESSION interactive_timeout = 28800');
+
 // Sql that brings the unread pdfs names
 $sqlunreadpdfs = "SELECT  id, filename AS name, uploaderid AS userid
 	FROM {paperattendance_unprocessed}
