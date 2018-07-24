@@ -2018,7 +2018,6 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 				$processed = $arraypaperattendance_read_csv[0];
 				if ($arraypaperattendance_read_csv[1] != null){
 					$pagesWithErrors[$arraypaperattendance_read_csv[1]->pagenumber] = $arraypaperattendance_read_csv[1];
-					var_dump($pagesWithErrors);
 				}
 				$countprocessed += $processed;
 			}
@@ -2051,7 +2050,6 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 				$errorpage->pageid = $sessionpageid;
 				$errorpage->pagenumber = $realpagenum + 1;
 				$pagesWithErrors[$errorpage->pagenumber] = $errorpage;
-				var_dump($pagesWithErrors);
 			}
 			
 			$countprocessed++;
@@ -2062,7 +2060,6 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	}
 	
 	if (count($pagesWithErrors) > 0){
-		var_dump($pagesWithErrors);
 		if (count($pagesWithErrors) > 1){
 			ksort($pagesWithErrors);
 		}
