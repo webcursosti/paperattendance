@@ -505,7 +505,13 @@ $( "#confirm" ).on( "click", function() {
 			    success: function (response) {
 			        var error = response["error"];
 			        if (error != 0){
-						alert(error);
+			        	var deleteornot = confirm(error+'\n¿Desea eliminarla?');
+			        	if (deleteornot){
+			        		<?php
+			        		$action = '<script> document.write(deleteornot) </script>';
+			        		?>
+			        		console.log($action);
+				        	}
 						console.log(517);
 			        }
 			        else{
