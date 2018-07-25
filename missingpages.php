@@ -527,16 +527,7 @@ $( "#confirm" ).on( "click", function() {
 			        	        if (error != 0){
 			        	        	var deleteornot = confirm(error+'\n¿Desea eliminarla?');
 						        	if (deleteornot){
-						        		<?php
-						        		$deletemissingurl = new moodle_url("/local/paperattendance/missingpages.php",
-						        				array(
-						        						"action" => "delete",
-						        						"sesspageid" => $sesspageid,
-						        						"sesskey" => sesskey()
-						        						
-						        				));
-						        		redirect($deletemissingurl);
-						        		?>
+						        		console.log(530);
 							        }
 			        	        }	
 			        	        //now we create the table with the students		        	        
