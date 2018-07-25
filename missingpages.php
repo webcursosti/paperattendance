@@ -527,11 +527,12 @@ $( "#confirm" ).on( "click", function() {
 			        	        if (error != 0){
 			        	        	var deleteornot = confirm(error+'\n¿Desea eliminarla?');
 						        	if (deleteornot){
+							        	var deleteaction = 'delete';
 						        		<?php
-						        		$action = '<script> document.write(deleteornot) </script>';
+						        		$action = '<script> document.write(deleteaction) </script>';
 						        		?>
 						        		console.log($action);
-							        	}
+							        }
 			        	        }	
 			        	        //now we create the table with the students		        	        
 			        	        else{
