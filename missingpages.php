@@ -482,7 +482,7 @@ $( "#confirm" ).on( "click", function() {
 	var date = $('#date');
 	var module = $('#module');
 	var begin = $('#begin');
-	var sesspageid = <?php echo $sesspageid; ?>;
+	var sesspageid = '<?php echo $sesspageid; ?>';
 	var pdfviewer = '<?php echo $viewerpdfdos; ?>';
 	var backbutton = '<?php echo $viewbackbutton; ?>';
 	//Validate the four fields in the form
