@@ -505,13 +505,7 @@ $( "#confirm" ).on( "click", function() {
 			    success: function (response) {
 			        var error = response["error"];
 			        if (error != 0){
-			        	var deleteornot = confirm(error+'\n¿Desea eliminarla?');
-			        	if (deleteornot){
-			        		<?php
-			        		$action = '<script> document.write(deleteornot) </script>';
-			        		?>
-			        		console.log($action);
-				        	}
+						alert(error);
 						console.log(517);
 			        }
 			        else{
@@ -531,7 +525,13 @@ $( "#confirm" ).on( "click", function() {
 			        	    	var error = responsetwo["process"];
 			        	    	console.log(error);
 			        	        if (error != 0){
-			        				alert(error);
+			        	        	var deleteornot = confirm(error+'\n¿Desea eliminarla?');
+						        	if (deleteornot){
+						        		<?php
+						        		$action = '<script> document.write(deleteornot) </script>';
+						        		?>
+						        		console.log($action);
+							        	}
 			        	        }	
 			        	        //now we create the table with the students		        	        
 			        	        else{
