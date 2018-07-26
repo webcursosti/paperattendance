@@ -525,7 +525,7 @@ $( "#confirm" ).on( "click", function() {
 			        	    	var error = responsetwo["process"];
 			        	    	console.log(error);
 			        	        if (error != 0){
-			        	        	var deleteornot = confirm(error+'\n¿Desea eliminarla?');
+			        	        	var deleteornot = confirm(error+'\n\n¿Desea eliminarla?');
 						        	if (deleteornot){
 						        		var sesskey = '<?php echo sesskey(); ?>';
 						        		location.href="missingpages.php?action=delete&sesspageid="+sesspageid+"&sesskey="+sesskey;
