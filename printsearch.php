@@ -232,14 +232,14 @@ $formmodal = '<div class="modal fade bs-example-modal-lg" id="formModal" tabinde
 			    	<div class="modal-content">
 			    		<div class="modal-header">
 			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			        		<h4 class="modal-title" id="formModalLabel">Lists cart</h4>
+			        		<h4 class="modal-title" id="formModalLabel">Carrito de listas</h4>
 			      		</div>
 		      		<div class="modal-body" style="height:70vh">
 						'.html_writer::table($carttable).'
 		      		</div>
 		      		<div class="modal-footer">
     	       	    	<button type="button" class="btn btn-info printbutton" data-dismiss="modal">Imprimir</button>
-			       		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			       		<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
 		      		</div>
 	      		</div>
 	  		</div>
@@ -250,7 +250,7 @@ $pdfmodal = '<div class="modal fade bs-example-modal-lg" id="pdfModal" tabindex=
 			    	<div class="modal-content">
 			    		<div class="modal-header">
 			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			        		<h4 class="modal-title" id="pdfModalLabel">Lists pdf</h4>
+			        		<h4 class="modal-title" id="pdfModalLabel">Listas pdf</h4>
 			      		</div>
 		      		<div class="modal-body pdflists" style="height:70vh">
 		      		</div>
