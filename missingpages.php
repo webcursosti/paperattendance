@@ -482,7 +482,7 @@ $( "#confirm" ).on( "click", function() {
 	var date = $('#date');
 	var module = $('#module');
 	var begin = $('#begin');
-	var sesspageid = <?php echo $sesspageid; ?>;
+	var sesspageid = '<?php echo $sesspageid; ?>';
 	var pdfviewer = '<?php echo $viewerpdfdos; ?>';
 	var backbutton = '<?php echo $viewbackbutton; ?>';
 	//Validate the four fields in the form
@@ -525,7 +525,11 @@ $( "#confirm" ).on( "click", function() {
 			        	    	var error = responsetwo["process"];
 			        	    	console.log(error);
 			        	        if (error != 0){
-			        				alert(error);
+			        	        	var deleteornot = confirm(error+'\n\n¿Desea eliminarla?');
+						        	if (deleteornot){
+						        		var sesskey = '<?php echo sesskey(); ?>';
+						        		location.href="missingpages.php?action=delete&sesspageid="+sesspageid+"&sesskey="+sesskey;
+							        }
 			        	        }	
 			        	        //now we create the table with the students		        	        
 			        	        else{
@@ -536,7 +540,7 @@ $( "#confirm" ).on( "click", function() {
 			    					$("#pdfviewer").empty();
 			    					$("#pdfviewer").append(pdfviewer);
 			    					//Create the table with all the students and checkboxs
-			    				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th><input type="checkbox" id="checkAll">Asistencia</th><th>Alumno</th></tr></thead><tbody id="appendtrs">';
+			    				    var table = '<table class="table table-hover table-condensed table-responsive table-striped" style="float:right; width:40%"><thead><tr><th>#</th><th><input type="checkbox" id="checkAll"></th><th>Seleccionar Todo</th></tr></thead><tbody id="appendtrs">';
 			    				    $("#inputs").append(table);
 			    				    
 			    			        $.each(response["alumnos"], function(i, field){
@@ -660,7 +664,7 @@ function RefreshSomeEventListener() {
 				$("#alerthelp").hide();
 				$("#inputs").html('<div class="alert alert-success" role="alert" style="float:left; margin-top:5%;">'+error3+error5+'</div>');
 				//console.log(error+error2+error3+error4+error5+error6+error7+error8+error9);
-				$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:left; margin-right:70%;">Volver</button>');
+				//$("#inputs").append('<a href="'+moodleurl+'/local/paperattendance/missingpages.php" class="btn btn-info" role="button" style="float:left; margin-right:70%;">Volver</button>');
 				
 		    },
 		    complete: function (index){
