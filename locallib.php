@@ -1068,7 +1068,6 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 				"modulos" => array( array("hora" => $modulo) ),
 				"alumnos" => $arrayalumnos
 		);
-
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($curl, CURLOPT_POST, TRUE);
@@ -1077,7 +1076,7 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 		$result = curl_exec ($curl);
 		curl_close ($curl);
         $executiontime = time() - $initialtime;
-        paperattendance_cronlog($url, $result, time(), $executiontime);
+        $cron = paperattendance_cronlog($url, $result, time(), $executiontime);
 		$alumnos = new stdClass();
 		$alumnos = json_decode($result)->alumnos;
 		

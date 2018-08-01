@@ -151,7 +151,6 @@ if ($action == "view") {
 		$counter = $page * $perpage + 1;
 		foreach ($missing as $miss) {
 
-
 			//delete action
 			$deletemissingurl = new moodle_url("/local/paperattendance/missingpages.php",
 					array(
@@ -384,7 +383,6 @@ if ($action == "edit") {
 							.form-control::-ms-input-placeholder { color: lightgrey; }  /* Microsoft Edge *
 							</style>');
 	echo html_writer::div(get_string("missingpageshelp","local_paperattendance"),"alert alert-info", array("role"=>"alert", "id"=>"alerthelp"));
-
   	$pdfarea = html_writer::div($viewerpdf,"col-md-12", array( "id"=>"pdfviewer"));
   	$inputarea = html_writer::div($inputs,"col-sm-12 row", array( "id"=>"inputs"));
  	echo html_writer::div($inputarea.$pdfarea, "form-group");
@@ -402,7 +400,6 @@ if ($action == "edit") {
  	echo $viewbackbutton;
 	
 }
-
 //Delete the selected missing page
 if ($action == "delete") {
 	if ($sesspageid == null) {
@@ -492,7 +489,6 @@ $( "#confirm" ).on( "click", function() {
 	else {
 		//AJAX to get the students list
 		$.ajax({
-
 			    type: 'GET',
 			    url: 'ajax/ajaxquerys.php',
 			    data: {
