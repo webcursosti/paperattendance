@@ -160,8 +160,8 @@ if( $isteacher || is_siteadmin($USER)) {
 		foreach($pdfnames as $pdfname){
 			$hashnamesql = "SELECT contenthash
 							FROM {files}
-							WHERE filename = ?";
-			$hashname = $DB->get_record_sql($hashnamesql, array($pdfname->pdfname));
+							WHERE filename = ? AND component = ?";
+			$hashname = $DB->get_record_sql($hashnamesql, array($pdfname->pdfname, 'local_paperattendance'));
 			if($hashname){
 				$newpdfname = $hashname->contenthash;
 				$f1 = substr($newpdfname, 0 , 2);

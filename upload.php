@@ -129,11 +129,7 @@ if ($addform->get_data()) {
 // If there is no data or is it not cancelled show the header, the tabs and the form.
 echo $OUTPUT->header();
 if($action == "viewform"){
-	if($courseid && $courseid != 1){
-		echo $OUTPUT->heading("Subir lista escaneada " . $course->shortname . " " . $course->fullname);
-	}else{
-		echo $OUTPUT->heading("Subir lista escaneada ");
-	}
+	echo $OUTPUT->heading("Subir lista escaneada ");
 	// Display the form.
 	$addform->display();
 }

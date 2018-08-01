@@ -931,10 +931,30 @@ function paperattendance_recursiveremovedirectory($directory)
  */
 function paperattendance_recursiveremovepng($directory)
 {
-	foreach(glob("{$directory}/*.png") as $file)
+	foreach(glob("{$directory}/*.jpg") as $file)
 	{
 		if(is_dir($file)) {
 			paperattendance_recursiveremovepng($file);
+		} else {
+			unlink($file);
+		}
+	}
+	//this comand delete the folder of the path, in this case we only want to delete the files inside the folder
+	//rmdir($directory);
+}
+
+/**
+ * Function to Delete all the csv inside of a folder
+ *
+ * @param varchar $directory
+ *            Directory path
+ */
+function paperattendance_recursiveremovecsv($directory)
+{
+	foreach(glob("{$directory}/*.csv") as $file)
+	{
+		if(is_dir($file)) {
+			paperattendance_recursiveremovecsv($file);
 		} else {
 			unlink($file);
 		}
@@ -1077,7 +1097,6 @@ function paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid
 					$sqlsyncstate = "UPDATE {paperattendance_presence} SET omegasync = ?, omegaid = ? WHERE sessionid  = ? AND userid = ?";
 					$studentid = $DB->execute($sqlsyncstate, array('1', $omegasessionid, $sessid, $studentid));
 				}else{
-					mtrace("el usuario: $username, no existe query:$studentid");
 				}
 			}
 		}
@@ -1951,6 +1970,8 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	if (!file_exists($path."/jpgs")) {
 		mkdir($path."/jpgs", 0777, true);
 	}
+	//Remove initial pngs in the directory
+	paperattendance_recursiveremovepng($path."/jpgs");
 	
 	$pdfname = explode(".",$filename);
 	$pdfname = $pdfname[0];
@@ -1962,6 +1983,11 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	if (!file_exists($path."/jpgs/processing")) {
 		mkdir($path."/jpgs/processing", 0777, true);
 	}
+	//Remove initial pngs in the directory
+	paperattendance_recursiveremovepng($path."/jpgs/processing");
+	
+	//Remove initial csv in the directory
+	paperattendance_recursiveremovecsv($path."/jpgs/processing");
 	
 	//process jpgs one by one and then delete it
 	$countprocessed = 0;
@@ -1990,8 +2016,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 				$arraypaperattendance_read_csv = paperattendance_read_csv($filecsv, $path, $filename, $uploaderobj);
 				$processed = $arraypaperattendance_read_csv[0];
 				if ($arraypaperattendance_read_csv[1] != null){
-					$pagesWithErrors[] = $arraypaperattendance_read_csv[1];
-					var_dump($pagesWithErrors);
+					$pagesWithErrors[$arraypaperattendance_read_csv[1]->pagenumber] = $arraypaperattendance_read_csv[1];
 				}
 				$countprocessed += $processed;
 			}
@@ -2023,8 +2048,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 				$errorpage = new stdClass();
 				$errorpage->pageid = $sessionpageid;
 				$errorpage->pagenumber = $realpagenum + 1;
-				$pagesWithErrors[] = $errorpage;
-				var_dump($pagesWithErrors);
+				$pagesWithErrors[$errorpage->pagenumber] = $errorpage;
 			}
 			
 			$countprocessed++;
@@ -2035,7 +2059,9 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	}
 	
 	if (count($pagesWithErrors) > 0){
-		var_dump($pagesWithErrors);
+		if (count($pagesWithErrors) > 1){
+			ksort($pagesWithErrors);
+		}
 		paperattendance_sendMail($pagesWithErrors, null, $uploaderobj->id, $uploaderobj->id, null, "NotNull", "nonprocesspdf", null);
 		$admins = get_admins();
 		foreach ($admins as $admin){
