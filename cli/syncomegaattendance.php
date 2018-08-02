@@ -173,10 +173,6 @@ if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
                     $DB->update_record("paperattendance_session", $update);
                     $syncedsessions++;
                     $syncedstudents += $count;
-                    $update = new stdClass();
-                    $update->id = $session->id;
-                    $update->status = 1;
-                    $DB->update_record("paperattendance_session", $update);
                 }else{
                     echo "omega sync failed... check php code \n";
                 }

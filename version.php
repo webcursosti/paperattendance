@@ -25,8 +25,6 @@
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
-defined('MOODLE_INTERNAL') || die();
-$plugin->pluginname = "local_paperattendance";
 $plugin->component = 'local_paperattendance';
 $plugin->version   = '2018080200';
 $plugin->requires = 2015111600;
