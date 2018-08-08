@@ -99,6 +99,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		INNER JOIN {course} c ON c.id=? AND c.id = ct.instanceid AND e.courseid = c.id
 		INNER JOIN {role} r ON r.id = ra.roleid AND r.shortname = 'student'
 		WHERE p.sessionid = ? AND e.enrol $sqlin AND e.status = 0 AND u.suspended = 0 AND u.deleted = 0
+        GROUP BY p.id
 		ORDER BY u.lastname ASC"; //**Nose si quitar (AND e.enrol = "database") para que tambien muestre a los enrolados manualmente
 		$attendances = $DB->get_records_sql($getstudentsattendance, $param, $page * $perpage, $perpage);
 		$studentsid = array_values($attendances);
