@@ -118,6 +118,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		
 		$attendancestable = new html_table();
 		
+		var_dump($studentsid);
 		//Check if we have at least one attendance in the selected session
 		if ($attendancescount > 0){
 			
