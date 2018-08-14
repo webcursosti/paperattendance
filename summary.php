@@ -144,9 +144,6 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 	echo $OUTPUT->tabtree(paperattendance_history_tabs($course->id), "studentssummary");
 	echo html_writer::nonempty_tag("h4", get_string('totalattendances', 'local_paperattendance').": ".$sessions, array("align" => "left"));
 	if ($nstudents>0){
-		if ($nstudents>30){
-			$nstudents = 30;
-		}
 		echo html_writer::table($table);
 		echo $OUTPUT->paging_bar($nstudents, $page, $perpage, $url);
 	}
