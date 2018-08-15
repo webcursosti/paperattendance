@@ -117,10 +117,11 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		$originalattendances = $DB->get_records_sql($gettotalstudentsattendances, array($attendanceid), $page * $perpage, $perpage);
 		
 		$attendancestable = new html_table();
-		var_dump('BREAK');
+		/*var_dump('BREAK');
 		var_dump($attendances);
 		var_dump('BREAK');
 		var_dump($originalattendances);
+		*/
 		//Check if we have at least one attendance in the selected session
 		if ($attendancescount > 0){
 			
