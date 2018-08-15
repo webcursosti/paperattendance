@@ -102,7 +102,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
         GROUP BY p.id
 		ORDER BY u.lastname ASC"; //**Nose si quitar (AND e.enrol = "database") para que tambien muestre a los enrolados manualmente
 		$attendances = $DB->get_records_sql($getstudentsattendance, $param, $page * $perpage, $perpage);
-		$studentsid = array_keys($attendances);
+		//$studentsid = array_values($attendances);
 		$gettotalstudentsattendances = "SELECT
 				p.id AS idp,
 				u.lastname,
@@ -117,10 +117,8 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		$originalattendances = $DB->get_records_sql($gettotalstudentsattendances, array($attendanceid), $page * $perpage, $perpage);
 		
 		$attendancestable = new html_table();
-		
-		var_dump($attendances);
 		var_dump('BREAK');
-		var_dump($studentsid);
+		var_dump($attendances);
 		var_dump('BREAK');
 		var_dump($originalattendances);
 		//Check if we have at least one attendance in the selected session
@@ -170,7 +168,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						$synchronizedicon
 						);
 				//if ($attendance->idp == $studentsid[$studentnumberinarray]->idp){
-				if (array_key_exists($attendance->idp, $studentsid)) {
+				if (array_key_exists($attendance->idp, $attendances)) {
 					//Define presente or ausente icon
 					$urlattendance = new moodle_url("#");
 						
