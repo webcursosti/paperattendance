@@ -119,6 +119,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		$attendancestable = new html_table();
 		
 		var_dump($attendances);
+		var_dump('BREAK');
 		var_dump($studentsid);
 		var_dump('BREAK');
 		var_dump($originalattendances);
