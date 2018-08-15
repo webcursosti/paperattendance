@@ -170,7 +170,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						$synchronizedicon
 						);
 				//if ($attendance->idp == $studentsid[$studentnumberinarray]->idp){
-				if (array_key_exists($attendance->idp, $attendances)) {
+				if (array_key_exists($attendance->idp, $studentsid)) {
 					//Define presente or ausente icon
 					$urlattendance = new moodle_url("#");
 						
