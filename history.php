@@ -102,7 +102,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
         GROUP BY p.id
 		ORDER BY u.lastname ASC"; //**Nose si quitar (AND e.enrol = "database") para que tambien muestre a los enrolados manualmente
 		$attendances = $DB->get_records_sql($getstudentsattendance, $param, $page * $perpage, $perpage);
-		$studentsid = array_values($attendances);
+		$studentsid = array_keys($attendances);
 		$gettotalstudentsattendances = "SELECT
 				p.id AS idp,
 				u.lastname,
