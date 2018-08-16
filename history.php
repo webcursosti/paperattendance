@@ -101,7 +101,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		WHERE p.sessionid = ? AND e.enrol $sqlin AND e.status = 0 AND u.suspended = 0 AND u.deleted = 0
         GROUP BY p.id
 		ORDER BY u.lastname ASC"; //**Nose si quitar (AND e.enrol = "database") para que tambien muestre a los enrolados manualmente
-		$attendances = $DB->get_records_sql($getstudentsattendance, $param, $page * $perpage, $perpage);
+		$attendances = $DB->get_records_sql($getstudentsattendance, $param);
 		//$studentsid = array_values($attendances);
 		$gettotalstudentsattendances = "SELECT
 				p.id AS idp,
