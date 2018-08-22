@@ -68,7 +68,7 @@ $initialtime = time();
 $read = 0;
 $found = 0;
 
-$DB->execute('SET SESSION connect_timeout = 500');
+$DB->set_debug(true);
 $DB->execute('SET SESSION wait_timeout = 28800');
 $DB->execute('SET SESSION interactive_timeout = 28800');
 
