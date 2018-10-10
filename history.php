@@ -281,7 +281,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 			print_r( array_key_exists($enrolledstudent->userid, $originalattendancesmodal));
 			echo '<br>'.$counter;
 			$counter++;
-			if (!array_key_exists($enrolledstudent->userid, $originalattendancesmodal)) {
+			if (array_key_exists($enrolledstudent->userid, $originalattendancesmodal) == false) {
 				$modaltable->data[] = array(
 						$counter,
 						$name,
