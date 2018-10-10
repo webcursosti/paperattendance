@@ -99,7 +99,7 @@ $string['module']="Módulo";
 $string['nonprocessingattendance']="Asistencia aun no procesada";
 $string['insertby']="Insertar por";
 $string['insertstudentinfo']="Inserte la información del alumno";
-$string['insertstudentmanually']="Insertar alumno manualmente";
+$string['insertstudentmanually']="Insertar alumno";
 $string['studentstatus']="Estado";
 $string['idnumber']="Rut";
 $string['iderror']="Rut inválido";
@@ -168,6 +168,11 @@ $string['coursedoesntexist']="No existe el curso";
 $string['incorrectmoduleinit']="Inicio de módulo incorrecto";
 $string['incorrectdate']="Fecha incorrecta";
 $string['changepresence']="Cambiar asitencia";
+$string['addstudent']="Agregar";
+$string['insertstudenterror']="No existen alumnos disponibles para insertar en la lista";
+$string['insertstudentinfomodal']="Elija los alumnos a insertar en la lista";
+$string['save']="Aceptar";
+
 
 //messages
 $string['dear'] = "Estimado(a) Profesor(a)";

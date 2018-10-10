@@ -99,7 +99,7 @@ $string['module']="Module";
 $string['nonprocessingattendance']="Attendance non processed yet";
 $string['insertby']="Insert by";
 $string['insertstudentinfo']="Insert the student info";
-$string['insertstudentmanually']="Insert student manually";
+$string['insertstudentmanually']="Insert student";
 $string['studentstatus']="Status";
 $string['idnumber']="ID number (RUT)";
 $string['iderror']="Invalid ID";
@@ -168,6 +168,10 @@ $string['coursedoesntexist']="Course doesn't exist";
 $string['incorrectmoduleinit']="Incorrect module init";
 $string['incorrectdate']="Incorrect date";
 $string['changepresence']="Change presence";
+$string['addstudent']="Add";
+$string['insertstudenterror']="There are no students available to insert in the list";
+$string['insertstudentinfomodal']="Choose the students to insert in the list";
+$string['save']="Save";
 
 //messages
 $string['dear'] = "Dear Teacher";

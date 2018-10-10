@@ -226,6 +226,100 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 							$studentnumberinarray++;
 			}
 		}
+		
+		$modaltable = new html_table();
+		$modaltable->head = array(
+				get_string('hashtag', 'local_paperattendance'),
+				get_string('student', 'local_paperattendance'),
+				get_string('addstudent', 'local_paperattendance')
+		);
+		$modaltable->id = "modaltable";
+		
+		//Query to get the original paper attendances students
+		$gettotalstudentsattendancesmodal = "SELECT
+				u.id AS userid,
+				u.lastname,
+				u.firstname
+				FROM {paperattendance_presence} AS p
+ 				INNER JOIN {user} AS u ON (u.id = p.userid)
+				WHERE p.sessionid = ?
+				GROUP BY userid
+				ORDER BY u.lastname ASC";
+		$originalattendancesmodal = $DB->get_records_sql($gettotalstudentsattendancesmodal, array($attendanceid));
+		
+		
+		list ( $sqlin, $param1 ) = $DB->get_in_or_equal ( $enrolincludes );
+		$param2 = array(
+				$courseid
+		);
+		$param = array_merge($param2,$param1);
+		//Query to get the actual enrolled students in the course
+		$getstudentsattendance = "SELECT
+			u.id AS userid,
+			u.lastname,
+			u.firstname,
+			u.email AS email
+			FROM {user} AS u
+			INNER JOIN {user_enrolments} ue ON ue.userid = u.id
+			INNER JOIN {enrol} e ON e.id = ue.enrolid
+			INNER JOIN {role_assignments} ra ON ra.userid = u.id
+			INNER JOIN {context} ct ON ct.id = ra.contextid AND ct.contextlevel = 50
+			INNER JOIN {course} c ON c.id=? AND c.id = ct.instanceid AND e.courseid = c.id
+			INNER JOIN {role} r ON r.id = ra.roleid AND r.shortname = 'student'
+			WHERE e.enrol $sqlin AND e.status = 0 AND u.suspended = 0 AND u.deleted = 0
+			ORDER BY u.lastname ASC"; //**Nose si quitar (AND e.enrol = "database") para que tambien muestre a los enrolados manualmente
+		$enrolledstudents = $DB->get_records_sql($getstudentsattendance, $param);
+		 
+		$counter = 1;
+		foreach ($enrolledstudents as $enrolledstudent){
+			$name = ($enrolledstudent->firstname.' '.$enrolledstudent->lastname);
+			
+			if (!array_key_exists($enrolledstudent->userid, $originalattendancesmodal)) {
+				$modaltable->data[] = array(
+						$counter,
+						$name,
+						'<input type="checkbox" class="usercheck" value="'.$enrolledstudent->userid.'" emailmodal="'.$enrolledstudent->email.'">',
+				);
+				$counter++;
+				
+				$insertstudentmodal= '<div class="modal fade" id="insertstudentmodal" role="dialog" style="width: 50vw; z-index: -10;">
+							    <div class="modal-dialog modal-sm">
+							      <div class="modal-content">
+									<div class="modal-header">
+          								<button type="button" class="close" data-dismiss="modal">&times;</button>
+          								<h4 class="modal-title">'.get_string("insertstudentmanually", "local_paperattendance").' </h4>
+       								</div>
+							        <div class="modal-body">
+									  <div class="alert alert-info">'.get_string("insertstudentinfomodal", "local_paperattendance").'</div>
+									  '.html_writer::table($modaltable).'
+							        </div>
+							        <div class="modal-footer">
+							          <button id="saveinsertstudent" type="button" class="btn btn-default" data-dismiss="modal">'.get_string("save", "local_paperattendance").'</button>
+							        </div>
+							      </div>
+							    </div>
+							  </div>';
+			}
+			else {
+				$insertstudentmodal= '<div class="modal fade" id="insertstudentmodal" role="dialog" style="width: 50vw; z-index: -10;">
+							    <div class="modal-dialog modal-sm">
+							      <div class="modal-content">
+									<div class="modal-header">
+          								<button type="button" class="close" data-dismiss="modal">&times;</button>
+          								<h4 class="modal-title">'.get_string("insertstudentmanually", "local_paperattendance").' </h4>
+       								</div>
+							        <div class="modal-body">
+									  <div class="alert alert-danger">'.get_string("insertstudenterror", "local_paperattendance").'</div>
+							        </div>
+							        <div class="modal-footer">
+							          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+							        </div>
+							      </div>
+							    </div>
+							  </div>';
+			}
+		}
+		
 		$viewbackbutton = new moodle_url("/local/paperattendance/history.php", array("action" => "view", "courseid" => $courseid));
 		$insertstudenturl = new moodle_url("/local/paperattendance/history.php", array(
 				"action" => "insertstudent",
@@ -620,7 +714,10 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 			$left .= html_writer::nonempty_tag("div", get_string("module","local_paperattendance").": ".$resources->hour, array("align" => "left"));
 			$left .= html_writer::nonempty_tag("div", get_string("scan","local_paperattendance").": ".$scanaction_attendance, array("align" => "left"));
 			$left .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
+			$left .= html_writer::nonempty_tag("div", '<button id="insertstudentmodalbtn" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#insertstudentmodal">'.get_string("insertstudentmanually", "local_paperattendance").'</button>', array("align" => "left"));
 			//$left .= html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "center"));
+			$left .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
+			$left .= html_writer::nonempty_tag("div",$insertstudentmodal);
 			//displays button to add a student manually
 			echo html_writer::nonempty_tag("div", $left);
 			echo html_writer::div('', 'loader');
@@ -855,6 +952,12 @@ else{
 }
 echo $OUTPUT->footer();
 ?>
+<script type="text/javascript">
+	$( document ).on( "click", "#insertstudentmodalbtn", function() {
+		jQuery('#insertstudentmodal').css('z-index', '');
+	});
+</script>
+
 <script>
 $( document ).ready(function() {
 	
@@ -976,6 +1079,55 @@ $( document ).ready(function() {
 		    }
 		});
 		
+	});
+
+	//Insert student modal function
+	$( "#saveinsertstudent" ).on( "click", function() {
+		var sessinfo = [];
+		var sessid = <?php echo $attendanceid; ?>;
+		var courseid = <?php echo $courseid; ?>;
+		//we add this info to de array sessinfo
+		sessinfo.push({'courseid' : courseid, 'sessid' : sessid});
+
+		var contador = 0;
+		var studentsattendance = [];
+		//Validate if the checkbox is checked or not
+		var checkbox = $('.usercheck');
+		$.each(checkbox, function(i, field){
+			var currentcheckbox = $(this);
+			if(currentcheckbox.prop("checked") == true){
+				var emailmodal= currentcheckbox.attr("emailmodal");
+				//We agregate the info to the de studentsattendance array
+				studentsattendance.push({"userid":currentcheckbox.val(), "email": emailmodal});
+				contador = contador+1;
+			}
+		});	
+		if (contador != 0){ //if exist at least one student to insert do this
+			//ajax to ajaxquerys with 2 arrays, one with the info session and the other with every studentid an email
+			$.ajax({
+			    type: 'POST',
+			    url: 'ajax/ajaxquerys.php',
+			    data: {
+				      'action' : 'saveinsertstudent',
+				      'sessinfo' : JSON.stringify(sessinfo),
+				      'studentsattendance' : JSON.stringify(studentsattendance)
+			    	},
+			    success: function (response) {		    
+	        		location.href="history.php?action=studentsattendance&attendanceid="+sessid+"&courseid="+courseid;
+					
+			    },
+			    complete: function (index){
+					console.log(index);
+			    }
+			});
+
+		}
+		//Shows students attendace and sessinfo in JSON format:
+		/*alert(JSON.stringify(studentsattendance));
+		console.log(JSON.stringify(studentsattendance));
+		console.log(JSON.stringify(sessinfo));
+		console.log(contador);
+		*/
 	});
 });
 </script>
