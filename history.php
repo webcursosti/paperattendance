@@ -282,6 +282,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 			echo '<br>'.$counter;
 			$counter++;
 			if (array_key_exists($enrolledstudent->userid, $originalattendancesmodal) == false) {
+				echo 'holaa';
 				$modaltable->data[] = array(
 						$counter,
 						$name,
