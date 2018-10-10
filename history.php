@@ -271,7 +271,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		$enrolledstudents = $DB->get_records_sql($getstudentsattendance, $param);
 		 
 		 var_dump('BREAK');
-		 var_dump($attendances);
+		 var_dump($originalattendancesmodal);
 		 var_dump('BREAK');
 		 var_dump($enrolledstudents);
 		 
