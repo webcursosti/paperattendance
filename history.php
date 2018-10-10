@@ -269,64 +269,44 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 			WHERE e.enrol $sqlin AND e.status = 0 AND u.suspended = 0 AND u.deleted = 0
 			ORDER BY u.lastname ASC"; //**Nose si quitar (AND e.enrol = "database") para que tambien muestre a los enrolados manualmente
 		$enrolledstudents = $DB->get_records_sql($getstudentsattendance, $param);
-		$counter = 1;
-		
-		echo '<br>usuarios paper';
-		print_r($originalattendancesmodal);
+		$counter = 0;
 		foreach ($enrolledstudents as $enrolledstudent){
 			$name = ($enrolledstudent->firstname.' '.$enrolledstudent->lastname);
-			echo '<br>';
-			echo $enrolledstudent->userid;
-			echo '<br>resultado';
-			print_r( array_key_exists($enrolledstudent->userid, $originalattendancesmodal));
-			echo '<br>'.$counter;
-			$counter++;
-			if (array_key_exists($enrolledstudent->userid, $originalattendancesmodal) == false) {
-				echo 'holaa';
+			
+			if (!array_key_exists($enrolledstudent->userid, $originalattendancesmodal)) {
+				$counter++;
+				
 				$modaltable->data[] = array(
 						$counter,
 						$name,
 						'<input type="checkbox" class="usercheck" value="'.$enrolledstudent->userid.'" emailmodal="'.$enrolledstudent->email.'">',
 				);
-				$counter++;
-				
-				$insertstudentmodal= '<div class="modal fade" id="insertstudentmodal" role="dialog" style="width: 50vw; z-index: -10;">
-							    <div class="modal-dialog modal-sm">
-							      <div class="modal-content">
-									<div class="modal-header">
-          								<button type="button" class="close" data-dismiss="modal">&times;</button>
-          								<h4 class="modal-title">'.get_string("insertstudentmanually", "local_paperattendance").' </h4>
-       								</div>
-							        <div class="modal-body">
-									  <div class="alert alert-info">'.get_string("insertstudentinfomodal", "local_paperattendance").'</div>
-									  '.html_writer::table($modaltable).'
-							        </div>
-							        <div class="modal-footer">
-							          <button id="saveinsertstudent" type="button" class="btn btn-default" data-dismiss="modal">'.get_string("save", "local_paperattendance").'</button>
-							        </div>
-							      </div>
-							    </div>
-							  </div>';
-			}
-			else {
-				$insertstudentmodal= '<div class="modal fade" id="insertstudentmodal" role="dialog" style="width: 50vw; z-index: -10;">
-							    <div class="modal-dialog modal-sm">
-							      <div class="modal-content">
-									<div class="modal-header">
-          								<button type="button" class="close" data-dismiss="modal">&times;</button>
-          								<h4 class="modal-title">'.get_string("insertstudentmanually", "local_paperattendance").' </h4>
-       								</div>
-							        <div class="modal-body">
-									  <div class="alert alert-danger">'.get_string("insertstudenterror", "local_paperattendance").'</div>
-							        </div>
-							        <div class="modal-footer">
-							          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-							        </div>
-							      </div>
-							    </div>
-							  </div>';
 			}
 		}
+		$insertstudentmodal= '<div class="modal fade" id="insertstudentmodal" role="dialog" style="width: 50vw; z-index: -10;">
+							    <div class="modal-dialog modal-sm">
+							      <div class="modal-content">
+									<div class="modal-header">
+          								<button type="button" class="close" data-dismiss="modal">&times;</button>
+          								<h4 class="modal-title">'.get_string("insertstudentmanually", "local_paperattendance").' </h4>
+       								</div>
+							        <div class="modal-body">';
+		if($counter>0){
+			$insertstudentmodal .= '<div class="alert alert-info">'.get_string("insertstudentinfomodal", "local_paperattendance").'</div>
+				  							'.html_writer::table($modaltable).'
+		        							</div>
+	        								<div class="modal-footer">
+	          								<button id="saveinsertstudent" type="button" class="btn btn-default" data-dismiss="modal">'.get_string("save", "local_paperattendance").'</button>';
+		}else{
+			$insertstudentmodal .= '<div class="alert alert-danger">'.get_string("insertstudenterror", "local_paperattendance").'</div>
+					</div>
+					<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>';
+		}
+		$insertstudentmodal .='</div>
+						      </div>
+						    </div>
+						  </div>';
 		
 		$viewbackbutton = new moodle_url("/local/paperattendance/history.php", array("action" => "view", "courseid" => $courseid));
 		$insertstudenturl = new moodle_url("/local/paperattendance/history.php", array(
