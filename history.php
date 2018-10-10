@@ -270,6 +270,11 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 			ORDER BY u.lastname ASC"; //**Nose si quitar (AND e.enrol = "database") para que tambien muestre a los enrolados manualmente
 		$enrolledstudents = $DB->get_records_sql($getstudentsattendance, $param);
 		 
+		 var_dump('BREAK');
+		 var_dump($attendances);
+		 var_dump('BREAK');
+		 var_dump($enrolledstudents);
+		 
 		$counter = 1;
 		foreach ($enrolledstudents as $enrolledstudent){
 			$name = ($enrolledstudent->firstname.' '.$enrolledstudent->lastname);
