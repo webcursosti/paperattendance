@@ -269,16 +269,14 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 			WHERE e.enrol $sqlin AND e.status = 0 AND u.suspended = 0 AND u.deleted = 0
 			ORDER BY u.lastname ASC"; //**Nose si quitar (AND e.enrol = "database") para que tambien muestre a los enrolados manualmente
 		$enrolledstudents = $DB->get_records_sql($getstudentsattendance, $param);
-		 
-		 var_dump('BREAK');
-		 var_dump($originalattendancesmodal);
-		 var_dump('BREAK');
-		 var_dump($enrolledstudents);
-		 
 		$counter = 1;
+		
 		foreach ($enrolledstudents as $enrolledstudent){
 			$name = ($enrolledstudent->firstname.' '.$enrolledstudent->lastname);
-			
+			echo '<br><br><br><br><br><br><br>';
+			echo array_key_exists($enrolledstudent->userid, $originalattendancesmodal);
+			echo '<br>$counter';
+			$counter++;
 			if (!array_key_exists($enrolledstudent->userid, $originalattendancesmodal)) {
 				$modaltable->data[] = array(
 						$counter,
