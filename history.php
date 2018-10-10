@@ -271,11 +271,15 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		$enrolledstudents = $DB->get_records_sql($getstudentsattendance, $param);
 		$counter = 1;
 		
+		echo '<br>usuarios paper';
+		print_r($originalattendancesmodal);
 		foreach ($enrolledstudents as $enrolledstudent){
 			$name = ($enrolledstudent->firstname.' '.$enrolledstudent->lastname);
-			echo '<br><br><br><br><br><br><br>';
-			echo array_key_exists($enrolledstudent->userid, $originalattendancesmodal);
-			echo '<br>$counter';
+			echo '<br>';
+			echo $enrolledstudent->userid;
+			echo '<br>resultado';
+			print_r( array_key_exists($enrolledstudent->userid, $originalattendancesmodal));
+			echo '<br>'.$counter;
 			$counter++;
 			if (!array_key_exists($enrolledstudent->userid, $originalattendancesmodal)) {
 				$modaltable->data[] = array(
