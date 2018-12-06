@@ -35,12 +35,17 @@ require_once ($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/fpdi.php');
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php");
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi.php");
 global $DB, $PAGE, $OUTPUT, $USER, $CFG;
-// Possible actions -> view, scan or students attendance . Standard is view mode
+
+//Possible actions -> view, scan or students attendance . Standard is view mode
 $action = optional_param("action", "view", PARAM_TEXT);
 $attendanceid = optional_param("attendanceid", 0, PARAM_INT);
 $presenceid = optional_param("presenceid", null, PARAM_INT);
 $courseid = required_param('courseid', PARAM_INT);
+
+//Context definition
 $context = context_course::instance($COURSE->id);
+
+//Page settings
 $url = new moodle_url("/local/paperattendance/history.php", array('courseid' => $courseid));
 $PAGE->set_url($url);
 $PAGE->set_context($context);
@@ -49,16 +54,21 @@ $PAGE->requires->jquery();
 $PAGE->requires->jquery_plugin ( 'ui' );
 $PAGE->requires->jquery_plugin ( 'ui-css' );
 $contextsystem = context_system::instance();
-//Page
+
+//Page pagination
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = 26;
+
 //for navbar
 $course = $DB->get_record("course",array("id" => $courseid));
 $categorycontext = context_coursecat::instance($course->category);
+
+//Login require
 require_login();
 if (isguestuser()){
 	die();
 }
+
 //Begins Teacher's View
 $isteacher = paperattendance_getteacherfromcourse($courseid, $USER->id);
 $isstudent = paperattendance_getstudentfromcourse($courseid, $USER->id);
@@ -117,11 +127,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		$originalattendances = $DB->get_records_sql($gettotalstudentsattendances, array($attendanceid), $page * $perpage, $perpage);
 		
 		$attendancestable = new html_table();
-		/*var_dump('BREAK');
-		var_dump($attendances);
-		var_dump('BREAK');
-		var_dump($originalattendances);
-		*/
+		
 		//Check if we have at least one attendance in the selected session
 		if ($attendancescount > 0){
 			
@@ -134,7 +140,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 					);
 		
 			$setpresence = 1;
-			$changeallattendance = html_writer::div("Cambiar Todos", "changeall", array("style"=>"display:none; cursor:pointer; text-decoration: underline; color: blue;","setpresence"=>"$setpresence"));
+			$changeallattendance = html_writer::div(get_string('changeall', 'local_paperattendance'), "changeall", array("style"=>"display:none; cursor:pointer; text-decoration: underline; color: blue;","setpresence"=>"$setpresence"));
 			
 			$tableheadattendance = html_writer::div( get_string('attendance', 'local_paperattendance').$statusiconactionchange, "changeall");
 			
@@ -168,7 +174,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						$urlomegasync,
 						$synchronizedicon
 						);
-				//if ($attendance->idp == $studentsid[$studentnumberinarray]->idp){
+				//Check if student is matriculated or not
 				if (array_key_exists($attendance->idp, $attendances)) {
 					//Define presente or ausente icon
 					$urlattendance = new moodle_url("#");
@@ -200,8 +206,8 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 					// 				$editiconattendance = new pix_icon("i/edit", get_string('edithistory', 'local_paperattendance'));
 					// 				$editactionasistencia = $OUTPUT->action_icon(
 					// 						$editurlattendance,
-							// 						$editiconattendance
-							// 						);	
+					// 						$editiconattendance
+					// 						);	
 					
 							$attendancestable->data[] = array(
 									$counter,
@@ -315,6 +321,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				"attendanceid" => $attendanceid
 		));
 	}
+	
 	// Edits an existent record for the students attendance view
 	if($action == "edit"){
 		if($presenceid == null){

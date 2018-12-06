@@ -172,6 +172,7 @@ $string['addstudent']="Add";
 $string['insertstudenterror']="There are no students available to insert in the list";
 $string['insertstudentinfomodal']="Choose the students to insert in the list";
 $string['save']="Save";
+$string['changeall']="Change All";
 
 //messages
 $string['dear'] = "Dear Teacher";

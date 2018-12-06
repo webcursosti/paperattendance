@@ -172,6 +172,7 @@ $string['addstudent']="Agregar";
 $string['insertstudenterror']="No existen alumnos disponibles para insertar en la lista";
 $string['insertstudentinfomodal']="Elija los alumnos a insertar en la lista";
 $string['save']="Aceptar";
+$string['changeall']="Cambiar Todos";
 
 
 //messages
