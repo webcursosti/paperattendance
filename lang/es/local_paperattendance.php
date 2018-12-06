@@ -173,6 +173,12 @@ $string['insertstudenterror']="No existen alumnos disponibles para insertar en l
 $string['insertstudentinfomodal']="Elija los alumnos a insertar en la lista";
 $string['save']="Aceptar";
 $string['changeall']="Cambiar Todos";
+$string['courseshortname']="Shortname del Curso:";
+$string['datemiss']="Fecha:";
+$string['modulehourmiss']="Hora Módulo:";
+$string['listbeginmiss']="Inicio Lista:";
+$string['continue']="Continuar";
+$string['close']="Cerrar";
 
 
 //messages

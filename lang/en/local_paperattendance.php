@@ -162,7 +162,7 @@ $string['session']="Session";
 $string['remove']="Remove";
 $string['selectmodules']="Select modules";
 $string['nothingtoprint']="There's nothing to print for today";
-$string['missingpagestitle']="Mising Pages";
+$string['missingpagestitle']="Missing Pages";
 $string['incorrectlistinit']="Incorrect list init";
 $string['coursedoesntexist']="Course doesn't exist";
 $string['incorrectmoduleinit']="Incorrect module init";
@@ -173,6 +173,12 @@ $string['insertstudenterror']="There are no students available to insert in the 
 $string['insertstudentinfomodal']="Choose the students to insert in the list";
 $string['save']="Save";
 $string['changeall']="Change All";
+$string['courseshortname']="Course Shortname:";
+$string['datemiss']="Date:";
+$string['modulehourmiss']="Module Hour:";
+$string['listbeginmiss']="List Begin:";
+$string['continue']="Continue";
+$string['close']="Close";
 
 //messages
 $string['dear'] = "Dear Teacher";
