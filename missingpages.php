@@ -57,6 +57,7 @@ if(is_siteadmin()){
 else{
 	/*
 	 //if the user is a secretary show their own uploaded attendances
+	  * 
 	 $sqlcategory = "SELECT cc.*
 	 FROM {course_categories} cc
 	 INNER JOIN {role_assignments} ra ON (ra.userid = ?)
@@ -292,15 +293,15 @@ if ($action == "edit") {
 			/*Inputs of the form to edit a missing page plus the modals help buttons*/
 				
 			//Input for the Shortname of the course like : 2113-V-ECO121-1-1-2017
-			$inputs = html_writer::div('<label for="course">Shortname del Curso:</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017"><button id="sn" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#shortnamemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			$inputs = html_writer::div('<label for="course">'.get_string("courseshortname", "local_paperattendance").'</label><input type="text" class="form-control" id="course" placeholder="2113-V-ECO121-1-1-2017"><button id="sn" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#shortnamemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
 			//Input for the Date of the list like: 01-08-2017
-			$inputs .= html_writer::div('<label for="date">Fecha:</label><input type="text" class="form-control" id="date" placeholder="01-08-2017"><button id="d" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#datemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			$inputs .= html_writer::div('<label for="date">'.get_string("datemiss", "local_paperattendance").'</label><input type="text" class="form-control" id="date" placeholder="01-08-2017"><button id="d" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#datemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
 			//Input for the time of the module of the session like: 16:30
-			$inputs .= html_writer::div('<label for="module">Hora Módulo:</label><input type="text" class="form-control" id="module" placeholder="16:30"><button id="m" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modulemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			$inputs .= html_writer::div('<label for="module">'.get_string("modulehourmiss", "local_paperattendance").'</label><input type="text" class="form-control" id="module" placeholder="16:30"><button id="m" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modulemodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
 			//Input for the list begin number like: 27
-			$inputs .= html_writer::div('<label for="begin">Inicio Lista:</label><input type="text" class="form-control" id="begin" placeholder="27"><button id="b" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#beginmodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
+			$inputs .= html_writer::div('<label for="begin">'.get_string("listbeginmiss", "local_paperattendance").'</label><input type="text" class="form-control" id="begin" placeholder="27"><button id="b" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#beginmodal">?</button>',"form-group", array("style"=>"float:left; margin-left:10%"));
 			//Input fot the submit button of the form
-			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">Continuar</button>',"form-group", array("style"=>"float:right; margin-right:5%; margin-top:3%;"));
+			$inputs .= html_writer::div('<button type="submit" id="confirm" class="btn btn-default">'.get_string("continue", "local_paperattendance").'</button>',"form-group", array("style"=>"float:right; margin-right:5%; margin-top:3%;"));
 				
 			//We now create de four help modals
 			$shortnamemodal = '<div class="modal fade" id="shortnamemodal" role="dialog" style="width: 50vw; z-index: -10;">
@@ -311,7 +312,7 @@ if ($action == "edit") {
 									  <img class="img-responsive" src="img/hshortname.png">
 							        </div>
 							        <div class="modal-footer">
-							          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+							          <button type="button" class="btn btn-default" data-dismiss="modal">'.get_string("close", "local_paperattendance").'</button>
 							        </div>
 							      </div>
 							    </div>
@@ -324,7 +325,7 @@ if ($action == "edit") {
 									  <img class="img-responsive" src="img/helpdate.png">
 							        </div>
 							        <div class="modal-footer">
-							          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+							          <button type="button" class="btn btn-default" data-dismiss="modal">'.get_string("close", "local_paperattendance").'</button>
 							        </div>
 							      </div>
 							    </div>
@@ -337,7 +338,7 @@ if ($action == "edit") {
 									  <img class="img-responsive" src="img/helpmodule.png">
 							        </div>
 							        <div class="modal-footer">
-							          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+							          <button type="button" class="btn btn-default" data-dismiss="modal">'.get_string("close", "local_paperattendance").'</button>
 							        </div>
 							      </div>
 							    </div>
@@ -350,7 +351,7 @@ if ($action == "edit") {
 									  <img class="img-responsive" src="img/helpbegin.png">
 							        </div>
 							        <div class="modal-footer">
-							          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+							          <button type="button" class="btn btn-default" data-dismiss="modal">'.get_string("close", "local_paperattendance").'</button>
 							        </div>
 							      </div>
 							    </div>
