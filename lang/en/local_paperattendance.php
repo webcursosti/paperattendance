@@ -55,6 +55,7 @@ $string['nonexiststudent']="Non exist student";
 $string['date']="Date";
 $string['time']="Time";
 $string['scan']="Scan";
+$string['type']="Type";
 $string['studentsattendance']="Students Attendance";
 $string['see']="See";
 $string['seestudents']="See students";
@@ -179,6 +180,7 @@ $string['modulehourmiss']="Module Hour:";
 $string['listbeginmiss']="List Begin:";
 $string['continue']="Continue";
 $string['close']="Close";
+$string['digitallist'] = "Digital list";
 
 //messages
 $string['dear'] = "Dear Teacher";

@@ -636,6 +636,28 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 		// Paperattendance savepoint reached.
 		upgrade_plugin_savepoint(true, 2018010801, 'local', 'paperattendance');
 	}
+	if ($oldversion < 2018122601) {
+	    
+	    // Define field type to be added to paperattendance_session.
+	    $table = new xmldb_table('paperattendance_session');
+	    $field = new xmldb_field('type', XMLDB_TYPE_INTEGER, '10', null, null, null, '0', 'lastmodified');
+	    
+	    // Conditionally launch add field type.
+	    if (!$dbman->field_exists($table, $field)) {
+	        $dbman->add_field($table, $field);
+	    }
+	    
+	    // Paperattendance savepoint reached.
+	    upgrade_plugin_savepoint(true, 2018122601, 'local', 'paperattendance');
+	/*
+	    $query = "UPDATE {paperattendance_session}
+                SET type = 0";
+	    //At this point, only attendance in paper exists
+	    //Update must be made to fill column with 0
+	    $DB->execute($query);
+	    upgrade_plugin_savepoint(true, 2018122601, 'local', 'paperattendance');*/
+	}
+	
 	
 	
 	return true;

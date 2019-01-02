@@ -35,17 +35,13 @@ require_once ($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/fpdi.php');
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi_bridge.php");
 require_once ($CFG->dirroot . "/mod/assign/feedback/editpdf/fpdi/fpdi.php");
 global $DB, $PAGE, $OUTPUT, $USER, $CFG;
-
-//Possible actions -> view, scan or students attendance . Standard is view mode
+// Possible actions -> view, scan or students attendance . Standard is view mode
 $action = optional_param("action", "view", PARAM_TEXT);
 $attendanceid = optional_param("attendanceid", 0, PARAM_INT);
 $presenceid = optional_param("presenceid", null, PARAM_INT);
 $courseid = required_param('courseid', PARAM_INT);
-
-//Context definition
+$isdigital = optional_param('type', 0, PARAM_INT);
 $context = context_course::instance($COURSE->id);
-
-//Page settings
 $url = new moodle_url("/local/paperattendance/history.php", array('courseid' => $courseid));
 $PAGE->set_url($url);
 $PAGE->set_context($context);
@@ -54,21 +50,16 @@ $PAGE->requires->jquery();
 $PAGE->requires->jquery_plugin ( 'ui' );
 $PAGE->requires->jquery_plugin ( 'ui-css' );
 $contextsystem = context_system::instance();
-
-//Page pagination
+//Page
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = 26;
-
 //for navbar
 $course = $DB->get_record("course",array("id" => $courseid));
 $categorycontext = context_coursecat::instance($course->category);
-
-//Login require
 require_login();
 if (isguestuser()){
 	die();
 }
-
 //Begins Teacher's View
 $isteacher = paperattendance_getteacherfromcourse($courseid, $USER->id);
 $isstudent = paperattendance_getstudentfromcourse($courseid, $USER->id);
@@ -127,7 +118,11 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 		$originalattendances = $DB->get_records_sql($gettotalstudentsattendances, array($attendanceid), $page * $perpage, $perpage);
 		
 		$attendancestable = new html_table();
-		
+		/*var_dump('BREAK');
+		var_dump($attendances);
+		var_dump('BREAK');
+		var_dump($originalattendances);
+		*/
 		//Check if we have at least one attendance in the selected session
 		if ($attendancescount > 0){
 			
@@ -140,7 +135,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 					);
 		
 			$setpresence = 1;
-			$changeallattendance = html_writer::div(get_string('changeall', 'local_paperattendance'), "changeall", array("style"=>"display:none; cursor:pointer; text-decoration: underline; color: blue;","setpresence"=>"$setpresence"));
+			$changeallattendance = html_writer::div("Cambiar Todos", "changeall", array("style"=>"display:none; cursor:pointer; text-decoration: underline; color: blue;","setpresence"=>"$setpresence"));
 			
 			$tableheadattendance = html_writer::div( get_string('attendance', 'local_paperattendance').$statusiconactionchange, "changeall");
 			
@@ -174,7 +169,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						$urlomegasync,
 						$synchronizedicon
 						);
-				//Check if student is matriculated or not
+				//if ($attendance->idp == $studentsid[$studentnumberinarray]->idp){
 				if (array_key_exists($attendance->idp, $attendances)) {
 					//Define presente or ausente icon
 					$urlattendance = new moodle_url("#");
@@ -206,8 +201,8 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 					// 				$editiconattendance = new pix_icon("i/edit", get_string('edithistory', 'local_paperattendance'));
 					// 				$editactionasistencia = $OUTPUT->action_icon(
 					// 						$editurlattendance,
-					// 						$editiconattendance
-					// 						);	
+							// 						$editiconattendance
+							// 						);	
 					
 							$attendancestable->data[] = array(
 									$counter,
@@ -232,88 +227,6 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 							$studentnumberinarray++;
 			}
 		}
-		
-		$modaltable = new html_table();
-		$modaltable->head = array(
-				get_string('hashtag', 'local_paperattendance'),
-				get_string('student', 'local_paperattendance'),
-				get_string('addstudent', 'local_paperattendance')
-		);
-		$modaltable->id = "modaltable";
-		
-		//Query to get the original paper attendances students
-		$gettotalstudentsattendancesmodal = "SELECT
-				u.id AS userid,
-				u.lastname,
-				u.firstname
-				FROM {paperattendance_presence} AS p
- 				INNER JOIN {user} AS u ON (u.id = p.userid)
-				WHERE p.sessionid = ?
-				GROUP BY userid
-				ORDER BY u.lastname ASC";
-		$originalattendancesmodal = $DB->get_records_sql($gettotalstudentsattendancesmodal, array($attendanceid));
-		
-		
-		list ( $sqlin, $param1 ) = $DB->get_in_or_equal ( $enrolincludes );
-		$param2 = array(
-				$courseid
-		);
-		$param = array_merge($param2,$param1);
-		//Query to get the actual enrolled students in the course
-		$getstudentsattendance = "SELECT
-			u.id AS userid,
-			u.lastname,
-			u.firstname,
-			u.email AS email
-			FROM {user} AS u
-			INNER JOIN {user_enrolments} ue ON ue.userid = u.id
-			INNER JOIN {enrol} e ON e.id = ue.enrolid
-			INNER JOIN {role_assignments} ra ON ra.userid = u.id
-			INNER JOIN {context} ct ON ct.id = ra.contextid AND ct.contextlevel = 50
-			INNER JOIN {course} c ON c.id=? AND c.id = ct.instanceid AND e.courseid = c.id
-			INNER JOIN {role} r ON r.id = ra.roleid AND r.shortname = 'student'
-			WHERE e.enrol $sqlin AND e.status = 0 AND u.suspended = 0 AND u.deleted = 0
-			ORDER BY u.lastname ASC"; //**Nose si quitar (AND e.enrol = "database") para que tambien muestre a los enrolados manualmente
-		$enrolledstudents = $DB->get_records_sql($getstudentsattendance, $param);
-		$counter = 0;
-		foreach ($enrolledstudents as $enrolledstudent){
-			$name = ($enrolledstudent->firstname.' '.$enrolledstudent->lastname);
-			
-			if (!array_key_exists($enrolledstudent->userid, $originalattendancesmodal)) {
-				$counter++;
-				
-				$modaltable->data[] = array(
-						$counter,
-						$name,
-						'<input type="checkbox" class="usercheck" value="'.$enrolledstudent->userid.'" emailmodal="'.$enrolledstudent->email.'">',
-				);
-			}
-		}
-		$insertstudentmodal= '<div class="modal fade" id="insertstudentmodal" role="dialog" style="width: 50vw; z-index: -10;">
-							    <div class="modal-dialog modal-sm">
-							      <div class="modal-content">
-									<div class="modal-header">
-          								<button type="button" class="close" data-dismiss="modal">&times;</button>
-          								<h4 class="modal-title">'.get_string("insertstudentmanually", "local_paperattendance").' </h4>
-       								</div>
-							        <div class="modal-body">';
-		if($counter>0){
-			$insertstudentmodal .= '<div class="alert alert-info">'.get_string("insertstudentinfomodal", "local_paperattendance").'</div>
-				  							'.html_writer::table($modaltable).'
-		        							</div>
-	        								<div class="modal-footer">
-	          								<button id="saveinsertstudent" type="button" class="btn btn-default" data-dismiss="modal">'.get_string("save", "local_paperattendance").'</button>';
-		}else{
-			$insertstudentmodal .= '<div class="alert alert-danger">'.get_string("insertstudenterror", "local_paperattendance").'</div>
-					</div>
-					<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>';
-		}
-		$insertstudentmodal .='</div>
-						      </div>
-						    </div>
-						  </div>';
-		
 		$viewbackbutton = new moodle_url("/local/paperattendance/history.php", array("action" => "view", "courseid" => $courseid));
 		$insertstudenturl = new moodle_url("/local/paperattendance/history.php", array(
 				"action" => "insertstudent",
@@ -321,7 +234,6 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				"attendanceid" => $attendanceid
 		));
 	}
-	
 	// Edits an existent record for the students attendance view
 	if($action == "edit"){
 		if($presenceid == null){
@@ -486,7 +398,8 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						   CONCAT( m.initialtime, ' - ', m.endtime) AS hour,
 				 		   s.pdf,
 						   s.status AS status,
-						   s.description AS description
+						   s.description AS description,
+                           s.type as type
 						   FROM {paperattendance_session} AS s
 						   INNER JOIN {paperattendance_sessmodule} AS sm ON (s.id = sm.sessionid)
 						   INNER JOIN {paperattendance_module} AS m ON (sm.moduleid = m.id)
@@ -503,7 +416,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 					get_string('module', 'local_paperattendance'),
 					get_string('description', 'local_paperattendance'),
 					get_string('percentagestudent', 'local_paperattendance'),
-					get_string('scan', 'local_paperattendance'),
+					get_string('type', 'local_paperattendance'), 
 					get_string('studentsattendance', 'local_paperattendance'),
 					get_string('omegasync', 'local_paperattendance')
 			);
@@ -568,21 +481,32 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				
 				
 				// Define scan icon and url
-				$scanurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
-						"action" => "scan",
-						"attendanceid" => $attendance->id,
-						"courseid" => $courseid
-				));
-				$scanicon_attendance = new pix_icon("e/new_document", get_string('see', 'local_paperattendance'));
-				$scanaction_attendance = $OUTPUT->action_icon(
-						$scanurl_attendance,
-						$scanicon_attendance
-						);
+				if ($attendance->type == 0){
+    				$scanurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
+    						"action" => "scan",
+    						"attendanceid" => $attendance->id,
+    						"courseid" => $courseid
+    				));
+    				$scanicon_attendance = new pix_icon("e/new_document", get_string('see', 'local_paperattendance'));
+    				$scanaction_attendance = $OUTPUT->action_icon(
+    						$scanurl_attendance,
+    						$scanicon_attendance
+    						);
+    			}
+    			else{
+    				//Define digital icon
+    				$digitalicon_attendance = new pix_icon("f/env", get_string('see', 'local_paperattendance')); // change icon
+    				$digitalaction_attendance = $OUTPUT->action_icon(
+    				    "#",
+    				    $digitalicon_attendance
+    				    );
+    			}
 				// Define Asistencia alumnos icon and url
 				$studentsattendanceurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
 						"action" => "studentsattendance",
 						"attendanceid" => $attendance->id,
-						"courseid" => $courseid
+						"courseid" => $courseid,
+				        "type" => $attendance->type
 				));
 				$studentsattendanceicon_attendance = new pix_icon("e/fullpage", get_string('seestudents', 'local_paperattendance'));
 				$studentsattendanceaction_attendance = $OUTPUT->action_icon(
@@ -612,7 +536,8 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 				else{
 					$attdescription = get_string('class', 'local_paperattendance');
 				}
-				$attendancestable->data[] = array(
+				if ($attendance->type == 0){
+    				$attendancestable->data[] = array(
 						$counter,
 						$dateconverted,
 						$attendance->hour,
@@ -622,8 +547,22 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 						$scanaction_attendance,
 						$studentsattendanceaction_attendance,
 						$synchronizediconaction
-				);
-				$counter++;
+    				);
+    				$counter++;
+				}
+				else if($attendance->type == 1){
+				    $attendancestable->data[] = array(
+				        $counter,
+				        $dateconverted,
+				        $attendance->hour,
+				        $attendance->name,
+				        $attdescription,
+				        $percentage->percentage."%",
+				        $digitalaction_attendance,
+				        $studentsattendanceaction_attendance,
+				        $synchronizediconaction
+				    );
+				}
 			}
 		}
 		$buttonurl = new moodle_url("/course/view.php", array("id" => $courseid));
@@ -690,29 +629,41 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
 			}
 			
 			// add scanbutton for the teacher to open scan on new window
-			$scanurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
-					"action" => "scan",
-					"attendanceid" => $attendanceid,
-					"courseid" => $courseid
-					
-			));
-			$scanicon_attendance = new pix_icon("e/new_document", get_string('see', 'local_paperattendance'));
-			$scanaction_attendance = $OUTPUT->action_icon(
-					$scanurl_attendance,
-					$scanicon_attendance,
-					null,
-					array("target" => "_blank")
-					);
-			
+			if ($isdigital == 0){
+    			$scanurl_attendance = new moodle_url("/local/paperattendance/history.php", array(
+    					"action" => "scan",
+    					"attendanceid" => $attendanceid,
+    					"courseid" => $courseid
+    					
+    			));
+    			$scanicon_attendance = new pix_icon("e/new_document", get_string('see', 'local_paperattendance'));
+    			$scanaction_attendance = $OUTPUT->action_icon(
+    					$scanurl_attendance,
+    					$scanicon_attendance,
+    					null,
+    					array("target" => "_blank")
+    					);
+			}
+			else{
+			    $digitallist = get_string('digitallist', 'local_paperattendance');
+			    $digitalicon_attendance = new pix_icon("f/env", get_string('see', 'local_paperattendance')); // change icon
+			    $digitalaction_attendance = $OUTPUT->action_icon(
+			        "#",
+			        $digitalicon_attendance
+			        );
+			}
 			$left = html_writer::nonempty_tag("div", paperattendance_convertdate($resources->smdate), array("align" => "left"));
 			$left .= html_writer::nonempty_tag("div", get_string("description","local_paperattendance").": ".$summdescription, array("align" => "left"));
 			$left .= html_writer::nonempty_tag("div", get_string("module","local_paperattendance").": ".$resources->hour, array("align" => "left"));
-			$left .= html_writer::nonempty_tag("div", get_string("scan","local_paperattendance").": ".$scanaction_attendance, array("align" => "left"));
+			if($isdigital == 0){
+                $left .= html_writer::nonempty_tag("div", get_string("scan","local_paperattendance").": ".$scanaction_attendance, array("align" => "left"));
+			}
+			else{
+			    $left .= html_writer::nonempty_tag("div", $digitallist.": ".$digitalaction_attendance, array("align" => "left"));
+			}
+			
 			$left .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
-			$left .= html_writer::nonempty_tag("div", '<button id="insertstudentmodalbtn" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#insertstudentmodal">'.get_string("insertstudentmanually", "local_paperattendance").'</button>', array("align" => "left"));
 			//$left .= html_writer::nonempty_tag("div", $OUTPUT->single_button($insertstudenturl, get_string('insertstudentmanually', 'local_paperattendance')), array("align" => "center"));
-			$left .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
-			$left .= html_writer::nonempty_tag("div",$insertstudentmodal);
 			//displays button to add a student manually
 			echo html_writer::nonempty_tag("div", $left);
 			echo html_writer::div('', 'loader');
@@ -947,12 +898,6 @@ else{
 }
 echo $OUTPUT->footer();
 ?>
-<script type="text/javascript">
-	$( document ).on( "click", "#insertstudentmodalbtn", function() {
-		jQuery('#insertstudentmodal').css('z-index', '');
-	});
-</script>
-
 <script>
 $( document ).ready(function() {
 	
@@ -1074,55 +1019,6 @@ $( document ).ready(function() {
 		    }
 		});
 		
-	});
-
-	//Insert student modal function
-	$( "#saveinsertstudent" ).on( "click", function() {
-		var sessinfo = [];
-		var sessid = <?php echo $attendanceid; ?>;
-		var courseid = <?php echo $courseid; ?>;
-		//we add this info to de array sessinfo
-		sessinfo.push({'courseid' : courseid, 'sessid' : sessid});
-
-		var contador = 0;
-		var studentsattendance = [];
-		//Validate if the checkbox is checked or not
-		var checkbox = $('.usercheck');
-		$.each(checkbox, function(i, field){
-			var currentcheckbox = $(this);
-			if(currentcheckbox.prop("checked") == true){
-				var emailmodal= currentcheckbox.attr("emailmodal");
-				//We agregate the info to the de studentsattendance array
-				studentsattendance.push({"userid":currentcheckbox.val(), "email": emailmodal});
-				contador = contador+1;
-			}
-		});	
-		if (contador != 0){ //if exist at least one student to insert do this
-			//ajax to ajaxquerys with 2 arrays, one with the info session and the other with every studentid an email
-			$.ajax({
-			    type: 'POST',
-			    url: 'ajax/ajaxquerys.php',
-			    data: {
-				      'action' : 'saveinsertstudent',
-				      'sessinfo' : JSON.stringify(sessinfo),
-				      'studentsattendance' : JSON.stringify(studentsattendance)
-			    	},
-			    success: function (response) {		    
-	        		location.href="history.php?action=studentsattendance&attendanceid="+sessid+"&courseid="+courseid;
-					
-			    },
-			    complete: function (index){
-					console.log(index);
-			    }
-			});
-
-		}
-		//Shows students attendace and sessinfo in JSON format:
-		/*alert(JSON.stringify(studentsattendance));
-		console.log(JSON.stringify(studentsattendance));
-		console.log(JSON.stringify(sessinfo));
-		console.log(contador);
-		*/
 	});
 });
 </script>
