@@ -619,32 +619,23 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
                     $attdescription = get_string('class', 'local_paperattendance');
                 }
                 if ($attendance->type == 0){
-                    $attendancestable->data[] = array(
-                        $counter,
-                        $dateconverted,
-                        $attendance->hour,
-                        $attendance->name,
-                        $attdescription,
-                        $percentage->percentage."%",
-                        $scanaction_attendance,
-                        $studentsattendanceaction_attendance,
-                        $synchronizediconaction
-                    );
-                    $counter++;
+                    $type = $scanaction_attendance;
                 }
-                else if($attendance->type == 1){
-                    $attendancestable->data[] = array(
-                        $counter,
-                        $dateconverted,
-                        $attendance->hour,
-                        $attendance->name,
-                        $attdescription,
-                        $percentage->percentage."%",
-                        $digitalaction_attendance,
-                        $studentsattendanceaction_attendance,
-                        $synchronizediconaction
-                    );
+                else if ($attendance->type == 1){
+                    $type = $digitalaction_attendance;
                 }
+                $attendancestable->data[] = array(
+                    $counter,
+                    $dateconverted,
+                    $attendance->hour,
+                    $attendance->name,
+                    $attdescription,
+                    $percentage->percentage."%",
+                    $type,
+                    $studentsattendanceaction_attendance,
+                    $synchronizediconaction
+                );
+                $counter++;
             }
         }
         $buttonurl = new moodle_url("/course/view.php", array("id" => $courseid));
