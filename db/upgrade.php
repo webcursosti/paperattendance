@@ -649,13 +649,6 @@ function xmldb_local_paperattendance_upgrade($oldversion) {
 	    
 	    // Paperattendance savepoint reached.
 	    upgrade_plugin_savepoint(true, 2018122601, 'local', 'paperattendance');
-	/*
-	    $query = "UPDATE {paperattendance_session}
-                SET type = 0";
-	    //At this point, only attendance in paper exists
-	    //Update must be made to fill column with 0
-	    $DB->execute($query);
-	    upgrade_plugin_savepoint(true, 2018122601, 'local', 'paperattendance');*/
 	}
 	
 	
