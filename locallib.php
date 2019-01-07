@@ -656,8 +656,12 @@ function paperattendance_get_qr_text($path, $pdf){
  *            Full name of the pdf
  * @param int $description
  *            Description of the session
+ * @param int $type
+ *            Description of the type of assitance
+ *            0 -> for paper
+ *            1 -> for digital
  */
-function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffile, $description){
+function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffile, $description, $type){
 	global $DB;
 
 	//mtrace("courseid: ".$courseid. " requestorid: ".$requestorid. " userid: ".$userid." pdffile: ".$pdffile. " description: ".$description);
@@ -670,6 +674,7 @@ function paperattendance_insert_session($courseid, $requestorid, $userid, $pdffi
 	$sessioninsert->status = 0;
 	$sessioninsert->lastmodified = time();
 	$sessioninsert->description = $description;
+	$sessioninsert->type = $type;
 	if($sessionid = $DB->insert_record('paperattendance_session', $sessioninsert)){
 		//var_dump($sessionid);
 	return $sessionid;
@@ -777,7 +782,7 @@ function paperattendance_read_pdf_save_session($path, $pdffile, $qrtext){
 			$pos = substr_count($arraymodules, ':');
 			if ($pos == 0) {
 				$module = $arraymodules;
-				$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile, $description);
+				$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile, $description, 0);
 				$verification = paperattendance_insert_session_module($module, $sessionid, $time);
 				if($verification == true){
 					return "Perfect";
@@ -794,7 +799,7 @@ function paperattendance_read_pdf_save_session($path, $pdffile, $qrtext){
 					//for each module inside $arraymodules, save records.
 					$module = $modulesexplode[$i];
 
-					$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile, $description);
+					$sessionid = paperattendance_insert_session($courseid, $requestorid, $USER-> id, $pdffile, $description, 0);
 					$verification = paperattendance_insert_session_module($module, $sessionid, $time);
 					if($verification == true){
 						return "Perfect";
@@ -1764,7 +1769,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						
 						if( $sessdoesntexist == "perfect"){
 							mtrace("no existe");
-							$sessid = paperattendance_insert_session($course, $requestorid, $uploaderobj->id, $pdffilename, $description);
+							$sessid = paperattendance_insert_session($course, $requestorid, $uploaderobj->id, $pdffilename, $description, 0);
 							mtrace("la session id es : ".$sessid);
 							paperattendance_insert_session_module($module, $sessid, $time);
 							paperattendance_save_current_pdf_page_to_session($realpagenum, $sessid, $page, $pdffilename, 1, $uploaderobj->id, time());
