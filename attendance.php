@@ -92,7 +92,7 @@ if($action == "view"){
 				"token" => $token
 		);
 		// 0 (para domingo) hasta 6 (para sábado)
-		$fields = array("diaSemana" => 3, "seccionId"=> 59169, "token" => $token);
+		//$fields = array("diaSemana" => 3, "seccionId"=> 59169, "token" => $token);
 		
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
@@ -116,7 +116,7 @@ if($action == "view"){
 		$actualseconds = $actualdate["seconds"];
 		$actualmodule = $actualhour.":".$actualminutes.":".$actualseconds;
 		
-		$actualmodule = "17:0:1";
+		//$actualmodule = "17:0:1";
 		$actualmoduleunix = strtotime($actualmodule);
 		$existmodule = false;
 		foreach ($modules as $module){
