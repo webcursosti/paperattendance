@@ -392,7 +392,7 @@ switch ($action) {
 					$requestor = $teacher->userid;
 				}
 				$description = 0; //0 -> Indicates normal class
-				$sessid = paperattendance_insert_session($courseobject->id, $requestor, $USER->id, $sesspageobject->pdfname, $description);
+				$sessid = paperattendance_insert_session($courseobject->id, $requestor, $USER->id, $sesspageobject->pdfname, $description, 0);
 				//mtrace("el id de la sesión es : ".$sessid);
 				paperattendance_insert_session_module($moduleobject->id, $sessid, strtotime($date));
 				
