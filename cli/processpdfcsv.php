@@ -71,6 +71,8 @@ $found = 0;
 $DB->execute('SET SESSION wait_timeout = 28800');
 $DB->execute('SET SESSION interactive_timeout = 28800');
 
+mtrace("Start - line 74: ". memory_get_usage() . "\n");
+
 // Sql that brings the unread pdfs names
 $sqlunreadpdfs = "SELECT  id, filename AS name, uploaderid AS userid
 	FROM {paperattendance_unprocessed}
@@ -80,11 +82,13 @@ $sqlunreadpdfs = "SELECT  id, filename AS name, uploaderid AS userid
 if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
 	$path = $CFG -> dataroot. "/temp/local/paperattendance/unread";
 	mtrace("Query find data correctly");
+	mtrace("$sqlunreadpdfs - line 85: ". memory_get_usage() . "\n");
 	foreach($resources as $pdf){
 		$found++;
 		mtrace("Found ".$found." pdfs");
 		$uploaderobj = $DB->get_record("user", array("id" => $pdf-> userid));
 		$process = paperattendance_runcsvproccessing($path, $pdf-> name, $uploaderobj); 
+		mtrace("each pdf - line 91: ". memory_get_usage() . "\n");
 		
  		if($process){
  			mtrace("Pdf ".$found." correctly processed");
@@ -92,11 +96,13 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
  			$DB->delete_records("paperattendance_unprocessed", array('id'=> $pdf-> id)); 
  			mtrace("Pdf ".$found." deleted from unprocessed table");
  			//TODO: unlink al pdf grande y viejo y ya no utilizado
+ 			mtrace("pdf procesasdo correctamente - line 99: ". memory_get_usage() . "\n");
  		}
  		else{
  			mtrace("problem reading the csv or with the pdf");
  		}
 	}
+	mtrace("Fin foreach - line 105: ". memory_get_usage() . "\n");
 	
 	echo $found." PDF found. \n";
 	echo $read." PDF processed. \n";
@@ -109,5 +115,7 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
 }else{
 	echo $found." pdfs found. \n";
 }
+
+mtrace("Fin CLI - line 119: ". memory_get_usage() . "\n");
 
 exit(0);
