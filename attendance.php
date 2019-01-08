@@ -102,13 +102,8 @@ if($action == "view"){
 		$result = curl_exec ($curl);
 		curl_close ($curl);
 		
-		$modules = json_decode($result);
-		//var_dump($modules);
-		
-		if(count($modules) == 0){
-			print_error(get_string("usernotloggedin", "local_paperattendance"));
-			//redirect($backtocourse);
-		}
+		$omegamodules = json_decode($result);
+		//var_dump($omegamodules);
 		
 		$actualdate = getdate();
 		$actualhour = $actualdate["hours"];
@@ -118,26 +113,54 @@ if($action == "view"){
 		
 		//$actualmodule = "17:0:1";
 		$actualmoduleunix = strtotime($actualmodule);
-		$existmodule = false;
-		foreach ($modules as $module){
-			
-			$modinicial = $module->horaInicio;
-			$modfinal = $module->horaFin;
-			
-			//Check if exist some module in the actual time
-			if ( (strtotime($modinicial) <= $actualmoduleunix) && ($actualmoduleunix <= strtotime($modfinal) )){
-				$mod = explode(":", $module->horaInicio);
-				$moduleinicio = $mod[0].":".$mod[1];
-				$modfin = explode(":", $module->horaFin);
-				$modulefin = $modfin[0].":".$modfin[1];
-				$modquery = $DB->get_record("paperattendance_module", array("initialtime" => $moduleinicio));
-				$moduleid = $modquery -> id;
-				$existmodule = true;
+		$noexistmodule = true;
+		$betweenmodules = true;
+		if(count($omegamodules) != 0){ // then exist omegamodules from omega
+			foreach ($omegamodules as $module){
+				
+				$modinicial = $module->horaInicio;
+				$modfinal = $module->horaFin;
+				
+				//Check if exist some module in the actual time
+				if ( (strtotime($modinicial) <= $actualmoduleunix) && ($actualmoduleunix <= strtotime($modfinal) )){
+					$mod = explode(":", $module->horaInicio);
+					$moduleinicio = $mod[0].":".$mod[1];
+					$modfin = explode(":", $module->horaFin);
+					$modulefin = $modfin[0].":".$modfin[1];
+					$modquery = $DB->get_record("paperattendance_module", array("initialtime" => $moduleinicio));
+					$moduleid = $modquery -> id;
+					$noexistmodule = false;
+				}
 			}
+		}
+		else if (count($omegamodules) == 0 || $noexistmodule){ //no exist actual omegamodules from omega today
+			//geting all modules from moodle
+			$getmodules = "SELECT *
+						   FROM {paperattendance_module} 
+						   ORDER BY name DESC";
+			$modules = $DB->get_records_sql($getmodules);
 			
-		}	
-		// if exist one module in the actual hour ->
-		if ($existmodule) {
+			foreach ($modules as $module){
+				
+				$modinicial = $module->initialtime;
+				$modfinal = $module->endtime;
+				
+				//Check what module is inside the actual time
+				if ( (strtotime($modinicial) <= $actualmoduleunix) && ($actualmoduleunix <= strtotime($modfinal) )){
+					$modquery = $module; //set the actual module to the modquery variable that we use after
+					$moduleid = $modquery -> id;
+					$moduleinicio = $modinicial;
+					$modulefin = $modfinal;
+					$betweenmodules = false;
+				}
+			}
+		}
+		else { //actual hour is in break time (between modules)
+			$betweenmodules = true;
+		}
+		
+		// if not in between modules ->
+		if (!$betweenmodules) {
 			//var_dump("existe");
 			
 			//session date from today in unix
@@ -158,6 +181,9 @@ if($action == "view"){
 			$sessinfo .= html_writer::nonempty_tag("div", get_string("module","local_paperattendance").": ".$moduleinicio." - ".$modulefin, array("align" => "left"));
 			$sessinfo .= html_writer::nonempty_tag("div", get_string("session","local_paperattendance")." ".$actualsession, array("align" => "left"));
 			$sessinfo .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
+			if ($noexistmodule){
+				$sessinfo .= html_writer::div("Estimador profesor(a), para poder tomar asistencia se creará una sesión extra que no proviene de omega.","alert alert-info", array("role"=>"alert"));
+			}
 			
 			//get students for the form
 			$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
@@ -254,10 +280,15 @@ if($action == "view"){
 				
 			}
 		}
-		// if not exist a module ->
+		// if actual hour is in between modules ->
 		else {
-			var_dump(" no existe");
-			print_error(get_string("usernotloggedin", "local_paperattendance"));
+			//var_dump(" entre modulos");
+			$sessinfo = html_writer::div("Estimador profesor(a), para poder tomar asistencia debe esperar a que comience el módulo siguiente.","alert alert-error", array("role"=>"alert"));
+			$viewbacktocoursebutton = html_writer::nonempty_tag(
+					"div",
+					$OUTPUT->single_button($backtocourse, get_string('back', 'local_paperattendance')),
+					array("align" => "left"
+					));
 		}
 		
 		/*
@@ -289,7 +320,7 @@ if($action == "save"){
 	));
 	$viewbackbutton = html_writer::nonempty_tag(
 			"div",
-			$OUTPUT->single_button($backurl, get_string('back', 'local_paperattendance')),
+			$OUTPUT->single_button($backurl, "Ver Historial"),
 			array("align" => "left"
 			));
 }
@@ -300,9 +331,13 @@ if($action == "view"){
 	
 	echo html_writer::nonempty_tag("h3", $course->shortname." - ".$course->fullname);
 	echo html_writer::nonempty_tag("div", $sessinfo);
-	//displays the form
-	$mform->display();
-	
+	if (isset($mform)){
+		//displays the form
+		$mform->display();
+	}
+	else{
+		echo $viewbacktocoursebutton;
+	}
 }
 
 if($action == "save"){
@@ -312,3 +347,4 @@ if($action == "save"){
 
 echo $OUTPUT->footer();
 ?>
+
