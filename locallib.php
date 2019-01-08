@@ -1883,7 +1883,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	  			}
 			}
 			$fila++;
-			gc_collect_cycles();
+			var_dump(gc_collect_cycles());
   		}
 		fclose($handle);
 	}
@@ -1949,7 +1949,11 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	global $CFG;
 	
 	$pagesWithErrors = array();
-
+    
+	mtrace("*************locallib******************\n");
+	mtrace("Antes del new Imagick: ". memory_get_usage() . "\n");
+	mtrace("*************locallib******************\n");
+	
 	// convert pdf to jpg
 	$pdf = new Imagick();
 
@@ -1982,6 +1986,13 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	
 	$pdf->writeImages($path."/jpgs/".$pdfname.".jpg", false);
 	$pdf->clear();
+	mtrace("*************locallib******************\n");
+	mtrace("Antes del unset: ". memory_get_usage() . "\n");
+	mtrace("*************locallib******************\n");
+	unset($pdf);
+	mtrace("*************locallib******************\n");
+	mtrace("Despues del unset: ". memory_get_usage() . "\n");
+	mtrace("*************locallib******************\n");
 	
 	if (!file_exists($path."/jpgs/processing")) {
 		mkdir($path."/jpgs/processing", 0777, true);
