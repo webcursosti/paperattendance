@@ -1691,6 +1691,7 @@ function paperattendance_exporttoexcel($title, $header, $filename, $data, $descr
  */
 function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	global $DB, $CFG, $USER;
+	mtrace("********************read csv*****************************");
 
 	$omegafailures = array(); //Is not in use
 	$fila = 1;
@@ -1722,6 +1723,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					}
 				}
 				
+				$mem1 = memory_get_usage();
 				$numpages = paperattendance_number_of_pages($path, $pdffilename);
 				if($numpages == 1){
 					$realpagenum = 0;
@@ -1736,6 +1738,12 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					$realpagenum = $realpagenum[0];
 					mtrace("el numero de pagina correspondiente a este pdf es: ".$realpagenum);
 				}
+				$mem2 = memory_get_usage();
+				mtrace("*************locallib******************\n");
+				mtrace("Calculate Number of pages: ". memory_get_usage() . "\n");
+				mtrace("Aumento de memoria en ".$mem2-$mem1." bytes\n");
+				mtrace("*************locallib******************\n");
+				
 				
 				if($stop){
 					//If stop is not false, it means that we could read one qr
@@ -1763,6 +1771,8 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						$objcourse -> id = $course;
 						$studentlist = paperattendance_get_printed_students($printid);
 						//var_dump($studentlist);
+						
+						$mem1 = memory_get_usage();
 						
 						$sessdoesntexist = paperattendance_check_session_modules($module, $course, $time);
 						mtrace("checkeo de la sesion: ".$sessdoesntexist);
@@ -1797,6 +1807,12 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 								$stop = true;
 							}
 						}
+						$mem2 = memory_get_usage();
+						mtrace("*************locallib******************\n");
+						mtrace("Chequeo de sesion: ". memory_get_usage() . "\n");
+						mtrace("Aumento de memoria en ".$mem2-$mem1." bytes\n");
+						mtrace("*************locallib******************\n");
+						
 						
 						if($stop){
 							$arrayalumnos = array();
@@ -1805,6 +1821,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 							$count = 1; //start at one because init starts at one
 							$csvcol = 1;
 							foreach ($studentlist as $student){
+							    $mem1 = memory_get_usage();
 								if($count>=$init && $count<=$end){
 									$line = array();
 									$line['emailAlumno'] = paperattendance_getusername($student->id);
@@ -1823,15 +1840,25 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 									$csvcol++;
 								}
 								$count++;
+								$mem2 = memory_get_usage();
+								mtrace("*************locallib******************\n");
+								mtrace("Foreach student list: ". memory_get_usage() . "\n");
+								mtrace("Aumento de memoria en ".$mem2-$mem1." bytes\n");
+								mtrace("*************locallib******************\n");
 							}
 							
 							$omegasync = false;
-							
+							$mem1 = memory_get_usage();
 							if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 								if(paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid)){
 									$omegasync = true;
 								}
 							}
+							$mem2 = memory_get_usage();
+							mtrace("*************locallib******************\n");
+							mtrace("Check Token Omega sync: ". memory_get_usage() . "\n");
+							mtrace("Aumento de memoria en ".$mem2-$mem1." bytes\n");
+							mtrace("*************locallib******************\n");
 							
 							$update = new stdClass();
 							$update->id = $sessid;
@@ -1960,19 +1987,11 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		$pdf->mergeImageLayers(imagick::LAYERMETHOD_FLATTEN);
 	}
 	
-	mtrace("*************locallib******************\n");
-	mtrace("PDF alpha channel - line 1964: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
-	
 	if (!file_exists($path."/jpgs")) {
 		mkdir($path."/jpgs", 0777, true);
 	}
 	//Remove initial pngs in the directory
 	paperattendance_recursiveremovepng($path."/jpgs");
-	
-	mtrace("*************locallib******************\n");
-	mtrace("paperattendance_recursiveremovepng - line 1974: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
 	
 	$pdfname = explode(".",$filename);
 	$pdfname = $pdfname[0];
@@ -1980,26 +1999,14 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	$pdf->writeImages($path."/jpgs/".$pdfname.".jpg", false);
 	$pdf->clear();
 	
-	mtrace("*************locallib******************\n");
-	mtrace("pdf -> clear () - line 1984: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
-	
 	if (!file_exists($path."/jpgs/processing")) {
 		mkdir($path."/jpgs/processing", 0777, true);
 	}
 	//Remove initial pngs in the directory
 	paperattendance_recursiveremovepng($path."/jpgs/processing");
 	
-	mtrace("*************locallib******************\n");
-	mtrace("paperattendance_recursiveremovepng - line 1994: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
-	
 	//Remove initial csv in the directory
 	paperattendance_recursiveremovecsv($path."/jpgs/processing");
-	
-	mtrace("*************locallib******************\n");
-	mtrace("paperattendance_recursiveremovecsv - line 2001: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
 	
 	//process jpgs one by one and then delete it
 	$countprocessed = 0;
@@ -2010,19 +2017,11 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		mtrace("el nombre del jpg recien sacado es: ". $jpgname);
 		rename($file, $path."/jpgs/processing/".$jpgname);
 		
-		mtrace("*************locallib******************\n");
-		mtrace("jpg sacado - line 2014: ". memory_get_usage() . "\n");
-		mtrace("*************locallib******************\n");
-		
 		//now run the exec command
 		//$command = 'timeout 30 java -jar /Datos/formscanner/formscanner-1.1.3-bin/lib/formscanner-main-1.1.3.jar /Datos/formscanner/template.xtmpl /data/data/moodledata/temp/local/paperattendance/unread/jpgs/processing/';	
 		$command = "timeout 30 java -jar ".$CFG->paperattendance_formscannerjarlocation." ".$CFG->paperattendance_formscannertemplatelocation." ".$CFG->paperattendance_formscannerfolderlocation;
 		
 		$lastline = exec($command, $output, $return_var);
-		
-		mtrace("*************locallib******************\n");
-		mtrace("\$lastline - line 2024: ". memory_get_usage() . "\n");
-		mtrace("*************locallib******************\n");
 		
 		//return_var es el que devuelve 124 si es que se alcanza el timeout
 		if($return_var != 124){
@@ -2036,7 +2035,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 				$arraypaperattendance_read_csv = paperattendance_read_csv($filecsv, $path, $filename, $uploaderobj);
 				
 				mtrace("*************locallib******************\n");
-				mtrace("paperattendance read csv- line 2038: ". memory_get_usage() . "\n");
+				mtrace("paperattendance read csv- line 2011: ". memory_get_usage() . "\n");
 				mtrace("*************locallib******************\n");
 				
 				$processed = $arraypaperattendance_read_csv[0];
@@ -2045,18 +2044,11 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 				}
 				$countprocessed += $processed;
 			}
-			mtrace("*************locallib******************\n");
-			mtrace("fin secondary foreach - line 2049: ". memory_get_usage() . "\n");
-			mtrace("*************locallib******************\n");
 		}
 		else{
 			//meaning that the timeout was reached, save that page with status unprocessed
 			mtrace("si se alcanzó el timeout, todo mal");
 			$numpages = paperattendance_number_of_pages($path, $filename);
-			
-			mtrace("*************locallib******************\n");
-			mtrace("timeout reached - line 2058: ". memory_get_usage() . "\n");
-			mtrace("*************locallib******************\n");
 			
 			if($numpages == 1){
 				$realpagenum = 0;
@@ -2084,18 +2076,11 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 			}
 			
 			$countprocessed++;
-			mtrace("*************locallib******************\n");
-			mtrace("end iteration ".$countprocessed++." in main foreach - line 2088: ". memory_get_usage() . "\n");
-			mtrace("*************locallib******************\n");
 		}
 		
 		//finally unlink the jpg file
 		unlink($path."/jpgs/processing/".$jpgname);
 	}
-	mtrace("*************locallib******************\n");
-	mtrace("unlink path - line 2096: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
-	
 	if (count($pagesWithErrors) > 0){
 		if (count($pagesWithErrors) > 1){
 			ksort($pagesWithErrors);
@@ -2105,15 +2090,8 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		foreach ($admins as $admin){
 			paperattendance_sendMail($pagesWithErrors, null, $admin->id, $admin->id, null, "NotNull", "nonprocesspdf", null);
 		}
-		mtrace("*************locallib******************\n");
-		mtrace("pages with error - line 2109: ". memory_get_usage() . "\n");
-		mtrace("*************locallib******************\n");
 		mtrace("end pages with errors var dump");
 	}
-	
-	mtrace("*************locallib******************\n");
-	mtrace("END - line 2115: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
 	
 	if($countprocessed>= 1){
 		return true;
