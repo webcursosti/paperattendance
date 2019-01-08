@@ -261,6 +261,7 @@ if($action == "view"){
 					paperattendance_save_student_presence($sessid, $student -> userid, $attendance, NULL);
 					$arrayalumnos[] = $line;
 				}
+				/*
 				//save attendance in omega
 				$update = new stdClass();
 				$update->id = $sessid;
@@ -270,7 +271,7 @@ if($action == "view"){
 					$update->status = 1;
 				}
 				$DB->update_record("paperattendance_session", $update);
-				
+				*/
 				//send mail of confirmation
 				if($CFG->paperattendance_sendmail == 1){
 					$sessdate = date("d-m-Y", $time).", ".$modquery->name. ": ". $modquery->initialtime. " - " .$modquery->endtime;
