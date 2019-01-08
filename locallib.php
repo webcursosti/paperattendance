@@ -1714,7 +1714,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				$qrcodetop = $data[28];
 				if(strpos($qrcodetop, '*') !== false) {
 					$qrcode = $qrcodetop;
-				} else {
+				} else {    
 					if(strpos($qrcodebottom, '*') !== false) {
 						$qrcode = $qrcodebottom;
 					}
@@ -1772,8 +1772,6 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 						$studentlist = paperattendance_get_printed_students($printid);
 						//var_dump($studentlist);
 						
-						$mem1 = memory_get_usage();
-						
 						$sessdoesntexist = paperattendance_check_session_modules($module, $course, $time);
 						mtrace("checkeo de la sesion: ".$sessdoesntexist);
 						
@@ -1807,12 +1805,6 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 								$stop = true;
 							}
 						}
-						$mem2 = memory_get_usage();
-						mtrace("*************locallib******************\n");
-						mtrace("Chequeo de sesion: ". memory_get_usage() . "\n");
-						mtrace("Aumento de memoria en ".$mem2-$mem1." bytes\n");
-						mtrace("*************locallib******************\n");
-						
 						
 						if($stop){
 							$arrayalumnos = array();
@@ -1821,7 +1813,6 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 							$count = 1; //start at one because init starts at one
 							$csvcol = 1;
 							foreach ($studentlist as $student){
-							    $mem1 = memory_get_usage();
 								if($count>=$init && $count<=$end){
 									$line = array();
 									$line['emailAlumno'] = paperattendance_getusername($student->id);
@@ -1840,25 +1831,14 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 									$csvcol++;
 								}
 								$count++;
-								$mem2 = memory_get_usage();
-								mtrace("*************locallib******************\n");
-								mtrace("Foreach student list: ". memory_get_usage() . "\n");
-								mtrace("Aumento de memoria en ".$mem2-$mem1." bytes\n");
-								mtrace("*************locallib******************\n");
 							}
 							
 							$omegasync = false;
-							$mem1 = memory_get_usage();
 							if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 								if(paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid)){
 									$omegasync = true;
 								}
 							}
-							$mem2 = memory_get_usage();
-							mtrace("*************locallib******************\n");
-							mtrace("Check Token Omega sync: ". memory_get_usage() . "\n");
-							mtrace("Aumento de memoria en ".$mem2-$mem1." bytes\n");
-							mtrace("*************locallib******************\n");
 							
 							$update = new stdClass();
 							$update->id = $sessid;
@@ -1900,7 +1880,11 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	  			}
 			}
 			$fila++;
-		}
+			if(!gc_enabled()){
+			    gc_enable();
+			} 
+			gc_collect_cycles();
+  		}
 		fclose($handle);
 	}
 	
