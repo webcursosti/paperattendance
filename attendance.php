@@ -155,9 +155,9 @@ if($action == "view"){
 				}
 			}
 		}
-		else { //actual hour is in break time (between modules)
-			$betweenmodules = true;
-		}
+		//else { //actual hour is in break time (between modules)
+			//$betweenmodules = true;
+		//}
 		
 		// if not in between modules ->
 		if (!$betweenmodules) {
