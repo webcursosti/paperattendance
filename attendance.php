@@ -130,6 +130,7 @@ if($action == "view"){
 					$modquery = $DB->get_record("paperattendance_module", array("initialtime" => $moduleinicio));
 					$moduleid = $modquery -> id;
 					$noexistmodule = false;
+					$betweenmodules = false;
 				}
 			}
 		}
