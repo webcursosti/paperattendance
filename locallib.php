@@ -1702,6 +1702,9 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	if (($handle = fopen($file, "r")) !== FALSE) {
 		while(! feof($handle))
   		{
+  		    if(!gc_enabled()){
+  		        gc_enable();
+  		    } 
 			$data = fgetcsv($handle, 1000, ";");
 			$numero = count($data);
 			//mtrace( $numero." datoss en la línea ".$fila);
@@ -1880,9 +1883,6 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	  			}
 			}
 			$fila++;
-			if(!gc_enabled()){
-			    gc_enable();
-			} 
 			gc_collect_cycles();
   		}
 		fclose($handle);
