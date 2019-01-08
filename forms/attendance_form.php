@@ -59,10 +59,10 @@ class paperattendance_attendance_form extends moodleform {
 			$email = $student->email;
 			$userid = $student->userid;
 			$mform->addElement('html', '<div class="row">');
-			$mform->addElement('html', '<div class="span6">');
+			$mform->addElement('html', '<div class="span7">');
 			$mform->addElement('advcheckbox', 'key'.$userid, $counter, $name, array('group' => 1), array(0, 1));
 			$mform->addElement('html', '</div>');
-			$mform->addElement('html', '<div class="span6">');
+			$mform->addElement('html', '<div class="span5">');
 			if ($existsession) {
 				//student summary sql
 				$present = "SELECT COUNT(*)
