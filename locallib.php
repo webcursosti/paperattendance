@@ -1702,9 +1702,6 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	if (($handle = fopen($file, "r")) !== FALSE) {
 		while(! feof($handle))
   		{
-  		    if(!gc_enabled()){
-  		        gc_enable();
-  		    } 
 			$data = fgetcsv($handle, 1000, ";");
 			$numero = count($data);
 			//mtrace( $numero." datoss en la línea ".$fila);
@@ -1726,13 +1723,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					}
 				}
 				
-				mtrace("*************locallib******************\n");
-				mtrace("Antes del paperattendance_number_of_pages: ". memory_get_usage() . "\n");
-				mtrace("*************locallib******************\n");
 				$numpages = paperattendance_number_of_pages($path, $pdffilename);
-				mtrace("*************locallib******************\n");
-				mtrace("Despues del paperattendance_number_of_pages: ". memory_get_usage() . "\n");
-				mtrace("*************locallib******************\n");
 				if($numpages == 1){
 					$realpagenum = 0;
 				}
@@ -1882,7 +1873,6 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	  			}
 			}
 			$fila++;
-			var_dump(gc_collect_cycles());
   		}
 		fclose($handle);
 	}
@@ -1928,24 +1918,11 @@ function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid, $qr
  */
 function paperattendance_number_of_pages($path, $pdffilename){
 	// initiate FPDI
-    mtrace("*************locallib******************\n");
-    mtrace("Before New FPDI: ". memory_get_usage() . "\n");
-    mtrace("*************locallib******************\n");
 	$pdf = new FPDI();
-	mtrace("*************locallib******************\n");
-	mtrace("After new FPDI: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
 	// get the page count
 	$num = $pdf->setSourceFile($path."/".$pdffilename);
-	mtrace("*************locallib******************\n");
-	mtrace("Despues de set Source File: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
+	$pdf->close();
 	unset($pdf);
-	gc_enable();
-	gc_collect_cycles();
-	mtrace("*************locallib******************\n");
-	mtrace("Despues unset \$pdf: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
 	return $num;
 }
 
@@ -2027,16 +2004,8 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 			//revisar el csv que creó formscanner
 			foreach(glob("{$path}/jpgs/processing/*.csv") as $filecsv)
 			{
-				mtrace( "Csv file found - command works correct!" );
-				mtrace("*************locallib******************\n");
-				mtrace("Antes del read csv: ". memory_get_usage() . "\n");
-				mtrace("*************locallib******************\n");
 				$arraypaperattendance_read_csv = array();
 				$arraypaperattendance_read_csv = paperattendance_read_csv($filecsv, $path, $filename, $uploaderobj);
-				
-				mtrace("*************locallib******************\n");
-				mtrace("Despues de paperattendance read csv- line 2011: ". memory_get_usage() . "\n");
-				mtrace("*************locallib******************\n");
 				
 				$processed = $arraypaperattendance_read_csv[0];
 				if ($arraypaperattendance_read_csv[1] != null){
