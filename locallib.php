@@ -1726,8 +1726,13 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					}
 				}
 				
-				$mem1 = memory_get_usage();
+				mtrace("*************locallib******************\n");
+				mtrace("Antes del paperattendance_number_of_pages: ". memory_get_usage() . "\n");
+				mtrace("*************locallib******************\n");
 				$numpages = paperattendance_number_of_pages($path, $pdffilename);
+				mtrace("*************locallib******************\n");
+				mtrace("Despues del paperattendance_number_of_pages: ". memory_get_usage() . "\n");
+				mtrace("*************locallib******************\n");
 				if($numpages == 1){
 					$realpagenum = 0;
 				}
@@ -1741,12 +1746,6 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 					$realpagenum = $realpagenum[0];
 					mtrace("el numero de pagina correspondiente a este pdf es: ".$realpagenum);
 				}
-				$mem2 = memory_get_usage();
-				mtrace("*************locallib******************\n");
-				mtrace("Calculate Number of pages: ". memory_get_usage() . "\n");
-				mtrace("Aumento de memoria en ".$mem2-$mem1." bytes\n");
-				mtrace("*************locallib******************\n");
-				
 				
 				if($stop){
 					//If stop is not false, it means that we could read one qr
@@ -1987,19 +1986,10 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	if (!file_exists($path."/jpgs/processing")) {
 		mkdir($path."/jpgs/processing", 0777, true);
 	}
-	mtrace("*************locallib******************\n");
-	mtrace("Antes del new remove PNG: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
 	//Remove initial pngs in the directory
 	paperattendance_recursiveremovepng($path."/jpgs/processing");
-	mtrace("*************locallib******************\n");
-	mtrace("Despues del remove png, antes del run recursive csv: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
 	//Remove initial csv in the directory
 	paperattendance_recursiveremovecsv($path."/jpgs/processing");
-	mtrace("*************locallib******************\n");
-	mtrace("Despues del recursive png: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
 	//process jpgs one by one and then delete it
 	$countprocessed = 0;
 	foreach(glob("{$path}/jpgs/*.jpg") as $file)
