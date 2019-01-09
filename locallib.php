@@ -1928,9 +1928,18 @@ function paperattendance_save_current_pdf_page_to_session($pagenum, $sessid, $qr
  */
 function paperattendance_number_of_pages($path, $pdffilename){
 	// initiate FPDI
+    mtrace("*************locallib******************\n");
+    mtrace("Before New FPDI: ". memory_get_usage() . "\n");
+    mtrace("*************locallib******************\n");
 	$pdf = new FPDI();
+	mtrace("*************locallib******************\n");
+	mtrace("After new FPDI: ". memory_get_usage() . "\n");
+	mtrace("*************locallib******************\n");
 	// get the page count
 	$num = $pdf->setSourceFile($path."/".$pdffilename);
+	mtrace("*************locallib******************\n");
+	mtrace("Despues de set Source File: ". memory_get_usage() . "\n");
+	mtrace("*************locallib******************\n");
 	return $num;
 }
 
