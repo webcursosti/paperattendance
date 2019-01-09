@@ -1940,6 +1940,10 @@ function paperattendance_number_of_pages($path, $pdffilename){
 	mtrace("*************locallib******************\n");
 	mtrace("Despues de set Source File: ". memory_get_usage() . "\n");
 	mtrace("*************locallib******************\n");
+	unset($pdf);
+	mtrace("*************locallib******************\n");
+	mtrace("Despues unset \$pdf: ". memory_get_usage() . "\n");
+	mtrace("*************locallib******************\n");
 	return $num;
 }
 
