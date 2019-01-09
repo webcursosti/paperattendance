@@ -58,6 +58,7 @@ $string['scan']="Scan";
 $string['type']="Tipo";
 $string['studentsattendance']="Asistencia Alumnos";
 $string['see']="Ver";
+$string['see_digital']="Aistencia Digital";
 $string['seestudents']="Ver alumnos";
 $string['historytitle']="Historial de Asistencia";
 $string['historyheading']="Historial de Asistencia";
