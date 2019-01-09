@@ -1949,10 +1949,6 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	global $CFG;
 	
 	$pagesWithErrors = array();
-    
-	mtrace("*************locallib******************\n");
-	mtrace("Antes del new Imagick: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
 	
 	// convert pdf to jpg
 	$pdf = new Imagick();
@@ -1986,23 +1982,24 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	
 	$pdf->writeImages($path."/jpgs/".$pdfname.".jpg", false);
 	$pdf->clear();
-	mtrace("*************locallib******************\n");
-	mtrace("Antes del unset: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
 	unset($pdf);
-	mtrace("*************locallib******************\n");
-	mtrace("Despues del unset: ". memory_get_usage() . "\n");
-	mtrace("*************locallib******************\n");
 	
 	if (!file_exists($path."/jpgs/processing")) {
 		mkdir($path."/jpgs/processing", 0777, true);
 	}
+	mtrace("*************locallib******************\n");
+	mtrace("Antes del new remove PNG: ". memory_get_usage() . "\n");
+	mtrace("*************locallib******************\n");
 	//Remove initial pngs in the directory
 	paperattendance_recursiveremovepng($path."/jpgs/processing");
-	
+	mtrace("*************locallib******************\n");
+	mtrace("Despues del remove png, antes del run recursive csv: ". memory_get_usage() . "\n");
+	mtrace("*************locallib******************\n");
 	//Remove initial csv in the directory
 	paperattendance_recursiveremovecsv($path."/jpgs/processing");
-	
+	mtrace("*************locallib******************\n");
+	mtrace("Despues del recursive png: ". memory_get_usage() . "\n");
+	mtrace("*************locallib******************\n");
 	//process jpgs one by one and then delete it
 	$countprocessed = 0;
 	foreach(glob("{$path}/jpgs/*.jpg") as $file)
@@ -2026,11 +2023,14 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 			foreach(glob("{$path}/jpgs/processing/*.csv") as $filecsv)
 			{
 				mtrace( "Csv file found - command works correct!" );
+				mtrace("*************locallib******************\n");
+				mtrace("Antes del read csv: ". memory_get_usage() . "\n");
+				mtrace("*************locallib******************\n");
 				$arraypaperattendance_read_csv = array();
 				$arraypaperattendance_read_csv = paperattendance_read_csv($filecsv, $path, $filename, $uploaderobj);
 				
 				mtrace("*************locallib******************\n");
-				mtrace("paperattendance read csv- line 2011: ". memory_get_usage() . "\n");
+				mtrace("Despues de paperattendance read csv- line 2011: ". memory_get_usage() . "\n");
 				mtrace("*************locallib******************\n");
 				
 				$processed = $arraypaperattendance_read_csv[0];
