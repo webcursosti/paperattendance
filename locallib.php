@@ -1713,7 +1713,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 				$qrcodetop = $data[28];
 				if(strpos($qrcodetop, '*') !== false) {
 					$qrcode = $qrcodetop;
-				} else {
+				} else {    
 					if(strpos($qrcodebottom, '*') !== false) {
 						$qrcode = $qrcodebottom;
 					}
@@ -1826,7 +1826,6 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 							}
 							
 							$omegasync = false;
-							
 							if(paperattendance_checktoken($CFG->paperattendance_omegatoken)){
 								if(paperattendance_omegacreateattendance($course, $arrayalumnos, $sessid)){
 									$omegasync = true;
@@ -1873,7 +1872,7 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	  			}
 			}
 			$fila++;
-		}
+  		}
 		fclose($handle);
 	}
 	
@@ -1921,6 +1920,8 @@ function paperattendance_number_of_pages($path, $pdffilename){
 	$pdf = new FPDI();
 	// get the page count
 	$num = $pdf->setSourceFile($path."/".$pdffilename);
+	$pdf->close();
+	unset($pdf);
 	return $num;
 }
 
@@ -1938,7 +1939,7 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	global $CFG;
 	
 	$pagesWithErrors = array();
-
+	
 	// convert pdf to jpg
 	$pdf = new Imagick();
 
@@ -1971,17 +1972,15 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 	
 	$pdf->writeImages($path."/jpgs/".$pdfname.".jpg", false);
 	$pdf->clear();
-	
+	unset($pdf);
 	
 	if (!file_exists($path."/jpgs/processing")) {
 		mkdir($path."/jpgs/processing", 0777, true);
 	}
 	//Remove initial pngs in the directory
 	paperattendance_recursiveremovepng($path."/jpgs/processing");
-	
 	//Remove initial csv in the directory
 	paperattendance_recursiveremovecsv($path."/jpgs/processing");
-	
 	//process jpgs one by one and then delete it
 	$countprocessed = 0;
 	foreach(glob("{$path}/jpgs/*.jpg") as $file)
@@ -2004,9 +2003,9 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 			//revisar el csv que creó formscanner
 			foreach(glob("{$path}/jpgs/processing/*.csv") as $filecsv)
 			{
-				mtrace( "Csv file found - command works correct!" );
 				$arraypaperattendance_read_csv = array();
 				$arraypaperattendance_read_csv = paperattendance_read_csv($filecsv, $path, $filename, $uploaderobj);
+				
 				$processed = $arraypaperattendance_read_csv[0];
 				if ($arraypaperattendance_read_csv[1] != null){
 					$pagesWithErrors[$arraypaperattendance_read_csv[1]->pagenumber] = $arraypaperattendance_read_csv[1];
@@ -2050,7 +2049,6 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		//finally unlink the jpg file
 		unlink($path."/jpgs/processing/".$jpgname);
 	}
-	
 	if (count($pagesWithErrors) > 0){
 		if (count($pagesWithErrors) > 1){
 			ksort($pagesWithErrors);

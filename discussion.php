@@ -266,7 +266,7 @@ if( $isteacher || is_siteadmin($USER)) {
 	if($action == "response"){
 	    if ($discussion->type == 1){
 	        $digitallist = get_string('digitallist', 'local_paperattendance');
-	        $digitalicon_attendance = new pix_icon("f/env", get_string('see', 'local_paperattendance')); // change icon
+	        $digitalicon_attendance = new pix_icon("e/bullet_list", get_string('see_digital', 'local_paperattendance')); // change icon
 	        $digitalaction_attendance = $OUTPUT->action_icon(
 	            "#",
 	            $digitalicon_attendance

@@ -58,6 +58,7 @@ $string['scan']="Scan";
 $string['type']="Type";
 $string['studentsattendance']="Students Attendance";
 $string['see']="See";
+$string['see_digital']="Digital Attendance";
 $string['seestudents']="See students";
 $string['historytitle']="Attendance History";
 $string['historyheading']="Attendance History";
