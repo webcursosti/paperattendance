@@ -1691,7 +1691,6 @@ function paperattendance_exporttoexcel($title, $header, $filename, $data, $descr
  */
 function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	global $DB, $CFG, $USER;
-	mtrace("********************read csv*****************************");
 
 	$omegafailures = array(); //Is not in use
 	$fila = 1;
