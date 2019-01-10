@@ -18,8 +18,8 @@
  *
  * @package    local
  * @subpackage paperattendance
- * @copyright  2016 Jorge Cabané (jcabane@alumnos.uai.cl)
- * @copyright  2016 Matías Queirolo (mqueirolo@alumnos.uai.cl)
+ * @copyright  2016 Jorge Cabanï¿½ (jcabane@alumnos.uai.cl)
+ * @copyright  2016 Matï¿½as Queirolo (mqueirolo@alumnos.uai.cl)
  * @copyright  2016 Cristobal Silva (cristobal.isilvap@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -733,7 +733,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
                 $left .= html_writer::nonempty_tag("div", get_string("scan","local_paperattendance").": ".$scanaction_attendance, array("align" => "left"));
             }
             else{
-                $left .= html_writer::nonempty_tag("div", $digitallist.": ".$digitalaction_attendance, array("align" => "left"));
+                $left .= html_writer::nonempty_tag("div", $digitallist." ".$digitalaction_attendance, array("align" => "left"));
             }
             $left .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
             $left .= html_writer::nonempty_tag("div", '<button id="insertstudentmodalbtn" type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#insertstudentmodal">'.get_string("insertstudentmanually", "local_paperattendance").'</button>', array("align" => "left"));
