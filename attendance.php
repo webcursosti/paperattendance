@@ -188,7 +188,7 @@ if($action == "view"){
 				$sessinfo .= html_writer::nonempty_tag("div", get_string("session","local_paperattendance")." ".$actualsession, array("align" => "left"));
 				$sessinfo .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
 				if ($noexistmodule){
-					$sessinfo .= html_writer::div("Estimador profesor(a), para poder tomar asistencia se creará una sesión extra que no proviene de omega.","alert alert-info", array("role"=>"alert"));
+					$sessinfo .= html_writer::div("Estimado profesor(a), para poder tomar asistencia se creará una sesión extra que no proviene de omega.","alert alert-info", array("role"=>"alert"));
 				}
 				
 				//get students for the form
