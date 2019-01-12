@@ -76,10 +76,24 @@ class paperattendance_attendance_form extends moodleform {
 				$percentagestudentabsent = round(($absent/$sessions)*100)."%";
 				
 				//progress bar
-				$progressbar = '<div class="progress progress-striped active" style="width: 50%;">
- 						   	   		<div class="bar bar-success" style="width: '.$percentagestudentpresent.';">'.$percentagestudentpresent.'</div>
-  							     	<div class="bar bar-danger" style="width: '.$percentagestudentabsent.';">'.$percentagestudentabsent.'</div>
-					    		</div>';
+				//$progressbar = '<div class="progress progress-striped active" style="width: 50%;">
+ 				//		   	   		<div class="bar bar-success" style="width: '.$percentagestudentpresent.';">'.$percentagestudentpresent.'</div>
+  				//			     	<div class="bar bar-danger" style="width: '.$percentagestudentabsent.';">'.$percentagestudentabsent.'</div>
+				//	    		</div>';
+				$progressbar = '<div class="progress progress-striped active" style="width: 50%;">';
+				if ($percentagestudentpresent > 90){
+					$progressbar .= '<div class="bar bar-success" style="width: '.$percentagestudentpresent.';">'.$percentagestudentpresent.'</div>
+  							     	<div class="bar bar-danger" style="width: '.$percentagestudentabsent.';"></div>';
+				}
+				elseif ($percentagestudentabsent > 90){
+					$progressbar = '<div class="bar bar-success" style="width: '.$percentagestudentpresent.';"></div>
+  							     	<div class="bar bar-danger" style="width: '.$percentagestudentabsent.';">'.$percentagestudentabsent.'</div>';
+				}
+				else {
+					$progressbar = '<div class="bar bar-success" style="width: '.$percentagestudentpresent.';">'.$percentagestudentpresent.'</div>
+  							     	<div class="bar bar-danger" style="width: '.$percentagestudentabsent.';">'.$percentagestudentabsent.'</div>';
+				}
+				$progressbar .= '</div>';
 				$mform->addElement('html', $progressbar);
 			}
 			$mform->addElement('html', '</div>');

@@ -263,7 +263,7 @@ if($action == "view"){
 						paperattendance_save_student_presence($sessid, $student -> userid, $attendance, NULL);
 						$arrayalumnos[] = $line;
 					}
-					
+					/*
 					//save attendance in omega
 					$update = new stdClass();
 					$update->id = $sessid;
