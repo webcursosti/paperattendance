@@ -85,12 +85,12 @@ class paperattendance_attendance_form extends moodleform {
 					$progressbar .= '<div class="bar bar-success" style="width: '.$percentagestudentpresent.';">'.$percentagestudentpresent.'</div>
   							     	<div class="bar bar-danger" style="width: '.$percentagestudentabsent.';"></div>';
 				}
-				elseif ($percentagestudentabsent > 90){
-					$progressbar = '<div class="bar bar-success" style="width: '.$percentagestudentpresent.';"></div>
+				else if ($percentagestudentabsent > 90){
+					$progressbar .= '<div class="bar bar-success" style="width: '.$percentagestudentpresent.';"></div>
   							     	<div class="bar bar-danger" style="width: '.$percentagestudentabsent.';">'.$percentagestudentabsent.'</div>';
 				}
 				else {
-					$progressbar = '<div class="bar bar-success" style="width: '.$percentagestudentpresent.';">'.$percentagestudentpresent.'</div>
+					$progressbar .= '<div class="bar bar-success" style="width: '.$percentagestudentpresent.';">'.$percentagestudentpresent.'</div>
   							     	<div class="bar bar-danger" style="width: '.$percentagestudentabsent.';">'.$percentagestudentabsent.'</div>';
 				}
 				$progressbar .= '</div>';
