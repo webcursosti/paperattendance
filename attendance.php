@@ -111,7 +111,7 @@ if($action == "view"){
 		$actualseconds = $actualdate["seconds"];
 		$actualmodule = $actualhour.":".$actualminutes.":".$actualseconds;
 		
-		//$actualmodule = "12:25:1";
+		$actualmodule = "12:25:1";
 		$actualmoduleunix = strtotime($actualmodule);
 		$noexistmodule = true;
 		$betweenmodules = true;
@@ -287,7 +287,7 @@ if($action == "view"){
 			}
 			else {
 				var_dump("sesion ya existe");
-				$sessinfo = html_writer::div("Estimador profesor(a), ya se ha tomado asistencia en el modulo actual.","alert alert-error", array("role"=>"alert"));
+				$sessinfo = html_writer::div("Estimado profesor(a), ya se ha tomado asistencia en el modulo actual.","alert alert-error", array("role"=>"alert"));
 				$viewbacktocoursebutton = html_writer::nonempty_tag(
 						"div",
 						$OUTPUT->single_button($backtocourse, get_string('back', 'local_paperattendance')),
@@ -298,7 +298,7 @@ if($action == "view"){
 		// if actual hour is in between modules ->
 		else {
 			var_dump(" entre modulos");
-			$sessinfo = html_writer::div("Estimador profesor(a), para poder tomar asistencia debe esperar a que comience el módulo siguiente.","alert alert-error", array("role"=>"alert"));
+			$sessinfo = html_writer::div("Estimado profesor(a), para poder tomar asistencia debe esperar a que comience el módulo siguiente.","alert alert-error", array("role"=>"alert"));
 			$viewbacktocoursebutton = html_writer::nonempty_tag(
 					"div",
 					$OUTPUT->single_button($backtocourse, get_string('back', 'local_paperattendance')),
