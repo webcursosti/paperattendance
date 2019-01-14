@@ -276,7 +276,7 @@ if($action == "view"){
 					*/
 					//send mail of confirmation
 					if($CFG->paperattendance_sendmail == 1){
-						$sessdate = date("d-m-Y", $time).", ".$modquery->name. ": ". $modquery->initialtime. " - " .$modquery->endtime;
+						$sessdate = date("d-m-Y", time()).", ".$modquery->name. ": ". $modquery->initialtime. " - " .$modquery->endtime;
 						paperattendance_sendMail($sessid, $courseid, $requestorid, $requestorid, $sessdate, $course->fullname, "processpdf", null);
 					}
 					
