@@ -111,7 +111,7 @@ if($action == "view"){
 		$actualseconds = $actualdate["seconds"];
 		$actualmodule = $actualhour.":".$actualminutes.":".$actualseconds;
 		
-		$actualmodule = "12:25:1";
+		//$actualmodule = "15:25:1";
 		$actualmoduleunix = strtotime($actualmodule);
 		$noexistmodule = true;
 		$betweenmodules = true;
@@ -188,7 +188,7 @@ if($action == "view"){
 				$sessinfo .= html_writer::nonempty_tag("div", get_string("session","local_paperattendance")." ".$actualsession, array("align" => "left"));
 				$sessinfo .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
 				if ($noexistmodule){
-					$sessinfo .= html_writer::div("Estimado profesor(a), para poder tomar asistencia se creará una sesión extra que no proviene de omega.","alert alert-info", array("role"=>"alert"));
+					$sessinfo .= html_writer::div("Estimado profesor(a), para poder tomar asistencia se creará una sesión extra que no proviene de omega","alert alert-info", array("role"=>"alert"));
 				}
 				
 				//get students for the form
@@ -273,13 +273,13 @@ if($action == "view"){
 						$update->status = 1;
 					}
 					$DB->update_record("paperattendance_session", $update);
-					/*
+					*/
 					//send mail of confirmation
 					if($CFG->paperattendance_sendmail == 1){
 						$sessdate = date("d-m-Y", $time).", ".$modquery->name. ": ". $modquery->initialtime. " - " .$modquery->endtime;
 						paperattendance_sendMail($sessid, $courseid, $requestorid, $requestorid, $sessdate, $course->fullname, "processpdf", null);
 					}
-					*/
+					
 					
 					$action = "save";
 					
@@ -287,7 +287,7 @@ if($action == "view"){
 			}
 			else {
 				var_dump("sesion ya existe");
-				$sessinfo = html_writer::div("Estimado profesor(a), ya se ha tomado asistencia en el modulo actual.","alert alert-error", array("role"=>"alert"));
+				$sessinfo = html_writer::div("Estimado profesor(a), ya se ha tomado asistencia en el modulo actual","alert alert-error", array("role"=>"alert"));
 				$viewbacktocoursebutton = html_writer::nonempty_tag(
 						"div",
 						$OUTPUT->single_button($backtocourse, get_string('back', 'local_paperattendance')),
@@ -298,7 +298,7 @@ if($action == "view"){
 		// if actual hour is in between modules ->
 		else {
 			var_dump(" entre modulos");
-			$sessinfo = html_writer::div("Estimado profesor(a), para poder tomar asistencia debe esperar a que comience el módulo siguiente.","alert alert-error", array("role"=>"alert"));
+			$sessinfo = html_writer::div("Estimado profesor(a), para poder tomar asistencia debe esperar a que comience el módulo siguiente","alert alert-error", array("role"=>"alert"));
 			$viewbacktocoursebutton = html_writer::nonempty_tag(
 					"div",
 					$OUTPUT->single_button($backtocourse, get_string('back', 'local_paperattendance')),
@@ -362,4 +362,3 @@ if($action == "save"){
 
 echo $OUTPUT->footer();
 ?>
-
