@@ -116,7 +116,7 @@ if($action == "view"){
 		$noexistmodule = true;
 		$betweenmodules = true;
 		if(count($omegamodules) != 0){ // then exist omegamodules from omega
-			var_dump("hay modulos omega");
+			//var_dump("hay modulos omega");
 			foreach ($omegamodules as $module){
 				
 				$modinicial = $module->horaInicio;
@@ -132,13 +132,13 @@ if($action == "view"){
 					$moduleid = $modquery -> id;
 					$noexistmodule = false;
 					$betweenmodules = false;
-					var_dump("actual esta en omega");
+					//var_dump("actual esta en omega");
 				}
 			}
 		}
 		if (count($omegamodules) == 0 || $noexistmodule){ //no exist actual omegamodules from omega today
 			//geting all modules from moodle
-			var_dump("no hay modulos omega o no existe actual en omga");
+			//var_dump("no hay modulos omega o no existe actual en omga");
 			$getmodules = "SELECT *
 						   FROM {paperattendance_module} 
 						   ORDER BY name DESC";
@@ -156,14 +156,14 @@ if($action == "view"){
 					$moduleinicio = $modinicial;
 					$modulefin = $modfinal;
 					$betweenmodules = false;
-					var_dump("modulo actual existe en modulos moodle");
+					//var_dump("modulo actual existe en modulos moodle");
 				}
 			}
 		}
 		
 		// if not in between modules ->
 		if (!$betweenmodules) {
-			var_dump("no entremodulos");
+			//var_dump("no entremodulos");
 			
 			//session date from today in unix
 			$sessiondate = strtotime(date('Y-m-d'));
@@ -286,7 +286,7 @@ if($action == "view"){
 				}
 			}
 			else {
-				var_dump("sesion ya existe");
+				//var_dump("sesion ya existe");
 				$sessinfo = html_writer::div("Estimado profesor(a), ya se ha tomado asistencia en el modulo actual","alert alert-error", array("role"=>"alert"));
 				$viewbacktocoursebutton = html_writer::nonempty_tag(
 						"div",
@@ -297,7 +297,7 @@ if($action == "view"){
 		}
 		// if actual hour is in between modules ->
 		else {
-			var_dump(" entre modulos");
+			//var_dump(" entre modulos");
 			$sessinfo = html_writer::div("Estimado profesor(a), para poder tomar asistencia debe esperar a que comience el módulo siguiente","alert alert-error", array("role"=>"alert"));
 			$viewbacktocoursebutton = html_writer::nonempty_tag(
 					"div",
@@ -322,7 +322,7 @@ if($action == "view"){
 	}
 	// if the token not accepted ->
 	else{
-		var_dump("tokenno");
+		//var_dump("tokenno");
 		print_error(get_string("usernotloggedin", "local_paperattendance"));
 	}
 }
@@ -331,7 +331,8 @@ if($action == "save"){
 	$backurl = new moodle_url("/local/paperattendance/history.php", array(
 			"action" => "studentsattendance",
 			"attendanceid" => $sessid,
-			"courseid" => $courseid
+			"courseid" => $courseid,
+			"type" => 1
 	));
 	$viewbackbutton = html_writer::nonempty_tag(
 			"div",
