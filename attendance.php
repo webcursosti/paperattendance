@@ -172,25 +172,6 @@ if($action == "view"){
 			$sessdoesntexist = paperattendance_check_session_modules($moduleid, $courseid, $sessiondate);
 			
 			if( $sessdoesntexist == "perfect"){
-				//name of requestor
-				$sessionrequestor = $DB->get_record("user", array("id" => $USER->id));
-				$requestorname = ($sessionrequestor->firstname.' '.$sessionrequestor->lastname);
-				
-				//nº of sessions
-				$sessions = $DB->count_records("paperattendance_session", array ("courseid" => $courseid));
-				$actualsession = $sessions +1;
-				
-				//Info in the title
-				$sessinfo = html_writer::nonempty_tag("div", paperattendance_convertdate($sessiondate), array("align" => "left"));
-				$sessinfo .= html_writer::nonempty_tag("div", get_string("requestor","local_paperattendance").": ".$requestorname, array("align" => "left"));
-				$sessinfo .= html_writer::nonempty_tag("div", get_string("description","local_paperattendance").": ".get_string('class', 'local_paperattendance'), array("align" => "left"));
-				$sessinfo .= html_writer::nonempty_tag("div", get_string("module","local_paperattendance").": ".$moduleinicio." - ".$modulefin, array("align" => "left"));
-				$sessinfo .= html_writer::nonempty_tag("div", get_string("session","local_paperattendance")." ".$actualsession, array("align" => "left"));
-				$sessinfo .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
-				if ($noexistmodule){
-					$sessinfo .= html_writer::div("Estimado profesor(a), para poder tomar asistencia se creará una sesión extra que no proviene de omega","alert alert-info", array("role"=>"alert"));
-				}
-				
 				//get students for the form
 				$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
 				list ( $sqlin, $param1 ) = $DB->get_in_or_equal ( $enrolincludes );
@@ -214,80 +195,107 @@ if($action == "view"){
 				WHERE e.enrol $sqlin AND e.status = 0 AND u.suspended = 0 AND u.deleted = 0
 				ORDER BY u.lastname ASC";
 				$nstudents = count($DB->get_records_sql($getstudents, $param));
-				///////if no students add condition print error
-				$enrolledstudents = $DB->get_records_sql($getstudents, $param);
-				
-				//Instantiate form
-				$mform = new paperattendance_attendance_form(null, array("courseid" => $courseid, "enrolledstudents" => $enrolledstudents));
-				
-				//Form processing and displaying is done here
-				if ($mform->is_cancelled()) {
-					//Handle form cancel operation, if cancel button is present on form
-					redirect($backtocourse);
-				} else if ($data = $mform->get_data()) {
-					//In this case you process validated data. $mform->get_data() returns data posted in form.
-					//var_dump($data);
+				//if no students add condition
+				if ($nstudents != 0){
+					$enrolledstudents = $DB->get_records_sql($getstudents, $param);
 					
-					//Session creation
-					$description = 0; //0 -> Indicates normal class
-					$requestorid = $USER->id;
-					//type = 1 for digital, 0 for paper
-					$type = 1;
-					// (courseid, teacherid, uploaderid, pdfname, description)
-					$sessid = paperattendance_insert_session($courseid, $requestorid, $requestorid, NULL, $description, $type);
-					paperattendance_insert_session_module($moduleid, $sessid, $sessiondate);
+					//name of requestor
+					$sessionrequestor = $DB->get_record("user", array("id" => $USER->id));
+					$requestorname = ($sessionrequestor->firstname.' '.$sessionrequestor->lastname);
 					
-					$arrayalumnos = array();
-					foreach ($enrolledstudents as $student){
-						$email = $student->email;
-						$userid = $student->userid;
-						$key = "key".$userid;
-						$checkboxname = $data->$key;
-						//var_dump($userid);
-						//var_dump($checkboxname);
+					//nº of sessions
+					$sessions = $DB->count_records("paperattendance_session", array ("courseid" => $courseid));
+					$actualsession = $sessions +1;
+					
+					//Info in the title
+					$sessinfo = html_writer::nonempty_tag("div", paperattendance_convertdate($sessiondate), array("align" => "left"));
+					$sessinfo .= html_writer::nonempty_tag("div", get_string("requestor","local_paperattendance").": ".$requestorname, array("align" => "left"));
+					$sessinfo .= html_writer::nonempty_tag("div", get_string("description","local_paperattendance").": ".get_string('class', 'local_paperattendance'), array("align" => "left"));
+					$sessinfo .= html_writer::nonempty_tag("div", get_string("module","local_paperattendance").": ".$moduleinicio." - ".$modulefin, array("align" => "left"));
+					$sessinfo .= html_writer::nonempty_tag("div", get_string("session","local_paperattendance")." ".$actualsession, array("align" => "left"));
+					$sessinfo .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
+					if ($noexistmodule){
+						$sessinfo .= html_writer::div("Se creará una <strong>sesión extra</strong> que no pertenece al horario del curso.","alert alert-info", array("role"=>"alert"));
+					}
+					
+					//Instantiate form
+					$mform = new paperattendance_attendance_form(null, array("courseid" => $courseid, "enrolledstudents" => $enrolledstudents));
+					
+					//Form processing and displaying is done here
+					if ($mform->is_cancelled()) {
+						//Handle form cancel operation, if cancel button is present on form
+						redirect($backtocourse);
+					} else if ($data = $mform->get_data()) {
+						//In this case you process validated data. $mform->get_data() returns data posted in form.
+						//var_dump($data);
 						
-						if ($checkboxname == 0){
-							$asistencia = "false";
-							$attendance = '0';
-						}
-						else{
-							$asistencia = "true";
-							$attendance = '1';
-						}
-						$line = array();
-						$line['emailAlumno'] = $email;
-						$line['resultado'] = "true";
-						$line['asistencia'] = $asistencia;
+						//Session creation
+						$description = 0; //0 -> Indicates normal class
+						$requestorid = $USER->id;
+						//type = 1 for digital, 0 for paper
+						$type = 1;
+						// (courseid, teacherid, uploaderid, pdfname, description)
+						$sessid = paperattendance_insert_session($courseid, $requestorid, $requestorid, NULL, $description, $type);
+						paperattendance_insert_session_module($moduleid, $sessid, $sessiondate);
 						
-						//Save student attendance in database
-						paperattendance_save_student_presence($sessid, $student -> userid, $attendance, NULL);
-						$arrayalumnos[] = $line;
+						$arrayalumnos = array();
+						foreach ($enrolledstudents as $student){
+							$email = $student->email;
+							$userid = $student->userid;
+							$key = "key".$userid;
+							$checkboxname = $data->$key;
+							//var_dump($userid);
+							//var_dump($checkboxname);
+							
+							if ($checkboxname == 0){
+								$asistencia = "false";
+								$attendance = '0';
+							}
+							else{
+								$asistencia = "true";
+								$attendance = '1';
+							}
+							$line = array();
+							$line['emailAlumno'] = $email;
+							$line['resultado'] = "true";
+							$line['asistencia'] = $asistencia;
+							
+							//Save student attendance in database
+							paperattendance_save_student_presence($sessid, $student -> userid, $attendance, NULL);
+							$arrayalumnos[] = $line;
+						}
+						/*
+						//save attendance in omega
+						$update = new stdClass();
+						$update->id = $sessid;
+						if(paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid)){
+							$update->status = 2;
+						}else{
+							$update->status = 1;
+						}
+						$DB->update_record("paperattendance_session", $update);
+						*/
+						//send mail of confirmation
+						if($CFG->paperattendance_sendmail == 1){
+							$sessdate = date("d-m-Y", time()).", ".$modquery->name. ": ". $modquery->initialtime. " - " .$modquery->endtime;
+							paperattendance_sendMail($sessid, $courseid, $requestorid, $requestorid, $sessdate, $course->fullname, "processpdf", null);
+						}
+						$action = "save";
 					}
-					/*
-					//save attendance in omega
-					$update = new stdClass();
-					$update->id = $sessid;
-					if(paperattendance_omegacreateattendance($courseid, $arrayalumnos, $sessid)){
-						$update->status = 2;
-					}else{
-						$update->status = 1;
-					}
-					$DB->update_record("paperattendance_session", $update);
-					*/
-					//send mail of confirmation
-					if($CFG->paperattendance_sendmail == 1){
-						$sessdate = date("d-m-Y", time()).", ".$modquery->name. ": ". $modquery->initialtime. " - " .$modquery->endtime;
-						paperattendance_sendMail($sessid, $courseid, $requestorid, $requestorid, $sessdate, $course->fullname, "processpdf", null);
-					}
-					
-					
-					$action = "save";
-					
+				}
+				else {
+					//there's no students in the course
+					$sessinfo = html_writer::div("No existen alumnos matriculados en el curso.","alert alert-error", array("role"=>"alert"));
+					$viewbacktocoursebutton = html_writer::nonempty_tag(
+							"div",
+							$OUTPUT->single_button($backtocourse, get_string('back', 'local_paperattendance')),
+							array("align" => "left"
+							));
 				}
 			}
 			else {
 				//var_dump("sesion ya existe");
-				$sessinfo = html_writer::div("Estimado profesor(a), ya se ha tomado asistencia en el modulo actual","alert alert-error", array("role"=>"alert"));
+				$sessinfo = html_writer::div("Ya se ha tomado asistencia en el modulo actual.","alert alert-error", array("role"=>"alert"));
 				$viewbacktocoursebutton = html_writer::nonempty_tag(
 						"div",
 						$OUTPUT->single_button($backtocourse, get_string('back', 'local_paperattendance')),
@@ -298,7 +306,7 @@ if($action == "view"){
 		// if actual hour is in between modules ->
 		else {
 			//var_dump(" entre modulos");
-			$sessinfo = html_writer::div("Estimado profesor(a), para poder tomar asistencia debe esperar a que comience el módulo siguiente","alert alert-error", array("role"=>"alert"));
+			$sessinfo = html_writer::div("Para poder tomar asistencia debe esperar a que comience el módulo siguiente.","alert alert-error", array("role"=>"alert"));
 			$viewbacktocoursebutton = html_writer::nonempty_tag(
 					"div",
 					$OUTPUT->single_button($backtocourse, get_string('back', 'local_paperattendance')),
@@ -357,7 +365,7 @@ if($action == "view"){
 }
 
 if($action == "save"){
-	echo html_writer::div("Asistencia guardada correctamente","alert alert-success", array("role"=>"alert"));
+	echo html_writer::div("Asistencia guardada correctamente.","alert alert-success", array("role"=>"alert"));
 	echo $viewbackbutton;
 }
 
