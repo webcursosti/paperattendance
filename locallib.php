@@ -55,7 +55,7 @@ function paperattendance_create_qr_image($qrstring , $path){
 function paperattendance_get_students_for_printing($course) {
 	global $DB;
 	
-	$query = 'SELECT u.id, 
+	$query = "SELECT u.id, 
 			u.idnumber, 
 			u.firstname, 
 			u.lastname, 
@@ -63,12 +63,14 @@ function paperattendance_get_students_for_printing($course) {
 			GROUP_CONCAT(e.enrol) AS enrol
 			FROM {user_enrolments} ue
 			INNER JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = ?)
-			INNER JOIN {context} c ON (c.contextlevel = 50 AND c.instanceid = e.courseid)
-			INNER JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.roleid = 5 AND ra.userid = ue.userid)
+			INNER JOIN {context} c ON (c.contextlevel = ? AND c.instanceid = e.courseid)
+			INNER JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.userid = ue.userid)
 			INNER JOIN {user} u ON (ue.userid = u.id)
+			INNER JOIN {role} r ON (r.id = ra.roleid)
+			WHERE ".$DB->sql_like('r.shortname', '?', $casesensitive = false, $accentsensitive = false, $notlike = false)."
 			GROUP BY u.id
-			ORDER BY lastname ASC';
-	$params = array($course->id);
+			ORDER BY lastname ASC";
+	$params = array($course->id, 50, 'student');
 	$rs = $DB->get_recordset_sql($query, $params);
 	
 	return $rs;
