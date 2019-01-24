@@ -35,9 +35,11 @@ class paperattendance_print_form extends moodleform {
 		$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
 		list ( $sqlin, $param1 ) = $DB->get_in_or_equal ( $enrolincludes );
 		$param2 = array(
-				$courseid
+				50,
+				$courseid,
+				'%teacher%'
 		);
-		$param = array_merge($param2,$param1);
+		$param = array_merge($param1,$param2);
 		$teachersquery = "SELECT u.id, 
 							CONCAT(u.firstname, ' ', u.lastname) AS name
 							FROM {user} u
@@ -47,11 +49,13 @@ class paperattendance_print_form extends moodleform {
 							INNER JOIN {context} ct ON (ct.id = ra.contextid)
 							INNER JOIN {course} c ON (c.id = ct.instanceid AND e.courseid = c.id)
 							INNER JOIN {role} r ON (r.id = ra.roleid)
-							WHERE ct.contextlevel = '50' AND r.id = 3 AND c.id = ? AND e.enrol $sqlin
-							GROUP BY u.id";
+							WHERE e.enrol $sqlin AND ct.contextlevel = ? AND c.id = ? AND
+							".$DB->sql_like('r.shortname', '?', $casesensitive = false, $accentsensitive = false, $notlike = false)."
+							ORDER BY r.id ASC";
 		
 		$teachers = $DB->get_records_sql($teachersquery, $param);
 		
+		/* role id teacher = 3 , role id assistant = 4
 		$assistantsquery = "SELECT u.id,
 							CONCAT(u.firstname, ' ', u.lastname) AS name
 							FROM {user} u
@@ -65,7 +69,7 @@ class paperattendance_print_form extends moodleform {
 							GROUP BY u.id";
 		
 		$assistants = $DB->get_records_sql($assistantsquery, $param);
-		
+		*/
 		$arrayteachers = array();
 		$arrayteachers["no"] = get_string('selectteacher', 'local_paperattendance');
 		foreach ($teachers as $teacher){
@@ -78,11 +82,11 @@ class paperattendance_print_form extends moodleform {
 			*/
 			$arrayteachers[$teacher->id] = $teacher->name;
 		}
-		
+		/*
 		foreach ($assistants as $assistant){
 			$arrayteachers[$assistant->id] = $assistant->name;
 		}
-		
+		*/
 		$descriptions = array(get_string('class', 'local_paperattendance'), 
 							  get_string('assistantship', 'local_paperattendance'),
 							  get_string('extraclass', 'local_paperattendance'), 
