@@ -111,7 +111,7 @@ if($action == "view"){
 		$actualseconds = $actualdate["seconds"];
 		$actualmodule = $actualhour.":".$actualminutes.":".$actualseconds;
 		
-		//$actualmodule = "15:25:1";
+		$actualmodule = "14:25:1";
 		$actualmoduleunix = strtotime($actualmodule);
 		$noexistmodule = true;
 		$betweenmodules = true;
@@ -371,3 +371,22 @@ if($action == "save"){
 
 echo $OUTPUT->footer();
 ?>
+
+<script>
+$( document ).ready(function() {
+	
+	var trow = $('table').find('tr');
+	$.each(trow, function(i, field){
+		var div = $(this); 
+		div.find('.fitem').removeClass( "fitem" );
+		div.find('.fitemtitle').remove();
+	});
+
+});
+</script>
+
+<style>
+	.table > tbody > tr > td {
+     vertical-align: middle;
+}
+</style>

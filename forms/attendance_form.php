@@ -53,16 +53,32 @@ class paperattendance_attendance_form extends moodleform {
 		$mform->addElement('header', 'nameforyourheaderelement', 'Pasar Asistencia');
 		$this->add_checkbox_controller(1);
 		$counter = 0;
+		
+		$mform->addElement('html', '<table class="table table-striped table-condensed table-hover">');
+		$mform->addElement('html', '<thead>');
+		$mform->addElement('html', '<tr>');
+		$mform->addElement('html', '<th>#');
+		$mform->addElement('html', '</th>');
+		$mform->addElement('html', '<th>Alumno');
+		$mform->addElement('html', '</th>');
+		$mform->addElement('html', '<th>Asistencia actual');
+		$mform->addElement('html', '</th>');
+		$mform->addElement('html', '</tr>');
+		$mform->addElement('html', '</thead>');
+		$mform->addElement('html', '<tbody>');
 		foreach ($enrolledstudents as $student) {
 			$counter++;
 			$name = ($student->firstname.' '.$student->lastname);
 			$email = $student->email;
 			$userid = $student->userid;
-			$mform->addElement('html', '<div class="row">');
-			$mform->addElement('html', '<div class="span8">');
-			$mform->addElement('advcheckbox', 'key'.$userid, $counter, $name, array('group' => 1), array(0, 1));
-			$mform->addElement('html', '</div>');
-			$mform->addElement('html', '<div class="span4">');
+			
+			$mform->addElement('html', '<tr>');
+			$mform->addElement('html', '<td>'.$counter);
+			$mform->addElement('html', '</td>');
+			$mform->addElement('html', '<td class="text-left" width="40%">');
+			$mform->addElement('advcheckbox', 'key'.$userid, "", $name, array('group' => 1), array(0, 1));
+			$mform->addElement('html', '</td>');
+			$mform->addElement('html', '<td>');
 			if ($existsession) {
 				//student summary sql
 				$present = "SELECT COUNT(*)
@@ -80,7 +96,7 @@ class paperattendance_attendance_form extends moodleform {
  				//		   	   		<div class="bar bar-success" style="width: '.$percentagestudentpresent.';">'.$percentagestudentpresent.'</div>
   				//			     	<div class="bar bar-danger" style="width: '.$percentagestudentabsent.';">'.$percentagestudentabsent.'</div>
 				//	    		</div>';
-				$progressbar = '<div class="progress progress-striped active" style="width: 50%;">';
+				$progressbar = '<div class="progress progress-striped active" style="width: 60%;">';
 				if ($percentagestudentpresent > 90){
 					$progressbar .= '<div class="bar bar-success" style="width: '.$percentagestudentpresent.';">'.$percentagestudentpresent.'</div>
   							     	<div class="bar bar-danger" style="width: '.$percentagestudentabsent.';"></div>';
@@ -93,12 +109,14 @@ class paperattendance_attendance_form extends moodleform {
 					$progressbar .= '<div class="bar bar-success" style="width: '.$percentagestudentpresent.';">'.$percentagestudentpresent.'</div>
   							     	<div class="bar bar-danger" style="width: '.$percentagestudentabsent.';">'.$percentagestudentabsent.'</div>';
 				}
-				$progressbar .= '</div>';
+				$progressbar .= '</td>';
 				$mform->addElement('html', $progressbar);
 			}
-			$mform->addElement('html', '</div>');
-			$mform->addElement('html', '</div>');
+			$mform->addElement('html', '</tr>');
+			
 		}
+		$mform->addElement('html', '</tbody>');
+		$mform->addElement('html', '</table>');
 		//$this->add_checkbox_controller(2, get_string("checkallornone"), array('style' => 'font-weight: bold;'), 1);
 		
 		//Set the required parameter
