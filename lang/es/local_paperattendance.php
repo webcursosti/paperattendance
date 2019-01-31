@@ -182,6 +182,11 @@ $string['listbeginmiss']="Inicio Lista:";
 $string['continue']="Continuar";
 $string['close']="Cerrar";
 $string['digitallist'] = "Lista digital";
+$string['takeattendance'] = "Pasar Asistencia";
+$string['notallowedtakeattendance'] = "No tienes permisos para pasar asistencia";
+$string['nostudentsenrolled'] = "No existen alumnos matriculados en el curso.";
+$string['tokennotaccepted'] = "Token no aceptado";
+
 
 
 //messages

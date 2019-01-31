@@ -50,7 +50,7 @@ class paperattendance_attendance_form extends moodleform {
 		}
 		
 		//create de list of students with checkboxs
-		$mform->addElement('header', 'nameforyourheaderelement', 'Pasar Asistencia');
+		$mform->addElement('header', 'nameforyourheaderelement', get_string('takeattendance', 'local_paperattendance'));
 		$this->add_checkbox_controller(1);
 		$counter = 0;
 		
@@ -75,7 +75,7 @@ class paperattendance_attendance_form extends moodleform {
 			$mform->addElement('html', '<tr>');
 			$mform->addElement('html', '<td>'.$counter);
 			$mform->addElement('html', '</td>');
-			$mform->addElement('html', '<td class="text-left" width="40%">');
+			$mform->addElement('html', '<td class="text-left" width="50%">');
 			$mform->addElement('advcheckbox', 'key'.$userid, "", $name, array('group' => 1), array(0, 1));
 			$mform->addElement('html', '</td>');
 			$mform->addElement('html', '<td>');

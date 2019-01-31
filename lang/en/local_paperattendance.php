@@ -182,6 +182,10 @@ $string['listbeginmiss']="List Begin:";
 $string['continue']="Continue";
 $string['close']="Close";
 $string['digitallist'] = "Digital list";
+$string['takeattendance'] = "Take Attendance";
+$string['notallowedtakeattendance'] = "Not allowed to take attendances";
+$string['nostudentsenrolled'] = "There are no students enrolled in the course.";
+$string['tokennotaccepted'] = "Token not accepted";
 
 //messages
 $string['dear'] = "Dear Teacher";

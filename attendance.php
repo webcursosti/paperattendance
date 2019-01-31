@@ -62,7 +62,7 @@ $backtocourse = new moodle_url("/course/view.php", array('id' => $courseid));
 
 $isteacher = paperattendance_getteacherfromcourse($courseid, $USER->id);
 if( !$isteacher && !is_siteadmin($USER) ){
-	print_error(get_string('notallowedprint', 'local_paperattendance'));
+	print_error(get_string('notallowedtakeattendance', 'local_paperattendance'));
 }
 
 //for navbar
@@ -111,7 +111,7 @@ if($action == "view"){
 		$actualseconds = $actualdate["seconds"];
 		$actualmodule = $actualhour.":".$actualminutes.":".$actualseconds;
 		
-		$actualmodule = "14:25:1";
+		//$actualmodule = "14:25:1";
 		$actualmoduleunix = strtotime($actualmodule);
 		$noexistmodule = true;
 		$betweenmodules = true;
@@ -264,7 +264,7 @@ if($action == "view"){
 							paperattendance_save_student_presence($sessid, $student -> userid, $attendance, NULL);
 							$arrayalumnos[] = $line;
 						}
-						/*
+						
 						//save attendance in omega
 						$update = new stdClass();
 						$update->id = $sessid;
@@ -274,7 +274,7 @@ if($action == "view"){
 							$update->status = 1;
 						}
 						$DB->update_record("paperattendance_session", $update);
-						*/
+						
 						//send mail of confirmation
 						if($CFG->paperattendance_sendmail == 1){
 							$sessdate = date("d-m-Y", time()).", ".$modquery->name. ": ". $modquery->initialtime. " - " .$modquery->endtime;
@@ -285,7 +285,7 @@ if($action == "view"){
 				}
 				else {
 					//there's no students in the course
-					$sessinfo = html_writer::div("No existen alumnos matriculados en el curso.","alert alert-error", array("role"=>"alert"));
+					$sessinfo = html_writer::div(get_string('nostudentsenrolled', 'local_paperattendance'),"alert alert-error", array("role"=>"alert"));
 					$viewbacktocoursebutton = html_writer::nonempty_tag(
 							"div",
 							$OUTPUT->single_button($backtocourse, get_string('back', 'local_paperattendance')),
@@ -331,7 +331,7 @@ if($action == "view"){
 	// if the token not accepted ->
 	else{
 		//var_dump("tokenno");
-		print_error(get_string("usernotloggedin", "local_paperattendance"));
+		print_error(get_string("tokennotaccepted", "local_paperattendance"));
 	}
 }
 
