@@ -37,7 +37,7 @@ class paperattendance_print_form extends moodleform {
 		$param2 = array(
 				50,
 				$courseid,
-				'%teacher%'
+				'%profesoreditor%',
 		);
 		$param = array_merge($param1,$param2);
 		$teachersquery = "SELECT u.id, 
