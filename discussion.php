@@ -132,7 +132,8 @@ if( $isteacher || is_siteadmin($USER)) {
 							CONCAT(u.firstname, ' ', u.lastname) AS name, 
 							sm.date AS date, 
 							m.name AS module,
-							s.teacherid
+							s.teacherid,
+                            s.type
 							FROM {paperattendance_discussion} d
 							INNER JOIN {paperattendance_presence} p ON (d.presenceid = p.id)
 							INNER JOIN {paperattendance_session} s ON (p.sessionid = s.id)
@@ -143,71 +144,72 @@ if( $isteacher || is_siteadmin($USER)) {
 		$discussion = $DB->get_record_sql($sqldiscussion, array($discussionid));
 		$discdate = paperattendance_convertdate($discussion->date);
 		
-		//Pdf viewer for the session list
-		$path = $CFG -> dataroot. "/temp/local/paperattendance/";
-		$timepdf = time();
-		$attendancepdffile = $path . "/print/paperattendance_".$courseid."_".$timepdf.".pdf";
-		if (!file_exists($path . "/print/")) {
-			mkdir($path . "/print/", 0777, true);
-		}
 		
-		$pdfnamesql = "SELECT *
-					   FROM {paperattendance_sessionpages} sp
-					   WHERE sp.sessionid = ?
-					   ORDER BY qrpage ASC";
-		$pdfnames = $DB->get_records_sql($pdfnamesql, array($sessid));
-		$pdf = new FPDI();
-		foreach($pdfnames as $pdfname){
-			$hashnamesql = "SELECT contenthash
-							FROM {files}
-							WHERE filename = ? AND component = ?";
-			$hashname = $DB->get_record_sql($hashnamesql, array($pdfname->pdfname, 'local_paperattendance'));
-			if($hashname){
-				$newpdfname = $hashname->contenthash;
-				$f1 = substr($newpdfname, 0 , 2);
-				$f2 = substr($newpdfname, 2, 2);
-				$filepath = $f1."/".$f2."/".$newpdfname;
-				$pages = $pdfname->pagenum + 1;
-				//$originalpdf = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdfname;
-				$originalpdf = $CFG -> dataroot. "/filedir/".$filepath;
-				
-				$pageCount = $pdf->setSourceFile($originalpdf);
-				// import a page
-				$templateId = $pdf->importPage($pages);
-				// get the size of the imported page
-				$size = $pdf->getTemplateSize($templateId);
-				//Add page on portrait position
-				$pdf->AddPage('P', array($size['w'], $size['h']));
-				// use the imported page
-				$pdf->useTemplate($templateId);
-			}
-			
-		}
-		// Preview PDF
-		$pdf->Output($attendancepdffile, "F");
-		$fs = get_file_storage();
-		$file_record = array(
-				'contextid' => $context->id,
-				'component' => 'local_paperattendance',
-				'filearea' => 'scan',
-				'itemid' => 0,
-				'filepath' => '/',
-				'filename' => "paperattendance_".$courseid."_".$timepdf.".pdf"
-		);
-		// If the file already exists we delete it
-		if ($fs->file_exists($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
-			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
-			$previousfile->delete();
-		}
-		// Info for the new file
-		$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
-		$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
-		$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
-				"src" => $url,
-				"style" => "height:75vh; width:60vw"
-		));
-		unlink($attendancepdffile);
-		
+		if ($discussion->type == 0){//attendance in paper
+    		//Pdf viewer for the session list
+    		$path = $CFG -> dataroot. "/temp/local/paperattendance/";
+    		$timepdf = time();
+    		$attendancepdffile = $path . "/print/paperattendance_".$courseid."_".$timepdf.".pdf";
+    		if (!file_exists($path . "/print/")) {
+    			mkdir($path . "/print/", 0777, true);
+    		}    		
+    		$pdfnamesql = "SELECT *
+    					   FROM {paperattendance_sessionpages} sp
+    					   WHERE sp.sessionid = ?
+    					   ORDER BY qrpage ASC";
+    		$pdfnames = $DB->get_records_sql($pdfnamesql, array($sessid));
+    		$pdf = new FPDI();
+    		foreach($pdfnames as $pdfname){
+    			$hashnamesql = "SELECT contenthash
+    							FROM {files}
+    							WHERE filename = ? AND component = ?";
+    			$hashname = $DB->get_record_sql($hashnamesql, array($pdfname->pdfname, 'local_paperattendance'));
+    			if($hashname){
+    				$newpdfname = $hashname->contenthash;
+    				$f1 = substr($newpdfname, 0 , 2);
+    				$f2 = substr($newpdfname, 2, 2);
+    				$filepath = $f1."/".$f2."/".$newpdfname;
+    				$pages = $pdfname->pagenum + 1;
+    				//$originalpdf = $CFG -> dataroot. "/temp/local/paperattendance/unread/".$pdfname->pdfname;
+    				$originalpdf = $CFG -> dataroot. "/filedir/".$filepath;
+    				
+    				$pageCount = $pdf->setSourceFile($originalpdf);
+    				// import a page
+    				$templateId = $pdf->importPage($pages);
+    				// get the size of the imported page
+    				$size = $pdf->getTemplateSize($templateId);
+    				//Add page on portrait position
+    				$pdf->AddPage('P', array($size['w'], $size['h']));
+    				// use the imported page
+    				$pdf->useTemplate($templateId);
+    			}
+    			
+        		}
+        		// Preview PDF
+        		$pdf->Output($attendancepdffile, "F");
+        		$fs = get_file_storage();
+        		$file_record = array(
+        				'contextid' => $context->id,
+        				'component' => 'local_paperattendance',
+        				'filearea' => 'scan',
+        				'itemid' => 0,
+        				'filepath' => '/',
+        				'filename' => "paperattendance_".$courseid."_".$timepdf.".pdf"
+        		);
+        		// If the file already exists we delete it
+        		if ($fs->file_exists($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf")) {
+        			$previousfile = $fs->get_file($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
+        			$previousfile->delete();
+        		}
+        		// Info for the new file
+        		$fileinfo = $fs->create_file_from_pathname($file_record, $attendancepdffile);
+        		$url = moodle_url::make_pluginfile_url($context->id, 'local_paperattendance', 'scan', 0, '/', "paperattendance_".$courseid."_".$timepdf.".pdf");
+        		$viewerpdf = html_writer::nonempty_tag("embed", " ", array(
+        				"src" => $url,
+        				"style" => "height:75vh; width:60vw"
+        		));
+        		unlink($attendancepdffile);
+    		}
 		if($responseform->is_cancelled()){
 			$goback = new moodle_url("/local/paperattendance/discussion.php", array(
 					"courseid" => $courseid
@@ -262,16 +264,30 @@ if( $isteacher || is_siteadmin($USER)) {
 		}
 	}
 	if($action == "response"){
+	    if ($discussion->type == 1){
+	        $digitallist = get_string('digitallist', 'local_paperattendance');
+	        $digitalicon_attendance = new pix_icon("e/bullet_list", get_string('see_digital', 'local_paperattendance')); // change icon
+	        $digitalaction_attendance = $OUTPUT->action_icon(
+	            "#",
+	            $digitalicon_attendance
+	            );
+	    }
+	    
 		echo html_writer::nonempty_tag("h4", $discussion->name, array("align" => "left"));
 		$resume = html_writer::nonempty_tag("h5", get_string('comment', 'local_paperattendance').": ".$discussion->comment, array("align" => "left"));
 		$resume .= html_writer::nonempty_tag("div", get_string('attdate', 'local_paperattendance').": ".$discdate, array("align" => "left"));
 		$resume .= html_writer::nonempty_tag("div", get_string('module', 'local_paperattendance').": ".$discussion->module, array("align" => "left"));
+		if ($discussion->type == 1){
+		    $resume .= html_writer::nonempty_tag("div", $digitallist.": ".$digitalaction_attendance, array("align" => "left"));
+		}
 		echo html_writer::nonempty_tag("div", $resume, array("style" => "width:30%; margin-bottom:30px"));
 		$responseform->display();
 		//Display a space
 		echo html_writer::div('<br>');
-		//Display de scan of the list
-		echo $viewerpdf;
+		if (isset($viewerpdf)){
+		    //Display de scan of the list only if it is paper
+		    echo $viewerpdf;
+		}
 	}
 	echo html_writer::nonempty_tag("div", $OUTPUT->single_button($backbuttonurl, get_string('backtocourse', 'local_paperattendance')), array("align" => "left"));
 	echo $OUTPUT->footer();

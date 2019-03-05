@@ -55,8 +55,10 @@ $string['nonexiststudent']="Estudiante no existe";
 $string['date']="Fecha";
 $string['time']="Hora";
 $string['scan']="Scan";
+$string['type']="Tipo";
 $string['studentsattendance']="Asistencia Alumnos";
 $string['see']="Ver";
+$string['see_digital']="Asistencia Digital";
 $string['seestudents']="Ver alumnos";
 $string['historytitle']="Historial de Asistencia";
 $string['historyheading']="Historial de Asistencia";
@@ -179,6 +181,12 @@ $string['modulehourmiss']="Hora Módulo:";
 $string['listbeginmiss']="Inicio Lista:";
 $string['continue']="Continuar";
 $string['close']="Cerrar";
+$string['digitallist'] = "Lista digital";
+$string['takeattendance'] = "Pasar Asistencia";
+$string['notallowedtakeattendance'] = "No tienes permisos para pasar asistencia";
+$string['nostudentsenrolled'] = "No existen alumnos matriculados en el curso.";
+$string['tokennotaccepted'] = "Token no aceptado";
+
 
 
 //messages

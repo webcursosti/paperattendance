@@ -55,8 +55,10 @@ $string['nonexiststudent']="Non exist student";
 $string['date']="Date";
 $string['time']="Time";
 $string['scan']="Scan";
+$string['type']="Type";
 $string['studentsattendance']="Students Attendance";
 $string['see']="See";
+$string['see_digital']="Digital Attendance";
 $string['seestudents']="See students";
 $string['historytitle']="Attendance History";
 $string['historyheading']="Attendance History";
@@ -179,6 +181,11 @@ $string['modulehourmiss']="Module Hour:";
 $string['listbeginmiss']="List Begin:";
 $string['continue']="Continue";
 $string['close']="Close";
+$string['digitallist'] = "Digital list";
+$string['takeattendance'] = "Take Attendance";
+$string['notallowedtakeattendance'] = "Not allowed to take attendances";
+$string['nostudentsenrolled'] = "There are no students enrolled in the course.";
+$string['tokennotaccepted'] = "Token not accepted";
 
 //messages
 $string['dear'] = "Dear Teacher";

@@ -32,8 +32,15 @@ class paperattendance_print_form extends moodleform {
 		$instance = $this->_customdata;		
 		$courseid = $instance["courseid"];
 		
+		$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);
+		list ( $sqlin, $param1 ) = $DB->get_in_or_equal ( $enrolincludes );
+		$param2 = array(
+				50,
+				$courseid,
+				'%teacher%'
+		);
+		$param = array_merge($param1,$param2);
 		$teachersquery = "SELECT u.id, 
-							e.enrol,
 							CONCAT(u.firstname, ' ', u.lastname) AS name
 							FROM {user} u
 							INNER JOIN {user_enrolments} ue ON (ue.userid = u.id)
@@ -42,13 +49,14 @@ class paperattendance_print_form extends moodleform {
 							INNER JOIN {context} ct ON (ct.id = ra.contextid)
 							INNER JOIN {course} c ON (c.id = ct.instanceid AND e.courseid = c.id)
 							INNER JOIN {role} r ON (r.id = ra.roleid)
-							WHERE ct.contextlevel = '50' AND r.id = 3 AND c.id = ? AND e.enrol = 'database'
-							GROUP BY u.id";
+							WHERE e.enrol $sqlin AND ct.contextlevel = ? AND c.id = ? AND
+							".$DB->sql_like('r.shortname', '?', $casesensitive = false, $accentsensitive = false, $notlike = false)."
+							ORDER BY r.id ASC";
 		
-		$teachers = $DB->get_records_sql($teachersquery, array($courseid));
+		$teachers = $DB->get_records_sql($teachersquery, $param);
 		
+		/* role id teacher = 3 , role id assistant = 4
 		$assistantsquery = "SELECT u.id,
-							e.enrol,
 							CONCAT(u.firstname, ' ', u.lastname) AS name
 							FROM {user} u
 							INNER JOIN {user_enrolments} ue ON (ue.userid = u.id)
@@ -57,30 +65,28 @@ class paperattendance_print_form extends moodleform {
 							INNER JOIN {context} ct ON (ct.id = ra.contextid)
 							INNER JOIN {course} c ON (c.id = ct.instanceid AND e.courseid = c.id)
 							INNER JOIN {role} r ON (r.id = ra.roleid)
-							WHERE ct.contextlevel = '50' AND r.id = 4 AND c.id = ?
+							WHERE ct.contextlevel = '50' AND r.id = 4 AND c.id = ? AND e.enrol $sqlin
 							GROUP BY u.id";
 		
-		$assistants = $DB->get_records_sql($assistantsquery, array($courseid));
-		
+		$assistants = $DB->get_records_sql($assistantsquery, $param);
+		*/
 		$arrayteachers = array();
 		$arrayteachers["no"] = get_string('selectteacher', 'local_paperattendance');
-		
-		$enrolincludes = explode("," ,$CFG->paperattendance_enrolmethod);		
-		
 		foreach ($teachers as $teacher){
-			
+			/* *Comented because we use the cfg directly in the sql with sqlin*
 			$enrolment = explode(",", $teacher->enrol);
 			// Verifies that the teacher is enrolled through a valid enrolment and that we haven't added him yet.
 			if (count(array_intersect($enrolment, $enrolincludes)) == 0 || isset($arrayteachers[$teacher->id])) {
 				continue;
 			}
+			*/
 			$arrayteachers[$teacher->id] = $teacher->name;
 		}
-		
+		/*
 		foreach ($assistants as $assistant){
 			$arrayteachers[$assistant->id] = $assistant->name;
 		}
-		
+		*/
 		$descriptions = array(get_string('class', 'local_paperattendance'), 
 							  get_string('assistantship', 'local_paperattendance'),
 							  get_string('extraclass', 'local_paperattendance'), 

@@ -71,6 +71,8 @@ $found = 0;
 $DB->execute('SET SESSION wait_timeout = 28800');
 $DB->execute('SET SESSION interactive_timeout = 28800');
 
+mtrace("Start process pdf csv: ". memory_get_usage() . "bytes \n");
+
 // Sql that brings the unread pdfs names
 $sqlunreadpdfs = "SELECT  id, filename AS name, uploaderid AS userid
 	FROM {paperattendance_unprocessed}
@@ -109,5 +111,7 @@ if($resources = $DB->get_records_sql($sqlunreadpdfs, array())){
 }else{
 	echo $found." pdfs found. \n";
 }
+
+mtrace("End CLI. Total memory used: ". memory_get_usage() . "bytes \n");
 
 exit(0);
