@@ -190,7 +190,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
                         $statusicon
                         );
                     // Define edition icon and url
-                    $editactionasistencia = html_writer::div($msgstatus, "presencehover ", array("style"=>"display:none; cursor:pointer; text-decoration: underline; color: blue;", "presenceid"=>"$attendance->idp", "setstudentpresence"=>"$setstudentpresence"));
+                    $editactionasistencia = html_writer::div($msgstatus, "presencehover ", array("style"=>"display:yes; cursor:pointer; text-decoration: underline; color: blue;", "presenceid"=>"$attendance->idp", "setstudentpresence"=>"$setstudentpresence"));
                     // 				$editurlattendance = new moodle_url("/local/paperattendance/history.php", array(
                     // 						"action" => "edit",
                     // 						"presenceid" => $attendance->idp,
@@ -983,12 +983,12 @@ echo $OUTPUT->footer();
 <script>
 $( document ).ready(function() {
 	
-	$('.generaltable').find('tr').hover(function() {
-			$( this ).find('.presencehover').toggle();
-		}, function() {
-			$( this ).find('.presencehover').toggle();
-		}
-	);
+	//$('.generaltable').find('tr').hover(function() {
+		//	$( this ).find('.presencehover').toggle();
+		//}, function() {
+			//$( this ).find('.presencehover').toggle();
+		//}
+	//);
 	$('.generaltable').find('th').hover(function() {
 			$( this ).find('.changeall').toggle();
 		}, function() {
