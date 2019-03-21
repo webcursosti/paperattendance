@@ -47,7 +47,7 @@ $context = context_course::instance($COURSE->id);
 
 //Page settings
 $urlpage = new moodle_url("/local/paperattendance/attendance.php", array('courseid' => $courseid));
-$pagetitle = get_string('printtitle', 'local_paperattendance');//cambiar lang*****
+$pagetitle = get_string('attendancetitle', 'local_paperattendance');
 $PAGE->set_url($urlpage);
 $PAGE->set_context($context);
 $PAGE->set_title($pagetitle);
@@ -111,7 +111,7 @@ if($action == "view"){
 		$actualseconds = $actualdate["seconds"];
 		$actualmodule = $actualhour.":".$actualminutes.":".$actualseconds;
 		
-		//$actualmodule = "13:50:00";
+		//$actualmodule = "22:50:00";
 		$actualmoduleunix = strtotime($actualmodule);
 		$noexistmodule = true;
 		$betweenmodules = true;
@@ -215,7 +215,7 @@ if($action == "view"){
 					$sessinfo .= html_writer::nonempty_tag("div", get_string("session","local_paperattendance")." ".$actualsession, array("align" => "left"));
 					$sessinfo .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
 					if ($noexistmodule){
-						$sessinfo .= html_writer::div("Se creará una <strong>sesión extra</strong> que no pertenece al horario del curso.","alert alert-info", array("role"=>"alert"));
+						$sessinfo .= html_writer::div(get_string('extrasession', 'local_paperattendance'),"alert alert-info", array("role"=>"alert"));
 					}
 					
 					//Instantiate form
@@ -295,7 +295,7 @@ if($action == "view"){
 			}
 			else {
 				//var_dump("sesion ya existe");
-				$sessinfo = html_writer::div("Ya se ha tomado asistencia en el modulo actual.","alert alert-error", array("role"=>"alert"));
+				$sessinfo = html_writer::div(get_string('attendancealreadytaken', 'local_paperattendance'),"alert alert-error", array("role"=>"alert"));
 				$viewbacktocoursebutton = html_writer::nonempty_tag(
 						"div",
 						$OUTPUT->single_button($backtocourse, get_string('back', 'local_paperattendance')),
@@ -306,7 +306,7 @@ if($action == "view"){
 		// if actual hour is in between modules ->
 		else {
 			//var_dump(" entre modulos");
-			$sessinfo = html_writer::div("Para poder tomar asistencia debe esperar a que comience el módulo siguiente.","alert alert-error", array("role"=>"alert"));
+			$sessinfo = html_writer::div(get_string('waitnextmodule', 'local_paperattendance'),"alert alert-error", array("role"=>"alert"));
 			$viewbacktocoursebutton = html_writer::nonempty_tag(
 					"div",
 					$OUTPUT->single_button($backtocourse, get_string('back', 'local_paperattendance')),
@@ -365,7 +365,7 @@ if($action == "view"){
 }
 
 if($action == "save"){
-	echo html_writer::div("Asistencia guardada correctamente.","alert alert-success", array("role"=>"alert"));
+	echo html_writer::div(get_string('attendancesaved', 'local_paperattendance'),"alert alert-success", array("role"=>"alert"));
 	echo $viewbackbutton;
 }
 

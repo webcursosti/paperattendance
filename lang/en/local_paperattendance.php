@@ -186,6 +186,12 @@ $string['takeattendance'] = "Take Attendance";
 $string['notallowedtakeattendance'] = "Not allowed to take attendances";
 $string['nostudentsenrolled'] = "There are no students enrolled in the course.";
 $string['tokennotaccepted'] = "Token not accepted";
+$string['attendancetitle'] = "Digital Attendance";
+$string['extrasession'] = "An <strong>extra session</strong> will be created that does not belong to the course.";
+$string['attendancealreadytaken'] = "Assistance has already been taken in the current module.";
+$string['waitnextmodule'] = "To be able to take assistance you must wait for the <strong>next module</strong> to start.";
+$string['attendancesaved'] = "Attendance saved correctly.";
+
 
 //messages
 $string['dear'] = "Dear Teacher";

@@ -186,7 +186,11 @@ $string['takeattendance'] = "Pasar Asistencia";
 $string['notallowedtakeattendance'] = "No tienes permisos para pasar asistencia";
 $string['nostudentsenrolled'] = "No existen alumnos matriculados en el curso.";
 $string['tokennotaccepted'] = "Token no aceptado";
-
+$string['attendancetitle'] = "Asistencia Digital";
+$string['extrasession'] = "Se creará una <strong>sesión extra</strong> que no pertenece al horario del curso.";
+$string['attendancealreadytaken'] = "Ya se ha tomado asistencia en el modulo actual.";
+$string['waitnextmodule'] = "Para poder tomar asistencia debe esperar a que comience el <strong>módulo siguiente</strong>.";
+$string['attendancesaved'] = "Asistencia guardada correctamente.";
 
 
 //messages
