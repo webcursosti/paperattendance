@@ -47,7 +47,7 @@ $context = context_course::instance($COURSE->id);
 
 //Page settings
 $urlpage = new moodle_url("/local/paperattendance/attendance.php", array('courseid' => $courseid));
-$pagetitle = get_string('printtitle', 'local_paperattendance');
+$pagetitle = get_string('printtitle', 'local_paperattendance');//cambiar lang*****
 $PAGE->set_url($urlpage);
 $PAGE->set_context($context);
 $PAGE->set_title($pagetitle);
@@ -111,7 +111,7 @@ if($action == "view"){
 		$actualseconds = $actualdate["seconds"];
 		$actualmodule = $actualhour.":".$actualminutes.":".$actualseconds;
 		
-		//$actualmodule = "14:25:1";
+		$actualmodule = "14:00:00";
 		$actualmoduleunix = strtotime($actualmodule);
 		$noexistmodule = true;
 		$betweenmodules = true;
