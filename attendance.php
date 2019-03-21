@@ -92,7 +92,7 @@ if($action == "view"){
 				"token" => $token
 		);
 		// 0 (para domingo) hasta 6 (para sábado)
-		$fields = array("diaSemana" => 3, "seccionId"=> 60801, "token" => $token);
+		//$fields = array("diaSemana" => 3, "seccionId"=> 60801, "token" => $token);
 		
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
@@ -111,7 +111,7 @@ if($action == "view"){
 		$actualseconds = $actualdate["seconds"];
 		$actualmodule = $actualhour.":".$actualminutes.":".$actualseconds;
 		
-		$actualmodule = "14:00:00";
+		//$actualmodule = "13:50:00";
 		$actualmoduleunix = strtotime($actualmodule);
 		$noexistmodule = true;
 		$betweenmodules = true;
@@ -141,7 +141,7 @@ if($action == "view"){
 			//var_dump("no hay modulos omega o no existe actual en omga");
 			$getmodules = "SELECT *
 						   FROM {paperattendance_module} 
-						   ORDER BY name DESC";
+						   ORDER BY name ASC";
 			$modules = $DB->get_records_sql($getmodules);
 			
 			foreach ($modules as $module){
