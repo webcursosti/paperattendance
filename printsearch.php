@@ -452,7 +452,7 @@ $( document ).ready(function() {
 	function callAjax(data, path, print, categoryid) {
 		console.log(lists);
 		var count = 1;
-		$("tbody").hide();
+		//$("tbody").hide();
 		$(".loader").html("<img style='display: block; margin-left: auto; margin-right: auto;' src='img/loading.gif'>");
 		$(".loader").show();
 		$.ajax({
@@ -483,7 +483,7 @@ $( document ).ready(function() {
 					count++;	
 		        });
 		        $(".loader").hide();
-		        $("tbody").show();
+		        //$("tbody").show();
 		    }
 		});
 	}

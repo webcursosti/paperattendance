@@ -255,6 +255,8 @@ $string['formscannerfolderlocation']="Formscanner - Folder location";
 $string['formscannerfolderlocationtext']="Address of the location of the folder containing the images to be processed. Example: /xxx/xxx/";
 $string['categoryid']="Category Id";
 $string['categoryidtext']="Pregrado's category value: 1 for Webcursos-d / 406 for Webcursos Production";
+$string['minutesdelay']="Minutes of digital delay";
+$string['minutesdelaytext']="Maximum of extra minutes to be able to take digital assistance after completing the module. (0 - 19)";
 
 // Task
 $string['taskprocesspdf']="Process PDFs";

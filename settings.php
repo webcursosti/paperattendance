@@ -200,4 +200,14 @@ if ($hassiteconfig) {
 					PARAM_INT
 					)
 			);
+	//Minutes delay for the digital attendance
+	$settings->add(
+			new admin_setting_configtext(
+					'paperattendance_minutesdelay',
+					get_string('minutesdelay', 'local_paperattendance'),
+					get_string('minutesdelaytext', 'local_paperattendance'),
+					0,
+					PARAM_INT
+					)
+			);
 }

@@ -111,8 +111,15 @@ if($action == "view"){
 		$actualseconds = $actualdate["seconds"];
 		$actualmodule = $actualhour.":".$actualminutes.":".$actualseconds;
 		
-		$actualmodule = "11:30:00";
+		$actualmodule = "10:00:00";
 		$actualmoduleunix = strtotime($actualmodule);
+		
+		$minutesdelay = $CFG->paperattendance_minutesdelay;
+		if ( ($minutesdelay > 19) || ($minutesdelay < 0) ){ //in case of bad usage of settings, prevent error
+			$minutesdelay = 19;
+		}
+		$secondsdelay = $minutesdelay * 60;
+		
 		$noexistmodule = true;
 		$betweenmodules = true;
 		$module1A = false;
@@ -129,17 +136,17 @@ if($action == "view"){
 				//the idea is to set the omega module to the actual module if the actual module is in one of this cases
 				
 				//first we check if the initial module is the 1A and if is in the middle of the 1A and 2
-				if ( ($modinicial == "08:15:00") && ( (strtotime("08:15:00") <= $actualmoduleunix) && ($actualmoduleunix <= strtotime("09:40:00")) ) ){
+				if ( ($modinicial == "08:15:00") && ( (strtotime("08:15:00") <= $actualmoduleunix) && ($actualmoduleunix <= (strtotime("09:40:00") +$secondsdelay) ) ) ){
 					$module1A = true; //it means that exist 1A module in omega and is in the actual hour
 				}
 				
 				//second we check if the initial module is the 4A and if is in the middle of the 4A and 5
-				if ( ($modinicial == "13:00:00") && ( (strtotime("13:00:00") <= $actualmoduleunix) && ($actualmoduleunix <= strtotime("14:40:00")) ) ){
+				if ( ($modinicial == "13:00:00") && ( (strtotime("13:00:00") <= $actualmoduleunix) && ($actualmoduleunix <= (strtotime("14:40:00") +$secondsdelay) ) ) ){
 					$module4A = true; //it means that exist 4A module in omega and is in the actual hour
 				}
 				
 				//Check if exist some module in the actual time
-				if ( ($module1A || $module4A) || ( (strtotime($modinicial) <= $actualmoduleunix) && ($actualmoduleunix <= strtotime($modfinal) ) ) ){
+				if ( ($module1A || $module4A) || ( (strtotime($modinicial) <= $actualmoduleunix) && ($actualmoduleunix <= (strtotime($modfinal) +$secondsdelay) ) ) ){
 					$mod = explode(":", $module->horaInicio);
 					$moduleinicio = $mod[0].":".$mod[1];
 					$modfin = explode(":", $module->horaFin);
@@ -166,7 +173,7 @@ if($action == "view"){
 				$modfinal = $module->endtime;
 				
 				//Check what module is inside the actual time
-				if ( (strtotime($modinicial) <= $actualmoduleunix) && ($actualmoduleunix <= strtotime($modfinal) )){
+				if ( (strtotime($modinicial) <= $actualmoduleunix) && ($actualmoduleunix <= (strtotime($modfinal) +$secondsdelay) )){
 					$modquery = $module; //set the actual module to the modquery variable that we use after
 					$moduleid = $modquery -> id;
 					$moduleinicio = $modinicial;
