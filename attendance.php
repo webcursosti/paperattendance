@@ -92,7 +92,7 @@ if($action == "view"){
 				"token" => $token
 		);
 		// 0 (para domingo) hasta 6 (para sábado)
-		//$fields = array("diaSemana" => 3, "seccionId"=> 60801, "token" => $token);
+		$fields = array("diaSemana" => 3, "seccionId"=> 60801, "token" => $token);
 		
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
@@ -111,10 +111,13 @@ if($action == "view"){
 		$actualseconds = $actualdate["seconds"];
 		$actualmodule = $actualhour.":".$actualminutes.":".$actualseconds;
 		
-		//$actualmodule = "22:50:00";
+		$actualmodule = "11:30:00";
 		$actualmoduleunix = strtotime($actualmodule);
 		$noexistmodule = true;
 		$betweenmodules = true;
+		$module1A = false;
+		$module4A = false;
+		
 		if(count($omegamodules) != 0){ // then exist omegamodules from omega
 			//var_dump("hay modulos omega");
 			foreach ($omegamodules as $module){
@@ -122,8 +125,21 @@ if($action == "view"){
 				$modinicial = $module->horaInicio;
 				$modfinal = $module->horaFin;
 				
+				//*Now we check the borders cases (1A/1B and 4A/4B modules)
+				//the idea is to set the omega module to the actual module if the actual module is in one of this cases
+				
+				//first we check if the initial module is the 1A and if is in the middle of the 1A and 2
+				if ( ($modinicial == "08:15:00") && ( (strtotime("08:15:00") <= $actualmoduleunix) && ($actualmoduleunix <= strtotime("09:40:00")) ) ){
+					$module1A = true; //it means that exist 1A module in omega and is in the actual hour
+				}
+				
+				//second we check if the initial module is the 4A and if is in the middle of the 4A and 5
+				if ( ($modinicial == "13:00:00") && ( (strtotime("13:00:00") <= $actualmoduleunix) && ($actualmoduleunix <= strtotime("14:40:00")) ) ){
+					$module4A = true; //it means that exist 4A module in omega and is in the actual hour
+				}
+				
 				//Check if exist some module in the actual time
-				if ( (strtotime($modinicial) <= $actualmoduleunix) && ($actualmoduleunix <= strtotime($modfinal) )){
+				if ( ($module1A || $module4A) || ( (strtotime($modinicial) <= $actualmoduleunix) && ($actualmoduleunix <= strtotime($modfinal) ) ) ){
 					$mod = explode(":", $module->horaInicio);
 					$moduleinicio = $mod[0].":".$mod[1];
 					$modfin = explode(":", $module->horaFin);
@@ -214,6 +230,7 @@ if($action == "view"){
 					$sessinfo .= html_writer::nonempty_tag("div", get_string("module","local_paperattendance").": ".$moduleinicio." - ".$modulefin, array("align" => "left"));
 					$sessinfo .= html_writer::nonempty_tag("div", get_string("session","local_paperattendance")." ".$actualsession, array("align" => "left"));
 					$sessinfo .= html_writer::nonempty_tag("div","<br>", array("align" => "left"));
+					$sessinfo .= html_writer::div(get_string('alertinfodigitalattendance', 'local_paperattendance'),"alert", array("role"=>"alert"));
 					if ($noexistmodule){
 						$sessinfo .= html_writer::div(get_string('extrasession', 'local_paperattendance'),"alert alert-info", array("role"=>"alert"));
 					}

@@ -214,6 +214,7 @@ echo html_writer::div($filterinput.$cartbutton, "topbarmenu");
 
 if ($ncourses>0){
 	echo html_writer::table($table);
+	echo html_writer::div('', 'loader');
 	echo $OUTPUT->paging_bar($ncourses, $page, $perpage, $url);
 }
 
@@ -451,6 +452,9 @@ $( document ).ready(function() {
 	function callAjax(data, path, print, categoryid) {
 		console.log(lists);
 		var count = 1;
+		$("tbody").hide();
+		$(".loader").html("<img style='display: block; margin-left: auto; margin-right: auto;' src='img/loading.gif'>");
+		$(".loader").show();
 		$.ajax({
 		    type: 'GET',
 		    url: 'ajax/ajaxquerys.php',
@@ -478,6 +482,8 @@ $( document ).ready(function() {
 		        	$table.append("<tr class='ajaxtr'>"+num+his+teacher+category+printicon+carticon+quickprinticon+"</tr>");
 					count++;	
 		        });
+		        $(".loader").hide();
+		        $("tbody").show();
 		    }
 		});
 	}

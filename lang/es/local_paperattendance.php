@@ -191,6 +191,7 @@ $string['extrasession'] = "Se creará una <strong>sesión extra</strong> que no 
 $string['attendancealreadytaken'] = "Ya se ha tomado asistencia en el modulo actual.";
 $string['waitnextmodule'] = "Para poder tomar asistencia debe esperar a que comience el <strong>módulo siguiente</strong>.";
 $string['attendancesaved'] = "Asistencia guardada correctamente.";
+$string['alertinfodigitalattendance'] = "<strong>¡Atención!</strong> No podrá pasar asistencia para el módulo actual después que este haya finalizado.";
 
 
 //messages
