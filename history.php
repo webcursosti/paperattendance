@@ -162,7 +162,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
                     $synchronizedicon = new pix_icon("i/checkpermissions", get_string('synchronized', 'local_paperattendance'));
                 }
                 else{
-                    $synchronizedicon = new pix_icon(" e/insert_time", get_string('unsynchronized', 'local_paperattendance'));
+                    $synchronizedicon = new pix_icon(" i/duration", get_string('unsynchronized', 'local_paperattendance'));
                 }
                 $synchronizediconaction = $OUTPUT->action_icon(
                     $urlomegasync,
@@ -605,7 +605,7 @@ if( $isteacher || is_siteadmin($USER) || has_capability('local/paperattendance:p
                     $synchronizedicon = new pix_icon("i/checked", get_string('synchronized', 'local_paperattendance'));
                 }
                 else{
-                    $synchronizedicon = new pix_icon(" e/insert_time", get_string('unsynchronized', 'local_paperattendance'));
+                    $synchronizedicon = new pix_icon(" i/duration", get_string('unsynchronized', 'local_paperattendance'));
                 }
                 $synchronizediconaction = $OUTPUT->action_icon(
                     $urlomegasync,
@@ -792,7 +792,7 @@ else if ($isstudent) {
     if ($action == "view"){
         //icons
         $urlicon = new moodle_url("#");
-        $synchronizedicon = new pix_icon(" e/insert_time", get_string('pending', 'local_paperattendance'));
+        $synchronizedicon = new pix_icon(" i/duration", get_string('pending', 'local_paperattendance'));
         $synchronizediconaction = $OUTPUT->action_icon(
             $urlicon,
             $synchronizedicon
