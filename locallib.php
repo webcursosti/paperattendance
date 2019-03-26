@@ -1699,39 +1699,31 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 	$return = 0;
 	
 	$errorpage = null;
-	mtrace("linea 1702");
 	if (($handle = fopen($file, "r")) !== FALSE) {
-		mtrace("linea 1704");
 		while(! feof($handle))
   		{
 			$data = fgetcsv($handle, 1000, ";");
 			$numero = count($data);
-			mtrace( $numero." datoss en la línea ".$fila);
 			print_r($data);
 			$stop = true;
 			
 			if($fila> 1 && $numero > 26){
-				mtrace("linea 1714");
 				//$data[27] and $data[28] brings the info of the session
 				$qrcodebottom = $data[27];
 				$qrcodetop = $data[28];
 				if(strpos($qrcodetop, '*') !== false) {
-					mtrace("linea 1719");
 					$qrcode = $qrcodetop;
 				} else {    
 					if(strpos($qrcodebottom, '*') !== false) {
-						mtrace("linea 1723");
 						$qrcode = $qrcodebottom;
 					}
 					else{
-						mtrace("linea 1727");
 						$stop = false;
 					}
 				}
 				
 				$numpages = paperattendance_number_of_pages($path, $pdffilename);
 				if($numpages == 1){
-					mtrace("linea 1734");
 					$realpagenum = 0;
 				}
 				else{
@@ -1884,7 +1876,6 @@ function paperattendance_read_csv($file, $path, $pdffilename, $uploaderobj){
 		fclose($handle);
 	}
 	
-	mtrace("linea 1887");
 	$returnarray = array();
 	$returnarray[] = $return;
 	$returnarray[] = $errorpage;
@@ -2009,8 +2000,6 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		if($return_var != 124){
 			mtrace("no se alcanzó el timeout, todo bien");
 			mtrace($return_var);
-			print_r(scandir($path."/jpgs/processing/"));
-			print_r(scandir($path."/jpgs/"));
 			//revisar el csv que creó formscanner
 			foreach(glob("{$path}/jpgs/processing/*.csv") as $filecsv)
 			{
@@ -2021,7 +2010,6 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 				mtrace("paperattendance_runcsvproccessing linea 2019: ".$processed);
 				if ($arraypaperattendance_read_csv[1] != null){
 					$pagesWithErrors[$arraypaperattendance_read_csv[1]->pagenumber] = $arraypaperattendance_read_csv[1];
-					mtrace("linea 2022");
 				}
 				$countprocessed += $processed;
 			}
@@ -2071,7 +2059,6 @@ function paperattendance_runcsvproccessing($path, $filename, $uploaderobj){
 		foreach ($admins as $admin){
 			paperattendance_sendMail($pagesWithErrors, null, $admin->id, $admin->id, null, "NotNull", "nonprocesspdf", null);
 		}
-		mtrace("end pages with errors var dump");
 	}
 	
 	if($countprocessed>= 1){
